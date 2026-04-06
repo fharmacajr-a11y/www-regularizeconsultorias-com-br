@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Regularize Consultoria – 19 anos de experiência em regularização junto à ANVISA e ao Programa Farmácia Popular. Especialistas em AFE, AE, credenciamento e documentação técnica para drogãrias, farmácias, distribuidoras e indústrias." />
+  <title>Regularize Consultoria | ANVISA e Farmácia Popular</title>
+
+  <!-- Tailwind CSS via CDN (Play CDN – sem build step) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- CSS personalizado (variáveis de cor, overrides) -->
+  <link rel="stylesheet" href="assets/css/custom.css" />
+
+  <!-- Configuração de cores personalizadas do Tailwind -->
+  <!-- Para trocar as cores do site inteiro, edite também custom.css :root {} -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-dark':  '#1a3a5c',
+            'brand':       '#2563eb',
+            'brand-light': '#38bdf8',
+          },
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+</head>
+
+<body class="font-sans bg-slate-50 text-slate-800 antialiased">
+
+  <!-- ============================================================
+       NAVBAR FIXA
+       ============================================================ -->
+  <header id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-white transition-shadow duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 md:h-20">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex-shrink-0" aria-label="Regularize Consultoria – Página inicial">
+          <img src="assets/img/logo-placeholder.svg" alt="Regularize Consultoria" class="h-9 w-auto" />
+        </a>
+
+        <!-- Links de navegação (desktop) -->
+        <nav class="hidden md:flex items-center gap-8" aria-label="Navegação principal">
+          <a href="index.html"    class="text-sm font-medium text-slate-700 hover:text-brand transition-colors duration-200">Início</a>
+          <a href="sobre.html"    class="text-sm font-medium text-slate-700 hover:text-brand transition-colors duration-200">Sobre</a>
+          <a href="servicos.html" class="text-sm font-medium text-slate-700 hover:text-brand transition-colors duration-200">Serviços</a>
+          <a href="contato.html"  class="text-sm font-medium text-slate-700 hover:text-brand transition-colors duration-200">Contato</a>
+        </nav>
+
+        <!-- CTA (desktop) + Hamburguer (mobile) -->
+        <div class="flex items-center gap-3">
+          <a href="contato.html"
+             class="hidden md:inline-flex items-center px-5 py-2.5 rounded-lg bg-brand text-white text-sm font-semibold hover:bg-brand-dark transition-colors duration-200 shadow-sm">
+            Solicitar Análise
+          </a>
+          <!-- Botão hamburguer (mobile) -->
+          <button id="menu-toggle"
+                  class="md:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors duration-200"
+                  aria-label="Abrir menu de navegação"
+                  aria-expanded="false"
+                  aria-controls="mobile-menu">
+            <svg id="icon-hamburger" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+            <svg id="icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Menu mobile dropdown -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-slate-100 bg-white px-4 pb-5">
+      <nav class="flex flex-col gap-1 pt-3" aria-label="Navegação mobile">
+        <a href="index.html"    class="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors">Início</a>
+        <a href="sobre.html"    class="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors">Sobre</a>
+        <a href="servicos.html" class="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors">Serviços</a>
+        <a href="contato.html"  class="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors">Contato</a>
+        <a href="contato.html"  class="mt-2 block text-center px-5 py-3 rounded-lg bg-brand text-white text-sm font-semibold hover:bg-brand-dark transition-colors">Solicitar Análise</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Espaçador para compensar navbar fixa -->
+  <div class="h-16 md:h-20" aria-hidden="true"></div>
+
+  <main>
+
+    <!-- ============================================================
+         HERO SECTION
+         ============================================================ -->
+    <section class="bg-gradient-to-br from-brand-dark to-brand py-20 md:py-28 lg:py-36">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+          <!-- Coluna de texto -->
+          <div>
+            <span class="inline-block px-3 py-1 rounded-full bg-white/10 text-brand-light text-xs font-semibold tracking-wide mb-6">
+              19 anos de experiência em regularização
+            </span>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6">
+              Sua empresa regularizada perante a ANVISA e a Farmácia Popular
+            </h1>
+            <p class="text-lg text-slate-200 leading-relaxed mb-8 max-w-lg">
+              A <strong class="text-white">Regularize Consultoria</strong> presta serviços
+              especializados de regularização para drogãrias, farmácias de manipulação,
+              distribuidoras, indústrias e transportadoras — com agilidade e comprometimento.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4">
+              <a href="servicos.html"
+                 class="inline-flex justify-center items-center px-7 py-3.5 rounded-xl bg-white text-brand-dark font-semibold text-sm hover:bg-slate-100 transition-colors shadow-lg">
+                Conheça Nossos Serviços
+              </a>
+              <a href="contato.html"
+                 class="inline-flex justify-center items-center px-7 py-3.5 rounded-xl border border-white/40 text-white font-semibold text-sm hover:bg-white/10 transition-colors">
+                Fale Conosco
+              </a>
+            </div>
+          </div>
+
+          <!-- Indicadores de confiança -->
+          <div class="hidden lg:flex justify-center">
+            <div class="w-full max-w-md bg-white/10 border border-white/20 rounded-2xl p-8 backdrop-blur-sm shadow-2xl space-y-6">
+              <div class="flex items-center gap-5">
+                <div class="w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center flex-shrink-0">
+                  <svg class="w-7 h-7 text-brand-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-white font-extrabold text-3xl leading-none">19 anos</p>
+                  <p class="text-white/60 text-sm mt-1">de atuação no setor farmacêutico</p>
+                </div>
+              </div>
+              <div class="border-t border-white/10"></div>
+              <div class="flex items-center gap-5">
+                <div class="w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center flex-shrink-0">
+                  <svg class="w-7 h-7 text-brand-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-white font-bold text-base leading-none">ANVISA &amp; Farmácia Popular</p>
+                  <p class="text-white/60 text-sm mt-1">Especialização em ambos os órgãos</p>
+                </div>
+              </div>
+              <div class="border-t border-white/10"></div>
+              <div class="flex items-center gap-5">
+                <div class="w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center flex-shrink-0">
+                  <svg class="w-7 h-7 text-brand-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-white font-bold text-base leading-none">Atendimento em todo o Brasil</p>
+                  <p class="text-white/60 text-sm mt-1">Serviços prestados remotamente</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         POR QUE ESCOLHER
+         ============================================================ -->
+    <section class="py-20 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="text-center mb-14">
+          <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+            Por que escolher a Regularize Consultoria?
+          </h2>
+          <p class="text-slate-500 max-w-xl mx-auto text-base">
+            Especialização, experiência e dedícação para garantir a conformidade da sua empresa com os órgãos reguladores.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+          <!-- 19 anos -->
+          <div class="text-center p-8 rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-lg transition-all duration-300">
+            <div class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-brand/10 flex items-center justify-center">
+              <svg class="w-7 h-7 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-900 mb-3">19 anos de experiência</h3>
+            <p class="text-slate-500 text-sm leading-relaxed">
+              Atuando no setor farmacêutico desde 2007, com histórico sólido de processos
+              concluídos junto à ANVISA e ao Programa Farmácia Popular em todo o Brasil.
+            </p>
+          </div>
+
+          <!-- Especialização -->
+          <div class="text-center p-8 rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-lg transition-all duration-300">
+            <div class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-brand/10 flex items-center justify-center">
+              <svg class="w-7 h-7 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-900 mb-3">Especialização técnica</h3>
+            <p class="text-slate-500 text-sm leading-relaxed">
+              Profundo conhecimento da legislação sanitária e dos processos da ANVISA e Farmácia
+              Popular — agilidade e segurança em cada etapa da regularização.
+            </p>
+          </div>
+
+          <!-- Acompanhamento -->
+          <div class="text-center p-8 rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-lg transition-all duration-300">
+            <div class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-brand/10 flex items-center justify-center">
+              <svg class="w-7 h-7 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/>
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-900 mb-3">Acompanhamento completo</h3>
+            <p class="text-slate-500 text-sm leading-relaxed">
+              Da análise inicial à obtenção do documento final, orientamos o cliente em cada
+              etapa com clareza e comprometimento.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         MÓDULOS EM DESTAQUE
+         ============================================================ -->
+    <section class="py-20 bg-slate-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="text-center mb-14">
+          <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+            Nossos serviços
+          </h2>
+          <p class="text-slate-500 max-w-xl mx-auto text-base">
+            Cobertura completa de regularização para o setor farmacêutico e correlatos.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+          <!-- Card: AFE e AE -->
+          <a href="servicos.html"
+             class="group block p-6 bg-white rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-lg transition-all duration-300">
+            <div class="w-12 h-12 mb-4 rounded-xl bg-brand/10 flex items-center justify-center group-hover:bg-brand transition-colors duration-300">
+              <svg class="w-6 h-6 text-brand group-hover:text-white transition-colors duration-300"
+                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <h3 class="text-base font-semibold text-slate-900 mb-1">AFE e AE junto à ANVISA</h3>
+            <p class="text-slate-500 text-sm leading-relaxed">Autorização de Funcionamento e Autorização Especial para o setor farmacêutico.</p>
+          </a>
+
+          <!-- Card: Alterações ANVISA -->
+          <a href="servicos.html"
+             class="group block p-6 bg-white rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-lg transition-all duration-300">
+            <div class="w-12 h-12 mb-4 rounded-xl bg-brand/10 flex items-center justify-center group-hover:bg-brand transition-colors duration-300">
+              <svg class="w-6 h-6 text-brand group-hover:text-white transition-colors duration-300"
+                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+              </svg>
+            </div>
+            <h3 class="text-base font-semibold text-slate-900 mb-1">Alterações Cadastrais ANVISA</h3>
+            <p class="text-slate-500 text-sm leading-relaxed">Porte, endereço, responsável técnico, SNGPC, razão social e recursos de indeferimentos.</p>
+          </a>
+
+          <!-- Card: Farmácia Popular -->
+          <a href="servicos.html"
+             class="group block p-6 bg-white rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-lg transition-all duration-300">
+            <div class="w-12 h-12 mb-4 rounded-xl bg-brand/10 flex items-center justify-center group-hover:bg-brand transition-colors duration-300">
+              <svg class="w-6 h-6 text-brand group-hover:text-white transition-colors duration-300"
+                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+              </svg>
+            </div>
+            <h3 class="text-base font-semibold text-slate-900 mb-1">Farmácia Popular</h3>
+            <p class="text-slate-500 text-sm leading-relaxed">Credenciamento, renovação e alterações cadastrais junto ao Programa Farmácia Popular.</p>
+          </a>
+
+          <!-- Card: Documentação Técnica -->
+          <a href="servicos.html"
+             class="group block p-6 bg-white rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-lg transition-all duration-300">
+            <div class="w-12 h-12 mb-4 rounded-xl bg-brand/10 flex items-center justify-center group-hover:bg-brand transition-colors duration-300">
+              <svg class="w-6 h-6 text-brand group-hover:text-white transition-colors duration-300"
+                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+            </div>
+            <h3 class="text-base font-semibold text-slate-900 mb-1">Documentação Técnica</h3>
+            <p class="text-slate-500 text-sm leading-relaxed">PGRSS, Manuais de Boas Práticas e Procedimentos Operacionais Padrão (POPs).</p>
+          </a>
+
+        </div>
+
+        <div class="text-center mt-10">
+          <a href="servicos.html"
+             class="inline-flex items-center gap-2 text-brand font-semibold text-sm hover:underline underline-offset-4">
+            Ver todos os serviços
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CTA FINAL
+         ============================================================ -->
+    <section class="py-20 bg-brand-dark">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+          Precisa regularizar sua empresa?
+        </h2>
+        <p class="text-slate-300 text-lg mb-8">
+          Fale com nossa equipe. Analisamos o seu caso e orientamos sobre cada etapa do processo de regularização.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <a href="https://wa.me/5519996275900"
+             target="_blank" rel="noopener noreferrer"
+             class="inline-flex justify-center items-center gap-2 px-8 py-4 rounded-xl bg-white text-brand-dark font-semibold text-base hover:bg-slate-100 transition-colors shadow-lg">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+              <path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.554 4.122 1.524 5.855L.057 23.25l5.562-1.457A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.891 0-3.659-.513-5.177-1.406l-.371-.22-3.302.866.88-3.214-.242-.395A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+            </svg>
+            WhatsApp
+          </a>
+          <a href="contato.html"
+             class="inline-flex justify-center items-center px-8 py-4 rounded-xl border border-white/40 text-white font-semibold text-base hover:bg-white/10 transition-colors">
+            Enviar Mensagem
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+  <footer class="bg-slate-900 text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+
+        <div>
+          <a href="index.html" class="inline-block mb-4" aria-label="Regularize Consultoria">
+            <img src="assets/img/logo-placeholder.svg" alt="Regularize Consultoria"
+                 class="h-8 w-auto brightness-0 invert opacity-80" />
+          </a>
+          <p class="text-sm leading-relaxed max-w-xs">
+            Especialistas em regularização junto à ANVISA e ao Programa Farmácia Popular.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-semibold text-white uppercase tracking-widest mb-5">Navegação</h4>
+          <ul class="space-y-3 text-sm">
+            <li><a href="index.html"    class="hover:text-white transition-colors duration-200">Início</a></li>
+            <li><a href="sobre.html"    class="hover:text-white transition-colors duration-200">Sobre a Regularize</a></li>
+            <li><a href="servicos.html" class="hover:text-white transition-colors duration-200">Serviços</a></li>
+            <li><a href="contato.html"  class="hover:text-white transition-colors duration-200">Contato</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-semibold text-white uppercase tracking-widest mb-5">Contato</h4>
+          <ul class="space-y-3 text-sm">
+            <li class="flex items-center gap-3">
+              <svg class="w-4 h-4 text-brand-light flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+              </svg>
+              <a href="https://wa.me/5519996275900" class="hover:text-white transition-colors duration-200"
+                 target="_blank" rel="noopener noreferrer">
+                (19) 99627-5900
+              </a>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-4 h-4 text-brand-light flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              <a href="mailto:fharmacaj2013@hotmail.com" class="hover:text-white transition-colors duration-200">
+                fharmacaj2013@hotmail.com
+              </a>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="border-t border-slate-800 pt-8 text-center text-xs text-slate-500">
+        © 2026 Regularize Consultoria. Todos os direitos reservados.
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript principal (navbar, menu mobile, link ativo) -->
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Entre em contato com a Regularize Consultoria. Solicite análise do seu processo de regularização junto à ANVISA ou ao Programa Farmácia Popular." />
+  <title>Contato | Regularize Consultoria</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/custom.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-dark':  '#1a3a5c',
+            'brand':       '#2563eb',
+            'brand-light': '#38bdf8',
+          },
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+</head>
+
+<body class="font-sans bg-slate-50 text-slate-800 antialiased">
+
+  <!-- ============================================================
+       NAVBAR FIXA
+       ============================================================ -->
+  <header id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-white transition-shadow duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 md:h-20">
+        <a href="index.html" class="flex-shrink-0" aria-label="Regularize Consultoria – Página inicial">
+          <img src="assets/img/logo-placeholder.svg" alt="Regularize Consultoria" class="h-9 w-auto" />
+        </a>
+        <nav class="hidden md:flex items-center gap-8" aria-label="Navegação principal">
+          <a href="index.html"    class="text-sm font-medium text-slate-700 hover:text-brand transition-colors duration-200">Início</a>
+          <a href="sobre.html"    class="text-sm font-medium text-slate-700 hover:text-brand transition-colors duration-200">Sobre</a>
+          <a href="servicos.html" class="text-sm font-medium text-slate-700 hover:text-brand transition-colors duration-200">Serviços</a>
+          <a href="contato.html"  class="text-sm font-medium text-slate-700 hover:text-brand transition-colors duration-200">Contato</a>
+        </nav>
+        <div class="flex items-center gap-3">
+          <a href="contato.html"
+             class="hidden md:inline-flex items-center px-5 py-2.5 rounded-lg bg-brand text-white text-sm font-semibold hover:bg-brand-dark transition-colors duration-200 shadow-sm">
+            Solicitar Análise
+          </a>
+          <button id="menu-toggle"
+                  class="md:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors duration-200"
+                  aria-label="Abrir menu de navegação" aria-expanded="false" aria-controls="mobile-menu">
+            <svg id="icon-hamburger" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+            <svg id="icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden border-t border-slate-100 bg-white px-4 pb-5">
+      <nav class="flex flex-col gap-1 pt-3" aria-label="Navegação mobile">
+        <a href="index.html"    class="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors">Início</a>
+        <a href="sobre.html"    class="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors">Sobre</a>
+        <a href="servicos.html" class="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors">Serviços</a>
+        <a href="contato.html"  class="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors">Contato</a>
+        <a href="contato.html"  class="mt-2 block text-center px-5 py-3 rounded-lg bg-brand text-white text-sm font-semibold hover:bg-brand-dark transition-colors">Solicitar Análise</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="h-16 md:h-20" aria-hidden="true"></div>
+
+  <main>
+
+    <!-- ============================================================
+         CABEÇALHO DA PÁGINA
+         ============================================================ -->
+    <section class="bg-gradient-to-r from-brand-dark to-brand py-16 md:py-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav aria-label="Breadcrumb" class="mb-4">
+          <ol class="flex items-center gap-2 text-sm text-white/60">
+            <li><a href="index.html" class="hover:text-white transition-colors">Início</a></li>
+            <li aria-hidden="true" class="text-white/40">/</li>
+            <li class="text-white" aria-current="page">Contato</li>
+          </ol>
+        </nav>
+        <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-3">Fale com a Regularize Consultoria</h1>
+        <p class="text-slate-200 text-lg max-w-2xl">
+          Tire dúvidas, solicite análise do seu caso ou envie sua mensagem. Respondemos com agilidade.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         FORMULÁRIO + INFORMAÇÕES DE CONTATO
+         ============================================================ -->
+    <section class="py-20 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
+
+          <!-- ——————————————————————————————————————————————
+               FORMULÁRIO (coluna maior: 3/5)
+               ——————————————————————————————————————————————
+               COMO CONFIGURAR O FORMSPREE:
+               1. Crie uma conta gratuita em https://formspree.io
+               2. Crie um novo formulário no painel do Formspree
+               3. Copie o ID gerado (ex: "xpzbkqer")
+               4. Substitua "SEU_ID_AQUI" no atributo action abaixo:
+                  action="https://formspree.io/f/SEU_ID_AQUI"
+               5. Pronto! O Formspree gerencia o envio e envia
+                  os dados para o e-mail cadastrado na conta.
+
+               FALLBACK (mailto):
+               Se preferir não usar Formspree, troque o action por:
+               action="mailto:contato@rcapps.com.br"
+               method="POST" enctype="text/plain"
+               (abrirá o cliente de e-mail do usuário)
+          —————————————————————————————————————————————— -->
+          <div class="lg:col-span-3">
+            <h2 class="text-2xl font-bold text-slate-900 mb-2">Envie uma mensagem</h2>
+            <p class="text-slate-500 text-sm mb-8">
+              Preencha o formulário abaixo e retornaremos em até 1 dia útil.
+            </p>
+
+            <!-- FORMULÁRIO — substitua SEU_ID_AQUI pelo ID do Formspree -->
+            <form
+              id="contact-form"
+              action="https://formspree.io/f/SEU_ID_AQUI"
+              method="POST"
+              novalidate>
+
+              <!-- Campo oculto: assunto padrão recebido no e-mail -->
+              <input type="hidden" name="_subject" value="Contato via site Regularize Consultoria" />
+
+              <!-- Campo oculto: página de redirecionamento após envio -->
+              <!-- Crie um arquivo "obrigado.html" ou aponte para uma URL existente -->
+              <!-- <input type="hidden" name="_next" value="https://seusite.com/obrigado.html" /> -->
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+                <!-- Nome -->
+                <div>
+                  <label for="nome" class="block text-sm font-medium text-slate-700 mb-1.5">
+                    Nome completo <span class="text-red-500" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="nome"
+                    name="nome"
+                    required
+                    autocomplete="name"
+                    placeholder="Seu nome"
+                    class="form-input"
+                  />
+                </div>
+
+                <!-- E-mail -->
+                <div>
+                  <label for="email" class="block text-sm font-medium text-slate-700 mb-1.5">
+                    E-mail <span class="text-red-500" aria-hidden="true">*</span>
+                  </label>
+                  <!-- O Formspree usa o campo "email" para o reply-to automaticamente -->
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    autocomplete="email"
+                    placeholder="seu@email.com.br"
+                    class="form-input"
+                  />
+                </div>
+
+                <!-- Empresa -->
+                <div>
+                  <label for="empresa" class="block text-sm font-medium text-slate-700 mb-1.5">
+                    Empresa / Escritório
+                  </label>
+                  <input
+                    type="text"
+                    id="empresa"
+                    name="empresa"
+                    autocomplete="organization"
+                    placeholder="Nome da sua empresa"
+                    class="form-input"
+                  />
+                </div>
+
+                <!-- Segmento -->
+                <div>
+                  <label for="segmento" class="block text-sm font-medium text-slate-700 mb-1.5">
+                    Segmento
+                  </label>
+                  <select id="segmento" name="segmento" class="form-input">
+                    <option value="" disabled selected>Selecione...</option>
+                    <option value="drogaria">Drogaria</option>
+                    <option value="farmacia-manipulacao">Farmácia de Manipulação</option>
+                    <option value="distribuidora">Distribuidora de Medicamentos</option>
+                    <option value="industria">Indústria Farmacêutica</option>
+                    <option value="transportadora">Transportadora</option>
+                    <option value="outro">Outro</option>
+                  </select>
+                </div>
+
+                <!-- Mensagem (ocupa as 2 colunas) -->
+                <div class="sm:col-span-2">
+                  <label for="mensagem" class="block text-sm font-medium text-slate-700 mb-1.5">
+                    Mensagem <span class="text-red-500" aria-hidden="true">*</span>
+                  </label>
+                  <textarea
+                    id="mensagem"
+                    name="mensagem"
+                    required
+                    rows="5"
+                    placeholder="Descreva sua necessidade, dúvida ou interesse em demonstração..."
+                    class="form-input resize-none"
+                  ></textarea>
+                </div>
+
+              </div>
+
+              <!-- Aviso de campo obrigatório -->
+              <p class="text-xs text-slate-400 mt-4">
+                <span class="text-red-500">*</span> Campos obrigatórios.
+                Seus dados são usados apenas para contato e não são compartilhados.
+              </p>
+
+              <!-- Botão de envio -->
+              <div class="mt-6">
+                <button
+                  type="submit"
+                  class="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-brand text-white font-semibold text-sm hover:bg-brand-dark transition-colors duration-200 shadow-sm">
+                  Enviar mensagem
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                  </svg>
+                </button>
+              </div>
+
+            </form>
+
+            <!-- Fallback alternativo: link mailto direto -->
+            <div class="mt-6 pt-6 border-t border-slate-100">
+              <p class="text-xs text-slate-400">
+                Prefere enviar por e-mail diretamente?
+                <a href="mailto:fharmacaj2013@hotmail.com?subject=Contato%20via%20site%20Regularize%20Consultoria"
+                   class="text-brand hover:underline font-medium">
+                  fharmacaj2013@hotmail.com
+                </a>
+              </p>
+            </div>
+
+          </div>
+
+          <!-- ——————————————————————————————————————————————
+               INFORMAÇÕES DE CONTATO (coluna menor: 2/5)
+          —————————————————————————————————————————————— -->
+          <aside class="lg:col-span-2">
+            <div class="bg-slate-50 rounded-2xl p-8 border border-slate-100">
+
+              <h3 class="text-lg font-bold text-slate-900 mb-6">Informações de contato</h3>
+
+              <ul class="space-y-6">
+
+                <!-- Telefone / WhatsApp -->
+                <li class="flex items-start gap-4">
+                  <div class="w-10 h-10 rounded-xl bg-brand/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg class="w-5 h-5 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-xs text-slate-400 font-medium uppercase tracking-wide mb-0.5">WhatsApp</p>
+                    <a href="https://wa.me/5519996275900" target="_blank" rel="noopener noreferrer"
+                       class="text-sm font-medium text-slate-800 hover:text-brand transition-colors">
+                      (19) 99627-5900
+                    </a>
+                  </div>
+                </li>
+
+                <!-- E-mail -->
+                <li class="flex items-start gap-4">
+                  <div class="w-10 h-10 rounded-xl bg-brand/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg class="w-5 h-5 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-xs text-slate-400 font-medium uppercase tracking-wide mb-0.5">E-mail</p>
+                    <a href="mailto:fharmacaj2013@hotmail.com"
+                       class="text-sm font-medium text-slate-800 hover:text-brand transition-colors">
+                      fharmacaj2013@hotmail.com
+                    </a>
+                  </div>
+                </li>
+
+                <!-- Tempo de resposta -->
+                <li class="flex items-start gap-4">
+                  <div class="w-10 h-10 rounded-xl bg-brand/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg class="w-5 h-5 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-xs text-slate-400 font-medium uppercase tracking-wide mb-0.5">Tempo de resposta</p>
+                    <p class="text-sm font-medium text-slate-800">Até 1 dia útil</p>
+                  </div>
+                </li>
+
+                <!-- Localização -->
+                <li class="flex items-start gap-4">
+                  <div class="w-10 h-10 rounded-xl bg-brand/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg class="w-5 h-5 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-xs text-slate-400 font-medium uppercase tracking-wide mb-0.5">Localização</p>
+                    <p class="text-sm font-medium text-slate-800">Brasil</p>
+                  </div>
+                </li>
+
+              </ul>
+
+              <!-- Divisor -->
+              <div class="border-t border-slate-200 my-8"></div>
+
+              <!-- O que esperar -->
+              <div>
+                <h4 class="text-sm font-bold text-slate-900 mb-4">O que acontece depois?</h4>
+                <ol class="space-y-3">
+                  <li class="flex items-start gap-3">
+                    <span class="w-6 h-6 rounded-full bg-brand text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
+                    <p class="text-sm text-slate-500">Recebemos sua mensagem e confirmamos o contato.</p>
+                  </li>
+                  <li class="flex items-start gap-3">
+                    <span class="w-6 h-6 rounded-full bg-brand text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
+                    <p class="text-sm text-slate-500">Analisamos o seu caso e respondemos com orientações técnicas.</p>
+                  </li>
+                  <li class="flex items-start gap-3">
+                    <span class="w-6 h-6 rounded-full bg-brand text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
+                    <p class="text-sm text-slate-500">Iniciamos o processo de regularização com acompanhamento dedicado.</p>
+                  </li>
+                </ol>
+              </div>
+
+            </div>
+          </aside>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CTA FINAL
+         ============================================================ -->
+    <section class="py-20 bg-brand-dark">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-bold text-white mb-4">
+          Ainda com dúvidas?
+        </h2>
+        <p class="text-slate-300 text-lg mb-8">
+          Conheça nossos serviços ou saiba mais sobre a Regularize Consultoria antes de entrar em contato.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <a href="servicos.html"
+             class="inline-flex justify-center items-center px-8 py-4 rounded-xl bg-white text-brand-dark font-semibold text-base hover:bg-slate-100 transition-colors shadow-lg">
+            Ver Nossos Serviços
+          </a>
+          <a href="sobre.html"
+             class="inline-flex justify-center items-center px-8 py-4 rounded-xl border border-white/40 text-white font-semibold text-base hover:bg-white/10 transition-colors">
+            Sobre a Regularize
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+  <footer class="bg-slate-900 text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+        <div>
+          <a href="index.html" class="inline-block mb-4" aria-label="Regularize Consultoria">
+            <img src="assets/img/logo-placeholder.svg" alt="Regularize Consultoria" class="h-8 w-auto brightness-0 invert opacity-80" />
+          </a>
+          <p class="text-sm leading-relaxed max-w-xs">
+            Especialistas em regularização junto à ANVISA e ao Programa Farmácia Popular.
+          </p>
+        </div>
+        <div>
+          <h4 class="text-xs font-semibold text-white uppercase tracking-widest mb-5">Navegação</h4>
+          <ul class="space-y-3 text-sm">
+            <li><a href="index.html"    class="hover:text-white transition-colors duration-200">Início</a></li>
+            <li><a href="sobre.html"    class="hover:text-white transition-colors duration-200">Sobre a Regularize</a></li>
+            <li><a href="servicos.html" class="hover:text-white transition-colors duration-200">Serviços</a></li>
+            <li><a href="contato.html"  class="hover:text-white transition-colors duration-200">Contato</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-xs font-semibold text-white uppercase tracking-widest mb-5">Contato</h4>
+          <ul class="space-y-3 text-sm">
+            <li class="flex items-center gap-3">
+              <svg class="w-4 h-4 text-brand-light flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+              </svg>
+              <a href="https://wa.me/5519996275900" class="hover:text-white transition-colors duration-200"
+                 target="_blank" rel="noopener noreferrer">
+                (19) 99627-5900
+              </a>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-4 h-4 text-brand-light flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              <a href="mailto:fharmacaj2013@hotmail.com" class="hover:text-white transition-colors duration-200">
+                fharmacaj2013@hotmail.com
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-slate-800 pt-8 text-center text-xs text-slate-500">
+        © 2026 Regularize Consultoria. Todos os direitos reservados.
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+/* ================================================================
+   RC Apps – custom.css
+   ----------------------------------------------------------------
+   VARIÁVEIS DE COR CENTRALIZADAS
+   Para trocar todo o esquema de cores do site, edite apenas os
+   valores dentro do bloco :root {} abaixo.
+   ================================================================ */
+
+/* ---------- 1. Variáveis de cor ---------- */
+:root {
+  /* Azul escuro: fundo do hero, navbar hover, blocos de destaque */
+  --color-brand-dark:  #1a3a5c;
+
+  /* Azul principal: botões, links, badges, bordas de cards */
+  --color-brand:       #2563eb;
+
+  /* Azul claro: ícones de apoio, highlights, acento */
+  --color-brand-light: #38bdf8;
+
+  /* Fundo geral das páginas */
+  --color-bg:          #f8fafc;
+
+  /* Cor do texto principal */
+  --color-text:        #1e293b;
+
+  /* Fundo do rodapé */
+  --color-footer-bg:   #0f172a;
+}
+
+/* ---------- 2. Base e tipografia ---------- */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- 3. Navbar: sombra suave ao fazer scroll ---------- */
+/* Classe adicionada via JavaScript (main.js) quando window.scrollY > 10 */
+#navbar.scrolled {
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- 4. Link ativo na navbar ---------- */
+/* Classe adicionada via JavaScript com base na URL atual da página */
+#navbar a.active {
+  color: var(--color-brand) !important;
+  font-weight: 600;
+}
+
+/* ---------- 5. Focus ring acessível ---------- */
+/* Substitui o outline padrão do browser por um mais limpo e consistente */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- 6. Estilos de formulário (contato.html) ---------- */
+.form-input {
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: #1e293b;
+  background-color: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+  appearance: none;
+}
+
+.form-input:focus {
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.form-input::placeholder {
+  color: #94a3b8;
+}
+
+/* ---------- 7. Animação de entrada suave (opcional para cards) ---------- */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInUp 0.45s ease forwards;
+}

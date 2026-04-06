@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 52" fill="none">
+  <!-- Bloco ícone: retângulo azul escuro com "RC" em branco -->
+  <rect x="0" y="2" width="48" height="48" rx="10" fill="#1a3a5c"/>
+  <text x="7" y="37" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="900" fill="#ffffff">RC</text>
+
+  <!-- Nome da empresa -->
+  <text x="60" y="25" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#1a3a5c">Regularize</text>
+
+  <!-- Subtítulo / produto -->
+  <text x="60" y="41" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="500" fill="#2563eb" letter-spacing="0.6">Consultoria</text>
+</svg>
