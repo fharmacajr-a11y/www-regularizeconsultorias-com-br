@@ -1,5 +1,5 @@
 /**
- * RC Apps – main.js
+ * Regularize Consultoria – main.js
  * -----------------------------------------------------------------
  * Responsabilidades:
  *   1. Adicionar sombra na navbar ao fazer scroll

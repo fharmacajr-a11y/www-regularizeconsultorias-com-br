@@ -1,5 +1,5 @@
 /* ================================================================
-   RC Apps – custom.css
+   Regularize Consultoria – custom.css
    ----------------------------------------------------------------
    VARIÁVEIS DE COR CENTRALIZADAS
    Para trocar todo o esquema de cores do site, edite apenas os
@@ -12,10 +12,10 @@
   --color-brand-dark:  #1a3a5c;
 
   /* Azul principal: botões, links, badges, bordas de cards */
-  --color-brand:       #2563eb;
+  --color-brand:       #1565c0;
 
   /* Azul claro: ícones de apoio, highlights, acento */
-  --color-brand-light: #38bdf8;
+  --color-brand-light: #29b6f6;
 
   /* Fundo geral das páginas */
   --color-bg:          #f8fafc;
@@ -81,7 +81,7 @@ select:focus-visible {
 
 .form-input:focus {
   border-color: var(--color-brand);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.15);
 }
 
 .form-input::placeholder {
@@ -102,4 +102,24 @@ select:focus-visible {
 
 .animate-fade-in {
   animation: fadeInUp 0.45s ease forwards;
+}
+
+/* ---------- 8. Typography refinement ---------- */
+/* Tight letter-spacing em headings grandes para visual mais profissional */
+h1, h2 {
+  letter-spacing: -0.02em;
+}
+
+/* ---------- 9. Navbar logo — transição suave ---------- */
+#navbar img {
+  transition: opacity 0.2s ease;
+}
+#navbar img:hover {
+  opacity: 0.85;
+}
+
+/* ---------- 10. Footer logo badge ---------- */
+/* O logo tem fundo branco; o badge aplica padding + rounded para encaixar no footer escuro */
+footer img[alt="Regularize Consultoria"] {
+  display: block;
 }
