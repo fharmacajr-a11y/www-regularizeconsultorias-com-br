@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="shortcut icon" type="image/x-icon" href="assets/icons/favicon-32x32.ico">
+  <title>Comunicado Importante | Regularize Consultoria</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/custom.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-dark':  '#1a3a5c',
+            'brand':       '#1565c0',
+            'brand-light': '#29b6f6',
+          },
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+</head>
+
+<body class="font-sans bg-slate-50 text-slate-800 antialiased">
+
+  <!-- NAVBAR -->
+  <header id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-white transition-shadow duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20 md:h-24">
+
+        <a href="index.html" class="flex-shrink-0" aria-label="Regularize Consultoria – Página inicial">
+          <img src="assets/img/logorc2.png" alt="Regularize Consultoria" class="h-20 md:h-24 w-auto" />
+        </a>
+
+        <nav class="hidden md:flex items-center gap-8" aria-label="Navegação principal">
+          <a href="index.html"    class="text-sm font-medium text-slate-700 hover:text-brand transition-colors duration-200">Início</a>
+          <a href="sobre.html"    class="text-sm font-medium text-slate-700 hover:text-brand transition-colors duration-200">Sobre</a>
+          <a href="servicos.html" class="text-sm font-medium text-slate-700 hover:text-brand transition-colors duration-200">Serviços</a>
+          <a href="contato.html"  class="text-sm font-medium text-slate-700 hover:text-brand transition-colors duration-200">Contato</a>
+        </nav>
+
+        <div class="flex items-center gap-3">
+          <a href="comunicado.html"
+             class="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors duration-200 shadow-sm relative">
+            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+            COMUNICADO IMPORTANTE!
+            <span class="aviso-badge absolute -top-2 -right-2 min-w-[1.25rem] h-5 px-1 rounded-full bg-white text-red-600 text-xs font-bold flex items-center justify-center shadow border border-red-200">3</span>
+          </a>
+          <button id="menu-toggle"
+                  class="md:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors duration-200"
+                  aria-label="Abrir menu de navegação"
+                  aria-expanded="false"
+                  aria-controls="mobile-menu">
+            <svg id="icon-hamburger" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+            <svg id="icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="mobile-menu" class="hidden md:hidden border-t border-slate-100 bg-white px-4 pb-5">
+      <nav class="flex flex-col gap-1 pt-3" aria-label="Navegação mobile">
+        <a href="index.html"    class="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors">Início</a>
+        <a href="sobre.html"    class="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors">Sobre</a>
+        <a href="servicos.html" class="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors">Serviços</a>
+        <a href="contato.html"  class="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors">Contato</a>
+        <a href="comunicado.html" class="mt-2 relative flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+          </svg>
+          COMUNICADO IMPORTANTE!
+          <span class="aviso-badge absolute -top-2 -right-2 min-w-[1.25rem] h-5 px-1 rounded-full bg-white text-red-600 text-xs font-bold flex items-center justify-center shadow border border-red-200">3</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="h-20 md:h-24" aria-hidden="true"></div>
+
+  <main>
+
+    <!-- ============================================================
+         CABEÇALHO DA PÁGINA
+         ============================================================ -->
+    <section class="bg-gradient-to-r from-brand-dark to-brand py-16 md:py-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav aria-label="Breadcrumb" class="mb-4">
+          <ol class="flex items-center gap-2 text-sm text-white/60">
+            <li><a href="index.html" class="hover:text-white transition-colors">Início</a></li>
+            <li aria-hidden="true" class="text-white/40">/</li>
+            <li class="text-white" aria-current="page">Comunicados</li>
+          </ol>
+        </nav>
+        <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-3">Regularize Consultoria</h1>
+        <p class="text-slate-200 text-lg max-w-2xl">
+          Aqui você encontra os avisos e comunicados importantes da Regularize Consultoria.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         LEGENDA DAS CATEGORIAS
+         ============================================================ -->
+    <section class="py-10 bg-white border-b border-slate-100">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <p class="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-5">Tipos de aviso</p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+          <!-- Urgente -->
+          <div class="flex items-start gap-3 p-4 rounded-xl bg-red-50 border border-red-200">
+            <div class="flex-shrink-0 w-9 h-9 rounded-lg bg-red-100 flex items-center justify-center">
+              <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              </svg>
+            </div>
+            <div>
+              <span class="inline-block px-3 py-1 rounded-full bg-red-50 text-red-600 text-xs font-semibold uppercase tracking-wide border border-red-200 mb-2">Urgente</span>
+              <p class="text-xs text-slate-500 leading-relaxed">
+                Comunicados críticos que exigem atenção imediata — prazos, mudanças em legislação ou ações necessárias.
+              </p>
+            </div>
+          </div>
+
+          <!-- Informativo -->
+          <div class="flex items-start gap-3 p-4 rounded-xl bg-amber-50 border border-amber-200">
+            <div class="flex-shrink-0 w-9 h-9 rounded-lg bg-amber-100 flex items-center justify-center">
+              <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20A10 10 0 0012 2z"/>
+              </svg>
+            </div>
+            <div>
+              <span class="inline-block px-3 py-1 rounded-full bg-amber-50 text-amber-600 text-xs font-semibold uppercase tracking-wide border border-amber-200 mb-2">Informativo</span>
+              <p class="text-xs text-slate-500 leading-relaxed">
+                Novidades, atualizações de processos e informações gerais relevantes para clientes e parceiros.
+              </p>
+            </div>
+          </div>
+
+          <!-- Útil -->
+          <div class="flex items-start gap-3 p-4 rounded-xl bg-green-50 border border-green-200">
+            <div class="flex-shrink-0 w-9 h-9 rounded-lg bg-green-100 flex items-center justify-center">
+              <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div>
+              <span class="inline-block px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-semibold uppercase tracking-wide border border-green-200 mb-2">Útil</span>
+              <p class="text-xs text-slate-500 leading-relaxed">
+                Avisos leves do dia a dia — dicas práticas e informações úteis do setor.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         LISTA DE AVISOS
+         ============================================================ -->
+    <section class="py-16 bg-slate-50">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <h2 class="text-2xl font-bold text-slate-900 mb-8">Avisos</h2>
+
+        <!--
+          ┌─────────────────────────────────────────────────────────────┐
+          │  COMO ADICIONAR UM NOVO AVISO                               │
+          │  1. Copie um dos blocos <article> abaixo                    │
+          │  2. Remova o atributo data-placeholder="true"               │
+          │  3. Preencha o título, texto, datas e categoria             │
+          │  4. O badge do botão é atualizado automaticamente           │
+          │                                                             │
+          │  CATEGORIAS disponíveis: urgente | informativo | util       │
+          └─────────────────────────────────────────────────────────────┘
+        -->
+        <div id="avisos-lista" class="flex flex-col gap-6">
+
+          <!-- ═══════════════════════════════════════════════════════
+               URGENTE — sem avisos ainda (placeholder)
+               Para ativar: remova data-placeholder="true" e preencha
+               ═══════════════════════════════════════════════════════ -->
+          <article data-placeholder="true" class="rounded-2xl border border-red-200 border-dashed bg-red-50/40 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
+                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                </svg>
+              </div>
+              <span class="inline-block px-3 py-1 rounded-full bg-red-50 text-red-600 text-xs font-semibold uppercase tracking-wide border border-red-200">
+                Urgente
+              </span>
+            </div>
+            <p class="text-slate-800 font-semibold text-sm mb-1">Nenhum aviso urgente no momento.</p>
+            <p class="text-slate-500 text-sm">Quando houver um comunicado urgente, ele aparecerá aqui.</p>
+          </article>
+
+          <!-- ═══════════════════════════════════════════════════════
+               INFORMATIVO — sem avisos ainda (placeholder)
+               Para ativar: remova data-placeholder="true" e preencha
+               ═══════════════════════════════════════════════════════ -->
+          <article data-placeholder="true" class="rounded-2xl border border-amber-200 border-dashed bg-amber-50/40 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+                <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20A10 10 0 0012 2z"/>
+                </svg>
+              </div>
+              <span class="inline-block px-3 py-1 rounded-full bg-amber-50 text-amber-600 text-xs font-semibold uppercase tracking-wide border border-amber-200">
+                Informativo
+              </span>
+            </div>
+            <p class="text-slate-800 font-semibold text-sm mb-1">Nenhum aviso informativo no momento.</p>
+            <p class="text-slate-500 text-sm">Novidades e atualizações aparecerão aqui assim que forem publicadas.</p>
+          </article>
+
+          <!-- ═══════════════════════════════════════════════════════
+               ÚTIL — sem avisos ainda (placeholder)
+               Para ativar: remova data-placeholder="true" e preencha
+               ═══════════════════════════════════════════════════════ -->
+          <article data-placeholder="true" class="rounded-2xl border border-green-200 border-dashed bg-green-50/40 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
+                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <span class="inline-block px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-semibold uppercase tracking-wide border border-green-200">
+                Útil
+              </span>
+            </div>
+            <p class="text-slate-800 font-semibold text-sm mb-1">Nenhuma dica útil no momento.</p>
+            <p class="text-slate-500 text-sm">Dicas e avisos leves do setor aparecerão aqui em breve.</p>
+          </article>
+
+          <!--
+          ═══════════════════════════════════════════════════════════
+          EXEMPLO DE AVISO REAL — copie este bloco quando for publicar
+          ═══════════════════════════════════════════════════════════
+
+          <article class="bg-white rounded-2xl shadow-sm border border-red-200 p-6 md:p-8">
+            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+              <div class="flex items-center gap-3">
+                <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
+                  <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                  </svg>
+                </div>
+                <span class="inline-block px-3 py-1 rounded-full bg-red-50 text-red-600 text-xs font-semibold uppercase tracking-wide border border-red-200">
+                  Urgente
+                </span>
+              </div>
+              <div class="flex flex-col sm:items-end gap-1 text-xs text-slate-400">
+                <span class="flex items-center gap-1">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                  </svg>
+                  Publicado em: <strong class="text-slate-600">24/04/2026</strong>
+                </span>
+                <span class="flex items-center gap-1">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  Válido até: <strong class="text-slate-600">30/06/2026</strong>
+                </span>
+              </div>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">Título do aviso aqui</h3>
+            <p class="text-slate-600 text-sm leading-relaxed">
+              Descrição do aviso aqui.
+            </p>
+          </article>
+
+          ═══════════════════════════════════════════════════════════
+          FIM DO EXEMPLO
+          ═══════════════════════════════════════════════════════════
+          -->
+
+        </div>
+
+        <!-- Rodapé da seção -->
+        <div class="mt-12 text-center">
+          <a href="index.html"
+             class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand text-white font-semibold text-sm hover:bg-brand-dark transition-colors duration-200 shadow-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Voltar ao Início
+          </a>
+          <p class="text-slate-400 text-xs mt-6">
+            Regularize Consultoria &copy; 2026 — Todos os direitos reservados.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

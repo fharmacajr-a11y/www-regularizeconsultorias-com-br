@@ -92,4 +92,22 @@
     }
   });
 
+  /* =================================================================
+     4. BADGE DE AVISOS: atualiza contagem no botão de comunicados
+        - Em comunicado.html: conta os <article> dentro de #avisos-lista
+          automaticamente. Ao adicionar ou remover um aviso lá, o número
+          já atualiza sozinho sem precisar alterar mais nada.
+        - Nas demais páginas: use a variável AVISOS_COUNT abaixo.
+          Atualize-a sempre que adicionar ou remover avisos.
+     ================================================================= */
+  var avisoLista = document.getElementById('avisos-lista');
+  var AVISOS_COUNT = avisoLista
+    ? avisoLista.querySelectorAll('article:not([data-placeholder])').length
+    : 0; // Conta apenas avisos reais (sem data-placeholder="true")
+
+  document.querySelectorAll('.aviso-badge').forEach(function (badge) {
+    badge.textContent = AVISOS_COUNT;
+    badge.style.display = AVISOS_COUNT > 0 ? 'flex' : 'none';
+  });
+
 })();
