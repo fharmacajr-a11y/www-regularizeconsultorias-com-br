@@ -96,24 +96,78 @@
      4. BADGE DE AVISOS: sincroniza contagem entre todas as páginas
         - Em comunicado.html: conta avisos reais (sem data-placeholder)
           e salva no localStorage.
-        - Nas demais páginas: lê o valor salvo no localStorage.
+        - Nas demais páginas: usa fallback imediato na primeira visita
+          e sincroniza a contagem real a partir de comunicado.html.
         O badge some automaticamente quando não há avisos reais.
      ================================================================= */
   var avisoLista = document.getElementById('avisos-lista');
   var AVISOS_COUNT = 0;
+  var AVISOS_FALLBACK_COUNT = 1;
+  var AVISOS_STORAGE_KEY = 'avisos_count';
+
+  function normalizeAvisosCount(value) {
+    var parsedCount = parseInt(value, 10);
+    return isNaN(parsedCount) || parsedCount < 0 ? 0 : parsedCount;
+  }
+
+  function renderAvisosCount(count) {
+    AVISOS_COUNT = normalizeAvisosCount(count);
+
+    document.querySelectorAll('.aviso-badge').forEach(function (badge) {
+      badge.textContent = AVISOS_COUNT;
+      badge.style.display = AVISOS_COUNT > 0 ? 'flex' : 'none';
+    });
+  }
+
+  function persistAvisosCount(count) {
+    try { localStorage.setItem(AVISOS_STORAGE_KEY, normalizeAvisosCount(count)); } catch (e) {}
+  }
+
+  function readPersistedAvisosCount() {
+    try {
+      var storedCount = localStorage.getItem(AVISOS_STORAGE_KEY);
+      return storedCount === null ? null : normalizeAvisosCount(storedCount);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function countAvisos(listElement) {
+    return listElement ? listElement.querySelectorAll('article:not([data-placeholder])').length : 0;
+  }
+
+  function syncAvisosCountFromComunicado() {
+    fetch('comunicado.html', { cache: 'no-store' })
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error('Falha ao carregar comunicado.html');
+        }
+
+        return response.text();
+      })
+      .then(function (html) {
+        var parser = new DOMParser();
+        var comunicadoDoc = parser.parseFromString(html, 'text/html');
+        var comunicadoLista = comunicadoDoc.getElementById('avisos-lista');
+        var comunicadoCount = countAvisos(comunicadoLista);
+
+        renderAvisosCount(comunicadoCount);
+        persistAvisosCount(comunicadoCount);
+      })
+      .catch(function () {
+        // Mantem fallback/localStorage caso a sincronizacao falhe.
+      });
+  }
 
   if (avisoLista) {
     // Estamos em comunicado.html: calcula e persiste a contagem
-    AVISOS_COUNT = avisoLista.querySelectorAll('article:not([data-placeholder])').length;
-    try { localStorage.setItem('avisos_count', AVISOS_COUNT); } catch (e) {}
+    renderAvisosCount(countAvisos(avisoLista));
+    persistAvisosCount(AVISOS_COUNT);
   } else {
-    // Outra página: lê contagem salva (0 se nunca visitou comunicado.html)
-    try { AVISOS_COUNT = parseInt(localStorage.getItem('avisos_count') || '0', 10); } catch (e) {}
+    // Outra página: aplica fallback imediato e sincroniza com comunicado.html
+    var persistedCount = readPersistedAvisosCount();
+    renderAvisosCount(persistedCount === null ? AVISOS_FALLBACK_COUNT : persistedCount);
+    syncAvisosCountFromComunicado();
   }
-
-  document.querySelectorAll('.aviso-badge').forEach(function (badge) {
-    badge.textContent = AVISOS_COUNT;
-    badge.style.display = AVISOS_COUNT > 0 ? 'flex' : 'none';
-  });
 
 })();
