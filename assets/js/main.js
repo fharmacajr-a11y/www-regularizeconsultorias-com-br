@@ -159,6 +159,32 @@
       });
   }
 
+  function renderAvisoUpdates() {
+    document.querySelectorAll('#avisos-lista article').forEach(function (article) {
+      var updatedAt = article.getAttribute('data-updated-at');
+      var updatedMeta = article.querySelector('[data-aviso-updated]');
+      var updatedAtNode = article.querySelector('[data-aviso-updated-at]');
+      var updatedStatusNode = article.querySelector('[data-aviso-updated-status]');
+
+      if (!updatedMeta || !updatedAtNode || !updatedStatusNode) {
+        return;
+      }
+
+      if (!updatedAt) {
+        updatedAtNode.textContent = '';
+        updatedStatusNode.textContent = '';
+        updatedMeta.classList.add('hidden');
+        updatedMeta.classList.remove('flex');
+        return;
+      }
+
+      updatedAtNode.textContent = updatedAt;
+      updatedStatusNode.textContent = 'Situação ainda em acompanhamento.';
+      updatedMeta.classList.remove('hidden');
+      updatedMeta.classList.add('flex');
+    });
+  }
+
   if (avisoLista) {
     // Estamos em comunicado.html: calcula e persiste a contagem
     renderAvisosCount(countAvisos(avisoLista));
@@ -170,17 +196,29 @@
     syncAvisosCountFromComunicado();
   }
 
+  renderAvisoUpdates();
+
   /* =================================================================
      5. IMAGEM DO AVISO: abre ampliada na propria pagina
      ================================================================= */
-  var avisoImageTrigger = document.querySelector('[data-aviso-image-trigger]');
+  var avisoImageTriggers = document.querySelectorAll('[data-aviso-image-trigger]');
   var avisoImageModal = document.getElementById('aviso-imagem-modal');
   var avisoImageClose = avisoImageModal ? avisoImageModal.querySelector('[data-aviso-image-close]') : null;
+  var avisoImageModalTitle = avisoImageModal ? avisoImageModal.querySelector('#aviso-imagem-modal-titulo') : null;
+  var avisoImageModalImage = avisoImageModal ? avisoImageModal.querySelector('[data-aviso-image-modal]') : null;
   var lastFocusedElement = null;
 
-  if (avisoImageTrigger && avisoImageModal && avisoImageClose) {
-    var openAvisoImageModal = function () {
-      lastFocusedElement = document.activeElement;
+  if (avisoImageTriggers.length && avisoImageModal && avisoImageClose && avisoImageModalTitle && avisoImageModalImage) {
+    var openAvisoImageModal = function (trigger) {
+      var previewImage = trigger.querySelector('img');
+      var modalImageSrc = trigger.getAttribute('data-aviso-image-src') || (previewImage ? previewImage.getAttribute('src') : '');
+      var modalImageAlt = previewImage ? previewImage.getAttribute('alt') : '';
+      var modalImageTitle = trigger.getAttribute('data-aviso-image-title') || modalImageAlt || 'Imagem de referencia do aviso';
+
+      lastFocusedElement = trigger;
+      avisoImageModalTitle.textContent = modalImageTitle;
+      avisoImageModalImage.setAttribute('src', modalImageSrc);
+      avisoImageModalImage.setAttribute('alt', modalImageAlt);
       avisoImageModal.classList.remove('hidden');
       avisoImageModal.classList.add('flex');
       document.body.classList.add('overflow-hidden');
@@ -197,7 +235,11 @@
       }
     };
 
-    avisoImageTrigger.addEventListener('click', openAvisoImageModal);
+    avisoImageTriggers.forEach(function (trigger) {
+      trigger.addEventListener('click', function () {
+        openAvisoImageModal(trigger);
+      });
+    });
     avisoImageClose.addEventListener('click', closeAvisoImageModal);
 
     avisoImageModal.addEventListener('click', function (event) {

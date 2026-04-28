@@ -188,7 +188,8 @@
           │  1. Copie um dos blocos <article> abaixo                    │
           │  2. Remova o atributo data-placeholder="true"               │
           │  3. Preencha o título, texto, datas e categoria             │
-          │  4. O badge do botão é atualizado automaticamente           │
+          │  4. Use data-updated-at="dd/mm/aaaa às hh:mm" se revisar    │
+          │  5. O badge do botão é atualizado automaticamente           │
           │                                                             │
           │  CATEGORIAS disponíveis: urgente | informativo | util       │
           └─────────────────────────────────────────────────────────────┘
@@ -198,7 +199,7 @@
           <!-- ═══════════════════════════════════════════════════════
                  URGENTE — aviso ativo sem data definida
                ═══════════════════════════════════════════════════════ -->
-          <article class="bg-white rounded-2xl shadow-sm border border-red-200 p-6 md:p-8">
+          <article data-updated-at="28/04/2026 às 08:28" class="bg-white rounded-2xl shadow-sm border border-red-200 p-6 md:p-8">
             <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
               <div class="flex items-center gap-3">
                 <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
@@ -219,6 +220,18 @@
                   </svg>
                   Publicado em: <strong class="text-slate-600">27/04/2026 às 19:16</strong>
                 </span>
+                <span data-aviso-updated class="hidden flex-col gap-1 pt-0.5 text-left sm:items-end sm:text-right">
+                  <span class="flex items-center gap-1 sm:justify-end">
+                    <svg class="h-3.5 w-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4.582 9H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    <span>Atualizado em: <strong class="text-slate-600" data-aviso-updated-at></strong></span>
+                  </span>
+                  <span data-aviso-updated-status class="pl-[1.125rem] text-[11px] leading-relaxed text-slate-500 whitespace-nowrap sm:pl-0">
+                    Situação ainda em acompanhamento.
+                  </span>
+                </span>
               </div>
             </div>
             <h3 class="text-lg font-bold text-slate-900 mb-3">Portal de Consultas da Anvisa fora do ar</h3>
@@ -231,7 +244,7 @@
                 Ao tentar consultar empresas (AFE, funcionamento etc.), aparece “Erro Inesperado” ou bloqueio de acesso e a consulta não funciona.
               </p>
               <figure class="mx-auto max-w-xl rounded-2xl border border-slate-200 bg-slate-50 p-3 md:p-4">
-                <button type="button" data-aviso-image-trigger aria-haspopup="dialog" aria-controls="aviso-imagem-modal" class="block w-full overflow-hidden rounded-xl border border-slate-200 shadow-sm transition-transform duration-200 hover:scale-[1.01] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-brand/30">
+                <button type="button" data-aviso-image-trigger data-aviso-image-src="assets/img/image.png" data-aviso-image-title="Exemplo de erro recebido no portal" aria-haspopup="dialog" aria-controls="aviso-imagem-modal" class="block w-full overflow-hidden rounded-xl border border-slate-200 shadow-sm transition-transform duration-200 hover:scale-[1.01] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-brand/30">
                   <img src="assets/img/image.png" alt="Exemplo do erro recebido no portal de consultas da Anvisa" class="w-full h-auto" loading="lazy">
                 </button>
                 <figcaption class="mt-3 text-xs leading-relaxed text-slate-500">
@@ -262,7 +275,7 @@
           <!-- ═══════════════════════════════════════════════════════
                  URGENTE — aviso ativo
                ═══════════════════════════════════════════════════════ -->
-            <article class="bg-white rounded-2xl shadow-sm border border-red-200 p-6 md:p-8">
+            <article data-updated-at="28/04/2026 às 08:28" class="bg-white rounded-2xl shadow-sm border border-red-200 p-6 md:p-8">
               <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
                 <div class="flex items-center gap-3">
                   <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
@@ -283,6 +296,18 @@
                     </svg>
                     Publicado em: <strong class="text-slate-600">27/04/2026 às 17:00</strong>
                   </span>
+                  <span data-aviso-updated class="hidden flex-col gap-1 pt-0.5 text-left sm:items-end sm:text-right">
+                    <span class="flex items-center gap-1 sm:justify-end">
+                      <svg class="h-3.5 w-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4.582 9H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                      </svg>
+                      <span>Atualizado em: <strong class="text-slate-600" data-aviso-updated-at></strong></span>
+                    </span>
+                    <span data-aviso-updated-status class="pl-[1.125rem] text-[11px] leading-relaxed text-slate-500 whitespace-nowrap sm:pl-0">
+                      Situação ainda em acompanhamento.
+                    </span>
+                  </span>
                 </div>
               </div>
               <h3 class="text-lg font-bold text-slate-900 mb-3">Instabilidade no SNGPC e no sistema de segurança da Anvisa</h3>
@@ -292,6 +317,14 @@
                   Estamos recebendo várias reclamações de instabilidade no SNGPC e no sistema de segurança da Anvisa.
                   Muitos usuários estão sem acesso no momento.
                 </p>
+                <figure class="mx-auto max-w-xl rounded-2xl border border-slate-200 bg-slate-50 p-3 md:p-4">
+                  <button type="button" data-aviso-image-trigger data-aviso-image-src="assets/img/c0949f12-b087-48ae-8e02-979cef63834f.jpg" data-aviso-image-title="Imagem ilustrativa da instabilidade no SNGPC" aria-haspopup="dialog" aria-controls="aviso-imagem-modal" class="block w-full overflow-hidden rounded-xl border border-slate-200 shadow-sm transition-transform duration-200 hover:scale-[1.01] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-brand/30">
+                    <img src="assets/img/c0949f12-b087-48ae-8e02-979cef63834f.jpg" alt="Imagem ilustrativa da instabilidade observada no sistema de seguranca da Anvisa" class="w-full h-auto" loading="lazy">
+                  </button>
+                  <figcaption class="mt-3 text-xs leading-relaxed text-slate-500">
+                    Imagem ilustrativa da instabilidade observada. A mensagem exibida pelo sistema pode mudar, desaparecer ou voltar a qualquer momento; por isso, esta imagem serve apenas como referencia visual.
+                  </figcaption>
+                </figure>
                 <div>
                   <p class="font-semibold text-slate-800 mb-2">O que fazer:</p>
                   <ul class="list-disc pl-5 space-y-1">
@@ -408,7 +441,7 @@
                 Fechar
               </button>
             </div>
-            <img src="assets/img/image.png" alt="Exemplo ampliado do erro recebido no portal de consultas da Anvisa" class="mx-auto h-auto max-h-[80vh] w-auto max-w-full rounded-2xl border border-slate-200 bg-slate-50 object-contain">
+            <img data-aviso-image-modal src="assets/img/image.png" alt="Exemplo ampliado do erro recebido no portal de consultas da Anvisa" class="mx-auto h-auto max-h-[80vh] w-auto max-w-full rounded-2xl border border-slate-200 bg-slate-50 object-contain">
           </div>
         </div>
 
