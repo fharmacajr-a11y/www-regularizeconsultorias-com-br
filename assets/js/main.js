@@ -244,7 +244,7 @@
   renderAvisoUpdates();
 
   /* =================================================================
-     5. AVISOS NORMALIZADOS: resumo compacto com historico expansivel
+     5. AVISOS COM RESUMO: cards com conteudo expansivel
      ================================================================= */
   function initializeAvisoHistoryToggles() {
     document.querySelectorAll('[data-aviso-history-card]').forEach(function (article) {
@@ -252,15 +252,20 @@
       var toggleLabel = article.querySelector('[data-aviso-history-toggle-label]');
       var toggleIcon = article.querySelector('[data-aviso-history-toggle-icon]');
       var content = article.querySelector('[data-aviso-history-content]');
+      var expandLabel = toggle ? toggle.getAttribute('data-aviso-history-expand-label') : '';
+      var collapseLabel = toggle ? toggle.getAttribute('data-aviso-history-collapse-label') : '';
 
       if (!toggle || !toggleLabel || !content) {
         return;
       }
 
+      expandLabel = expandLabel || 'Ver histórico completo';
+      collapseLabel = collapseLabel || 'Ocultar histórico';
+
       var setExpandedState = function (expanded) {
         content.classList.toggle('hidden', !expanded);
         toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-        toggleLabel.textContent = expanded ? 'Ocultar histórico' : 'Ver histórico completo';
+        toggleLabel.textContent = expanded ? collapseLabel : expandLabel;
 
         if (toggleIcon) {
           toggleIcon.classList.toggle('rotate-180', expanded);
