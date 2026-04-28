@@ -102,8 +102,14 @@
      ================================================================= */
   var avisoLista = document.getElementById('avisos-lista');
   var AVISOS_COUNT = 0;
-  var AVISOS_FALLBACK_COUNT = 1;
+  var AVISOS_FALLBACK_COUNT = 0;
   var AVISOS_STORAGE_KEY = 'avisos_count';
+  var AVISOS_STORAGE_VERSION_KEY = 'avisos_count_version';
+  var AVISOS_STORAGE_VERSION = '2026-04-28-normalizado';
+
+  function normalizeAvisoStatus(value) {
+    return (value || '').toLowerCase().trim();
+  }
 
   function normalizeAvisosCount(value) {
     var parsedCount = parseInt(value, 10);
@@ -115,16 +121,25 @@
 
     document.querySelectorAll('.aviso-badge').forEach(function (badge) {
       badge.textContent = AVISOS_COUNT;
-      badge.style.display = AVISOS_COUNT > 0 ? 'flex' : 'none';
+      badge.style.display = 'flex';
     });
   }
 
   function persistAvisosCount(count) {
-    try { localStorage.setItem(AVISOS_STORAGE_KEY, normalizeAvisosCount(count)); } catch (e) {}
+    try {
+      localStorage.setItem(AVISOS_STORAGE_KEY, normalizeAvisosCount(count));
+      localStorage.setItem(AVISOS_STORAGE_VERSION_KEY, AVISOS_STORAGE_VERSION);
+    } catch (e) {}
   }
 
   function readPersistedAvisosCount() {
     try {
+      var storedVersion = localStorage.getItem(AVISOS_STORAGE_VERSION_KEY);
+
+      if (storedVersion !== AVISOS_STORAGE_VERSION) {
+        return null;
+      }
+
       var storedCount = localStorage.getItem(AVISOS_STORAGE_KEY);
       return storedCount === null ? null : normalizeAvisosCount(storedCount);
     } catch (e) {
@@ -132,8 +147,30 @@
     }
   }
 
+  function isAvisoAtivo(article) {
+    if (!article || article.hasAttribute('data-placeholder')) {
+      return false;
+    }
+
+    var articleStatus = normalizeAvisoStatus(article.getAttribute('data-status'));
+
+    return articleStatus !== 'resolved' && articleStatus !== 'normalizado';
+  }
+
   function countAvisos(listElement) {
-    return listElement ? listElement.querySelectorAll('article:not([data-placeholder])').length : 0;
+    var avisosCount = 0;
+
+    if (!listElement) {
+      return avisosCount;
+    }
+
+    listElement.querySelectorAll('article').forEach(function (article) {
+      if (isAvisoAtivo(article)) {
+        avisosCount += 1;
+      }
+    });
+
+    return avisosCount;
   }
 
   function syncAvisosCountFromComunicado() {
@@ -159,29 +196,37 @@
       });
   }
 
+  function renderAvisoMeta(metaNode, valueNode, value) {
+    if (!metaNode || !valueNode) {
+      return;
+    }
+
+    if (!value) {
+      valueNode.textContent = '';
+      metaNode.classList.add('hidden');
+      metaNode.classList.remove('flex');
+      return;
+    }
+
+    valueNode.textContent = value;
+    metaNode.classList.remove('hidden');
+    metaNode.classList.add('flex');
+  }
+
   function renderAvisoUpdates() {
     document.querySelectorAll('#avisos-lista article').forEach(function (article) {
+      var articleStatus = normalizeAvisoStatus(article.getAttribute('data-status'));
       var updatedAt = article.getAttribute('data-updated-at');
+      var resolvedAt = articleStatus === 'resolved' || articleStatus === 'normalizado'
+        ? article.getAttribute('data-resolved-at')
+        : '';
       var updatedMeta = article.querySelector('[data-aviso-updated]');
       var updatedAtNode = article.querySelector('[data-aviso-updated-at]');
-      var updatedStatusNode = article.querySelector('[data-aviso-updated-status]');
+      var resolvedMeta = article.querySelector('[data-aviso-resolved]');
+      var resolvedAtNode = article.querySelector('[data-aviso-resolved-at]');
 
-      if (!updatedMeta || !updatedAtNode || !updatedStatusNode) {
-        return;
-      }
-
-      if (!updatedAt) {
-        updatedAtNode.textContent = '';
-        updatedStatusNode.textContent = '';
-        updatedMeta.classList.add('hidden');
-        updatedMeta.classList.remove('flex');
-        return;
-      }
-
-      updatedAtNode.textContent = updatedAt;
-      updatedStatusNode.textContent = 'Situação ainda em acompanhamento.';
-      updatedMeta.classList.remove('hidden');
-      updatedMeta.classList.add('flex');
+      renderAvisoMeta(updatedMeta, updatedAtNode, updatedAt);
+      renderAvisoMeta(resolvedMeta, resolvedAtNode, resolvedAt);
     });
   }
 
