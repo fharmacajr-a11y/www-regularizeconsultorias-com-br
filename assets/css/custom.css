@@ -124,3 +124,89 @@ h1, h2 {
 footer img[alt="Regularize Consultoria"] {
   display: block;
 }
+
+/* ---------- 11. Blog e artigos ---------- */
+.blog-filter-button[aria-pressed="true"] {
+  background-color: var(--color-brand);
+  color: #fff;
+  border-color: var(--color-brand);
+}
+
+.blog-filter-button[aria-pressed="true"] span {
+  color: #fff !important;
+}
+
+.blog-news-card {
+  position: relative;
+}
+
+.blog-news-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 1.25rem;
+  right: 1.25rem;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--color-brand), var(--color-brand-light));
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.blog-news-card:hover::before,
+.blog-featured-card::before {
+  opacity: 1;
+}
+
+.article-body {
+  color: #475569;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.article-body h2 {
+  color: #0f172a;
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.25;
+  margin-top: 2.5rem;
+  margin-bottom: 0.9rem;
+}
+
+.article-body h3 {
+  color: #1e293b;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-top: 1.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.article-body p,
+.article-body ul,
+.article-body ol {
+  margin-bottom: 1.1rem;
+}
+
+.article-body ul,
+.article-body ol {
+  padding-left: 1.25rem;
+}
+
+.article-body ul {
+  list-style: disc;
+}
+
+.article-body ol {
+  list-style: decimal;
+}
+
+.article-body li {
+  margin-bottom: 0.45rem;
+}
+
+.article-body a {
+  color: var(--color-brand);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

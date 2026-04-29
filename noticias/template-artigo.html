@@ -1,0 +1,193 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="shortcut icon" type="image/x-icon" href="../assets/icons/favicon-32x32.ico">
+
+  <!-- CHANGE: title tag -->
+  <title>Título do artigo | Regularize Consultoria</title>
+  <!-- CHANGE: meta description -->
+  <meta name="description" content="Escreva aqui uma descrição objetiva com até 155 caracteres, usando o tema principal do artigo." />
+  <!-- CHANGE: slug/canonical URL -->
+  <link rel="canonical" href="https://www.regularizeconsultorias.com.br/noticias/slug-do-artigo.html" />
+
+  <meta property="og:type" content="article" />
+  <!-- CHANGE: title/description/url for sharing -->
+  <meta property="og:title" content="Título do artigo" />
+  <meta property="og:description" content="Resumo curto do artigo para redes sociais e compartilhamento." />
+  <meta property="og:url" content="https://www.regularizeconsultorias.com.br/noticias/slug-do-artigo.html" />
+  <meta property="og:image" content="https://www.regularizeconsultorias.com.br/assets/img/logorc2.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Título do artigo" />
+  <meta name="twitter:description" content="Resumo curto do artigo." />
+  <meta name="twitter:image" content="https://www.regularizeconsultorias.com.br/assets/img/logorc2.png" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/custom.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { 'brand-dark': '#1a3a5c', 'brand': '#1565c0', 'brand-light': '#29b6f6' },
+          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+
+  <!-- CHANGE: JSON-LD fields -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Título do artigo",
+    "description": "Descrição curta do artigo.",
+    "url": "https://www.regularizeconsultorias.com.br/noticias/slug-do-artigo.html",
+    "datePublished": "2026-04-28",
+    "dateModified": "2026-04-28",
+    "author": { "@type": "Organization", "name": "Regularize Consultoria" },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Regularize Consultoria",
+      "logo": { "@type": "ImageObject", "url": "https://www.regularizeconsultorias.com.br/assets/img/logorc2.png" }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://www.regularizeconsultorias.com.br/noticias/slug-do-artigo.html"
+    }
+  }
+  </script>
+</head>
+
+<body class="font-sans bg-slate-50 text-slate-800 antialiased">
+  <header id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-white transition-shadow duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20 md:h-24">
+        <a href="../index.html" class="flex-shrink-0" aria-label="Regularize Consultoria - Página inicial">
+          <img src="../assets/img/logorc2.png" alt="Regularize Consultoria" class="h-20 md:h-24 w-auto" />
+        </a>
+        <nav class="hidden md:flex items-center gap-8" aria-label="Navegação principal">
+          <a href="../index.html" class="text-sm font-medium text-slate-700 hover:text-brand transition-colors duration-200">Início</a>
+          <a href="../sobre.html" class="text-sm font-medium text-slate-700 hover:text-brand transition-colors duration-200">Sobre</a>
+          <a href="../servicos.html" class="text-sm font-medium text-slate-700 hover:text-brand transition-colors duration-200">Serviços</a>
+          <a href="../blog_noticias.html" class="text-sm font-medium text-slate-700 hover:text-brand transition-colors duration-200">Notícias</a>
+          <a href="../contato.html" class="text-sm font-medium text-slate-700 hover:text-brand transition-colors duration-200">Contato</a>
+        </nav>
+        <div class="flex items-center gap-3">
+          <a href="../comunicado.html" class="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors duration-200 shadow-sm relative">
+            COMUNICADO IMPORTANTE!
+            <span class="aviso-badge absolute -top-2 -right-2 min-w-[1.25rem] h-5 px-1 rounded-full bg-white text-red-600 text-xs font-bold flex items-center justify-center shadow border border-red-200">0</span>
+          </a>
+          <button id="menu-toggle" class="md:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors duration-200" aria-label="Abrir menu de navegação" aria-expanded="false" aria-controls="mobile-menu">
+            <svg id="icon-hamburger" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            <svg id="icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden border-t border-slate-100 bg-white px-4 pb-5">
+      <nav class="flex flex-col gap-1 pt-3" aria-label="Navegação mobile">
+        <a href="../index.html" class="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors">Início</a>
+        <a href="../sobre.html" class="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors">Sobre</a>
+        <a href="../servicos.html" class="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors">Serviços</a>
+        <a href="../blog_noticias.html" class="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors">Notícias</a>
+        <a href="../contato.html" class="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors">Contato</a>
+        <a href="../comunicado.html" class="mt-2 relative flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors">
+          COMUNICADO IMPORTANTE!
+          <span class="aviso-badge absolute -top-2 -right-2 min-w-[1.25rem] h-5 px-1 rounded-full bg-white text-red-600 text-xs font-bold flex items-center justify-center shadow border border-red-200">0</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="h-20 md:h-24" aria-hidden="true"></div>
+
+  <main>
+    <article>
+      <header class="bg-gradient-to-r from-brand-dark to-brand py-14 md:py-20">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <nav aria-label="Breadcrumb" class="mb-5">
+            <ol class="flex flex-wrap items-center gap-2 text-sm text-white/60">
+              <li><a href="../index.html" class="hover:text-white transition-colors">Início</a></li>
+              <li aria-hidden="true">/</li>
+              <li><a href="../blog_noticias.html" class="hover:text-white transition-colors">Notícias</a></li>
+              <li aria-hidden="true">/</li>
+              <!-- CHANGE: short breadcrumb title -->
+              <li class="text-white" aria-current="page">Título curto</li>
+            </ol>
+          </nav>
+          <!-- CHANGE: category -->
+          <p class="text-brand-light text-sm font-semibold mb-3">Categoria</p>
+          <!-- CHANGE: h1 -->
+          <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-5">Título principal do artigo</h1>
+          <p class="text-slate-200 text-lg leading-relaxed">Escreva uma introdução curta com a palavra-chave principal nos primeiros 100 termos.</p>
+          <div class="mt-6 flex flex-wrap gap-3 text-sm text-slate-200">
+            <!-- CHANGE: publication date -->
+            <span>Publicado em <time datetime="2026-04-28">28/04/2026</time></span>
+            <span aria-hidden="true">•</span>
+            <span>Atualizado em <time datetime="2026-04-28">28/04/2026</time></span>
+          </div>
+        </div>
+      </header>
+
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <div class="mb-8 rounded-2xl border border-slate-100 bg-white p-6 text-sm text-slate-600 shadow-sm">
+          Conteúdo informativo produzido pela Regularize Consultoria.
+        </div>
+
+        <!-- CHANGE: article body -->
+        <section class="article-body">
+          <p>Comece com um resumo claro do problema que a pessoa pesquisou no Google. Evite prometer resultados e não invente regras, prazos ou exigências.</p>
+
+          <h2>Pergunta prática que a pessoa pesquisaria</h2>
+          <p>Responda em parágrafos curtos, usando termos naturais como ANVISA, Farmácia Popular, SNGPC, AFE, Vigilância Sanitária ou documentação técnica quando fizer sentido.</p>
+
+          <h2>Checklist útil</h2>
+          <ul>
+            <li>Item prático 1.</li>
+            <li>Item prático 2.</li>
+            <li>Item prático 3.</li>
+          </ul>
+
+          <div class="my-8 rounded-2xl border border-brand/20 bg-gradient-to-br from-sky-50 via-white to-blue-100 p-6 shadow-sm ring-1 ring-brand/5">
+            <p class="mb-2 text-xs font-semibold uppercase tracking-widest text-brand">Atendimento técnico</p>
+            <h2 class="mt-0 text-slate-950">Precisa analisar um processo?</h2>
+            <p class="text-slate-600">A Regularize analisa documentos e orienta os próximos passos conforme o caso.</p>
+            <a href="../contato.html" class="mt-4 inline-flex items-center justify-center rounded-lg bg-brand px-5 py-3 text-sm font-bold !text-white no-underline hover:bg-brand-dark">Solicitar análise</a>
+          </div>
+        </section>
+
+        <section class="mt-10 rounded-2xl bg-slate-100 p-6 text-sm text-slate-600">
+          <p><strong>Aviso importante:</strong> A Regularize Consultoria é uma empresa privada e independente. Não integra, representa ou substitui órgãos públicos como ANVISA, Ministério da Saúde, CAIXA, CRF, MAPA, Vigilância Sanitária ou Polícia Federal. As informações publicadas têm caráter informativo e podem mudar conforme normas, sistemas e orientações oficiais.</p>
+        </section>
+
+        <!-- CHANGE: related articles -->
+        <section class="mt-10">
+          <h2 class="text-2xl font-bold text-slate-900 mb-4">Artigos relacionados</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <a href="../blog_noticias.html" class="rounded-2xl bg-white border border-slate-100 p-5 hover:shadow-md transition-shadow"><span class="text-sm text-slate-400">Notícias</span><strong class="block text-slate-900 mt-1">Ver todos os artigos</strong></a>
+            <a href="../servicos.html" class="rounded-2xl bg-white border border-slate-100 p-5 hover:shadow-md transition-shadow"><span class="text-sm text-slate-400">Regularização</span><strong class="block text-slate-900 mt-1">Conhecer serviços da Regularize</strong></a>
+          </div>
+        </section>
+      </div>
+    </article>
+  </main>
+
+  <footer class="bg-slate-900 text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+        <div><a href="../index.html" class="inline-block mb-4" aria-label="Regularize Consultoria"><img src="../assets/img/logorc2.png" alt="Regularize Consultoria" class="h-24 w-auto" style="filter: brightness(10) saturate(0); opacity: 0.90;" /></a><p class="text-sm leading-relaxed max-w-xs">Especialistas em regularização junto à ANVISA, Farmácia Popular, CRF, M.A.P.A, SNCR e Vigilância Sanitária.</p></div>
+        <div><h2 class="text-xs font-semibold text-white uppercase tracking-widest mb-5">Navegação</h2><ul class="space-y-3 text-sm"><li><a href="../index.html" class="hover:text-white transition-colors duration-200">Início</a></li><li><a href="../sobre.html" class="hover:text-white transition-colors duration-200">Sobre a Regularize</a></li><li><a href="../servicos.html" class="hover:text-white transition-colors duration-200">Serviços</a></li><li><a href="../blog_noticias.html" class="hover:text-white transition-colors duration-200">Notícias</a></li><li><a href="../contato.html" class="hover:text-white transition-colors duration-200">Contato</a></li></ul></div>
+        <div><h2 class="text-xs font-semibold text-white uppercase tracking-widest mb-5">Contato</h2><ul class="space-y-3 text-sm"><li><a href="https://wa.me/5519996275900" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors duration-200">(19) 99627-5900</a></li><li><a href="mailto:fharmaca2013@hotmail.com" class="hover:text-white transition-colors duration-200">fharmaca2013@hotmail.com</a></li><li><a href="https://www.instagram.com/regularizeconsultoriarc/" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors duration-200">@regularizeconsultoriarc</a></li></ul></div>
+      </div>
+      <div class="border-t border-slate-800 pt-8 text-center text-xs text-slate-500 space-y-2"><p>A Regularize Consultoria é uma empresa de consultoria privada e independente. Não integramos, representamos nem somos vinculados à ANVISA, ao Ministério da Saúde ou ao Programa Farmácia Popular do Governo Federal.</p><p>© 2026 Regularize Consultoria. Todos os direitos reservados.</p></div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/main.js?v=20260428-5"></script>
+</body>
+</html>
