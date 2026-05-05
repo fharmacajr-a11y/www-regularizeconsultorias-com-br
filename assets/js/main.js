@@ -78,19 +78,41 @@
         ao link correspondente na navbar
         → custom.css aplica cor e font-weight no link .active
      ================================================================= */
-  var currentPath = window.location.pathname;
-  var currentFile = currentPath.split('/').pop() || 'index.html';
-  var isNoticiasArticle = currentPath.indexOf('/noticias/') !== -1 || currentPath.indexOf('\\noticias\\') !== -1;
+  function normalizeInternalPath(path) {
+    path = (path || '/').replace(/\\/g, '/');
+
+    if (path.charAt(0) !== '/') {
+      path = '/' + path;
+    }
+
+    if (path !== '/' && path.charAt(path.length - 1) !== '/') {
+      path += '/';
+    }
+
+    return path;
+  }
+
+  function getInternalLinkPath(href) {
+    var parser = document.createElement('a');
+    parser.href = href;
+
+    if (parser.hostname && parser.hostname !== window.location.hostname) {
+      return '';
+    }
+
+    return normalizeInternalPath(parser.pathname || href);
+  }
+
+  var currentPath = normalizeInternalPath(window.location.pathname);
+  var isNoticiasArticle = currentPath.indexOf('/noticias/') === 0 && currentPath !== '/noticias/';
 
   document.querySelectorAll('#navbar nav a[href]').forEach(function (link) {
     var href = link.getAttribute('href');
-    var normalizedHref = href ? href.split('/').pop() : '';
+    var linkPath = href ? getInternalLinkPath(href) : '';
 
-    // Considera "/" ou "" como index.html
     if (
-      normalizedHref === currentFile ||
-      (currentFile === '' && normalizedHref === 'index.html') ||
-      (isNoticiasArticle && normalizedHref === 'blog_noticias.html')
+      linkPath === currentPath ||
+      (isNoticiasArticle && linkPath === '/noticias/')
     ) {
       link.classList.add('active');
     }
@@ -98,10 +120,10 @@
 
   /* =================================================================
      4. BADGE DE AVISOS: sincroniza contagem entre todas as páginas
-        - Em comunicado.html: conta avisos reais (sem data-placeholder)
+        - Na página de comunicados: conta avisos reais (sem data-placeholder)
           e salva no localStorage.
         - Nas demais páginas: usa fallback imediato na primeira visita
-          e sincroniza a contagem real a partir de comunicado.html.
+          e sincroniza a contagem real a partir da página de comunicados.
         O badge some automaticamente quando não há avisos reais.
      ================================================================= */
   var avisoLista = document.getElementById('avisos-lista');
@@ -178,12 +200,12 @@
   }
 
   function syncAvisosCountFromComunicado() {
-    var comunicadoPath = isNoticiasArticle ? '../comunicado.html' : 'comunicado.html';
+    var comunicadoPath = '/comunicado/';
 
     fetch(comunicadoPath, { cache: 'no-store' })
       .then(function (response) {
         if (!response.ok) {
-          throw new Error('Falha ao carregar comunicado.html');
+          throw new Error('Falha ao carregar a página de comunicados');
         }
 
         return response.text();
@@ -237,11 +259,11 @@
   }
 
   if (avisoLista) {
-    // Estamos em comunicado.html: calcula e persiste a contagem
+    // Estamos na página de comunicados: calcula e persiste a contagem
     renderAvisosCount(countAvisos(avisoLista));
     persistAvisosCount(AVISOS_COUNT);
   } else {
-    // Outra página: aplica fallback imediato e sincroniza com comunicado.html
+    // Outra página: aplica fallback imediato e sincroniza com a página de comunicados
     var persistedCount = readPersistedAvisosCount();
     renderAvisosCount(persistedCount === null ? AVISOS_FALLBACK_COUNT : persistedCount);
     syncAvisosCountFromComunicado();
@@ -290,7 +312,7 @@
   initializeAvisoHistoryToggles();
 
   /* =================================================================
-     6. BLOG: busca e filtros da pagina blog_noticias.html
+     6. BLOG: busca e filtros da página de notícias
      ================================================================= */
   function initializeBlogFilters() {
     var blogList = document.getElementById('blog-article-list');

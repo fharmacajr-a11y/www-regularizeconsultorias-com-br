@@ -2,78 +2,72 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.regularizeconsultorias.com.br/</loc>
-    <lastmod>2026-04-28</lastmod>
+    <lastmod>2026-04-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.regularizeconsultorias.com.br/index.html</loc>
-    <lastmod>2026-04-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://www.regularizeconsultorias.com.br/sobre.html</loc>
+    <loc>https://www.regularizeconsultorias.com.br/sobre/</loc>
     <lastmod>2026-04-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.regularizeconsultorias.com.br/servicos.html</loc>
+    <loc>https://www.regularizeconsultorias.com.br/servicos/</loc>
     <lastmod>2026-04-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.regularizeconsultorias.com.br/contato.html</loc>
+    <loc>https://www.regularizeconsultorias.com.br/contato/</loc>
     <lastmod>2026-04-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.regularizeconsultorias.com.br/comunicado.html</loc>
+    <loc>https://www.regularizeconsultorias.com.br/comunicado/</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.regularizeconsultorias.com.br/blog_noticias.html</loc>
+    <loc>https://www.regularizeconsultorias.com.br/noticias/</loc>
     <lastmod>2026-04-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.regularizeconsultorias.com.br/noticias/nova-regra-anvisa-cnes-receitas-farmacias.html</loc>
+    <loc>https://www.regularizeconsultorias.com.br/noticias/nova-regra-anvisa-cnes-receitas-farmacias/</loc>
     <lastmod>2026-04-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.regularizeconsultorias.com.br/noticias/como-acompanhar-instabilidades-sistemas-anvisa.html</loc>
+    <loc>https://www.regularizeconsultorias.com.br/noticias/como-acompanhar-instabilidades-sistemas-anvisa/</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.regularizeconsultorias.com.br/noticias/o-que-e-afe-e-por-que-e-importante.html</loc>
+    <loc>https://www.regularizeconsultorias.com.br/noticias/o-que-e-afe-e-por-que-e-importante/</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-cuidados-cadastro-documentacao.html</loc>
+    <loc>https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-cuidados-cadastro-documentacao/</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.regularizeconsultorias.com.br/noticias/sngpc-boas-praticas-evitar-pendencias.html</loc>
+    <loc>https://www.regularizeconsultorias.com.br/noticias/sngpc-boas-praticas-evitar-pendencias/</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.regularizeconsultorias.com.br/noticias/documentos-tecnicos-essenciais-farmacias-drogarias.html</loc>
+    <loc>https://www.regularizeconsultorias.com.br/noticias/documentos-tecnicos-essenciais-farmacias-drogarias/</loc>
     <lastmod>2026-04-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
