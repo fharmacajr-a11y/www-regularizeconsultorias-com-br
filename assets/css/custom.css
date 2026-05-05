@@ -119,13 +119,41 @@ h1, h2 {
   opacity: 0.85;
 }
 
-/* ---------- 10. Footer logo badge ---------- */
+/* ---------- 10. Navbar tablet: evita compressao em larguras intermediarias ---------- */
+@media (max-width: 1180px) {
+  #navbar > div:first-child > div > nav {
+    display: none !important;
+  }
+
+  #navbar > div:first-child > div > div > a[href="/comunicado/"] {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  #navbar #menu-toggle {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #navbar #mobile-menu:not(.hidden) {
+    display: block !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1180px) {
+  #navbar #mobile-menu a[href="/comunicado/"] {
+    display: none !important;
+  }
+}
+
+/* ---------- 11. Footer logo badge ---------- */
 /* O logo tem fundo branco; o badge aplica padding + rounded para encaixar no footer escuro */
 footer img[alt="Regularize Consultoria"] {
   display: block;
 }
 
-/* ---------- 11. Blog e artigos ---------- */
+/* ---------- 12. Blog e artigos ---------- */
 .blog-filter-button[aria-pressed="true"] {
   background-color: var(--color-brand);
   color: #fff;
