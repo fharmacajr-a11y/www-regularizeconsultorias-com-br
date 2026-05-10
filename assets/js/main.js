@@ -436,7 +436,7 @@
       var previewImage = trigger.querySelector('img');
       var modalImageSrc = trigger.getAttribute('data-aviso-image-src') || (previewImage ? previewImage.getAttribute('src') : '');
       var modalImageAlt = previewImage ? previewImage.getAttribute('alt') : '';
-      var modalImageTitle = trigger.getAttribute('data-aviso-image-title') || modalImageAlt || 'Imagem de referencia do aviso';
+      var modalImageTitle = trigger.getAttribute('data-aviso-image-title') || modalImageAlt || 'Imagem de referência do aviso';
 
       lastFocusedElement = trigger;
       avisoImageModalTitle.textContent = modalImageTitle;
