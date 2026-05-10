@@ -198,6 +198,12 @@ footer img[alt="Regularize Consultoria"] {
   opacity: 1;
 }
 
+.blog-amber-card::before {
+  height: 5px;
+  background: linear-gradient(90deg, #d97706, #f59e0b, #fbbf24);
+  opacity: 1;
+}
+
 .article-body {
   color: #475569;
   font-size: 1rem;
