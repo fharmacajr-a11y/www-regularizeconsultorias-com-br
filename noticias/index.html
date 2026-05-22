@@ -29,6 +29,36 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/css/tailwind.min.css">
   <link rel="stylesheet" href="/assets/css/custom.min.css?v=20260506-1" />
+  <style>
+    .blog-orange-card {
+      box-shadow: 0 10px 25px rgba(255, 237, 213, 0.6);
+    }
+
+    .blog-orange-card::before {
+      height: 5px;
+      background: linear-gradient(90deg, #ea580c, #f97316, #c2410c);
+      opacity: 1;
+    }
+
+    .blog-orange-badge {
+      background-color: #ea580c;
+      color: #fff;
+    }
+
+    .blog-orange-button {
+      background-color: #ea580c;
+      color: #fff;
+    }
+
+    .blog-orange-button:hover {
+      background-color: #c2410c;
+      color: #fff;
+    }
+
+    .blog-orange-button:focus-visible {
+      outline-color: #ea580c;
+    }
+  </style>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -249,22 +279,22 @@
 
           <div class="order-1 lg:order-2 lg:col-span-8 xl:col-span-9">
             <div id="blog-article-list" class="flex flex-col gap-4">
-              <article class="blog-news-card blog-featured-card rounded-xl border border-brand/20 bg-white p-6 shadow-sm transition-colors duration-300 hover:border-brand/40 md:p-8" data-blog-card data-category="Farmácia Popular" data-title="Alteração cadastral no Farmácia Popular exige atenção para evitar pendências no programa" data-summary="Farmácias credenciadas no Programa Farmácia Popular devem manter seus dados atualizados e coerentes entre Receita Federal, SIFAP, Anvisa, Vigilância Sanitária, CRF e documentos internos para evitar pendências e problemas operacionais." data-keywords="alteracao cadastral farmacia popular regularizacao sifap rta responsavel legal endereco cep responsavel tecnico dados bancarios receita federal anvisa crf caixa cadastro">
+              <article class="blog-news-card blog-featured-card blog-orange-card rounded-xl border-2 border-orange-200 bg-white p-6 shadow-md transition-colors duration-300 hover:border-orange-300 md:p-8" data-blog-card data-category="Farmácia Popular" data-title="Alteração cadastral no Farmácia Popular exige atenção para evitar pendências no programa" data-summary="Farmácias credenciadas no Programa Farmácia Popular devem manter seus dados atualizados e coerentes entre Receita Federal, SIFAP, Anvisa, Vigilância Sanitária, CRF e documentos internos para evitar pendências e problemas operacionais." data-keywords="alteracao cadastral farmacia popular regularizacao sifap rta responsavel legal endereco cep responsavel tecnico dados bancarios receita federal anvisa crf caixa cadastro">
                 <div class="flex flex-col gap-3 mb-5 text-xs font-semibold sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3 sm:mb-4">
                   <div class="flex flex-wrap items-center gap-2">
-                    <span class="px-2.5 py-1 sm:px-3 rounded-full bg-brand/10 text-brand whitespace-nowrap">Informativo</span>
+                    <span class="blog-orange-badge px-2.5 py-1 sm:px-3 rounded-full whitespace-nowrap">Informativo</span>
                     <span class="h-1 w-1 rounded-full bg-slate-300 hidden sm:block" aria-hidden="true"></span>
                     <span class="px-2.5 py-1 sm:px-3 rounded-full bg-rose-50 text-rose-700 whitespace-nowrap">Farmácia Popular</span>
                   </div>
                   <div class="flex items-center justify-center gap-2 font-normal text-slate-500 sm:justify-start">
-                    <span aria-hidden="true" class="h-px flex-1 max-w-12 bg-brand/25 sm:hidden"></span>
+                    <span aria-hidden="true" class="h-px flex-1 max-w-12 bg-orange-100 sm:hidden"></span>
                     <time datetime="2026-05-22T10:00:00-03:00" class="leading-none">22/05/2026 • 10h00</time>
-                    <span aria-hidden="true" class="h-px flex-1 max-w-12 bg-brand/25 sm:hidden"></span>
+                    <span aria-hidden="true" class="h-px flex-1 max-w-12 bg-orange-100 sm:hidden"></span>
                   </div>
                 </div>
                 <h2 class="max-w-3xl text-xl md:text-3xl lg:text-4xl font-extrabold leading-tight text-slate-950 mb-4">Alteração cadastral no Farmácia Popular exige atenção para evitar pendências no programa</h2>
                 <p class="max-w-3xl text-slate-600 leading-relaxed mb-6">Farmácias credenciadas no Programa Farmácia Popular devem manter seus dados atualizados e coerentes entre Receita Federal, SIFAP, Anvisa, Vigilância Sanitária, CRF e documentos internos para evitar pendências e problemas operacionais.</p>
-                <a href="/noticias/alteracao-cadastral-farmacia-popular-regularizacao/" class="inline-flex items-center gap-2 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-dark">Ler notícia <span aria-hidden="true">→</span></a>
+                <a href="/noticias/alteracao-cadastral-farmacia-popular-regularizacao/" class="blog-orange-button inline-flex items-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold transition-colors duration-200">Ler notícia <span aria-hidden="true">→</span></a>
               </article>
 
               <article class="blog-news-card blog-featured-card blog-urgent-card rounded-xl border-2 border-red-300 bg-white p-6 shadow-md shadow-red-100/60 transition-colors duration-300 hover:border-red-400 md:p-8" data-blog-card data-category="ANVISA" data-title="CNES continua obrigatório? Entenda o que mudou no acesso ao SNCR para farmácias privadas" data-summary="A mudança no acesso ao SNCR para farmácias privadas não revogou o CNES. Entenda a diferença entre o fluxo de habilitação e as obrigações cadastrais que continuam vigentes." data-keywords="cnes obrigatorio farmacia privada sncr afe cadastro anvisa gov.br anvisa cnes farmacia cnes afe sncr farmacia publica dispensario vigilancia sanitaria farmacia popular servicos clinicos regularize consultoria">
@@ -303,22 +333,22 @@
                 <a href="/noticias/farmacia-popular-suspensao-temporaria-recadastramento-sifap/" class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-700">Ler aviso urgente <span aria-hidden="true">→</span></a>
               </article>
 
-              <article class="blog-news-card blog-featured-card rounded-xl border border-brand/20 bg-white p-6 shadow-sm transition-colors duration-300 hover:border-brand/40 md:p-8" data-blog-card data-category="ANVISA" data-title="Anvisa avança na migração para o Cadastro via Gov.br, mas transição ainda exige atenção das empresas" data-summary="A Anvisa está substituindo gradualmente cadastros antigos pelo novo Cadastro Anvisa integrado ao Gov.br. Entenda os impactos da transição e os cuidados para evitar problemas de acesso." data-keywords="anvisa cadastro govbr gov.br transicao sistemas migracao solicita sistema seguranca acesso login regularize consultoria">
+              <article class="blog-news-card blog-featured-card blog-orange-card rounded-xl border-2 border-orange-200 bg-white p-6 shadow-md transition-colors duration-300 hover:border-orange-300 md:p-8" data-blog-card data-category="ANVISA" data-title="Anvisa avança na migração para o Cadastro via Gov.br, mas transição ainda exige atenção das empresas" data-summary="A Anvisa está substituindo gradualmente cadastros antigos pelo novo Cadastro Anvisa integrado ao Gov.br. Entenda os impactos da transição e os cuidados para evitar problemas de acesso." data-keywords="anvisa cadastro govbr gov.br transicao sistemas migracao solicita sistema seguranca acesso login regularize consultoria">
                 <div class="flex flex-col gap-3 mb-5 text-xs font-semibold sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3 sm:mb-4">
                   <div class="flex flex-wrap items-center gap-2">
-                    <span class="px-2.5 py-1 sm:px-3 rounded-full bg-brand/10 text-brand whitespace-nowrap">Informativo</span>
+                    <span class="blog-orange-badge px-2.5 py-1 sm:px-3 rounded-full whitespace-nowrap">Informativo</span>
                     <span class="h-1 w-1 rounded-full bg-slate-300 hidden sm:block" aria-hidden="true"></span>
                     <span class="px-2.5 py-1 sm:px-3 rounded-full bg-brand/10 text-brand whitespace-nowrap">ANVISA</span>
                   </div>
                   <div class="flex items-center justify-center gap-2 font-normal text-slate-500 sm:justify-start">
-                    <span aria-hidden="true" class="h-px flex-1 max-w-12 bg-brand/25 sm:hidden"></span>
+                    <span aria-hidden="true" class="h-px flex-1 max-w-12 bg-orange-100 sm:hidden"></span>
                     <time datetime="2026-05-19T19:00:00-03:00" class="leading-none">19/05/2026 • 19h00</time>
-                    <span aria-hidden="true" class="h-px flex-1 max-w-12 bg-brand/25 sm:hidden"></span>
+                    <span aria-hidden="true" class="h-px flex-1 max-w-12 bg-orange-100 sm:hidden"></span>
                   </div>
                 </div>
                 <h2 class="max-w-3xl text-xl md:text-3xl lg:text-4xl font-extrabold leading-tight text-slate-950 mb-4">Anvisa avança na migração para o Cadastro via Gov.br, mas transição ainda exige atenção das empresas</h2>
                 <p class="max-w-3xl text-slate-600 leading-relaxed mb-6">A Anvisa está substituindo gradualmente cadastros antigos pelo novo Cadastro Anvisa integrado ao Gov.br. Entenda os impactos da transição e os cuidados para evitar problemas de acesso.</p>
-                <a href="/noticias/cadastro-anvisa-govbr-transicao-sistemas/" class="inline-flex items-center gap-2 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-dark">Ler notícia <span aria-hidden="true">→</span></a>
+                <a href="/noticias/cadastro-anvisa-govbr-transicao-sistemas/" class="blog-orange-button inline-flex items-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold transition-colors duration-200">Ler notícia <span aria-hidden="true">→</span></a>
               </article>
 
               <article class="blog-news-card blog-featured-card blog-amber-card rounded-xl border-2 border-amber-300 bg-white p-6 shadow-md shadow-amber-100/60 transition-colors duration-300 hover:border-amber-400 md:p-8" data-blog-card data-category="Farmácia Popular" data-title="Prazo do SIFAP terminou: veja como acompanhar pendências, análise e RTA no Farmácia Popular" data-summary="O prazo informado para regularização cadastral no SIFAP encerrou em 13/05/2026. Veja o que farmácias notificadas devem verificar agora, como acompanhar pendências e por que a assinatura do RTA é etapa essencial." data-keywords="sifap prazo encerrado farmacia popular rta pendencia analise caixa ministerio da saude cadastrofpopular analise.fpopular regularize consultoria pos-prazo">
@@ -339,25 +369,25 @@
                 <a href="/noticias/prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular/" class="inline-flex items-center gap-2 rounded-lg bg-amber-500 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-amber-600">Ler atualização <span aria-hidden="true">→</span></a>
               </article>
 
-              <article class="blog-news-card blog-featured-card rounded-xl border border-brand/20 bg-white p-6 shadow-sm transition-colors duration-300 hover:border-brand/40 md:p-8" data-blog-card data-category="Farmácia Popular" data-title="SIFAP reabre para regularização cadastral de farmácias notificadas até 13 de maio" data-summary="Comunicado anterior sobre a reabertura temporária do SIFAP para farmácias notificadas. O prazo informado foi encerrado, mas o conteúdo permanece como registro histórico e orientação sobre o contexto da regularização." data-keywords="sifap farmácia popular farmacia popular regularizacao cadastral farmacias notificadas rta caixa ministerio da saude cadastrofpopular analise.fpopular regularize consultoria">
+              <article class="blog-news-card blog-featured-card blog-orange-card bg-white rounded-xl border-2 border-orange-200 p-5 shadow-md transition-colors duration-300 hover:border-orange-300" data-blog-card data-category="Farmácia Popular" data-title="SIFAP reabre para regularização cadastral de farmácias notificadas até 13 de maio" data-summary="Comunicado anterior sobre a reabertura temporária do SIFAP para farmácias notificadas. O prazo informado foi encerrado, mas o conteúdo permanece como registro histórico e orientação sobre o contexto da regularização." data-keywords="sifap farmácia popular farmacia popular regularizacao cadastral farmacias notificadas rta caixa ministerio da saude cadastrofpopular analise.fpopular regularize consultoria">
                 <div class="flex flex-col gap-3 mb-5 text-xs font-semibold sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3 sm:mb-4">
                   <div class="flex flex-wrap items-center gap-2">
-                    <span class="px-2.5 py-1 sm:px-3 rounded-full bg-brand/10 text-brand whitespace-nowrap">Informativo</span>
+                    <span class="blog-orange-badge px-2.5 py-1 sm:px-3 rounded-full whitespace-nowrap">Informativo</span>
                     <span class="h-1 w-1 rounded-full bg-slate-300 hidden sm:block" aria-hidden="true"></span>
                     <span class="px-2.5 py-1 sm:px-3 rounded-full bg-rose-50 text-rose-700 whitespace-nowrap">Farmácia Popular</span>
                   </div>
                   <div class="flex items-center justify-center gap-2 font-normal text-slate-500 sm:justify-start">
-                    <span aria-hidden="true" class="h-px flex-1 max-w-12 bg-brand/25 sm:hidden"></span>
+                    <span aria-hidden="true" class="h-px flex-1 max-w-12 bg-orange-100 sm:hidden"></span>
                     <time datetime="2026-05-10T09:00:00-03:00" class="leading-none">10/05/2026 • 09h00</time>
-                    <span aria-hidden="true" class="h-px flex-1 max-w-12 bg-brand/25 sm:hidden"></span>
+                    <span aria-hidden="true" class="h-px flex-1 max-w-12 bg-orange-100 sm:hidden"></span>
                   </div>
                 </div>
-                <h2 class="max-w-3xl text-xl md:text-3xl lg:text-4xl font-extrabold leading-tight text-slate-950 mb-4">SIFAP reabre para regularização cadastral de farmácias notificadas até 13 de maio</h2>
-                <p class="max-w-3xl text-slate-600 leading-relaxed mb-6">Comunicado anterior sobre a reabertura temporária do SIFAP para farmácias notificadas. O prazo informado foi encerrado, mas o conteúdo permanece como registro histórico e orientação sobre o contexto da regularização.</p>
-                <a href="/noticias/sifap-regularizacao-cadastral-farmacias-notificadas-13-maio/" class="inline-flex items-center gap-2 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-dark">Ler notícia <span aria-hidden="true">→</span></a>
+                <h2 class="text-xl font-extrabold leading-tight text-slate-950 mb-2">SIFAP reabre para regularização cadastral de farmácias notificadas até 13 de maio</h2>
+                <p class="text-slate-500 text-sm leading-relaxed mb-4">Comunicado anterior sobre a reabertura temporária do SIFAP para farmácias notificadas. O prazo informado foi encerrado, mas o conteúdo permanece como registro histórico e orientação sobre o contexto da regularização.</p>
+                <a href="/noticias/sifap-regularizacao-cadastral-farmacias-notificadas-13-maio/" class="inline-flex items-center gap-2 text-orange-600 text-sm font-semibold hover:text-orange-700 hover:underline underline-offset-4">Ler notícia <span aria-hidden="true">→</span></a>
               </article>
 
-              <article class="blog-news-card blog-featured-card blog-amber-card rounded-xl border-2 border-amber-200 bg-white p-6 shadow-md shadow-amber-100/60 transition-colors duration-300 hover:border-amber-300 md:p-8" data-blog-card data-category="ANVISA" data-title="Anvisa atualiza acesso das farmácias privadas ao SNCR: AFE passa a ser a base de habilitação" data-summary="Mudança divulgada pelo CFF, com fonte atribuída à Anvisa, indica que farmácias privadas deverão acessar o SNCR pelo Cadastro Anvisa com vinculação da AFE. CNES segue relevante em outras situações." data-keywords="anvisa sncr afe cadastro anvisa gov.br cff cnes farmacia drogaria habilitacao regularize consultoria">
+              <article class="blog-news-card blog-featured-card blog-amber-card bg-white rounded-xl border-2 border-amber-200 p-5 shadow-md shadow-amber-100/60 transition-colors duration-300 hover:border-amber-300" data-blog-card data-category="ANVISA" data-title="Anvisa atualiza acesso das farmácias privadas ao SNCR: AFE passa a ser a base de habilitação" data-summary="Mudança divulgada pelo CFF, com fonte atribuída à Anvisa, indica que farmácias privadas deverão acessar o SNCR pelo Cadastro Anvisa com vinculação da AFE. CNES segue relevante em outras situações." data-keywords="anvisa sncr afe cadastro anvisa gov.br cff cnes farmacia drogaria habilitacao regularize consultoria">
                 <div class="flex flex-col gap-3 mb-5 text-xs font-semibold sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3 sm:mb-4">
                   <div class="flex flex-wrap items-center gap-2">
                     <span class="px-2.5 py-1 sm:px-3 rounded-full bg-amber-500 text-white whitespace-nowrap">Atualização</span>
@@ -370,33 +400,33 @@
                     <span aria-hidden="true" class="h-px flex-1 max-w-12 bg-amber-500/30 sm:hidden"></span>
                   </div>
                 </div>
-                <h2 class="max-w-3xl text-xl md:text-3xl lg:text-4xl font-extrabold leading-tight text-slate-950 mb-4">Anvisa atualiza acesso das farmácias privadas ao SNCR: AFE passa a ser a base de habilitação</h2>
-                <p class="max-w-3xl text-slate-600 leading-relaxed mb-6">Mudança divulgada pelo CFF, com fonte atribuída à Anvisa, indica que farmácias privadas deverão acessar o SNCR pelo Cadastro Anvisa com vinculação da AFE. CNES segue relevante em outras situações.</p>
-                <a href="/noticias/anvisa-atualiza-acesso-sncr-afe-farmacias-privadas/" class="inline-flex items-center gap-2 rounded-lg bg-amber-500 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-amber-600">Ler atualização <span aria-hidden="true">→</span></a>
+                <h2 class="text-xl font-extrabold leading-tight text-slate-950 mb-2">Anvisa atualiza acesso das farmácias privadas ao SNCR: AFE passa a ser a base de habilitação</h2>
+                <p class="text-slate-500 text-sm leading-relaxed mb-4">Mudança divulgada pelo CFF, com fonte atribuída à Anvisa, indica que farmácias privadas deverão acessar o SNCR pelo Cadastro Anvisa com vinculação da AFE. CNES segue relevante em outras situações.</p>
+                <a href="/noticias/anvisa-atualiza-acesso-sncr-afe-farmacias-privadas/" class="inline-flex items-center gap-2 text-amber-700 text-sm font-semibold hover:text-amber-900 hover:underline underline-offset-4">Ler atualização <span aria-hidden="true">→</span></a>
               </article>
 
-              <article class="blog-news-card blog-featured-card rounded-xl border border-brand/20 bg-white p-6 shadow-sm transition-colors duration-300 hover:border-brand/40 md:p-8" data-blog-card data-category="ANVISA" data-title="CNES no SNCR: orientação inicial foi atualizada para farmácias privadas" data-summary="Conteúdo histórico atualizado após nova comunicação atribuída à Anvisa, indicando AFE como base de habilitação para farmácias privadas no SNCR." data-keywords="anvisa cnes sncr afe farmacia drogaria historico atualizacao cadastro anvisa cff regularize consultoria">
+              <article class="blog-news-card blog-featured-card blog-orange-card bg-white rounded-xl border-2 border-orange-200 p-5 shadow-md transition-colors duration-300 hover:border-orange-300" data-blog-card data-category="ANVISA" data-title="CNES no SNCR: orientação inicial foi atualizada para farmácias privadas" data-summary="Conteúdo histórico atualizado após nova comunicação atribuída à Anvisa, indicando AFE como base de habilitação para farmácias privadas no SNCR." data-keywords="anvisa cnes sncr afe farmacia drogaria historico atualizacao cadastro anvisa cff regularize consultoria">
                 <div class="flex flex-col gap-3 mb-5 text-xs font-semibold sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3 sm:mb-4">
                   <div class="flex flex-wrap items-center gap-2">
-                    <span class="px-2.5 py-1 sm:px-3 rounded-full bg-brand/10 text-brand whitespace-nowrap">Informativo</span>
+                    <span class="blog-orange-badge px-2.5 py-1 sm:px-3 rounded-full whitespace-nowrap">Informativo</span>
                     <span class="h-1 w-1 rounded-full bg-slate-300 hidden sm:block" aria-hidden="true"></span>
                     <span class="px-2.5 py-1 sm:px-3 rounded-full bg-brand/10 text-brand whitespace-nowrap">ANVISA</span>
                   </div>
                   <div class="flex items-center justify-center gap-2 font-normal text-slate-500 sm:justify-start">
-                    <span aria-hidden="true" class="h-px flex-1 max-w-12 bg-brand/25 sm:hidden"></span>
+                    <span aria-hidden="true" class="h-px flex-1 max-w-12 bg-orange-100 sm:hidden"></span>
                     <time datetime="2026-04-29T09:00:00-03:00" class="leading-none">29/04/2026 • 09h00</time>
-                    <span aria-hidden="true" class="h-px flex-1 max-w-12 bg-brand/25 sm:hidden"></span>
+                    <span aria-hidden="true" class="h-px flex-1 max-w-12 bg-orange-100 sm:hidden"></span>
                   </div>
                 </div>
-                <h2 class="max-w-3xl text-xl md:text-3xl lg:text-4xl font-extrabold leading-tight text-slate-950 mb-4">CNES no SNCR: orientação inicial foi atualizada para farmácias privadas</h2>
-                <p class="max-w-3xl text-slate-600 leading-relaxed mb-6">Conteúdo histórico atualizado após nova comunicação atribuída à Anvisa, indicando AFE como base de habilitação para farmácias privadas no SNCR.</p>
-                <a href="/noticias/nova-regra-anvisa-cnes-receitas-farmacias/" class="inline-flex items-center gap-2 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-dark">Ler notícia <span aria-hidden="true">→</span></a>
+                <h2 class="text-xl font-extrabold leading-tight text-slate-950 mb-2">CNES no SNCR: orientação inicial foi atualizada para farmácias privadas</h2>
+                <p class="text-slate-500 text-sm leading-relaxed mb-4">Conteúdo histórico atualizado após nova comunicação atribuída à Anvisa, indicando AFE como base de habilitação para farmácias privadas no SNCR.</p>
+                <a href="/noticias/nova-regra-anvisa-cnes-receitas-farmacias/" class="inline-flex items-center gap-2 text-orange-600 text-sm font-semibold hover:text-orange-700 hover:underline underline-offset-4">Ler notícia <span aria-hidden="true">→</span></a>
               </article>
 
-              <article class="blog-news-card blog-featured-card rounded-xl border border-brand/20 bg-white p-6 shadow-sm transition-colors duration-300 hover:border-brand/40 md:p-8" data-blog-card data-category="ANVISA" data-title="Como acompanhar instabilidades nos sistemas da ANVISA" data-summary="Rotina prática para registrar erros, organizar evidências e acompanhar canais oficiais quando sistemas da ANVISA apresentam instabilidade." data-keywords="anvisa instabilidade sistema peticionamento portal consultas sngpc erro pendencia regularizacao sanitaria alertas">
+              <article class="blog-news-card blog-featured-card bg-white rounded-xl border border-brand/20 p-5 shadow-sm transition-colors duration-300 hover:border-brand/40" data-blog-card data-category="ANVISA" data-title="Como acompanhar instabilidades nos sistemas da ANVISA" data-summary="Rotina prática para registrar erros, organizar evidências e acompanhar canais oficiais quando sistemas da ANVISA apresentam instabilidade." data-keywords="anvisa instabilidade sistema peticionamento portal consultas sngpc erro pendencia regularizacao sanitaria alertas">
                 <div class="flex flex-col gap-3 mb-5 text-xs font-semibold sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3 sm:mb-4">
                   <div class="flex flex-wrap items-center gap-2">
-                    <span class="px-2.5 py-1 sm:px-3 rounded-full bg-brand/10 text-brand whitespace-nowrap">Informativo</span>
+                    <span class="px-2.5 py-1 sm:px-3 rounded-full bg-brand/10 text-brand whitespace-nowrap">Orientação</span>
                     <span class="h-1 w-1 rounded-full bg-slate-300 hidden sm:block" aria-hidden="true"></span>
                     <span class="px-2.5 py-1 sm:px-3 rounded-full bg-brand/10 text-brand whitespace-nowrap">ANVISA</span>
                   </div>
@@ -406,15 +436,15 @@
                     <span aria-hidden="true" class="h-px flex-1 max-w-12 bg-brand/25 sm:hidden"></span>
                   </div>
                 </div>
-                <h2 class="max-w-3xl text-xl md:text-3xl lg:text-4xl font-extrabold leading-tight text-slate-950 mb-4">Como acompanhar instabilidades nos sistemas da ANVISA</h2>
-                <p class="max-w-3xl text-slate-600 leading-relaxed mb-6">Veja como organizar evidências, consultar canais oficiais e reduzir riscos quando sistemas como peticionamento, consultas ou módulos relacionados apresentam falhas.</p>
-                <a href="/noticias/como-acompanhar-instabilidades-sistemas-anvisa/" class="inline-flex items-center gap-2 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-dark">Ler notícia <span aria-hidden="true">→</span></a>
+                <h2 class="text-xl font-extrabold leading-tight text-slate-950 mb-2">Como acompanhar instabilidades nos sistemas da ANVISA</h2>
+                <p class="text-slate-500 text-sm leading-relaxed mb-4">Veja como organizar evidências, consultar canais oficiais e reduzir riscos quando sistemas como peticionamento, consultas ou módulos relacionados apresentam falhas.</p>
+                <a href="/noticias/como-acompanhar-instabilidades-sistemas-anvisa/" class="inline-flex items-center gap-2 text-brand text-sm font-semibold hover:text-brand-dark hover:underline underline-offset-4">Ler notícia <span aria-hidden="true">→</span></a>
               </article>
 
-              <article class="blog-news-card blog-featured-card bg-white rounded-xl border border-brand/20 p-5 transition-colors duration-300 hover:border-brand/40" data-blog-card data-category="ANVISA" data-title="O que é AFE e por que ela é importante para drogarias e distribuidoras" data-summary="Entenda o papel da Autorização de Funcionamento de Empresa e sua relação com atividades reguladas pela ANVISA." data-keywords="afe drogaria distribuidora anvisa autorizacao funcionamento empresa regularizacao farmacia ae consultoria anvisa farmacia">
+              <article class="blog-news-card blog-featured-card bg-white rounded-xl border border-brand/20 p-5 shadow-sm transition-colors duration-300 hover:border-brand/40" data-blog-card data-category="ANVISA" data-title="O que é AFE e por que ela é importante para drogarias e distribuidoras" data-summary="Entenda o papel da Autorização de Funcionamento de Empresa e sua relação com atividades reguladas pela ANVISA." data-keywords="afe drogaria distribuidora anvisa autorizacao funcionamento empresa regularizacao farmacia ae consultoria anvisa farmacia">
                 <div class="flex flex-col gap-3 mb-5 text-xs font-semibold sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3 sm:mb-4">
                   <div class="flex flex-wrap items-center gap-2">
-                    <span class="px-2.5 py-1 sm:px-3 rounded-full bg-brand/10 text-brand whitespace-nowrap">Informativo</span>
+                    <span class="px-2.5 py-1 sm:px-3 rounded-full bg-brand/10 text-brand whitespace-nowrap">Orientação</span>
                     <span class="h-1 w-1 rounded-full bg-slate-300 hidden sm:block" aria-hidden="true"></span>
                     <span class="px-2.5 py-1 sm:px-3 rounded-full bg-brand/10 text-brand whitespace-nowrap">ANVISA</span>
                   </div>
@@ -426,13 +456,13 @@
                 </div>
                 <h2 class="text-xl font-extrabold leading-tight text-slate-950 mb-2">O que é AFE e por que ela é importante para drogarias e distribuidoras</h2>
                 <p class="text-slate-500 text-sm leading-relaxed mb-4">Uma explicação prática sobre AFE, atividades reguladas, documentos relacionados e quando buscar apoio para regularizar drogaria ou distribuidora.</p>
-                <a href="/noticias/o-que-e-afe-e-por-que-e-importante/" class="inline-flex items-center gap-2 text-brand text-sm font-semibold hover:underline underline-offset-4">Ler matéria <span aria-hidden="true">→</span></a>
+                <a href="/noticias/o-que-e-afe-e-por-que-e-importante/" class="inline-flex items-center gap-2 text-brand text-sm font-semibold hover:text-brand-dark hover:underline underline-offset-4">Ler notícia <span aria-hidden="true">→</span></a>
               </article>
 
-              <article class="blog-news-card blog-featured-card bg-white rounded-xl border border-brand/20 p-5 transition-colors duration-300 hover:border-brand/40" data-blog-card data-category="Farmácia Popular" data-title="Farmácia Popular: cuidados com cadastro, renovação e documentação" data-summary="Pontos de atenção para manter documentos organizados e evitar inconsistências em rotinas ligadas ao Programa Farmácia Popular." data-keywords="farmacia popular documentacao cadastro renovacao contrato ministerio da saude caixa drogaria pendencia">
+              <article class="blog-news-card blog-featured-card bg-white rounded-xl border border-brand/20 p-5 shadow-sm transition-colors duration-300 hover:border-brand/40" data-blog-card data-category="Farmácia Popular" data-title="Farmácia Popular: cuidados com cadastro, renovação e documentação" data-summary="Pontos de atenção para manter documentos organizados e evitar inconsistências em rotinas ligadas ao Programa Farmácia Popular." data-keywords="farmacia popular documentacao cadastro renovacao contrato ministerio da saude caixa drogaria pendencia">
                 <div class="flex flex-col gap-3 mb-5 text-xs font-semibold sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3 sm:mb-4">
                   <div class="flex flex-wrap items-center gap-2">
-                    <span class="px-2.5 py-1 sm:px-3 rounded-full bg-brand/10 text-brand whitespace-nowrap">Informativo</span>
+                    <span class="px-2.5 py-1 sm:px-3 rounded-full bg-brand/10 text-brand whitespace-nowrap">Orientação</span>
                     <span class="h-1 w-1 rounded-full bg-slate-300 hidden sm:block" aria-hidden="true"></span>
                     <span class="px-2.5 py-1 sm:px-3 rounded-full bg-rose-50 text-rose-700 whitespace-nowrap">Farmácia Popular</span>
                   </div>
@@ -444,13 +474,13 @@
                 </div>
                 <h2 class="text-xl font-extrabold leading-tight text-slate-950 mb-2">Farmácia Popular: cuidados com cadastro, renovação e documentação</h2>
                 <p class="text-slate-500 text-sm leading-relaxed mb-4">Organização cadastral, documentos de apoio e cuidados práticos para farmácias que acompanham processos ou rotinas do Programa Farmácia Popular.</p>
-                <a href="/noticias/farmacia-popular-cuidados-cadastro-documentacao/" class="inline-flex items-center gap-2 text-brand text-sm font-semibold hover:underline underline-offset-4">Ler matéria <span aria-hidden="true">→</span></a>
+                <a href="/noticias/farmacia-popular-cuidados-cadastro-documentacao/" class="inline-flex items-center gap-2 text-brand text-sm font-semibold hover:text-brand-dark hover:underline underline-offset-4">Ler notícia <span aria-hidden="true">→</span></a>
               </article>
 
-              <article class="blog-news-card blog-featured-card bg-white rounded-xl border border-brand/20 p-5 transition-colors duration-300 hover:border-brand/40" data-blog-card data-category="SNGPC" data-title="SNGPC: boas práticas para evitar pendências operacionais" data-summary="Checklist para reduzir inconsistências de escrituração, acesso, responsabilidade técnica e acompanhamento de pendências no SNGPC." data-keywords="sngpc pendencia anvisa medicamento controlado escrituração responsavel tecnico inventario farmacia drogaria">
+              <article class="blog-news-card blog-featured-card bg-white rounded-xl border border-brand/20 p-5 shadow-sm transition-colors duration-300 hover:border-brand/40" data-blog-card data-category="SNGPC" data-title="SNGPC: boas práticas para evitar pendências operacionais" data-summary="Checklist para reduzir inconsistências de escrituração, acesso, responsabilidade técnica e acompanhamento de pendências no SNGPC." data-keywords="sngpc pendencia anvisa medicamento controlado escrituração responsavel tecnico inventario farmacia drogaria">
                 <div class="flex flex-col gap-3 mb-5 text-xs font-semibold sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3 sm:mb-4">
                   <div class="flex flex-wrap items-center gap-2">
-                    <span class="px-2.5 py-1 sm:px-3 rounded-full bg-brand/10 text-brand whitespace-nowrap">Informativo</span>
+                    <span class="px-2.5 py-1 sm:px-3 rounded-full bg-brand/10 text-brand whitespace-nowrap">Orientação</span>
                     <span class="h-1 w-1 rounded-full bg-slate-300 hidden sm:block" aria-hidden="true"></span>
                     <span class="px-2.5 py-1 sm:px-3 rounded-full bg-emerald-50 text-emerald-700 whitespace-nowrap">SNGPC</span>
                   </div>
@@ -462,13 +492,13 @@
                 </div>
                 <h2 class="text-xl font-extrabold leading-tight text-slate-950 mb-2">SNGPC: boas práticas para evitar pendências operacionais</h2>
                 <p class="text-slate-500 text-sm leading-relaxed mb-4">Boas práticas para organizar rotinas internas, conferir acessos e tratar sinais de pendência operacional com mais método e menos retrabalho.</p>
-                <a href="/noticias/sngpc-boas-praticas-evitar-pendencias/" class="inline-flex items-center gap-2 text-brand text-sm font-semibold hover:underline underline-offset-4">Ler matéria <span aria-hidden="true">→</span></a>
+                <a href="/noticias/sngpc-boas-praticas-evitar-pendencias/" class="inline-flex items-center gap-2 text-brand text-sm font-semibold hover:text-brand-dark hover:underline underline-offset-4">Ler notícia <span aria-hidden="true">→</span></a>
               </article>
 
-              <article class="blog-news-card blog-featured-card bg-white rounded-xl border border-brand/20 p-5 transition-colors duration-300 hover:border-brand/40" data-blog-card data-category="Documentação" data-title="Documentos técnicos essenciais para farmácias e drogárias" data-summary="Conheça documentos técnicos frequentemente exigidos em rotinas de vigilância sanitária, como POPs, Manual de Boas Práticas e PGRSS." data-keywords="documentos tecnicos farmacia drogaria vigilancia sanitaria pops manual boas praticas pgrss regularizacao sanitaria crf">
+              <article class="blog-news-card blog-featured-card bg-white rounded-xl border border-brand/20 p-5 shadow-sm transition-colors duration-300 hover:border-brand/40" data-blog-card data-category="Documentação" data-title="Documentos técnicos essenciais para farmácias e drogárias" data-summary="Conheça documentos técnicos frequentemente exigidos em rotinas de vigilância sanitária, como POPs, Manual de Boas Práticas e PGRSS." data-keywords="documentos tecnicos farmacia drogaria vigilancia sanitaria pops manual boas praticas pgrss regularizacao sanitaria crf">
                 <div class="flex flex-col gap-3 mb-5 text-xs font-semibold sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3 sm:mb-4">
                   <div class="flex flex-wrap items-center gap-2">
-                    <span class="px-2.5 py-1 sm:px-3 rounded-full bg-brand/10 text-brand whitespace-nowrap">Informativo</span>
+                    <span class="px-2.5 py-1 sm:px-3 rounded-full bg-brand/10 text-brand whitespace-nowrap">Orientação</span>
                     <span class="h-1 w-1 rounded-full bg-slate-300 hidden sm:block" aria-hidden="true"></span>
                     <span class="px-2.5 py-1 sm:px-3 rounded-full bg-slate-100 text-slate-600 whitespace-nowrap">Documentação</span>
                   </div>
@@ -480,11 +510,11 @@
                 </div>
                 <h2 class="text-xl font-extrabold leading-tight text-slate-950 mb-2">Documentos técnicos essenciais para farmácias e drogarias</h2>
                 <p class="text-slate-500 text-sm leading-relaxed mb-4">Um guia introdutório sobre documentos técnicos que costumam fazer parte da rotina sanitária de farmácias, drogarias e estabelecimentos regulados.</p>
-                <a href="/noticias/documentos-tecnicos-essenciais-farmacias-drogarias/" class="inline-flex items-center gap-2 text-brand text-sm font-semibold hover:underline underline-offset-4">Ler matéria <span aria-hidden="true">→</span></a>
+                <a href="/noticias/documentos-tecnicos-essenciais-farmacias-drogarias/" class="inline-flex items-center gap-2 text-brand text-sm font-semibold hover:text-brand-dark hover:underline underline-offset-4">Ler notícia <span aria-hidden="true">→</span></a>
               </article>
             </div>
 
-            <div id="carregar-mais-wrapper" class="hidden mt-6 pt-5 border-t border-slate-200 flex justify-center lg:mt-8 lg:pt-6">
+            <div id="carregar-mais-wrapper" class="hidden pt-4 border-t border-slate-200 flex justify-center lg:pt-6">
               <button id="btn-carregar-mais" type="button" class="inline-flex items-center gap-2 py-2 text-brand text-sm font-semibold hover:text-brand-dark underline-offset-4 hover:underline transition-colors duration-200 focus:outline-none focus:underline">
                 Ver mais notícias
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">

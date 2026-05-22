@@ -336,15 +336,13 @@
 
     // --- Carregar mais (mobile-first) ---
     // Apenas ativa quando o botão existe na página (somente /noticias/)
-    var MOBILE_INITIAL_LIMIT = 5;
-    var TABLET_INITIAL_LIMIT = 8;
-    var LOAD_MORE_STEP = 5;
+    var INITIAL_VISIBLE_LIMIT = 5;
     var loadMoreBtn = document.getElementById('btn-carregar-mais');
+    var loadMoreWrapper = document.getElementById('carregar-mais-wrapper');
+    var hasExpandedResults = false;
 
     function getInitialLimit() {
-      if (window.matchMedia('(min-width: 1024px)').matches) return Infinity;
-      if (window.matchMedia('(min-width: 640px)').matches) return TABLET_INITIAL_LIMIT;
-      return MOBILE_INITIAL_LIMIT;
+      return INITIAL_VISIBLE_LIMIT;
     }
 
     var currentLimit = loadMoreBtn ? getInitialLimit() : Infinity;
@@ -374,6 +372,26 @@
       articleCards.forEach(function (card) {
         blogList.appendChild(card);
       });
+    }
+
+    function positionLoadMoreControl(matchingCards) {
+      if (!loadMoreWrapper || !matchingCards.length) {
+        return;
+      }
+
+      var visibleCount = currentLimit === Infinity
+        ? matchingCards.length
+        : Math.min(currentLimit, matchingCards.length);
+      var anchorCard = matchingCards[Math.max(visibleCount - 1, 0)];
+
+      if (anchorCard) {
+        anchorCard.insertAdjacentElement('afterend', loadMoreWrapper);
+      }
+    }
+
+    function resetVisibleLimit() {
+      hasExpandedResults = false;
+      currentLimit = getInitialLimit();
     }
 
     function updateResults() {
@@ -414,18 +432,17 @@
       emptyState.classList.toggle('hidden', totalMatching !== 0);
 
       // Atualiza visibilidade do controle "Ver mais"
-      if (loadMoreBtn) {
-        var lmWrapper = document.getElementById('carregar-mais-wrapper');
-        if (lmWrapper) {
-          lmWrapper.classList.toggle('hidden', !(currentLimit < Infinity && currentLimit < totalMatching));
-        }
+      if (loadMoreBtn && loadMoreWrapper) {
+        positionLoadMoreControl(matchingCards);
+        loadMoreWrapper.classList.toggle('hidden', !(currentLimit < Infinity && currentLimit < totalMatching));
       }
     }
 
     // Clique no botão "Carregar mais"
     if (loadMoreBtn) {
       loadMoreBtn.addEventListener('click', function () {
-        currentLimit += LOAD_MORE_STEP;
+        hasExpandedResults = true;
+        currentLimit = Infinity;
         updateResults();
         loadMoreBtn.focus();
       });
@@ -433,7 +450,7 @@
 
     // Ao digitar na busca: reseta para o limite inicial do breakpoint atual
     searchInput.addEventListener('input', function () {
-      currentLimit = getInitialLimit();
+      resetVisibleLimit();
       updateResults();
     });
 
@@ -445,7 +462,7 @@
           item.setAttribute('aria-pressed', item === button ? 'true' : 'false');
         });
 
-        currentLimit = getInitialLimit();
+        resetVisibleLimit();
         sortArticles();
         updateResults();
       });
@@ -459,7 +476,7 @@
           item.setAttribute('aria-pressed', item === button ? 'true' : 'false');
         });
 
-        currentLimit = getInitialLimit();
+        resetVisibleLimit();
         updateResults();
       });
     });
