@@ -284,6 +284,31 @@ footer img[alt="Regularize Consultoria"] {
   text-underline-offset: 3px;
 }
 
+.article-important-notice {
+  background-color: #fff1f2;
+  border: 1px solid #fecaca;
+  border-radius: 1rem;
+  color: #334155;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  padding: 1.25rem;
+}
+
+.article-important-notice p {
+  margin: 0;
+}
+
+.article-important-notice strong {
+  color: #b91c1c;
+  font-weight: 700;
+}
+
+@media (min-width: 640px) {
+  .article-important-notice {
+    padding: 1.5rem;
+  }
+}
+
 /* ---------- 8. Botões flutuantes: WhatsApp + Voltar ao Topo ---------- */
 .floating-buttons {
   position: fixed;
