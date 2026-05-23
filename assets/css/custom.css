@@ -76,9 +76,10 @@ select:focus-visible {
   color: #fff;
 }
 
-main article header [class~="bg-white/15"][class~="px-2.5"][class~="py-1"][class~="text-slate-100"][class~="whitespace-nowrap"] {
+.news-topic-shortcuts > span {
   display: inline-flex;
   align-items: center;
+  border-color: rgba(255, 255, 255, 0.22);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 999px;
   background-color: rgba(255, 255, 255, 0.22);
