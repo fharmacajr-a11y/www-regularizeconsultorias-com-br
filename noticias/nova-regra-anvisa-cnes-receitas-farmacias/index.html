@@ -28,6 +28,29 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/css/tailwind.min.css">
   <link rel="stylesheet" href="/assets/css/custom.min.css?v=20260506-1" />
+  <style>
+    .article-body .sncr-mobile-card-label {
+      margin: 0 0 0.25rem;
+      letter-spacing: 0.08em;
+    }
+
+    .article-body .sncr-mobile-card-dl {
+      margin: 0;
+    }
+
+    .article-body .sncr-mobile-card-copy {
+      margin: 0;
+    }
+
+    .article-body .sncr-atendimento-label {
+      margin: 0 0 0.25rem;
+      letter-spacing: 0.08em;
+    }
+
+    .article-body .sncr-atendimento-title {
+      margin: 0 0 0.25rem;
+    }
+  </style>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -239,10 +262,10 @@
           </div>
           <section class="article-body">
             <div
-              class="mb-8 rounded-2xl border border-amber-200 bg-amber-50 p-6 text-sm text-amber-950 shadow-sm ring-1 ring-amber-100"
+              class="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 sm:p-5 md:p-6 shadow-sm ring-1 ring-amber-100"
             >
-              <p>
-                <strong>Atualização em 09/05/2026:</strong> após a publicação desta notícia, foi divulgado novo posicionamento técnico atribuído à Anvisa, informando que, para farmácias privadas, o acesso ao SNCR deverá ocorrer pelo Cadastro Anvisa, com vinculação da AFE e gestão de usuários via gov.br. Assim, a AFE passa a ser a base mais recente de habilitação para farmácias privadas no SNCR. O CNES, porém, não deve ser tratado como definitivamente dispensado, pois continua relevante para farmácias públicas, serviços clínicos, Farmácia Popular, exigências locais e outros cadastros no sistema de saúde.
+              <p class="sncr-mobile-card-copy text-sm leading-relaxed text-amber-950">
+                <strong class="sncr-mobile-card-label block text-xs font-semibold uppercase text-amber-700">Atualização em 09/05/2026:</strong> após a publicação desta notícia, foi divulgado novo posicionamento técnico atribuído à Anvisa, informando que, para farmácias privadas, o acesso ao SNCR deverá ocorrer pelo Cadastro Anvisa, com vinculação da AFE e gestão de usuários via gov.br. Assim, a AFE passa a ser a base mais recente de habilitação para farmácias privadas no SNCR. O CNES, porém, não deve ser tratado como definitivamente dispensado, pois continua relevante para farmácias públicas, serviços clínicos, Farmácia Popular, exigências locais e outros cadastros no sistema de saúde.
                 <a
                   href="/noticias/anvisa-atualiza-acesso-sncr-afe-farmacias-privadas/"
                   class="font-bold text-amber-800 underline underline-offset-4 hover:text-amber-900"
@@ -252,10 +275,10 @@
             </div>
 
             <div
-              class="mb-8 rounded-2xl border border-slate-200 bg-slate-50 p-6 text-sm text-slate-700 shadow-sm ring-1 ring-slate-100"
+              class="mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5 md:p-6 shadow-sm ring-1 ring-slate-100"
             >
-              <p>
-                <strong>Nota complementar (23/05/2026):</strong> este conteúdo permanece histórico. Após a orientação oficial da Anvisa publicada em 21/05/2026, reunimos a atualização operacional mais completa sobre cronograma do SNCR, ausência de acesso direto das farmácias neste momento, coexistência com o SNGPC e permanência do CNES quando aplicável no artigo principal abaixo.
+              <p class="sncr-mobile-card-copy text-sm leading-relaxed text-slate-700">
+                <strong class="sncr-mobile-card-label block text-xs font-semibold uppercase text-slate-500">Nota complementar (23/05/2026):</strong> este conteúdo permanece histórico. Após a orientação oficial da Anvisa publicada em 21/05/2026, reunimos a atualização operacional mais completa sobre cronograma do SNCR, ausência de acesso direto das farmácias neste momento, coexistência com o SNGPC e permanência do CNES quando aplicável no artigo principal abaixo.
                 <a
                   href="/noticias/cnes-continua-obrigatorio-sncr-afe-farmacias/"
                   class="font-bold text-brand underline underline-offset-4 hover:text-brand-dark"
@@ -327,24 +350,24 @@
             </p>
 
             <div
-              class="my-8 rounded-2xl border border-brand/20 bg-gradient-to-br from-sky-50 via-white to-blue-100 p-6 shadow-sm ring-1 ring-brand/5"
+              class="my-5 rounded-xl border border-brand/20 bg-gradient-to-br from-sky-50 via-white to-blue-100 p-3 sm:p-4 md:p-5 shadow-sm ring-1 ring-brand/5"
             >
               <p
-                class="mb-2 text-xs font-semibold uppercase tracking-widest text-brand"
+                class="sncr-atendimento-label text-xs font-semibold uppercase text-brand"
               >
                 Atendimento técnico
               </p>
-              <h2 class="mt-0 text-slate-950">
+              <h2 class="sncr-atendimento-title text-base font-bold leading-tight text-slate-900">
                 Precisa revisar AFE, CNES e acesso ao SNCR?
               </h2>
-              <p class="text-slate-600">
+              <p class="text-sm text-slate-600">
                 A Regularize pode avaliar o histórico cadastral da farmácia,
                 conferir AFE, Cadastro Anvisa, CNES e orientar os próximos
                 passos conforme o contexto do estabelecimento.
               </p>
               <a
                 href="/contato/"
-                class="mt-4 inline-flex items-center justify-center rounded-lg bg-brand px-5 py-3 text-sm font-bold !text-white no-underline hover:bg-brand-dark"
+                class="mt-2.5 inline-flex items-center justify-center rounded-lg bg-brand px-4 py-2.5 text-sm font-bold !text-white no-underline hover:bg-brand-dark"
                 >Entrar em contato</a
               >
             </div>
