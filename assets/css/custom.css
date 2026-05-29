@@ -231,6 +231,119 @@ footer img[alt="Regularize Consultoria"] {
   opacity: 1;
 }
 
+.blog-news-card > div:first-of-type > div:first-child > span:not(.category-chip):not([aria-hidden="true"]) {
+  text-transform: uppercase;
+}
+
+.category-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.5rem;
+  padding: 0.25rem 0.625rem;
+  border: 0;
+  border-radius: 9999px;
+  box-shadow: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1rem;
+  text-transform: uppercase;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.regulator-chip {
+  text-transform: none;
+}
+
+.article-meta-groups,
+.article-meta-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.article-meta-taxonomy {
+  margin-top: 0.625rem;
+  padding-top: 0.625rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.article-meta-card .category-chip {
+  min-height: 1.125rem;
+  padding: 0.125rem 0.45rem;
+  font-size: 0.6875rem;
+  line-height: 0.875rem;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+@media (min-width: 640px) {
+  .blog-news-card .category-chip {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+
+.category-chip--anvisa {
+  background-color: #e8f2fb;
+  border-color: #bfd7ee;
+  color: #174f8f;
+}
+
+.category-chip--farmacia-popular {
+  background-color: #e7f6ef;
+  border-color: #b9e4cc;
+  color: #166534;
+}
+
+.category-chip--cnes {
+  background-color: #e0f2fe;
+  border-color: #bae6fd;
+  color: #075985;
+}
+
+.category-chip--crf {
+  background-color: #edf7f2;
+  border-color: #c9e6d9;
+  color: #176b55;
+}
+
+.category-chip--mapa {
+  background-color: #ecf6e8;
+  border-color: #cfe8bf;
+  color: #3f6212;
+}
+
+.category-chip--sncr {
+  background-color: #e6f5f4;
+  border-color: #b9dedb;
+  color: #0f5f63;
+}
+
+.category-chip--sngpc {
+  background-color: #fef3c7;
+  border-color: #fde68a;
+  color: #92400e;
+}
+
+.category-chip--visa {
+  background-color: #eef2f7;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+.category-chip--pf {
+  background-color: #e8edf5;
+  border-color: #c7d2e3;
+  color: #1e3a5f;
+}
+
+main > article > header .category-chip {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #f1f5f9;
+}
+
 .article-body {
   color: #475569;
   font-size: 1rem;

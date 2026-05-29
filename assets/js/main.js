@@ -331,7 +331,7 @@
     }
 
     var articleCards = Array.prototype.slice.call(blogList.querySelectorAll('[data-blog-card]'));
-    var activeCategory = 'Todos';
+    var activeCategory = 'todos';
     var activeSort = 'desc';
 
     // --- Carregar mais (mobile-first) ---
@@ -354,6 +354,37 @@
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .trim();
+    }
+
+    function updateCategoryFilters() {
+      var categoryCounts = {};
+
+      articleCards.forEach(function (card) {
+        var category = normalizeText(card.getAttribute('data-category'));
+
+        if (category) {
+          categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+        }
+      });
+
+      filterButtons.forEach(function (button) {
+        var category = normalizeText(button.getAttribute('data-blog-category'));
+        var count = category === 'todos'
+          ? articleCards.length
+          : (categoryCounts[category] || 0);
+        var countElement = button.querySelector('span:last-child');
+        var shouldHide = category !== 'todos' && count === 0;
+
+        if (countElement) {
+          countElement.textContent = count;
+        }
+
+        button.classList.toggle('hidden', shouldHide);
+
+        if (shouldHide && normalizeText(activeCategory) === category) {
+          activeCategory = 'todos';
+        }
+      });
     }
 
     function getCardTimestamp(card) {
@@ -407,10 +438,11 @@
           card.getAttribute('data-summary'),
           card.getAttribute('data-category'),
           card.getAttribute('data-keywords'),
+          card.getAttribute('data-tags'),
           card.textContent
         ].join(' '));
         var matchesSearch = !query || haystack.indexOf(query) !== -1;
-        var matchesCategory = activeCategory === 'Todos' || normalizeText(cardCategory) === normalizedCategory;
+        var matchesCategory = activeCategory === 'todos' || normalizeText(cardCategory) === normalizedCategory;
 
         if (matchesSearch && matchesCategory) {
           matchingCards.push(card);
@@ -470,7 +502,7 @@
 
     filterButtons.forEach(function (button) {
       button.addEventListener('click', function () {
-        activeCategory = button.getAttribute('data-blog-category') || 'Todos';
+        activeCategory = button.getAttribute('data-blog-category') || 'todos';
 
         filterButtons.forEach(function (item) {
           item.setAttribute('aria-pressed', item === button ? 'true' : 'false');
@@ -481,6 +513,7 @@
       });
     });
 
+    updateCategoryFilters();
     sortArticles();
     updateResults();
   }
