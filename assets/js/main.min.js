@@ -330,13 +330,17 @@
       return;
     }
 
+    var INITIAL_VISIBLE_LIMIT = 5;
     var articleCards = Array.prototype.slice.call(blogList.querySelectorAll('[data-blog-card]'));
     var activeCategory = 'todos';
     var activeSort = 'desc';
 
+    articleCards.forEach(function (card, index) {
+      card.classList.toggle('blog-card-compact', index >= INITIAL_VISIBLE_LIMIT);
+    });
+
     // --- Carregar mais (mobile-first) ---
     // Apenas ativa quando o botão existe na página (somente /noticias/)
-    var INITIAL_VISIBLE_LIMIT = 5;
     var loadMoreBtn = document.getElementById('btn-carregar-mais');
     var loadMoreWrapper = document.getElementById('carregar-mais-wrapper');
     var hasExpandedResults = false;
