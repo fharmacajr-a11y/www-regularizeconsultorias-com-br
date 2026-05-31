@@ -821,3 +821,47 @@ main > article > header .category-chip {
 .blog-featured-card.blog-urgent-card > a:hover span[aria-hidden="true"] {
   transform: translateX(2px);
 }
+
+/* ---------- 14. Borda de destaque — cards em destaque ---------- */
+/* Borda perceptível nos 5 cards em destaque; excluída de .blog-card-compact via :not() */
+
+#blog-article-list .blog-featured-card:not(.blog-card-compact) {
+  border-width: 2px;
+}
+
+#blog-article-list .blog-featured-card.blog-orange-card:not(.blog-card-compact) {
+  border-color: rgba(234, 88, 12, 0.65);
+}
+
+#blog-article-list .blog-featured-card.blog-urgent-card:not(.blog-card-compact) {
+  border-color: rgba(220, 38, 38, 0.65);
+}
+
+#blog-article-list .blog-featured-card.blog-amber-card:not(.blog-card-compact) {
+  border-color: rgba(245, 158, 11, 0.70);
+}
+
+#blog-article-list .blog-featured-card:not(.blog-orange-card):not(.blog-urgent-card):not(.blog-amber-card):not(.blog-card-compact) {
+  border-color: rgba(21, 101, 192, 0.60);
+}
+
+/* Hover: borda 100% na cor do tipo, sobrescreve regras genéricas */
+#blog-article-list .blog-featured-card.blog-orange-card:not(.blog-card-compact):hover,
+#blog-article-list .blog-featured-card.blog-orange-card:not(.blog-card-compact):focus-within {
+  border-color: #ea580c !important;
+}
+
+#blog-article-list .blog-featured-card.blog-urgent-card:not(.blog-card-compact):hover,
+#blog-article-list .blog-featured-card.blog-urgent-card:not(.blog-card-compact):focus-within {
+  border-color: #dc2626 !important;
+}
+
+#blog-article-list .blog-featured-card.blog-amber-card:not(.blog-card-compact):hover,
+#blog-article-list .blog-featured-card.blog-amber-card:not(.blog-card-compact):focus-within {
+  border-color: #f59e0b !important;
+}
+
+#blog-article-list .blog-featured-card:not(.blog-orange-card):not(.blog-urgent-card):not(.blog-amber-card):not(.blog-card-compact):hover,
+#blog-article-list .blog-featured-card:not(.blog-orange-card):not(.blog-urgent-card):not(.blog-amber-card):not(.blog-card-compact):focus-within {
+  border-color: var(--color-brand) !important;
+}
