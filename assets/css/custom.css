@@ -48,9 +48,9 @@ body {
 /* ---------- 4. Link ativo na navbar ---------- */
 /* Classe adicionada via JavaScript com base na URL atual da página */
 /* Escopo restrito a <nav> para não afetar o botão CTA do header */
+/* Sem font-weight aqui: evita layout shift quando o JS adiciona a classe pós-render */
 #navbar nav a.active {
   color: var(--color-brand) !important;
-  font-weight: 600;
 }
 
 /* ---------- 5. Focus ring acessível ---------- */
@@ -318,13 +318,13 @@ main > article > header span.bg-white\/10:not(.category-chip) {
   transition: background-color 0.2s ease, box-shadow 0.15s ease !important;
 }
 
-.blog-card-compact > a span[aria-hidden="true"] {
+.blog-card-compact > a svg[aria-hidden="true"] {
   display: inline-block !important;
   transition: transform 0.15s ease !important;
 }
 
-.blog-card-compact > a:hover span[aria-hidden="true"],
-.blog-card-compact > a:focus-visible span[aria-hidden="true"] {
+.blog-card-compact > a:hover svg[aria-hidden="true"],
+.blog-card-compact > a:focus-visible svg[aria-hidden="true"] {
   transform: translateX(2px) !important;
 }
 
@@ -789,7 +789,7 @@ main > article > header .category-chip {
   transition: background-color 0.2s ease, box-shadow 0.15s ease;
 }
 
-.blog-featured-card .blog-orange-button span[aria-hidden="true"] {
+.blog-featured-card .blog-orange-button svg[aria-hidden="true"] {
   display: inline-block;
   transition: transform 0.15s ease;
 }
@@ -798,7 +798,7 @@ main > article > header .category-chip {
   box-shadow: 0 2px 8px rgba(234, 88, 12, 0.28);
 }
 
-.blog-featured-card .blog-orange-button:hover span[aria-hidden="true"] {
+.blog-featured-card .blog-orange-button:hover svg[aria-hidden="true"] {
   transform: translateX(2px);
 }
 
@@ -809,7 +809,7 @@ main > article > header .category-chip {
   transition: background-color 0.2s ease, box-shadow 0.15s ease;
 }
 
-.blog-featured-card.blog-urgent-card > a span[aria-hidden="true"] {
+.blog-featured-card.blog-urgent-card > a svg[aria-hidden="true"] {
   display: inline-block;
   transition: transform 0.15s ease;
 }
@@ -818,7 +818,7 @@ main > article > header .category-chip {
   box-shadow: 0 2px 8px rgba(220, 38, 38, 0.28);
 }
 
-.blog-featured-card.blog-urgent-card > a:hover span[aria-hidden="true"] {
+.blog-featured-card.blog-urgent-card > a:hover svg[aria-hidden="true"] {
   transform: translateX(2px);
 }
 
