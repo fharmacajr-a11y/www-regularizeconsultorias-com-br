@@ -302,38 +302,70 @@ main > article > header span.bg-white\/10:not(.category-chip) {
   margin-bottom: 1rem !important;
 }
 
-.blog-card-compact > a,
-.blog-card-compact > a:hover,
-.blog-card-compact > a:focus-visible {
-  background-color: transparent !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
+.blog-card-compact > a {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.375rem !important;
+  border-radius: 9999px !important;
+  padding: 0.375rem 0.875rem !important;
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  color: #fff !important;
   min-height: auto !important;
-  padding: 0 !important;
+  box-shadow: none !important;
+  transition: background-color 0.2s ease, box-shadow 0.15s ease !important;
 }
 
-.blog-card-compact.blog-orange-card > a,
+.blog-card-compact > a span[aria-hidden="true"] {
+  display: inline-block !important;
+  transition: transform 0.15s ease !important;
+}
+
+.blog-card-compact > a:hover span[aria-hidden="true"],
+.blog-card-compact > a:focus-visible span[aria-hidden="true"] {
+  transform: translateX(2px) !important;
+}
+
+.blog-card-compact.blog-orange-card > a {
+  background-color: #ea580c !important;
+}
+
 .blog-card-compact.blog-orange-card > a:hover,
 .blog-card-compact.blog-orange-card > a:focus-visible {
-  color: #ea580c !important;
+  background-color: #c2410c !important;
+  box-shadow: 0 2px 6px rgba(234, 88, 12, 0.28) !important;
 }
 
-.blog-card-compact.blog-urgent-card > a,
+.blog-card-compact.blog-urgent-card > a {
+  background-color: #dc2626 !important;
+}
+
 .blog-card-compact.blog-urgent-card > a:hover,
 .blog-card-compact.blog-urgent-card > a:focus-visible {
-  color: #dc2626 !important;
+  background-color: #b91c1c !important;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.28) !important;
 }
 
-.blog-card-compact.blog-amber-card > a,
+.blog-card-compact.blog-amber-card > a {
+  background-color: #f59e0b !important;
+}
+
 .blog-card-compact.blog-amber-card > a:hover,
 .blog-card-compact.blog-amber-card > a:focus-visible {
-  color: #b45309 !important;
+  background-color: #d97706 !important;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.32) !important;
 }
 
-.blog-card-compact:not(.blog-orange-card):not(.blog-urgent-card):not(.blog-amber-card) > a,
+.blog-card-compact:not(.blog-orange-card):not(.blog-urgent-card):not(.blog-amber-card) > a {
+  background-color: var(--color-brand) !important;
+}
+
 .blog-card-compact:not(.blog-orange-card):not(.blog-urgent-card):not(.blog-amber-card) > a:hover,
 .blog-card-compact:not(.blog-orange-card):not(.blog-urgent-card):not(.blog-amber-card) > a:focus-visible {
-  color: var(--color-brand) !important;
+  background-color: var(--color-brand-dark) !important;
+  box-shadow: 0 2px 6px rgba(21, 101, 192, 0.28) !important;
 }
 
 .category-chip {
