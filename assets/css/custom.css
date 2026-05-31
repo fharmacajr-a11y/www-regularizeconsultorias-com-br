@@ -746,3 +746,46 @@ main > article > header .category-chip {
     height: 1.375rem;
   }
 }
+
+/* ---------- 13. CTA dos cards em destaque: estilo pill + seta animada ---------- */
+/* Escopo restrito a .blog-featured-card — não afeta .blog-card-compact */
+
+.blog-featured-card .blog-orange-button {
+  border-radius: 9999px;
+  padding: 0.625rem 1.375rem;
+  gap: 0.5rem;
+  transition: background-color 0.2s ease, box-shadow 0.15s ease;
+}
+
+.blog-featured-card .blog-orange-button span[aria-hidden="true"] {
+  display: inline-block;
+  transition: transform 0.15s ease;
+}
+
+.blog-featured-card .blog-orange-button:hover {
+  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.28);
+}
+
+.blog-featured-card .blog-orange-button:hover span[aria-hidden="true"] {
+  transform: translateX(2px);
+}
+
+.blog-featured-card.blog-urgent-card > a {
+  border-radius: 9999px;
+  padding: 0.625rem 1.375rem;
+  gap: 0.5rem;
+  transition: background-color 0.2s ease, box-shadow 0.15s ease;
+}
+
+.blog-featured-card.blog-urgent-card > a span[aria-hidden="true"] {
+  display: inline-block;
+  transition: transform 0.15s ease;
+}
+
+.blog-featured-card.blog-urgent-card > a:hover {
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.28);
+}
+
+.blog-featured-card.blog-urgent-card > a:hover span[aria-hidden="true"] {
+  transform: translateX(2px);
+}
