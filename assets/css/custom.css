@@ -175,7 +175,7 @@ footer img[alt="Regularize Consultoria"] {
   display: block;
 }
 
-/* ---------- 12. Blog e artigos ---------- */
+/* ---------- 12. Notícias ---------- */
 .blog-filter-button[aria-pressed="true"] {
   background-color: var(--color-brand);
   color: #fff;
