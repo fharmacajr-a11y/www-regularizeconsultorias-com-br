@@ -142,7 +142,8 @@ h1, h2 {
 }
 
 /* ---------- 10. Navbar tablet: evita compressao em larguras intermediarias ---------- */
-@media (max-width: 1180px) {
+/* Abaixo de 900px: hamburger; de 900px a 1180px: nav visível compacta; acima: nav completa */
+@media (max-width: 899px) {
   #navbar > div:first-child > div > nav {
     display: none !important;
   }
@@ -163,9 +164,16 @@ h1, h2 {
   }
 }
 
-@media (min-width: 768px) and (max-width: 1180px) {
+@media (min-width: 768px) and (max-width: 899px) {
   #navbar #mobile-menu a[href="/comunicado/"] {
     display: none !important;
+  }
+}
+
+/* Nav compacta em telas intermediárias (900–1180px) */
+@media (min-width: 900px) and (max-width: 1180px) {
+  #navbar > div:first-child > div > nav {
+    gap: 1.25rem;
   }
 }
 
