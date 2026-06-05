@@ -177,6 +177,11 @@ h1, h2 {
   }
 }
 
+/* ---------- Equipe ---------- */
+.team-card-list {
+  padding-left: 1.5rem;
+}
+
 /* ---------- 11. Footer logo badge ---------- */
 /* O logo tem fundo branco; o badge aplica padding + rounded para encaixar no footer escuro */
 footer img[alt="Regularize Consultoria"] {
