@@ -323,6 +323,15 @@ footer li a {
 }
 
 @media (min-width: 640px) and (max-width: 767px) {
+  .about-hero-section {
+    padding-top: 2.75rem;
+    padding-bottom: 2.75rem;
+  }
+
+  .about-hero-content p {
+    max-width: 38rem;
+  }
+
   .about-principles-grid,
   .about-audience-grid {
     max-width: 30rem;
@@ -335,6 +344,14 @@ footer li a {
 }
 
 @media (min-width: 640px) and (max-width: 1279px) {
+  .about-hero-content {
+    margin-left: clamp(0.5rem, 2vw, 2rem);
+  }
+
+  .about-hero-content p {
+    max-width: 48rem;
+  }
+
   .about-principles-section {
     padding-bottom: 3rem;
   }
@@ -352,6 +369,11 @@ footer li a {
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
+  .about-hero-section {
+    padding-top: 3.25rem;
+    padding-bottom: 3.25rem;
+  }
+
   .institutional-cta-section {
     padding-top: 4rem;
     padding-bottom: 4rem;
@@ -371,6 +393,11 @@ footer li a {
 }
 
 @media (min-width: 1024px) and (max-width: 1279px) {
+  .about-hero-section {
+    padding-top: 3.25rem;
+    padding-bottom: 3.25rem;
+  }
+
   .institutional-cta-section {
     padding-top: 4rem;
     padding-bottom: 4rem;
