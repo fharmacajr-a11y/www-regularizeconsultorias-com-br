@@ -228,6 +228,11 @@ footer li a {
   .about-audience-grid {
     max-width: 30rem;
   }
+
+  .institutional-cta-section {
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
+  }
 }
 
 @media (min-width: 640px) and (max-width: 1279px) {
@@ -245,12 +250,14 @@ footer li a {
     padding-bottom: 3rem;
   }
 
-  .about-final-cta-section {
-    padding-top: 4rem;
-  }
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
+  .institutional-cta-section {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+
   .about-principles-grid,
   .about-audience-grid {
     max-width: 54rem;
@@ -265,6 +272,11 @@ footer li a {
 }
 
 @media (min-width: 1024px) and (max-width: 1279px) {
+  .institutional-cta-section {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+
   .about-principles-grid,
   .about-audience-grid {
     max-width: 70rem;
