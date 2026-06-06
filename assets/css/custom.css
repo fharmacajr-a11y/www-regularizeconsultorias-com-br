@@ -188,6 +188,86 @@ footer img[alt="Regularize Consultoria"] {
   display: block;
 }
 
+.home-about-cards-grid {
+  align-items: stretch;
+  max-width: 26rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.home-about-cards-grid > div,
+.home-services-grid > a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+}
+
+.home-services-grid > a > div:first-child {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.home-about-cards-grid h3,
+.home-about-cards-grid p,
+.home-services-grid h3,
+.home-services-grid p {
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .home-about-cards-grid {
+    max-width: 70rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1279px) {
+  .home-about-section {
+    padding-bottom: 2.75rem;
+  }
+
+  .home-services-section {
+    padding-top: 2.75rem;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1279px) {
+  .home-services-section {
+    padding-bottom: 2.75rem;
+  }
+
+  .home-services-section + section {
+    padding-top: 2.75rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .home-hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .home-hero-copy {
+    grid-column: auto;
+  }
+
+  .home-hero-mark {
+    display: none;
+  }
+
+  .home-services-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .home-about-cards-grid {
+    gap: 2rem;
+  }
+}
+
 /* ---------- 12. Notícias ---------- */
 .blog-filter-button[aria-pressed="true"] {
   background-color: var(--color-brand);
