@@ -197,6 +197,95 @@ footer li a {
   overflow-wrap: anywhere;
 }
 
+.about-principles-grid,
+.about-audience-grid {
+  align-items: stretch;
+  max-width: 26rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.about-principles-card,
+.about-audience-card {
+  height: 100%;
+}
+
+.about-principles-card > div:first-child {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.about-principles-card h3 {
+  text-align: center;
+}
+
+.about-principles-card p {
+  text-align: center;
+}
+
+@media (min-width: 640px) and (max-width: 767px) {
+  .about-principles-grid,
+  .about-audience-grid {
+    max-width: 30rem;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1279px) {
+  .about-principles-section {
+    padding-bottom: 3rem;
+  }
+
+  .about-history-section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  .about-audience-section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  .about-final-cta-section {
+    padding-top: 4rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .about-principles-grid,
+  .about-audience-grid {
+    max-width: 54rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .about-principles-card,
+  .about-audience-card {
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .about-principles-grid,
+  .about-audience-grid {
+    max-width: 70rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  .about-principles-card,
+  .about-audience-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .about-principles-grid,
+  .about-audience-grid {
+    max-width: 70rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 .home-about-cards-grid {
   align-items: stretch;
   max-width: 26rem;
