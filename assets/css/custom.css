@@ -188,6 +188,15 @@ footer img[alt="Regularize Consultoria"] {
   display: block;
 }
 
+footer li,
+footer li a {
+  min-width: 0;
+}
+
+footer li a {
+  overflow-wrap: anywhere;
+}
+
 .home-about-cards-grid {
   align-items: stretch;
   max-width: 26rem;
