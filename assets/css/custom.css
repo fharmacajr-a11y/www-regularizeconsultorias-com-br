@@ -182,6 +182,105 @@ h1, h2 {
   padding-left: 1.5rem;
 }
 
+.services-grid {
+  align-items: stretch;
+}
+
+.services-grid > article {
+  height: 100%;
+}
+
+@media (min-width: 640px) and (max-width: 767px) {
+  .services-hero-section {
+    padding-top: 2.75rem;
+    padding-bottom: 2.75rem;
+  }
+
+  .services-list-section {
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
+  }
+
+  .services-grid {
+    max-width: 30rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1279px) {
+  .services-grid > article > div:first-child {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .services-grid h3,
+  .services-grid p {
+    text-align: center;
+  }
+
+  .services-hero-section p {
+    max-width: 48rem;
+  }
+
+  .services-hero-content {
+    margin-left: clamp(0.5rem, 2vw, 2rem);
+  }
+
+  .services-grid ul {
+    max-width: 22rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .services-grid li {
+    align-items: flex-start;
+    gap: 0.625rem;
+  }
+
+  .services-grid li svg {
+    margin-top: 0.125rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .services-hero-section {
+    padding-top: 3.25rem;
+    padding-bottom: 3.25rem;
+  }
+
+  .services-list-section {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+
+  .services-grid {
+    max-width: 54rem;
+    margin-left: auto;
+    margin-right: auto;
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .services-hero-section {
+    padding-top: 3.25rem;
+    padding-bottom: 3.25rem;
+  }
+
+  .services-list-section {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+
+  .services-grid {
+    max-width: 62rem;
+    margin-left: auto;
+    margin-right: auto;
+    gap: 1.5rem;
+  }
+}
+
 /* ---------- 11. Footer logo badge ---------- */
 /* O logo tem fundo branco; o badge aplica padding + rounded para encaixar no footer escuro */
 footer img[alt="Regularize Consultoria"] {
