@@ -182,6 +182,20 @@ h1, h2 {
   padding-left: 1.5rem;
 }
 
+.team-overview-grid,
+.team-work-grid,
+.team-fronts-grid,
+.team-direction-grid {
+  align-items: stretch;
+}
+
+.team-overview-grid > article,
+.team-work-grid > article,
+.team-fronts-grid > article,
+.team-direction-grid > div {
+  height: 100%;
+}
+
 .services-grid {
   align-items: stretch;
 }
@@ -191,6 +205,32 @@ h1, h2 {
 }
 
 @media (min-width: 640px) and (max-width: 767px) {
+  .team-hero-section {
+    padding-top: 2.75rem;
+    padding-bottom: 2.75rem;
+  }
+
+  .team-hero-content {
+    margin-left: clamp(0.5rem, 2vw, 2rem);
+  }
+
+  .team-hero-content p {
+    max-width: 48rem;
+  }
+
+  .team-overview-grid,
+  .team-work-grid,
+  .team-fronts-grid,
+  .team-direction-grid {
+    max-width: 34rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .team-overview-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .services-hero-section {
     padding-top: 2.75rem;
     padding-bottom: 2.75rem;
@@ -209,6 +249,69 @@ h1, h2 {
 }
 
 @media (min-width: 640px) and (max-width: 1279px) {
+  .team-hero-content {
+    margin-left: clamp(0.5rem, 2vw, 2rem);
+  }
+
+  .team-hero-content p {
+    max-width: 48rem;
+  }
+
+  .team-overview-section {
+    padding-top: 3rem;
+    padding-bottom: 2.75rem;
+  }
+
+  .team-overview-grid {
+    align-items: flex-start;
+  }
+
+  .team-overview-grid > article {
+    height: auto;
+  }
+
+  .team-work-section {
+    padding-top: 2.75rem;
+    padding-bottom: 3.5rem;
+  }
+
+  .team-work-section > div > div:first-child {
+    margin-bottom: 2.5rem;
+  }
+
+  .team-fronts-section,
+  .team-direction-section {
+    padding-top: 3.25rem;
+    padding-bottom: 3.5rem;
+  }
+
+  .team-direction-grid {
+    gap: 0.875rem;
+  }
+
+  .team-direction-card {
+    padding: 1.25rem;
+  }
+
+  .team-direction-card > div:first-child {
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0.75rem;
+  }
+
+  .team-direction-card h2 {
+    text-align: center;
+    font-size: 1.5rem;
+    line-height: 1.25;
+    margin-bottom: 0.625rem;
+  }
+
+  .team-direction-card p {
+    text-align: left;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
   .services-grid > article > div:first-child {
     margin-left: auto;
     margin-right: auto;
@@ -244,6 +347,41 @@ h1, h2 {
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
+  .team-hero-section {
+    padding-top: 3.25rem;
+    padding-bottom: 3.25rem;
+  }
+
+  .team-work-grid {
+    max-width: 56rem;
+    margin-left: auto;
+    margin-right: auto;
+    gap: 1rem;
+  }
+
+  .team-overview-grid {
+    max-width: 56rem;
+    margin-left: auto;
+    margin-right: auto;
+    gap: 1rem;
+  }
+
+  .team-fronts-grid {
+    max-width: 56rem;
+    margin-left: auto;
+    margin-right: auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .team-direction-grid {
+    max-width: 56rem;
+    margin-left: auto;
+    margin-right: auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
   .services-hero-section {
     padding-top: 3.25rem;
     padding-bottom: 3.25rem;
@@ -263,6 +401,22 @@ h1, h2 {
 }
 
 @media (min-width: 1024px) and (max-width: 1279px) {
+  .team-hero-section {
+    padding-top: 3.25rem;
+    padding-bottom: 3.25rem;
+  }
+
+  .team-direction-card h2 {
+    font-size: 1.625rem;
+  }
+
+  .team-fronts-grid {
+    max-width: 62rem;
+    margin-left: auto;
+    margin-right: auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .services-hero-section {
     padding-top: 3.25rem;
     padding-bottom: 3.25rem;
@@ -662,7 +816,6 @@ main > article > header span.bg-white\/10:not(.category-chip) {
   line-height: 1 !important;
   text-decoration: none !important;
   color: #fff !important;
-  min-height: auto !important;
   box-shadow: none !important;
   transition: background-color 0.2s ease, box-shadow 0.15s ease !important;
 }
