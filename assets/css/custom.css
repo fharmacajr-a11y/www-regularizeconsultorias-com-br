@@ -189,6 +189,24 @@ h1, h2 {
   align-items: stretch;
 }
 
+.team-people-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.team-people-column {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+  align-content: start;
+}
+
+.team-person-card {
+  height: auto;
+}
+
 .team-overview-grid > article,
 .team-work-grid > article,
 .team-fronts-grid > article,
@@ -231,6 +249,11 @@ h1, h2 {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .team-people-layout,
+  .team-people-column {
+    gap: 1.25rem;
+  }
+
   .services-hero-section {
     padding-top: 2.75rem;
     padding-bottom: 2.75rem;
@@ -259,7 +282,7 @@ h1, h2 {
 
   .team-overview-section {
     padding-top: 3rem;
-    padding-bottom: 2.75rem;
+    padding-bottom: 2.25rem;
   }
 
   .team-overview-grid {
@@ -271,7 +294,7 @@ h1, h2 {
   }
 
   .team-work-section {
-    padding-top: 2.75rem;
+    padding-top: 2.25rem;
     padding-bottom: 3.5rem;
   }
 
@@ -346,6 +369,24 @@ h1, h2 {
   }
 }
 
+@media (min-width: 768px) {
+  .team-people-layout {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) and (max-width: 899px) {
+  .team-person-card {
+    padding: 1.25rem;
+  }
+
+  .team-card-list {
+    padding-left: 1rem;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+  }
+}
+
 @media (min-width: 768px) and (max-width: 1023px) {
   .team-hero-section {
     padding-top: 3.25rem;
@@ -363,6 +404,10 @@ h1, h2 {
     max-width: 56rem;
     margin-left: auto;
     margin-right: auto;
+    gap: 1rem;
+  }
+
+  .team-people-column {
     gap: 1rem;
   }
 
@@ -408,6 +453,17 @@ h1, h2 {
 
   .team-direction-card h2 {
     font-size: 1.625rem;
+  }
+
+  .team-overview-grid {
+    max-width: 62rem;
+    margin-left: auto;
+    margin-right: auto;
+    gap: 1.5rem;
+  }
+
+  .team-people-column {
+    gap: 1.25rem;
   }
 
   .team-fronts-grid {
