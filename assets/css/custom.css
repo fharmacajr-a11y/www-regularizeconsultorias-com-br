@@ -471,6 +471,14 @@ footer li a {
 }
 
 @media (min-width: 640px) and (max-width: 1279px) {
+  .home-hero-content {
+    margin-left: clamp(0.5rem, 2vw, 2rem);
+  }
+
+  .home-hero-copy p {
+    max-width: 48rem;
+  }
+
   .home-services-section {
     padding-bottom: 2.75rem;
   }
@@ -481,6 +489,11 @@ footer li a {
 }
 
 @media (min-width: 1024px) and (max-width: 1279px) {
+  .home-hero-section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
   .home-hero-grid {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -495,6 +508,13 @@ footer li a {
 
   .home-services-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .home-hero-section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
   }
 }
 
