@@ -953,8 +953,8 @@ footer li a {
 
 @media (min-width: 768px) and (max-width: 1023px) {
   .about-hero-section {
-    padding-top: 3.25rem;
-    padding-bottom: 3.25rem;
+    padding-top: clamp(2.625rem, 5vw, 3rem);
+    padding-bottom: clamp(2.625rem, 5vw, 3rem);
   }
 
   .institutional-cta-section {
@@ -972,6 +972,98 @@ footer li a {
   .about-principles-card,
   .about-audience-card {
     padding: 1rem;
+  }
+}
+
+/* ===== Ajuste fino tipografia: /sobre/ em tablet/meia-tela (768–1023) ===== */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Reduz margem abaixo dos h2 apenas na seção Sobre */
+  .about-principles-section h2,
+  .about-history-section h2,
+  .about-audience-section h2 {
+    margin-bottom: 14px;
+  }
+
+  /* Cards: título e texto alinhados ao padrão da Equipe */
+  .about-principles-card h3,
+  .about-audience-card h3 {
+    font-size: 16px;
+    line-height: 1.32;
+    font-weight: 700;
+  }
+
+  .about-principles-card p,
+  .about-audience-card p {
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 400;
+  }
+}
+
+/* ===== Ajustes específicos para /sobre/ em tablet / meia-tela ===== */
+@media (min-width: 768px) and (max-width: 911px) {
+  /* Hero um pouco mais compacto e títulos legíveis */
+  .about-hero-section {
+    padding-top: clamp(2.625rem, 5vw, 3rem);
+    padding-bottom: clamp(2.625rem, 5vw, 3rem);
+  }
+
+  .about-hero-content h1 {
+    font-size: 3rem;
+    line-height: 1.05;
+    margin-bottom: 0.625rem;
+  }
+
+  .about-hero-content p {
+    max-width: 48rem;
+    line-height: 1.48;
+  }
+
+  /* Evitar 3 colunas estreitas — usar 2 colunas e centralizar quando houver 1 item sobrando */
+  .about-principles-grid,
+  .about-audience-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 56rem;
+    gap: 1rem;
+  }
+
+  .about-principles-card,
+  .about-audience-card {
+    padding: 1.25rem;
+  }
+
+  .about-principles-grid > div:nth-child(3),
+  .about-audience-grid > div:nth-child(3) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    max-width: 48rem;
+  }
+}
+
+@media (min-width: 912px) and (max-width: 1023px) {
+  /* 3 colunas com espaçamento controlado para evitar cards muito altos/estreitos */
+  .about-hero-section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  .about-hero-content h1 {
+    font-size: 3rem;
+    line-height: 1.05;
+    margin-bottom: 0.625rem;
+  }
+
+  .about-principles-grid,
+  .about-audience-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 62rem;
+    gap: 1rem;
+  }
+
+  .about-principles-card,
+  .about-audience-card {
+    padding: 1rem 1.25rem;
+    min-height: 10rem;
   }
 }
 
