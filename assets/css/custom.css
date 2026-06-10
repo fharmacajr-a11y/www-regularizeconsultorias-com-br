@@ -2312,7 +2312,7 @@ main > article > header .category-chip {
   border-color: var(--color-brand) !important;
 }
 
-/* Tablet/meia-tela: Home e Sobre */
+/* Tablet/meia-tela: Home — Como trabalhamos e CTA */
 @media (min-width: 768px) and (max-width: 1024px) {
   main > section.pt-6.pb-10.sm\:py-16.bg-white .grid.grid-cols-1.xl\:grid-cols-3 > div:first-child {
     background: transparent;
@@ -2338,8 +2338,7 @@ main > article > header .category-chip {
     text-align: center;
   }
 
-  main > section.pt-6.pb-10.sm\:py-16.bg-white + .institutional-cta-section .flex.flex-col.sm\:flex-row,
-  .about-final-cta-section .flex.flex-col.sm\:flex-row {
+  main > section.pt-6.pb-10.sm\:py-16.bg-white + .institutional-cta-section .flex.flex-col.sm\:flex-row {
     display: flex;
     align-items: stretch;
     justify-content: center;
@@ -2349,8 +2348,7 @@ main > article > header .category-chip {
     margin-right: auto;
   }
 
-  main > section.pt-6.pb-10.sm\:py-16.bg-white + .institutional-cta-section .flex.flex-col.sm\:flex-row > a,
-  .about-final-cta-section .flex.flex-col.sm\:flex-row > a {
+  main > section.pt-6.pb-10.sm\:py-16.bg-white + .institutional-cta-section .flex.flex-col.sm\:flex-row > a {
     width: auto;
     flex: 0 1 20rem;
     min-height: 3.25rem;
@@ -2412,7 +2410,7 @@ main > article > header .category-chip {
   }
 }
 
-/* Correção final tablet/meia-tela: Home e Sobre */
+/* Correção final tablet/meia-tela: Home */
 @media (min-width: 768px) and (max-width: 1279px) {
   main > section.pt-6.pb-10.sm\:py-16.bg-white .grid.grid-cols-1.xl\:grid-cols-3 > div:first-child > p {
     background-color: rgba(21, 101, 192, 0.1);
@@ -2422,8 +2420,7 @@ main > article > header .category-chip {
     margin-right: auto;
   }
 
-  .institutional-cta-section .flex.flex-col.sm\:flex-row,
-  .about-final-cta-section .flex.flex-col.sm\:flex-row {
+  body:has(.home-hero-section) .institutional-cta-section:not(.about-final-cta-section) .flex.flex-col.sm\:flex-row {
     justify-content: center;
     gap: 0.75rem;
     max-width: 38rem;
@@ -2431,8 +2428,7 @@ main > article > header .category-chip {
     margin-right: auto;
   }
 
-  .institutional-cta-section .flex.flex-col.sm\:flex-row > a,
-  .about-final-cta-section .flex.flex-col.sm\:flex-row > a {
+  body:has(.home-hero-section) .institutional-cta-section:not(.about-final-cta-section) .flex.flex-col.sm\:flex-row > a {
     flex: 0 1 18rem;
     width: auto;
   }
@@ -2495,12 +2491,12 @@ main > article > header .category-chip {
 
 /* Ajuste final do CTA azul da Home em tablet/meia-tela */
 @media (min-width: 768px) and (max-width: 1279px) {
-  .institutional-cta-section:not(.about-final-cta-section) {
+  body:has(.home-hero-section) .institutional-cta-section:not(.about-final-cta-section) {
     padding-top: 3rem;
     padding-bottom: 3rem;
   }
 
-  .institutional-cta-section:not(.about-final-cta-section) .flex.flex-col.sm\:flex-row {
+  body:has(.home-hero-section) .institutional-cta-section:not(.about-final-cta-section) .flex.flex-col.sm\:flex-row {
     justify-content: center;
     align-items: stretch;
     gap: 0.625rem;
@@ -2509,7 +2505,7 @@ main > article > header .category-chip {
     margin-right: auto;
   }
 
-  .institutional-cta-section:not(.about-final-cta-section) .flex.flex-col.sm\:flex-row > a {
+  body:has(.home-hero-section) .institutional-cta-section:not(.about-final-cta-section) .flex.flex-col.sm\:flex-row > a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
