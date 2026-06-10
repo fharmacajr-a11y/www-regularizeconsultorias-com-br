@@ -2641,3 +2641,59 @@ main > article > header .category-chip {
     line-height: 1.25 !important;
   }
 }
+
+/* ---------- 17. Equipe/Serviços: CTA institucional em tablet/meia-tela ---------- */
+:root {
+  --rc-cta-equipe-servicos-v1-20260610: 1;
+}
+
+/* Mantém o mesmo padrão visual aprovado na Home/Sobre,
+   escopado apenas para as páginas Equipe e Serviços. */
+@media (min-width: 768px) and (max-width: 1279px) {
+  body:has(.team-hero-section) .institutional-cta-section,
+  body:has(.services-hero-section) .institutional-cta-section {
+    padding-top: clamp(2.5rem, 5vw, 3.25rem) !important;
+    padding-bottom: clamp(2.5rem, 5vw, 3rem) !important;
+  }
+
+  body:has(.team-hero-section) .institutional-cta-section h2,
+  body:has(.services-hero-section) .institutional-cta-section h2 {
+    margin-bottom: 0.75rem !important;
+    line-height: 1.12 !important;
+  }
+
+  body:has(.team-hero-section) .institutional-cta-section p,
+  body:has(.services-hero-section) .institutional-cta-section p {
+    max-width: 42rem !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    margin-bottom: 2rem !important;
+    line-height: 1.55 !important;
+  }
+
+  body:has(.team-hero-section) .institutional-cta-section .flex.flex-col.sm\:flex-row,
+  body:has(.services-hero-section) .institutional-cta-section .flex.flex-col.sm\:flex-row {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+    max-width: 42rem !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  body:has(.team-hero-section) .institutional-cta-section .flex.flex-col.sm\:flex-row > a,
+  body:has(.services-hero-section) .institutional-cta-section .flex.flex-col.sm\:flex-row > a {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 1 18.5rem !important;
+    width: auto !important;
+    min-height: 3.25rem !important;
+    padding: 0.875rem 1.25rem !important;
+    text-align: center !important;
+    line-height: 1.25 !important;
+  }
+}
+
