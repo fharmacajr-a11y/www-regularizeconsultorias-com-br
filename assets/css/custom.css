@@ -100,7 +100,9 @@ select:focus-visible {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-/* ---------- 6. Contato: estilos de formulário ---------- */
+/* ---------- 6. Contato: estilos de formulário ----------
+   Base reutilizável dos campos de formulário.
+   Não depende da página /contato/ e pode ser usada em outros formulários. */
 .form-input {
   width: 100%;
   border: 1px solid #e2e8f0;
@@ -124,7 +126,10 @@ select:focus-visible {
   color: #94a3b8;
 }
 
-/* ---------- 6.1. Contato: refinamentos responsivos ---------- */
+/* ---------- 6.1. Contato: base responsiva 768–1279px ----------
+   Escopo atual: página Contato identificada pelo link de CTA
+   "solicitar uma análise". Mantém ajustes gerais de hero, CTA,
+   aside e cards informativos em tablet/meia-tela. */
 @media (min-width: 768px) and (max-width: 1279px) {
   body:has(main a[href*="solicitar%20uma%20an%C3%A1lise"]) main > section:first-of-type {
     padding-top: 3.25rem;
@@ -251,6 +256,9 @@ select:focus-visible {
   }
 }
 
+/* Contato: refinamento tablet menor 768–1023px.
+   Ajusta empilhamento/larguras quando o layout ainda não comporta
+   bem as duas colunas mais largas. */
 @media (min-width: 768px) and (max-width: 1023px) {
   body:has(main a[href*="solicitar%20uma%20an%C3%A1lise"]) main > section:nth-of-type(2) > div > div:first-child {
     max-width: 46rem;
@@ -306,6 +314,9 @@ select:focus-visible {
   }
 }
 
+/* Contato: refinamento meia-tela 912–1279px.
+   Reintroduz a composição em duas colunas e compacta textos/espacamentos
+   para a largura intermediária. */
 @media (min-width: 912px) and (max-width: 1279px) {
   body:has(main a[href*="solicitar%20uma%20an%C3%A1lise"]) main > section:nth-of-type(2) > div > div:first-child {
     grid-template-columns: minmax(0, 1.05fr) minmax(18rem, 0.95fr);
@@ -358,6 +369,8 @@ select:focus-visible {
   }
 }
 
+/* Contato: refinamento desktop estreito 1024–1279px.
+   Ajustes finais de padding para o cartão principal e cards inferiores. */
 @media (min-width: 1024px) and (max-width: 1279px) {
   body:has(main a[href*="solicitar%20uma%20an%C3%A1lise"]) div:has(> a[href*="solicitar%20uma%20an%C3%A1lise"]) {
     padding: 1.625rem 1.75rem;
