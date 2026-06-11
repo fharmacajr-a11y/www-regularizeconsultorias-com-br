@@ -6,6 +6,19 @@
    valores dentro do bloco :root {} abaixo.
    ================================================================ */
 
+/* ================================================================
+   MAPA INTERNO DO ARQUIVO
+   ----------------------------------------------------------------
+   Base global: variáveis, tipografia, navbar, formulários e footer.
+   Páginas: Contato, Equipe/Serviços, Sobre, Home e Notícias.
+   Camadas finais aprovadas: ajustes responsivos de Home, Sobre e
+   CTA de Equipe/Serviços mantidos no fim para preservar a cascata.
+
+   Nesta fase, os comentários apenas organizam a leitura do arquivo.
+   Não alterar a ordem dos blocos sem validação visual, porque a ordem
+   também participa da cascata do CSS.
+   ================================================================ */
+
 /* ---------- 1. Variáveis de cor ---------- */
 :root {
   /* Azul escuro: fundo do hero, navbar hover, blocos de destaque */
@@ -87,7 +100,7 @@ select:focus-visible {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-/* ---------- 6. Estilos de formulário (contato) ---------- */
+/* ---------- 6. Contato: estilos de formulário ---------- */
 .form-input {
   width: 100%;
   border: 1px solid #e2e8f0;
@@ -111,7 +124,7 @@ select:focus-visible {
   color: #94a3b8;
 }
 
-/* ---------- 6.1. Refinos responsivos da página Contato ---------- */
+/* ---------- 6.1. Contato: refinamentos responsivos ---------- */
 @media (min-width: 768px) and (max-width: 1279px) {
   body:has(main a[href*="solicitar%20uma%20an%C3%A1lise"]) main > section:first-of-type {
     padding-top: 3.25rem;
@@ -421,7 +434,7 @@ h1, h2 {
   }
 }
 
-/* ---------- Equipe ---------- */
+/* ---------- 10. Páginas Equipe e Serviços: estrutura base e responsividade ---------- */
 .team-card-list {
   padding-left: 1.5rem;
 }
@@ -1108,7 +1121,7 @@ h1, h2 {
   }
 }
 
-/* ---------- 11. Footer logo badge ---------- */
+/* ---------- 11. Global: footer e ajustes de links ---------- */
 /* O logo tem fundo branco; o badge aplica padding + rounded para encaixar no footer escuro */
 footer img[alt="Regularize Consultoria"] {
   display: block;
@@ -1122,6 +1135,8 @@ footer li a {
 footer li a {
   overflow-wrap: anywhere;
 }
+
+/* ---------- 12. Página Sobre: base e responsividade original ---------- */
 
 .about-principles-grid,
 .about-audience-grid {
@@ -1365,6 +1380,8 @@ footer li a {
   }
 }
 
+/* ---------- 13. Página Home: cards, serviços e hero responsivo ---------- */
+
 .home-about-cards-grid {
   align-items: stretch;
   max-width: 26rem;
@@ -1607,7 +1624,7 @@ footer li a {
   }
 }
 
-/* ---------- 12. Notícias ---------- */
+/* ---------- 14. Notícias e artigos: listagem, chips e corpo editorial ---------- */
 .blog-filter-button[aria-pressed="true"] {
   background-color: var(--color-brand);
   color: #fff;
@@ -2134,7 +2151,7 @@ main > article > header .category-chip {
   }
 }
 
-/* ---------- 8. Botões flutuantes: WhatsApp + Voltar ao Topo ---------- */
+/* ---------- 15. Componentes globais: botões flutuantes ---------- */
 .floating-buttons {
   position: fixed;
   bottom: 1.5rem;
@@ -2210,7 +2227,7 @@ main > article > header .category-chip {
   }
 }
 
-/* ---------- 13. CTA dos cards em destaque: estilo pill + seta animada ---------- */
+/* ---------- 16. Notícias: CTA dos cards em destaque ---------- */
 /* Escopo restrito a .blog-featured-card — não afeta .blog-card-compact */
 
 .blog-featured-card .blog-orange-button {
@@ -2256,7 +2273,7 @@ main > article > header .category-chip {
   transform: translateX(2px);
 }
 
-/* ---------- 14. Borda de destaque — cards em destaque ---------- */
+/* ---------- 17. Notícias: borda de destaque dos cards ---------- */
 /* Borda perceptível nos 5 cards em destaque; excluída de .blog-card-compact via :not() */
 
 #blog-article-list .blog-featured-card:not(.blog-card-compact) {
@@ -2300,7 +2317,15 @@ main > article > header .category-chip {
   border-color: var(--color-brand) !important;
 }
 
-/* Tablet/meia-tela: Home — Como trabalhamos e CTA */
+/* ----------------------------------------------------------------
+   Camadas finais aprovadas
+   ----------------------------------------------------------------
+   Estes blocos ficam no final intencionalmente para vencer regras
+   anteriores sem alterar HTML. Quando o CSS for separado por página,
+   devem ser migrados com cuidado para preservar a ordem efetiva.
+   ---------------------------------------------------------------- */
+
+/* ---------- 18. Camada final aprovada: Home — Como trabalhamos e CTA ---------- */
 @media (min-width: 768px) and (max-width: 1024px) {
   main > section.pt-6.pb-10.sm\:py-16.bg-white .grid.grid-cols-1.xl\:grid-cols-3 > div:first-child {
     background: transparent;
@@ -2346,7 +2371,7 @@ main > article > header .category-chip {
   }
 }
 
-/* Correção final tablet/meia-tela: Home */
+/* Home: refinamento final do selo/pill e botões em tablet/meia-tela */
 @media (min-width: 768px) and (max-width: 1279px) {
   main > section.pt-6.pb-10.sm\:py-16.bg-white .grid.grid-cols-1.xl\:grid-cols-3 > div:first-child > p {
     background-color: rgba(21, 101, 192, 0.1);
@@ -2370,7 +2395,7 @@ main > article > header .category-chip {
   }
 }
 
-/* Ajuste final do CTA azul da Home em tablet/meia-tela */
+/* Home: ajuste final do CTA azul em tablet/meia-tela */
 @media (min-width: 768px) and (max-width: 1279px) {
   body:has(.home-hero-section) .institutional-cta-section:not(.about-final-cta-section) {
     padding-top: 3rem;
@@ -2399,7 +2424,7 @@ main > article > header .category-chip {
   }
 }
 
-/* ---------- 16. Sobre: reparo estável de cards e CTA em tablet/meia-tela ---------- */
+/* ---------- 19. Camada final aprovada: Sobre — cards e CTA em tablet/meia-tela ---------- */
 :root {
   --rc-sobre-stable-v4-20260610: 1;
 }
@@ -2519,7 +2544,7 @@ main > article > header .category-chip {
   }
 }
 
-/* ---------- 17. Equipe/Serviços: CTA institucional em tablet/meia-tela ---------- */
+/* ---------- 20. Camada final aprovada: Equipe/Serviços — CTA institucional ---------- */
 :root {
   --rc-cta-equipe-servicos-v1-20260610: 1;
 }
