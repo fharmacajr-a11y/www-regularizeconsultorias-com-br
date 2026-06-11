@@ -318,25 +318,25 @@
   /* =================================================================
      6. BLOG: busca, filtros e carregar mais na página de notícias
      ================================================================= */
-  function initializeBlogFilters() {
-    var blogList = document.getElementById('blog-article-list');
-    var searchInput = document.getElementById('blog-search');
-    var filterButtons = document.querySelectorAll('[data-blog-category]');
-    var resultCount = document.getElementById('blog-result-count');
-    var emptyState = document.getElementById('blog-empty-state');
-    var sortButtons = document.querySelectorAll('[data-blog-sort]');
+  function initializeNewsFilters() {
+    var newsList = document.getElementById('news-article-list');
+    var searchInput = document.getElementById('news-search');
+    var filterButtons = document.querySelectorAll('[data-news-category]');
+    var resultCount = document.getElementById('news-result-count');
+    var emptyState = document.getElementById('news-empty-state');
+    var sortButtons = document.querySelectorAll('[data-news-sort]');
 
-    if (!blogList || !searchInput || !filterButtons.length || !resultCount || !emptyState) {
+    if (!newsList || !searchInput || !filterButtons.length || !resultCount || !emptyState) {
       return;
     }
 
     var INITIAL_VISIBLE_LIMIT = 5;
-    var articleCards = Array.prototype.slice.call(blogList.querySelectorAll('[data-blog-card]'));
+    var articleCards = Array.prototype.slice.call(newsList.querySelectorAll('[data-news-card]'));
     var activeCategory = 'todos';
     var activeSort = 'desc';
 
     articleCards.forEach(function (card, index) {
-      card.classList.toggle('blog-card-compact', index >= INITIAL_VISIBLE_LIMIT);
+      card.classList.toggle('news-card-compact', index >= INITIAL_VISIBLE_LIMIT);
     });
 
     // --- Carregar mais (mobile-first) ---
@@ -372,7 +372,7 @@
       });
 
       filterButtons.forEach(function (button) {
-        var category = normalizeText(button.getAttribute('data-blog-category'));
+        var category = normalizeText(button.getAttribute('data-news-category'));
         var count = category === 'todos'
           ? articleCards.length
           : (categoryCounts[category] || 0);
@@ -405,7 +405,7 @@
       });
 
       articleCards.forEach(function (card) {
-        blogList.appendChild(card);
+        newsList.appendChild(card);
       });
     }
 
@@ -492,7 +492,7 @@
 
     sortButtons.forEach(function (button) {
       button.addEventListener('click', function () {
-        activeSort = button.getAttribute('data-blog-sort') || 'desc';
+        activeSort = button.getAttribute('data-news-sort') || 'desc';
 
         sortButtons.forEach(function (item) {
           item.setAttribute('aria-pressed', item === button ? 'true' : 'false');
@@ -506,7 +506,7 @@
 
     filterButtons.forEach(function (button) {
       button.addEventListener('click', function () {
-        activeCategory = button.getAttribute('data-blog-category') || 'todos';
+        activeCategory = button.getAttribute('data-news-category') || 'todos';
 
         filterButtons.forEach(function (item) {
           item.setAttribute('aria-pressed', item === button ? 'true' : 'false');
@@ -522,7 +522,7 @@
     updateResults();
   }
 
-  initializeBlogFilters();
+  initializeNewsFilters();
 
   /* =================================================================
      7. IMAGEM DO AVISO: abre ampliada na propria pagina

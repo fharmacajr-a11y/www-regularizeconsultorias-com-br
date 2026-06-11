@@ -33,28 +33,28 @@
    Nesta fase, os subtítulos abaixo apenas documentam o bloco sem alterar regras. */
 
 /* 15.1 Notícias: filtros e estados ativos da listagem */
-.blog-filter-button[aria-pressed="true"] {
+.news-filter-button[aria-pressed="true"] {
   background-color: var(--color-brand);
   color: #fff;
   border-color: var(--color-brand);
 }
 
-.blog-filter-button[aria-pressed="true"] span {
+.news-filter-button[aria-pressed="true"] span {
   color: #fff !important;
 }
 
-.blog-sort-button[aria-pressed="true"] {
+.news-sort-button[aria-pressed="true"] {
   background-color: #fff;
   color: var(--color-brand);
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
 }
 
 /* 15.2 Notícias: cards da listagem e barras decorativas por tipo */
-.blog-news-card {
+.news-card {
   position: relative;
 }
 
-.blog-news-card::before {
+.news-card::before {
   content: "";
   position: absolute;
   top: 0;
@@ -67,7 +67,7 @@
   transition: opacity 0.2s ease;
 }
 
-#blog-article-list .blog-news-card::before {
+#news-article-list .news-card::before {
   left: 1.25rem;
   right: 1.25rem;
   height: 5px;
@@ -75,33 +75,33 @@
   opacity: 1;
 }
 
-.blog-news-card:hover::before,
-.blog-featured-card::before {
+.news-card:hover::before,
+.news-featured-card::before {
   opacity: 1;
 }
 
-.blog-urgent-card::before {
+.news-urgent-card::before {
   height: 5px;
   background: linear-gradient(90deg, #dc2626, #ef4444, #991b1b);
   opacity: 1;
 }
 
-.blog-amber-card::before {
+.news-amber-card::before {
   height: 5px;
   background: linear-gradient(90deg, #d97706, #f59e0b, #fbbf24);
   opacity: 1;
 }
 
-.blog-history-card::before {
+.news-history-card::before {
   background: linear-gradient(90deg, #475569, #64748b, #94a3b8);
   opacity: 1;
 }
 
-.blog-news-card > div:first-of-type > div:first-child > span:not(.category-chip):not([aria-hidden="true"]) {
+.news-card > div:first-of-type > div:first-child > span:not(.category-chip):not([aria-hidden="true"]) {
   text-transform: uppercase;
 }
 
-#blog-article-list .blog-news-card > div:first-of-type > div:first-child > span.bg-brand\/10:not(.category-chip):not([aria-hidden="true"]),
+#news-article-list .news-card > div:first-of-type > div:first-child > span.bg-brand\/10:not(.category-chip):not([aria-hidden="true"]),
 main > article > header span.bg-white\/10:not(.category-chip) {
   background-color: var(--color-brand);
   border-color: var(--color-brand);
@@ -110,50 +110,50 @@ main > article > header span.bg-white\/10:not(.category-chip) {
 }
 
 /* 15.3 Notícias: card compacto e CTAs internos */
-.blog-card-compact {
+.news-card-compact {
   border-color: rgba(21, 101, 192, 0.2) !important;
   border-width: 1px !important;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05) !important;
   padding: 1.25rem !important;
 }
 
-#blog-article-list .blog-news-card.blog-orange-card:hover,
-#blog-article-list .blog-news-card.blog-orange-card:focus-within {
+#news-article-list .news-card.news-orange-card:hover,
+#news-article-list .news-card.news-orange-card:focus-within {
   border-color: rgba(234, 88, 12, 0.45) !important;
 }
 
-#blog-article-list .blog-news-card.blog-urgent-card:hover,
-#blog-article-list .blog-news-card.blog-urgent-card:focus-within {
+#news-article-list .news-card.news-urgent-card:hover,
+#news-article-list .news-card.news-urgent-card:focus-within {
   border-color: rgba(220, 38, 38, 0.48) !important;
 }
 
-#blog-article-list .blog-news-card.blog-amber-card:hover,
-#blog-article-list .blog-news-card.blog-amber-card:focus-within {
+#news-article-list .news-card.news-amber-card:hover,
+#news-article-list .news-card.news-amber-card:focus-within {
   border-color: rgba(217, 119, 6, 0.5) !important;
 }
 
-#blog-article-list .blog-news-card:not(.blog-orange-card):not(.blog-urgent-card):not(.blog-amber-card):hover,
-#blog-article-list .blog-news-card:not(.blog-orange-card):not(.blog-urgent-card):not(.blog-amber-card):focus-within {
+#news-article-list .news-card:not(.news-orange-card):not(.news-urgent-card):not(.news-amber-card):hover,
+#news-article-list .news-card:not(.news-orange-card):not(.news-urgent-card):not(.news-amber-card):focus-within {
   border-color: rgba(21, 101, 192, 0.45) !important;
 }
 
-.blog-card-compact::before {
+.news-card-compact::before {
   opacity: 1;
 }
 
-.blog-card-compact:hover::before,
-.blog-card-compact:focus-within::before {
+.news-card-compact:hover::before,
+.news-card-compact:focus-within::before {
   opacity: 1;
 }
 
-.blog-card-compact h2 {
+.news-card-compact h2 {
   max-width: none !important;
   font-size: 1.25rem !important;
   line-height: 1.25 !important;
   margin-bottom: 0.5rem !important;
 }
 
-.blog-card-compact p {
+.news-card-compact p {
   max-width: none !important;
   color: #64748b !important;
   font-size: 0.875rem !important;
@@ -161,7 +161,7 @@ main > article > header span.bg-white\/10:not(.category-chip) {
   margin-bottom: 1rem !important;
 }
 
-.blog-card-compact > a {
+.news-card-compact > a {
   display: inline-flex !important;
   align-items: center !important;
   gap: 0.375rem !important;
@@ -176,52 +176,52 @@ main > article > header span.bg-white\/10:not(.category-chip) {
   transition: background-color 0.2s ease, box-shadow 0.15s ease !important;
 }
 
-.blog-card-compact > a svg[aria-hidden="true"] {
+.news-card-compact > a svg[aria-hidden="true"] {
   display: inline-block !important;
   transition: transform 0.15s ease !important;
 }
 
-.blog-card-compact > a:hover svg[aria-hidden="true"],
-.blog-card-compact > a:focus-visible svg[aria-hidden="true"] {
+.news-card-compact > a:hover svg[aria-hidden="true"],
+.news-card-compact > a:focus-visible svg[aria-hidden="true"] {
   transform: translateX(2px) !important;
 }
 
-.blog-card-compact.blog-orange-card > a {
+.news-card-compact.news-orange-card > a {
   background-color: #ea580c !important;
 }
 
-.blog-card-compact.blog-orange-card > a:hover,
-.blog-card-compact.blog-orange-card > a:focus-visible {
+.news-card-compact.news-orange-card > a:hover,
+.news-card-compact.news-orange-card > a:focus-visible {
   background-color: #c2410c !important;
   box-shadow: 0 2px 6px rgba(234, 88, 12, 0.28) !important;
 }
 
-.blog-card-compact.blog-urgent-card > a {
+.news-card-compact.news-urgent-card > a {
   background-color: #dc2626 !important;
 }
 
-.blog-card-compact.blog-urgent-card > a:hover,
-.blog-card-compact.blog-urgent-card > a:focus-visible {
+.news-card-compact.news-urgent-card > a:hover,
+.news-card-compact.news-urgent-card > a:focus-visible {
   background-color: #b91c1c !important;
   box-shadow: 0 2px 6px rgba(220, 38, 38, 0.28) !important;
 }
 
-.blog-card-compact.blog-amber-card > a {
+.news-card-compact.news-amber-card > a {
   background-color: #f59e0b !important;
 }
 
-.blog-card-compact.blog-amber-card > a:hover,
-.blog-card-compact.blog-amber-card > a:focus-visible {
+.news-card-compact.news-amber-card > a:hover,
+.news-card-compact.news-amber-card > a:focus-visible {
   background-color: #d97706 !important;
   box-shadow: 0 2px 6px rgba(245, 158, 11, 0.32) !important;
 }
 
-.blog-card-compact:not(.blog-orange-card):not(.blog-urgent-card):not(.blog-amber-card) > a {
+.news-card-compact:not(.news-orange-card):not(.news-urgent-card):not(.news-amber-card) > a {
   background-color: var(--color-brand) !important;
 }
 
-.blog-card-compact:not(.blog-orange-card):not(.blog-urgent-card):not(.blog-amber-card) > a:hover,
-.blog-card-compact:not(.blog-orange-card):not(.blog-urgent-card):not(.blog-amber-card) > a:focus-visible {
+.news-card-compact:not(.news-orange-card):not(.news-urgent-card):not(.news-amber-card) > a:hover,
+.news-card-compact:not(.news-orange-card):not(.news-urgent-card):not(.news-amber-card) > a:focus-visible {
   background-color: var(--color-brand-dark) !important;
   box-shadow: 0 2px 6px rgba(21, 101, 192, 0.28) !important;
 }
@@ -272,7 +272,7 @@ main > article > header span.bg-white\/10:not(.category-chip) {
 }
 
 @media (min-width: 640px) {
-  .blog-news-card .category-chip {
+  .news-card .category-chip {
     padding-left: 0.75rem;
     padding-right: 0.75rem;
   }
@@ -566,17 +566,17 @@ main > article > header .category-chip {
 }
 
 /* ---------- 17. Notícias: CTA dos cards em destaque ----------
-   Escopo restrito a .blog-featured-card — não afeta .blog-card-compact.
+   Escopo restrito a .news-featured-card — não afeta .news-card-compact.
    Mantém botões destacados separados dos cards compactos da listagem. */
 
-.blog-featured-card .blog-orange-button {
+.news-featured-card .news-orange-button {
   border-radius: 9999px;
   padding: 0.625rem 1.375rem;
   gap: 0.5rem;
   transition: background-color 0.2s ease, box-shadow 0.15s ease;
 }
 
-.blog-featured-card .blog-orange-button svg[aria-hidden="true"] {
+.news-featured-card .news-orange-button svg[aria-hidden="true"] {
   display: inline-block;
   transition: transform 0.15s ease;
 }
@@ -584,75 +584,72 @@ main > article > header .category-chip {
 /* ===== Correção local de overflow decorativo (tablet / meia-tela) ===== */
 /* (Removidas regras experimentais de overflow decorativo — preservando ajustes aprovados) */
 
-.blog-featured-card .blog-orange-button:hover {
+.news-featured-card .news-orange-button:hover {
   box-shadow: 0 2px 8px rgba(234, 88, 12, 0.28);
 }
 
-.blog-featured-card .blog-orange-button:hover svg[aria-hidden="true"] {
+.news-featured-card .news-orange-button:hover svg[aria-hidden="true"] {
   transform: translateX(2px);
 }
 
-.blog-featured-card.blog-urgent-card > a {
+.news-featured-card.news-urgent-card > a {
   border-radius: 9999px;
   padding: 0.625rem 1.375rem;
   gap: 0.5rem;
   transition: background-color 0.2s ease, box-shadow 0.15s ease;
 }
 
-.blog-featured-card.blog-urgent-card > a svg[aria-hidden="true"] {
+.news-featured-card.news-urgent-card > a svg[aria-hidden="true"] {
   display: inline-block;
   transition: transform 0.15s ease;
 }
 
-.blog-featured-card.blog-urgent-card > a:hover {
+.news-featured-card.news-urgent-card > a:hover {
   box-shadow: 0 2px 8px rgba(220, 38, 38, 0.28);
 }
 
-.blog-featured-card.blog-urgent-card > a:hover svg[aria-hidden="true"] {
+.news-featured-card.news-urgent-card > a:hover svg[aria-hidden="true"] {
   transform: translateX(2px);
 }
 
 /* ---------- 18. Notícias: borda de destaque dos cards ----------
-   Borda perceptível nos cards em destaque; excluída de .blog-card-compact via :not().
+   Borda perceptível nos cards em destaque; excluída de .news-card-compact via :not().
    As variações por cor seguem as classes de destaque já usadas na listagem. */
 
-#blog-article-list .blog-featured-card:not(.blog-card-compact) {
+#news-article-list .news-featured-card:not(.news-card-compact) {
   border-width: 2px;
 }
 
-#blog-article-list .blog-featured-card.blog-orange-card:not(.blog-card-compact) {
+#news-article-list .news-featured-card.news-orange-card:not(.news-card-compact) {
   border-color: rgba(234, 88, 12, 0.65);
 }
 
-#blog-article-list .blog-featured-card.blog-urgent-card:not(.blog-card-compact) {
+#news-article-list .news-featured-card.news-urgent-card:not(.news-card-compact) {
   border-color: rgba(220, 38, 38, 0.65);
 }
 
-#blog-article-list .blog-featured-card.blog-amber-card:not(.blog-card-compact) {
+#news-article-list .news-featured-card.news-amber-card:not(.news-card-compact) {
   border-color: rgba(245, 158, 11, 0.70);
 }
 
-#blog-article-list .blog-featured-card:not(.blog-orange-card):not(.blog-urgent-card):not(.blog-amber-card):not(.blog-card-compact) {
+#news-article-list .news-featured-card:not(.news-orange-card):not(.news-urgent-card):not(.news-amber-card):not(.news-card-compact) {
   border-color: rgba(21, 101, 192, 0.60);
 }
 
 /* Hover: borda 100% na cor do tipo, sobrescreve regras genéricas */
-#blog-article-list .blog-featured-card.blog-orange-card:not(.blog-card-compact):hover,
-#blog-article-list .blog-featured-card.blog-orange-card:not(.blog-card-compact):focus-within {
+#news-article-list .news-featured-card.news-orange-card:not(.news-card-compact):hover,
+#news-article-list .news-featured-card.news-orange-card:not(.news-card-compact):focus-within {
   border-color: #ea580c !important;
 }
 
-#blog-article-list .blog-featured-card.blog-urgent-card:not(.blog-card-compact):hover,
-#blog-article-list .blog-featured-card.blog-urgent-card:not(.blog-card-compact):focus-within {
+#news-article-list .news-featured-card.news-urgent-card:not(.news-card-compact):hover,
+#news-article-list .news-featured-card.news-urgent-card:not(.news-card-compact):focus-within {
   border-color: #dc2626 !important;
 }
 
-#blog-article-list .blog-featured-card.blog-amber-card:not(.blog-card-compact):hover,
-#blog-article-list .blog-featured-card.blog-amber-card:not(.blog-card-compact):focus-within {
+#news-article-list .news-featured-card.news-amber-card:not(.news-card-compact):hover,
+#news-article-list .news-featured-card.news-amber-card:not(.news-card-compact):focus-within {
   border-color: #f59e0b !important;
 }
 
-#blog-article-list .blog-featured-card:not(.blog-orange-card):not(.blog-urgent-card):not(.blog-amber-card):not(.blog-card-compact):hover,
-#blog-article-list .blog-featured-card:not(.blog-orange-card):not(.blog-urgent-card):not(.blog-amber-card):not(.blog-card-compact):focus-within {
-  border-color: var(--color-brand) !important;
-}
+#news-article-list .news-featured-card:not(.news-orange-card):not(.news-urgent-card):not(.news-amber-card):not(.news-card-co
