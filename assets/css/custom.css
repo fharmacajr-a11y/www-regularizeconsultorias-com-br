@@ -447,7 +447,7 @@ h1, h2 {
   }
 }
 
-/* ---------- 10. Páginas Equipe e Serviços: estrutura base e responsividade ---------- */
+/* ---------- 11. Páginas Equipe e Serviços: estrutura base e responsividade ---------- */
 .team-card-list {
   padding-left: 1.5rem;
 }
@@ -1106,7 +1106,7 @@ h1, h2 {
   }
 }
 
-/* ---------- 11. Global: footer e ajustes de links ---------- */
+/* ---------- 12. Global: footer e ajustes de links ---------- */
 /* O logo tem fundo branco; o badge aplica padding + rounded para encaixar no footer escuro */
 footer img[alt="Regularize Consultoria"] {
   display: block;
@@ -1121,7 +1121,7 @@ footer li a {
   overflow-wrap: anywhere;
 }
 
-/* ---------- 12. Página Sobre: base e responsividade original ---------- */
+/* ---------- 13. Página Sobre: base e responsividade original ---------- */
 
 .about-principles-grid,
 .about-audience-grid {
@@ -1365,7 +1365,7 @@ footer li a {
   }
 }
 
-/* ---------- 13. Página Home: cards, serviços e hero responsivo ---------- */
+/* ---------- 14. Página Home: cards, serviços e hero responsivo ---------- */
 
 .home-about-cards-grid {
   align-items: stretch;
@@ -1609,11 +1609,11 @@ footer li a {
   }
 }
 
-/* ---------- 14. Notícias e artigos: listagem, chips e corpo editorial ----------
+/* ---------- 15. Notícias e artigos: listagem, chips e corpo editorial ----------
    Mantém juntos os estilos da listagem /noticias/ e dos artigos individuais.
    Nesta fase, os subtítulos abaixo apenas documentam o bloco sem alterar regras. */
 
-/* 14.1 Notícias: filtros e estados ativos da listagem */
+/* 15.1 Notícias: filtros e estados ativos da listagem */
 .blog-filter-button[aria-pressed="true"] {
   background-color: var(--color-brand);
   color: #fff;
@@ -1630,7 +1630,7 @@ footer li a {
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
 }
 
-/* 14.2 Notícias: cards da listagem e barras decorativas por tipo */
+/* 15.2 Notícias: cards da listagem e barras decorativas por tipo */
 .blog-news-card {
   position: relative;
 }
@@ -1690,7 +1690,7 @@ main > article > header span.bg-white\/10:not(.category-chip) {
   color: #fff;
 }
 
-/* 14.3 Notícias: card compacto e CTAs internos */
+/* 15.3 Notícias: card compacto e CTAs internos */
 .blog-card-compact {
   border-color: rgba(21, 101, 192, 0.2) !important;
   border-width: 1px !important;
@@ -1807,7 +1807,7 @@ main > article > header span.bg-white\/10:not(.category-chip) {
   box-shadow: 0 2px 6px rgba(21, 101, 192, 0.28) !important;
 }
 
-/* 14.4 Notícias: chips, categorias e reguladores */
+/* 15.4 Notícias: chips, categorias e reguladores */
 .category-chip {
   display: inline-flex;
   align-items: center;
@@ -1829,7 +1829,7 @@ main > article > header span.bg-white\/10:not(.category-chip) {
   text-transform: none;
 }
 
-/* 14.5 Artigos: metadados e taxonomia */
+/* 15.5 Artigos: metadados e taxonomia */
 .article-meta-groups,
 .article-meta-block {
   display: flex;
@@ -1918,7 +1918,7 @@ main > article > header .category-chip {
   color: #f1f5f9;
 }
 
-/* 14.6 Artigos: corpo editorial */
+/* 15.6 Artigos: corpo editorial */
 .article-body {
   color: #475569;
   font-size: 1rem;
@@ -1972,7 +1972,7 @@ main > article > header .category-chip {
   text-underline-offset: 3px;
 }
 
-/* 14.7 Artigos: aviso importante, CTA final e notícias relacionadas */
+/* 15.7 Artigos: aviso importante, CTA final e notícias relacionadas */
 .article-important-notice {
   background-color: #fff1f2;
   border: 1px solid #fecaca;
@@ -2146,7 +2146,7 @@ main > article > header .category-chip {
   }
 }
 
-/* ---------- 15. Componentes globais: botões flutuantes ---------- */
+/* ---------- 16. Componentes globais: botões flutuantes ---------- */
 .floating-buttons {
   position: fixed;
   bottom: 1.5rem;
@@ -2222,7 +2222,7 @@ main > article > header .category-chip {
   }
 }
 
-/* ---------- 16. Notícias: CTA dos cards em destaque ----------
+/* ---------- 17. Notícias: CTA dos cards em destaque ----------
    Escopo restrito a .blog-featured-card — não afeta .blog-card-compact.
    Mantém botões destacados separados dos cards compactos da listagem. */
 
@@ -2269,7 +2269,7 @@ main > article > header .category-chip {
   transform: translateX(2px);
 }
 
-/* ---------- 17. Notícias: borda de destaque dos cards ----------
+/* ---------- 18. Notícias: borda de destaque dos cards ----------
    Borda perceptível nos cards em destaque; excluída de .blog-card-compact via :not().
    As variações por cor seguem as classes de destaque já usadas na listagem. */
 
@@ -2322,7 +2322,7 @@ main > article > header .category-chip {
    devem ser migrados com cuidado para preservar a ordem efetiva.
    ---------------------------------------------------------------- */
 
-/* ---------- 18. Camada final aprovada: Home — Como trabalhamos e CTA ---------- */
+/* ---------- 19. Camada final aprovada: Home — Como trabalhamos e CTA ---------- */
 @media (min-width: 768px) and (max-width: 1024px) {
   main > section.pt-6.pb-10.sm\:py-16.bg-white .grid.grid-cols-1.xl\:grid-cols-3 > div:first-child {
     background: transparent;
@@ -2421,7 +2421,7 @@ main > article > header .category-chip {
   }
 }
 
-/* ---------- 19. Camada final aprovada: Sobre — cards e CTA em tablet/meia-tela ---------- */
+/* ---------- 20. Camada final aprovada: Sobre — cards e CTA em tablet/meia-tela ---------- */
 :root {
   --rc-sobre-stable-v4-20260610: 1;
 }
@@ -2541,7 +2541,7 @@ main > article > header .category-chip {
   }
 }
 
-/* ---------- 20. Camada final aprovada: Equipe/Serviços — CTA institucional ---------- */
+/* ---------- 21. Camada final aprovada: Equipe/Serviços — CTA institucional ---------- */
 :root {
   --rc-cta-equipe-servicos-v1-20260610: 1;
 }
