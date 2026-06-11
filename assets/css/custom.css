@@ -1609,7 +1609,11 @@ footer li a {
   }
 }
 
-/* ---------- 14. Notícias e artigos: listagem, chips e corpo editorial ---------- */
+/* ---------- 14. Notícias e artigos: listagem, chips e corpo editorial ----------
+   Mantém juntos os estilos da listagem /noticias/ e dos artigos individuais.
+   Nesta fase, os subtítulos abaixo apenas documentam o bloco sem alterar regras. */
+
+/* 14.1 Notícias: filtros e estados ativos da listagem */
 .blog-filter-button[aria-pressed="true"] {
   background-color: var(--color-brand);
   color: #fff;
@@ -1626,6 +1630,7 @@ footer li a {
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
 }
 
+/* 14.2 Notícias: cards da listagem e barras decorativas por tipo */
 .blog-news-card {
   position: relative;
 }
@@ -1685,6 +1690,7 @@ main > article > header span.bg-white\/10:not(.category-chip) {
   color: #fff;
 }
 
+/* 14.3 Notícias: card compacto e CTAs internos */
 .blog-card-compact {
   border-color: rgba(21, 101, 192, 0.2) !important;
   border-width: 1px !important;
@@ -1801,6 +1807,7 @@ main > article > header span.bg-white\/10:not(.category-chip) {
   box-shadow: 0 2px 6px rgba(21, 101, 192, 0.28) !important;
 }
 
+/* 14.4 Notícias: chips, categorias e reguladores */
 .category-chip {
   display: inline-flex;
   align-items: center;
@@ -1822,6 +1829,7 @@ main > article > header span.bg-white\/10:not(.category-chip) {
   text-transform: none;
 }
 
+/* 14.5 Artigos: metadados e taxonomia */
 .article-meta-groups,
 .article-meta-block {
   display: flex;
@@ -1910,6 +1918,7 @@ main > article > header .category-chip {
   color: #f1f5f9;
 }
 
+/* 14.6 Artigos: corpo editorial */
 .article-body {
   color: #475569;
   font-size: 1rem;
@@ -1963,6 +1972,7 @@ main > article > header .category-chip {
   text-underline-offset: 3px;
 }
 
+/* 14.7 Artigos: aviso importante, CTA final e notícias relacionadas */
 .article-important-notice {
   background-color: #fff1f2;
   border: 1px solid #fecaca;
@@ -2212,8 +2222,9 @@ main > article > header .category-chip {
   }
 }
 
-/* ---------- 16. Notícias: CTA dos cards em destaque ---------- */
-/* Escopo restrito a .blog-featured-card — não afeta .blog-card-compact */
+/* ---------- 16. Notícias: CTA dos cards em destaque ----------
+   Escopo restrito a .blog-featured-card — não afeta .blog-card-compact.
+   Mantém botões destacados separados dos cards compactos da listagem. */
 
 .blog-featured-card .blog-orange-button {
   border-radius: 9999px;
@@ -2258,8 +2269,9 @@ main > article > header .category-chip {
   transform: translateX(2px);
 }
 
-/* ---------- 17. Notícias: borda de destaque dos cards ---------- */
-/* Borda perceptível nos 5 cards em destaque; excluída de .blog-card-compact via :not() */
+/* ---------- 17. Notícias: borda de destaque dos cards ----------
+   Borda perceptível nos cards em destaque; excluída de .blog-card-compact via :not().
+   As variações por cor seguem as classes de destaque já usadas na listagem. */
 
 #blog-article-list .blog-featured-card:not(.blog-card-compact) {
   border-width: 2px;
