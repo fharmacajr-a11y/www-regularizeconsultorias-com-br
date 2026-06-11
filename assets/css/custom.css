@@ -711,19 +711,6 @@ h1, h2 {
 }
 
 @media (min-width: 640px) and (max-width: 767px) {
-  .team-hero-section {
-    padding-top: 2.75rem;
-    padding-bottom: 2.75rem;
-  }
-
-  .team-hero-content {
-    margin-left: clamp(0.5rem, 2vw, 2rem);
-  }
-
-  .team-hero-content p {
-    max-width: 48rem;
-  }
-
   .team-overview-grid,
   .team-work-grid,
   .team-fronts-grid,
@@ -735,11 +722,6 @@ h1, h2 {
 
   .team-overview-grid {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .team-people-layout,
-  .team-people-column {
-    gap: 1.25rem;
   }
 
   .services-hero-section {
@@ -864,23 +846,13 @@ h1, h2 {
 }
 
 @media (min-width: 768px) and (max-width: 899px) {
-  .team-person-card {
-    padding: 1.25rem;
-  }
-
   .team-card-list {
-    padding-left: 1rem;
     font-size: 0.8125rem;
     line-height: 1.45;
   }
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
-  .team-hero-section {
-    padding-top: 3.25rem;
-    padding-bottom: 3.25rem;
-  }
-
   .team-work-grid {
     max-width: 56rem;
     margin-left: auto;
