@@ -1430,6 +1430,12 @@ footer li a {
     gap: 1rem;
   }
 
+  .home-about-cards-grid > div:nth-child(3) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    max-width: 48rem;
+  }
+
   .home-about-cards-grid > div {
     padding: 1.25rem;
   }
@@ -1475,24 +1481,6 @@ footer li a {
   .home-hero-copy > span {
     margin-bottom: 0.75rem;
   }
-
-
-/* ===== Ajustes específicos para a grade "Por que escolher" em tablet/meia-tela ===== */
-/* 768–911px: usar 2 colunas, mas centralizar o terceiro card para evitar card solto */
-@media (min-width: 768px) and (max-width: 911px) {
-  .home-about-cards-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    max-width: 56rem;
-    gap: 1rem;
-  }
-
-  /* Se houver 3 cards, fazer o terceiro ocupar a linha inteira e ficar centralizado */
-  .home-about-cards-grid > div:nth-child(3) {
-    grid-column: 1 / -1;
-    justify-self: center;
-    max-width: 48rem;
-  }
-}
 
 /* 912–1279px: usar 3 colunas — melhora o equilíbrio visual antes do breakpoint desktop maior */
 @media (min-width: 912px) and (max-width: 1279px) {
