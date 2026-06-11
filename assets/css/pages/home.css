@@ -1,0 +1,350 @@
+/* ================================================================
+   Regularize Consultoria — CSS separado (rascunho técnico)
+   ----------------------------------------------------------------
+   Gerado a partir de assets/css/custom.css para a fase de separação.
+   Não substitui custom.css/custom.min.css automaticamente.
+   Preserve a ordem de carregamento indicada no README antes de usar.
+   ================================================================ */
+
+/* ---------- 14. Página Home: cards, serviços e hero responsivo ---------- */
+
+.home-about-cards-grid {
+  align-items: stretch;
+  max-width: 26rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.home-about-cards-grid > div,
+.home-services-grid > a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+}
+
+.home-services-grid > a > div:first-child {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.home-about-cards-grid h3,
+.home-about-cards-grid p,
+.home-services-grid h3,
+.home-services-grid p {
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .home-about-cards-grid {
+    max-width: 70rem;
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 911px) {
+  .home-about-section {
+    padding-top: 3rem;
+  }
+
+  .home-about-section {
+    padding-bottom: 1.75rem;
+  }
+
+  .home-about-section > div > div:first-child {
+    margin-bottom: 1.75rem;
+  }
+
+  .home-about-section h2 {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .home-about-section > div > div:first-child p {
+    line-height: 1.55;
+    max-width: 38rem;
+  }
+
+  .home-about-cards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 56rem;
+    gap: 1rem;
+  }
+
+  .home-about-cards-grid > div:nth-child(3) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    max-width: 48rem;
+  }
+
+  .home-about-cards-grid > div {
+    padding: 1.25rem;
+  }
+
+  .home-about-cards-grid > div > div:first-child {
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 0.75rem;
+    border-radius: 0.875rem;
+  }
+
+  .home-about-cards-grid > div > div:first-child svg {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+
+  .home-about-cards-grid h3 {
+    margin-bottom: 0.625rem;
+    font-size: 1.0625rem;
+    line-height: 1.25;
+  }
+
+  .home-about-cards-grid p {
+    font-size: 0.875rem;
+    line-height: 1.52;
+  }
+
+  .home-services-section {
+    padding-top: 2rem;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1279px) {
+  .home-hero-section {
+    padding-top: clamp(2.5rem, 5vw, 3.25rem);
+    padding-bottom: clamp(2.5rem, 5vw, 3.25rem);
+  }
+
+  .home-hero-content {
+    margin-left: clamp(0.5rem, 2vw, 2rem);
+  }
+
+  .home-hero-copy > span {
+    margin-bottom: 0.75rem;
+  }
+
+/* 912–1279px: usar 3 colunas — melhora o equilíbrio visual antes do breakpoint desktop maior */
+@media (min-width: 912px) and (max-width: 1279px) {
+  .home-about-cards-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 62rem;
+    gap: 1.25rem;
+  }
+
+  .home-about-cards-grid > div {
+    padding: 1.25rem;
+  }
+
+  .home-about-cards-grid > div > div:first-child {
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 0.75rem;
+    border-radius: 0.875rem;
+  }
+
+  .home-about-cards-grid > div > div:first-child svg {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+
+  .home-about-cards-grid h3 {
+    margin-bottom: 0.625rem;
+    font-size: 1.0625rem;
+    line-height: 1.25;
+  }
+
+  .home-about-cards-grid p {
+    font-size: 0.875rem;
+    line-height: 1.52;
+  }
+}
+
+  .home-hero-copy h1 {
+    margin-bottom: 0.875rem;
+    line-height: 1.06;
+  }
+
+  .home-hero-copy p {
+    max-width: 48rem;
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+
+  .home-hero-copy .flex.flex-col.sm\:flex-row {
+    gap: 0.75rem;
+  }
+
+  .home-hero-copy a {
+    min-height: 3rem;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .home-services-section {
+    padding-bottom: 2rem;
+  }
+
+  .home-services-section + section {
+    padding-top: 2.75rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .home-hero-section {
+    padding-top: 3.25rem;
+    padding-bottom: 3.25rem;
+  }
+
+  .home-hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .home-hero-copy h1 {
+    max-width: 58rem;
+    font-size: 3rem;
+    line-height: 1.05;
+  }
+
+  .home-hero-copy p {
+    max-width: 56rem;
+  }
+
+  .home-about-cards-grid {
+    max-width: 62rem;
+    gap: 1.25rem;
+  }
+
+  .home-hero-copy {
+    grid-column: auto;
+  }
+
+  .home-hero-mark {
+    display: none;
+  }
+
+  .home-services-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .home-hero-section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  .home-hero-copy h1 {
+    font-size: clamp(2.375rem, 5vw, 2.75rem);
+  }
+
+  .home-hero-copy p {
+    max-width: 46rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .home-about-cards-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2rem;
+  }
+}
+
+/* ---------- 19. Camada final aprovada: Home — Como trabalhamos e CTA ---------- */
+@media (min-width: 768px) and (max-width: 1024px) {
+  main > section.pt-6.pb-10.sm\:py-16.bg-white .grid.grid-cols-1.xl\:grid-cols-3 > div:first-child {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    text-align: center;
+  }
+
+  main > section.pt-6.pb-10.sm\:py-16.bg-white .grid.grid-cols-1.xl\:grid-cols-3 > div:first-child p {
+    display: inline-flex;
+    width: auto;
+    max-width: max-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  main > section.pt-6.pb-10.sm\:py-16.bg-white .home-process-title {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 42rem;
+    text-align: center;
+  }
+
+  main > section.pt-6.pb-10.sm\:py-16.bg-white + .institutional-cta-section .flex.flex-col.sm\:flex-row {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    gap: 1rem;
+    max-width: 42rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  main > section.pt-6.pb-10.sm\:py-16.bg-white + .institutional-cta-section .flex.flex-col.sm\:flex-row > a {
+    width: auto;
+    flex: 0 1 20rem;
+    min-height: 3.25rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    text-align: center;
+  }
+}
+
+/* Home: refinamento final do selo/pill e botões em tablet/meia-tela */
+@media (min-width: 768px) and (max-width: 1279px) {
+  main > section.pt-6.pb-10.sm\:py-16.bg-white .grid.grid-cols-1.xl\:grid-cols-3 > div:first-child > p {
+    background-color: rgba(21, 101, 192, 0.1);
+    color: var(--color-brand);
+    max-width: max-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  body:has(.home-hero-section) .institutional-cta-section:not(.about-final-cta-section) .flex.flex-col.sm\:flex-row {
+    justify-content: center;
+    gap: 0.75rem;
+    max-width: 38rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  body:has(.home-hero-section) .institutional-cta-section:not(.about-final-cta-section) .flex.flex-col.sm\:flex-row > a {
+    flex: 0 1 18rem;
+    width: auto;
+  }
+}
+
+/* Home: ajuste final do CTA azul em tablet/meia-tela */
+@media (min-width: 768px) and (max-width: 1279px) {
+  body:has(.home-hero-section) .institutional-cta-section:not(.about-final-cta-section) {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  body:has(.home-hero-section) .institutional-cta-section:not(.about-final-cta-section) .flex.flex-col.sm\:flex-row {
+    justify-content: center;
+    align-items: stretch;
+    gap: 0.625rem;
+    max-width: 35rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  body:has(.home-hero-section) .institutional-cta-section:not(.about-final-cta-section) .flex.flex-col.sm\:flex-row > a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 1 17rem;
+    width: auto;
+    min-height: 3rem;
+    padding: 0.75rem 1rem;
+    text-align: center;
+    line-height: 1.25;
+  }
+}

@@ -1,0 +1,210 @@
+/* ================================================================
+   Regularize Consultoria — CSS separado (rascunho técnico)
+   ----------------------------------------------------------------
+   Gerado a partir de assets/css/custom.css para a fase de separação.
+   Não substitui custom.css/custom.min.css automaticamente.
+   Preserve a ordem de carregamento indicada no README antes de usar.
+   ================================================================ */
+
+/* ---------- 3. Navbar: sombra suave ao fazer scroll ---------- */
+/* Classe adicionada via JavaScript (main.js) quando window.scrollY > 10 */
+#navbar.scrolled {
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- 4. Link ativo na navbar ---------- */
+/* Classe adicionada via JavaScript com base na URL atual da página */
+/* Escopo restrito a <nav> para não afetar o botão CTA do header */
+/* Sem font-weight aqui: evita layout shift quando o JS adiciona a classe pós-render */
+#navbar nav a.active {
+  color: var(--color-brand) !important;
+}
+
+/* ---------- 5. Focus ring acessível ---------- */
+/* Substitui o outline padrão do browser por um mais limpo e consistente */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- 6. Contato: estilos de formulário ----------
+   Base reutilizável dos campos de formulário.
+   Não depende da página /contato/ e pode ser usada em outros formulários. */
+.form-input {
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: #1e293b;
+  background-color: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+  appearance: none;
+}
+
+.form-input:focus {
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.15);
+}
+
+.form-input::placeholder {
+  color: #94a3b8;
+}
+
+/* ---------- 7. Animação de entrada suave (opcional para cards) ---------- */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInUp 0.45s ease forwards;
+}
+
+/* ---------- 9. Navbar logo — transição suave ---------- */
+#navbar img {
+  transition: opacity 0.2s ease;
+}
+#navbar img:hover {
+  opacity: 0.85;
+}
+
+/* ---------- 10. Navbar tablet: evita compressao em larguras intermediarias ---------- */
+/* Abaixo de 900px: hamburger; de 900px a 1180px: nav visível compacta; acima: nav completa */
+@media (max-width: 899px) {
+  #navbar > div:first-child > div > nav {
+    display: none !important;
+  }
+
+  #navbar > div:first-child > div > div > a[href="/comunicado/"] {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  #navbar #menu-toggle {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #navbar #mobile-menu:not(.hidden) {
+    display: block !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 899px) {
+  #navbar #mobile-menu a[href="/comunicado/"] {
+    display: none !important;
+  }
+}
+
+/* Nav compacta em telas intermediárias (900–1180px) */
+@media (min-width: 900px) and (max-width: 1180px) {
+  #navbar > div:first-child > div > nav {
+    gap: 1.25rem;
+  }
+}
+
+/* ---------- 12. Global: footer e ajustes de links ---------- */
+/* O logo tem fundo branco; o badge aplica padding + rounded para encaixar no footer escuro */
+footer img[alt="Regularize Consultoria"] {
+  display: block;
+}
+
+footer li,
+footer li a {
+  min-width: 0;
+}
+
+footer li a {
+  overflow-wrap: anywhere;
+}
+
+/* ---------- 16. Componentes globais: botões flutuantes ---------- */
+.floating-buttons {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  z-index: 9999;
+}
+
+.floating-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  transition: transform 0.2s ease, box-shadow 0.2s ease,
+              opacity 0.3s ease, visibility 0.3s ease;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.floating-btn svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+}
+
+.floating-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* WhatsApp – verde oficial */
+.floating-btn--whatsapp {
+  background-color: #25d366;
+}
+
+/* Voltar ao topo – cor da brand; oculto por padrão */
+.floating-btn--top {
+  background-color: var(--color-brand);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.floating-btn--top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Mobile: botões levemente menores para não sobrepor conteúdo */
+@media (max-width: 640px) {
+  .floating-buttons {
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  .floating-btn {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .floating-btn svg {
+    width: 1.375rem;
+    height: 1.375rem;
+  }
+}

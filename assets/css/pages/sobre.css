@@ -1,0 +1,371 @@
+/* ================================================================
+   Regularize Consultoria — CSS separado (rascunho técnico)
+   ----------------------------------------------------------------
+   Gerado a partir de assets/css/custom.css para a fase de separação.
+   Não substitui custom.css/custom.min.css automaticamente.
+   Preserve a ordem de carregamento indicada no README antes de usar.
+   ================================================================ */
+
+/* ---------- 13. Página Sobre: base e responsividade original ---------- */
+
+.about-principles-grid,
+.about-audience-grid {
+  align-items: stretch;
+  max-width: 26rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.about-principles-card,
+.about-audience-card {
+  height: 100%;
+}
+
+.about-principles-card > div:first-child {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.about-principles-card h3 {
+  text-align: center;
+}
+
+.about-principles-card p {
+  text-align: center;
+}
+
+@media (min-width: 640px) and (max-width: 767px) {
+  .about-hero-section {
+    padding-top: 2.75rem;
+    padding-bottom: 2.75rem;
+  }
+
+  .about-hero-content p {
+    max-width: 38rem;
+  }
+
+  .about-principles-grid,
+  .about-audience-grid {
+    max-width: 30rem;
+  }
+
+  .institutional-cta-section {
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1279px) {
+  .about-hero-content {
+    margin-left: clamp(0.5rem, 2vw, 2rem);
+  }
+
+  .about-hero-content p {
+    max-width: 48rem;
+  }
+
+  .about-principles-section {
+    padding-bottom: 3rem;
+  }
+
+  .about-history-section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  .about-audience-section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .about-hero-section {
+    padding-top: clamp(2.625rem, 5vw, 3rem);
+    padding-bottom: clamp(2.625rem, 5vw, 3rem);
+  }
+
+  .institutional-cta-section {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+
+  .about-principles-grid,
+  .about-audience-grid {
+    max-width: 54rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .about-principles-card,
+  .about-audience-card {
+    padding: 1rem;
+  }
+}
+
+/* ===== Ajuste fino tipografia: /sobre/ em tablet/meia-tela (768–1023) ===== */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Reduz margem abaixo dos h2 apenas na seção Sobre */
+  .about-principles-section h2,
+  .about-history-section h2,
+  .about-audience-section h2 {
+    margin-bottom: 14px;
+  }
+
+  /* Cards: título e texto alinhados ao padrão da Equipe */
+  .about-principles-card h3,
+  .about-audience-card h3 {
+    font-size: 16px;
+    line-height: 1.32;
+    font-weight: 700;
+  }
+
+  .about-principles-card p,
+  .about-audience-card p {
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 400;
+  }
+}
+
+/* ===== Ajustes específicos para /sobre/ em tablet / meia-tela ===== */
+@media (min-width: 768px) and (max-width: 1279px) {
+  /* Hero um pouco mais compacto e títulos legíveis (mantém espaçamento coerente) */
+  .about-hero-section {
+    padding-top: clamp(2.625rem, 5vw, 3rem);
+    padding-bottom: clamp(2.625rem, 5vw, 3rem);
+  }
+
+  .about-hero-content h1 {
+    font-size: 3rem;
+    line-height: 1.05;
+    margin-bottom: 0.625rem;
+  }
+
+  .about-hero-content p {
+    max-width: 48rem;
+    line-height: 1.48;
+  }
+
+  /* Sobre: usar 3 colunas flexíveis em toda a faixa tablet / meia-tela */
+  .about-principles-grid,
+  .about-audience-grid {
+    width: 100%;
+    max-width: 72rem;
+    margin-left: auto;
+    margin-right: auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.875rem;
+    align-items: stretch;
+  }
+
+  /* Reset de comportamento do terceiro card: sem centralização especial */
+  .about-principles-grid > div:nth-child(3),
+  .about-audience-grid > div:nth-child(3) {
+    grid-column: auto;
+    justify-self: stretch;
+    width: auto;
+    max-width: none;
+  }
+
+  .about-principles-card,
+  .about-audience-card {
+    width: auto;
+    min-width: 0;
+    min-height: 0;
+    padding: 1rem 0.875rem;
+  }
+
+  .about-principles-card h3,
+  .about-audience-card h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    line-height: 1.22;
+  }
+
+  .about-principles-card p,
+  .about-audience-card p {
+    font-size: 0.875rem;
+    line-height: 1.34;
+  }
+}
+
+@media (min-width: 912px) and (max-width: 1023px) {
+  /* 3 colunas com espaçamento controlado para evitar cards muito altos/estreitos */
+  .about-hero-section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  .about-hero-content h1 {
+    font-size: 3rem;
+    line-height: 1.05;
+    margin-bottom: 0.625rem;
+  }
+
+  .about-principles-grid,
+  .about-audience-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 62rem;
+    gap: 1rem;
+  }
+
+  .about-principles-card,
+  .about-audience-card {
+    padding: 1rem 1.25rem;
+    min-height: 10rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .about-hero-section {
+    padding-top: 3.25rem;
+    padding-bottom: 3.25rem;
+  }
+
+  .institutional-cta-section {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+
+  .about-principles-grid,
+  .about-audience-grid {
+    max-width: 70rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  .about-principles-card,
+  .about-audience-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .about-principles-grid,
+  .about-audience-grid {
+    max-width: 70rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ---------- 20. Camada final aprovada: Sobre — cards e CTA em tablet/meia-tela ---------- */
+:root {
+  --rc-sobre-stable-v4-20260610: 1;
+}
+
+/* Cards da página Sobre: mantém 3 colunas em tablet/meia-tela.
+   O !important fica restrito a esta página porque regras utilitárias anteriores
+   podem vencer o grid em alguns breakpoints. */
+@media (min-width: 700px) and (max-width: 1279px) {
+  main .about-principles-section .about-principles-grid,
+  main .about-audience-section .about-audience-grid {
+    display: grid !important;
+    width: 100% !important;
+    max-width: 72rem !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: clamp(0.75rem, 1.2vw, 1rem) !important;
+    align-items: stretch !important;
+  }
+
+  main .about-principles-section .about-principles-grid > *,
+  main .about-audience-section .about-audience-grid > * {
+    min-width: 0 !important;
+  }
+
+  main .about-principles-section .about-principles-grid > div:nth-child(3),
+  main .about-audience-section .about-audience-grid > div:nth-child(3) {
+    grid-column: auto !important;
+    justify-self: stretch !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  main .about-principles-section .about-principles-card,
+  main .about-audience-section .about-audience-card {
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: clamp(1rem, 1.4vw, 1.25rem) clamp(0.875rem, 1.2vw, 1.125rem) !important;
+  }
+
+  main .about-principles-section .about-principles-card > div:first-child,
+  main .about-audience-section .about-audience-card > div:first-child {
+    width: clamp(3rem, 4vw, 3.5rem) !important;
+    height: clamp(3rem, 4vw, 3.5rem) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    margin-bottom: 0.75rem !important;
+    border-radius: 0.875rem !important;
+  }
+
+  main .about-principles-section .about-principles-card > div:first-child svg,
+  main .about-audience-section .about-audience-card > div:first-child svg {
+    width: clamp(1.35rem, 2vw, 1.5rem) !important;
+    height: clamp(1.35rem, 2vw, 1.5rem) !important;
+  }
+
+  main .about-principles-section .about-principles-card h3,
+  main .about-audience-section .about-audience-card h3 {
+    margin-bottom: 0.625rem !important;
+    font-size: clamp(1.0625rem, 1.65vw, 1.25rem) !important;
+    line-height: 1.25 !important;
+  }
+
+  main .about-principles-section .about-principles-card p,
+  main .about-audience-section .about-audience-card p {
+    font-size: clamp(0.9375rem, 1.25vw, 1rem) !important;
+    line-height: 1.52 !important;
+  }
+
+  /* CTA final da Sobre: escopo restrito pela presença da seção da Sobre,
+     evitando atingir a Home ou outras páginas. */
+  body:has(.about-principles-section) .about-final-cta-section,
+  body:has(.about-principles-section) main .institutional-cta-section:last-of-type {
+    padding-top: clamp(2.5rem, 5vw, 3.25rem) !important;
+    padding-bottom: clamp(2.5rem, 5vw, 3rem) !important;
+  }
+
+  body:has(.about-principles-section) .about-final-cta-section h2,
+  body:has(.about-principles-section) main .institutional-cta-section:last-of-type h2 {
+    margin-bottom: 0.75rem !important;
+    line-height: 1.12 !important;
+  }
+
+  body:has(.about-principles-section) .about-final-cta-section p,
+  body:has(.about-principles-section) main .institutional-cta-section:last-of-type p {
+    max-width: 42rem !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    margin-bottom: 2rem !important;
+    line-height: 1.55 !important;
+  }
+
+  body:has(.about-principles-section) .about-final-cta-section .flex.flex-col.sm\:flex-row,
+  body:has(.about-principles-section) main .institutional-cta-section:last-of-type .flex.flex-col.sm\:flex-row {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+    max-width: 42rem !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  body:has(.about-principles-section) .about-final-cta-section .flex.flex-col.sm\:flex-row > a,
+  body:has(.about-principles-section) main .institutional-cta-section:last-of-type .flex.flex-col.sm\:flex-row > a {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 1 18.5rem !important;
+    width: auto !important;
+    min-height: 3.25rem !important;
+    padding: 0.875rem 1.25rem !important;
+    text-align: center !important;
+    line-height: 1.25 !important;
+  }
+}
