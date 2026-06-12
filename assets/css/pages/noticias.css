@@ -97,6 +97,17 @@
   opacity: 1;
 }
 
+/* Removida customização de ::before para evitar alterar a barra superior
+   dos cards "Orientação". Em vez disso, aplicar apenas destaque na borda
+   externa no hover para cards com etiqueta bg-brand/10 (Orientação). */
+
+/* Hover da borda externa para cards de Orientação: usa classe semântica
+   `news-card--orientation` aplicada ao <article> correspondente. */
+#news-article-list .news-card.news-card--orientation:hover,
+#news-article-list .news-card.news-card--orientation:focus-within {
+  border-color: var(--color-brand) !important;
+  box-shadow: 0 8px 24px rgba(21,101,192,0.06) !important;
+}
 .news-card > div:first-of-type > div:first-child > span:not(.category-chip):not([aria-hidden="true"]) {
   text-transform: uppercase;
 }
@@ -132,10 +143,8 @@ main > article > header span.bg-white\/10:not(.category-chip) {
   border-color: rgba(217, 119, 6, 0.5) !important;
 }
 
-#news-article-list .news-card:not(.news-orange-card):not(.news-urgent-card):not(.news-amber-card):hover,
-#news-article-list .news-card:not(.news-orange-card):not(.news-urgent-card):not(.news-amber-card):focus-within {
-  border-color: rgba(21, 101, 192, 0.45) !important;
-}
+/* Removida regra genérica que aplicava borda semi-transparente a cards não laranja/urgent/amber.
+   Preferimos regras específicas por tipo para evitar clareamento/transparência indesejada. */
 
 .news-card-compact::before {
   opacity: 1;
