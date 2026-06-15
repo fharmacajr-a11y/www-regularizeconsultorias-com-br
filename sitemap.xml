@@ -38,9 +38,15 @@
   </url>
   <url>
     <loc>https://www.regularizeconsultorias.com.br/noticias/</loc>
-    <lastmod>2026-06-11</lastmod>
+    <lastmod>2026-06-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.regularizeconsultorias.com.br/noticias/cff-orientacao-liberacao-medicamentos-controlados/</loc>
+    <lastmod>2026-06-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.regularizeconsultorias.com.br/noticias/crf-responsavel-tecnico-farmacias-drogarias/</loc>
