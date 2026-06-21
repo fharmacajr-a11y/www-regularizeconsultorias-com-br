@@ -1,8 +1,8 @@
-/* ================================================================
-   Regularize Consultoria — CSS separado (rascunho técnico)
+﻿/* ================================================================
+  Regularize Consultoria — CSS separado (rascunho técnico)
    ----------------------------------------------------------------
-   Gerado a partir de assets/css/custom.css para a fase de separação.
-   Não substitui custom.css/custom.min.css automaticamente.
+  Gerado a partir de assets/css/custom.css para a fase de separação.
+  Não substitui custom.css/custom.min.css automaticamente.
    Preserve a ordem de carregamento indicada no README antes de usar.
    ================================================================ */
 
@@ -33,8 +33,8 @@ select:focus-visible {
 }
 
 /* ---------- 6. Contato: estilos de formulário ----------
-   Base reutilizável dos campos de formulário.
-   Não depende da página /contato/ e pode ser usada em outros formulários. */
+  Base reutilizável dos campos de formulário.
+  Não depende da página /contato/ e pode ser usada em outros formulários. */
 .form-input {
   width: 100%;
   border: 1px solid #e2e8f0;
@@ -206,5 +206,96 @@ footer li a {
   .floating-btn svg {
     width: 1.375rem;
     height: 1.375rem;
+  }
+}
+
+/* ---------- Hero institucional compartilhado ----------
+  Padroniza breadcrumb, título, subtítulo e espaçamento dos heroes azuis
+  das páginas internas: Sobre, Serviços, Equipe, Contato e Notícias. */
+.institutional-hero-section {
+  padding-top: 5rem !important;
+  padding-bottom: 5rem !important;
+}
+
+.institutional-hero-content {
+  position: relative;
+}
+
+.institutional-hero-breadcrumb {
+  margin-bottom: 1rem !important;
+}
+
+.institutional-hero-breadcrumb-list {
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+}
+
+.institutional-hero-title {
+  color: #fff !important;
+  font-size: clamp(1.875rem, 4vw, 3rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.08 !important;
+  margin-bottom: 0.75rem !important;
+  max-width: 56rem;
+}
+
+.institutional-hero-lead {
+  color: #e2e8f0 !important;
+  font-size: clamp(1rem, 2vw, 1.125rem) !important;
+  line-height: 1.58 !important;
+  margin-bottom: 0 !important;
+  max-width: 48rem !important;
+}
+
+@media (max-width: 639px) {
+  .institutional-hero-section {
+    padding-top: 2.5rem !important;
+    padding-bottom: 2.5rem !important;
+  }
+
+  .institutional-hero-breadcrumb {
+    margin-bottom: 0.875rem !important;
+  }
+
+  .institutional-hero-title {
+    font-size: 1.875rem !important;
+    line-height: 1.15 !important;
+    margin-bottom: 0.625rem !important;
+  }
+
+  .institutional-hero-lead {
+    line-height: 1.55 !important;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .institutional-hero-section {
+    padding-top: clamp(2.625rem, 5vw, 3rem) !important;
+    padding-bottom: clamp(2.625rem, 5vw, 3rem) !important;
+  }
+
+  .institutional-hero-content {
+    margin-left: clamp(0.5rem, 2vw, 2rem) !important;
+  }
+
+  .institutional-hero-title {
+    margin-bottom: 0.625rem !important;
+  }
+
+  .institutional-hero-lead {
+    line-height: 1.48 !important;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .institutional-hero-section {
+    padding-top: 3.25rem !important;
+    padding-bottom: 3.25rem !important;
+  }
+
+  .institutional-hero-content {
+    margin-left: clamp(0.5rem, 2vw, 2rem) !important;
   }
 }
