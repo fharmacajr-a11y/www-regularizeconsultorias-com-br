@@ -28,6 +28,73 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
+/* ---------- Notícias: hero da listagem alinhado ao padrão institucional ---------- */
+.news-hero-content {
+  position: relative;
+}
+
+.news-topic-shortcuts {
+  max-width: 48rem;
+}
+
+.news-topic-shortcuts > span {
+  border-radius: 999px;
+}
+
+@media (max-width: 639px) {
+  .news-hero-section {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .news-hero-content > h1 {
+    margin-bottom: 0.625rem;
+  }
+
+  .news-hero-content > p {
+    line-height: 1.55;
+  }
+
+  .news-topic-shortcuts {
+    gap: 0.5rem;
+  }
+
+  .news-topic-shortcuts > span {
+    padding: 0.25rem 0.625rem;
+    font-size: 0.6875rem;
+    line-height: 1rem;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1279px) {
+  .news-hero-content {
+    margin-left: clamp(0.5rem, 2vw, 2rem);
+  }
+
+  .news-hero-content p {
+    max-width: 48rem;
+    line-height: 1.48;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .news-hero-section {
+    padding-top: clamp(2.625rem, 5vw, 3rem);
+    padding-bottom: clamp(2.625rem, 5vw, 3rem);
+  }
+
+  .news-hero-content > h1 {
+    margin-bottom: 0.625rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .news-hero-section {
+    padding-top: 3.25rem;
+    padding-bottom: 3.25rem;
+  }
+}
+
 /* ---------- 15. Notícias e artigos: listagem, chips e corpo editorial ----------
    Mantém juntos os estilos da listagem /noticias/ e dos artigos individuais.
    Nesta fase, os subtítulos abaixo apenas documentam o bloco sem alterar regras. */
@@ -661,4 +728,7 @@ main > article > header .category-chip {
   border-color: #f59e0b !important;
 }
 
-#news-article-list .news-featured-card:not(.news-orange-card):not(.news-urgent-card):not(.news-amber-card):not(.news-card-co
+#news-article-list .news-featured-card:not(.news-orange-card):not(.news-urgent-card):not(.news-amber-card):not(.news-card-compact):hover,
+#news-article-list .news-featured-card:not(.news-orange-card):not(.news-urgent-card):not(.news-amber-card):not(.news-card-compact):focus-within {
+  border-color: var(--color-brand) !important;
+}
