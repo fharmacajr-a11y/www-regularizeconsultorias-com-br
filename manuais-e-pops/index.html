@@ -31,6 +31,12 @@
   <link rel="stylesheet" href="/assets/css/base.css">
   <link rel="stylesheet" href="/assets/css/components.css">
   <link rel="stylesheet" href="/assets/css/pages/manuais-e-pops.css">
+  <noscript>
+    <style>
+      /* Se o JS estiver desativado, mostrar todos os cards mesmo que tenham [hidden] */
+      .manuals-catalog-card[hidden] { display: block !important; }
+    </style>
+  </noscript>
   <script type="application/ld+json">
   {
   "@context": "https://schema.org",
@@ -252,7 +258,7 @@
           <span>PGRSS</span>
           <span>Cosméticos e Saneantes</span>
         </div>
-        <div class="manuals-catalog-grid">
+        <div id="manuals-catalog-grid" class="manuals-catalog-grid">
           <article class="manuals-catalog-card manuals-catalog-card--active bg-white rounded-2xl border border-slate-100 p-5 sm:p-6 hover:shadow-lg transition-all duration-300">
             <div class="manuals-card-cover manuals-card-cover--image">
               <img src="/assets/img/manuais-e-pops/manual-farmacia-popular-detalhe.webp" alt="Ilustração do card Manual de Boas Práticas e POPs — Farmácia Popular" loading="lazy" width="1448" height="1086" class="manuals-card-image" />
@@ -592,5 +598,6 @@
   </div>
 
   <script src="/assets/js/main.min.js?v=20260506-1"></script>
+  <script src="/assets/js/manuais-e-pops.js?v=20260624"></script>
 </body>
 </html>

@@ -706,3 +706,36 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+/* Controlar visibilidade dos cards extras quando usamos atributo hidden */
+.manuals-catalog-card[hidden] {
+  display: none !important;
+}
+
+/* Controls wrapper */
+.manuals-catalog-controls {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+/* Toggle button */
+.manuals-catalog-toggle {
+  background: transparent;
+  border: 0;
+  color: var(--color-brand);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* Ícone de toggle: animação e rotação quando expandido */
+.manuals-catalog-toggle-icon {
+  transition: transform 0.2s ease;
+}
+.manuals-catalog-toggle[aria-expanded="true"] .manuals-catalog-toggle-icon {
+  transform: rotate(180deg);
+}
