@@ -417,8 +417,26 @@
   max-width: 42rem;
 }
 
-.manuals-catalog-grid + div {
-  margin-top: 2rem !important;
+.manuals-catalog-followup {
+  margin-top: 1.5rem;
+}
+
+.manuals-catalog-followup .manuals-type-grid article {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.manuals-catalog-followup .manuals-type-grid span {
+  margin-bottom: 0.9rem;
+}
+
+.manuals-catalog-followup .manuals-card-link {
+  margin-top: auto;
+}
+
+.manuals-catalog-controls + .manuals-catalog-followup {
+  margin-top: 1.75rem;
 }
 
 .manuals-type-grid,
@@ -847,6 +865,14 @@
 
   .manuals-farmacia-popular-cta-note {
     font-size: 0.8rem;
+  }
+
+  .manuals-catalog-followup {
+    margin-top: 1.25rem;
+  }
+
+  .manuals-catalog-controls + .manuals-catalog-followup {
+    margin-top: 1.5rem;
   }
 }
 
