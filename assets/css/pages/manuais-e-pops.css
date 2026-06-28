@@ -394,12 +394,26 @@
   min-width: 0;
 }
 
+.manuals-page-placeholder .institutional-hero-breadcrumb-list,
+.manuals-page-distribuidora .institutional-hero-breadcrumb-list {
+  flex-wrap: wrap;
+}
+
+.manuals-page-placeholder .institutional-hero-title,
+.manuals-page-placeholder .institutional-hero-lead,
+.manuals-page-placeholder .manuals-product-copy,
+.manuals-page-placeholder .manuals-section-heading,
+.manuals-page-distribuidora .institutional-hero-title,
+.manuals-page-distribuidora .institutional-hero-lead {
+  overflow-wrap: anywhere;
+}
+
 .manuals-product-visual {
   align-items: center;
   background: linear-gradient(135deg, #ffffff 0%, #eef6ff 100%);
   display: flex;
   justify-content: center;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .manuals-product-image {
@@ -596,6 +610,19 @@
 }
 
 .manuals-page-farmacia-popular .manuals-product-image {
+  max-width: min(100%, 30rem);
+}
+
+.manuals-page-placeholder .manuals-intro-section {
+  padding-bottom: 2.25rem !important;
+  padding-top: 2.25rem !important;
+}
+
+.manuals-page-placeholder .manuals-product-layout {
+  gap: 1.25rem;
+}
+
+.manuals-page-placeholder .manuals-product-image {
   max-width: min(100%, 30rem);
 }
 
