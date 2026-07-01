@@ -72,7 +72,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
             </svg>
             AVISOS!
-            <span class="aviso-badge absolute -top-2 -right-2 min-w-[1.25rem] h-5 px-1 rounded-full bg-white text-red-600 text-xs font-bold flex items-center justify-center shadow border border-red-200">3</span>
+            <span class="aviso-badge absolute -top-2 -right-2 min-w-[1.25rem] h-5 px-1 rounded-full bg-white text-red-600 text-xs font-bold flex items-center justify-center shadow border border-red-200">6</span>
           </a>
           <button id="menu-toggle"
                   class="md:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors duration-200"
@@ -106,7 +106,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
         </svg>
         AVISOS!
-        <span class="aviso-badge absolute -top-2 -right-2 min-w-[1.25rem] h-5 px-1 rounded-full bg-white text-red-600 text-xs font-bold flex items-center justify-center shadow border border-red-200">3</span>
+        <span class="aviso-badge absolute -top-2 -right-2 min-w-[1.25rem] h-5 px-1 rounded-full bg-white text-red-600 text-xs font-bold flex items-center justify-center shadow border border-red-200">6</span>
       </a>
     </div>
   </header>
@@ -231,6 +231,165 @@
           └─────────────────────────────────────────────────────────────┘
         -->
         <div id="avisos-lista" class="flex flex-col gap-6">
+          <!-- ═══════════════════════════════════════════════════════
+                 URGENTE — alerta sanitário consolidado
+               ═══════════════════════════════════════════════════════ -->
+          <article data-status="urgent" data-category="anvisa" class="rounded-2xl border border-red-200 bg-red-50 p-5 shadow-sm md:p-6">
+            <div class="flex flex-col gap-4">
+              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                <div class="flex items-center gap-3">
+                  <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                    </svg>
+                  </div>
+                  <span class="inline-block rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-red-600">
+                    Urgente
+                  </span>
+                </div>
+                <div class="flex flex-col sm:items-end gap-1 text-xs text-slate-400">
+                  <span class="flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Publicado em: <strong class="text-slate-600">28/06/2026 às 19h00</strong>
+                  </span>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <h3 class="text-lg font-bold text-slate-900">Alerta sanitário: produtos irregulares exigem conferência de estoque e fornecedores</h3>
+                <div class="space-y-3 text-sm leading-relaxed text-slate-700">
+                  <p>
+                    Publicações recentes da Anvisa e do SNVS reforçam a necessidade de conferir regularidade, origem, documentação, rotulagem e situação sanitária de medicamentos, suplementos, cosméticos e saneantes.
+                  </p>
+                  <p>
+                    A orientação prática é revisar estoque, fornecedores e documentos internos antes de manter, adquirir ou divulgar produtos sujeitos à vigilância sanitária.
+                  </p>
+                </div>
+                <div class="flex flex-wrap items-center gap-4">
+                  <a href="/noticias/boletim-snvs-fiscalizacao-produtos-irregulares/" class="inline-flex items-center gap-2 rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition-colors duration-200 hover:border-red-300 hover:bg-red-100 hover:text-red-700">
+                    Ver alerta sanitário
+                    <span aria-hidden="true">→</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- ═══════════════════════════════════════════════════════
+                 ATUALIZAÇÃO — Farmácia Popular: listas EAN
+               ═══════════════════════════════════════════════════════ -->
+          <article data-status="atualizacao" data-category="farmacia-popular" class="rounded-2xl border border-yellow-200 bg-yellow-50 p-5 shadow-sm md:p-6">
+            <div class="flex flex-col gap-4">
+              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                <div class="flex items-center gap-3">
+                  <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-yellow-100 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4.582 9H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                  </div>
+                  <span class="inline-block rounded-full border border-yellow-200 bg-yellow-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-yellow-600">
+                    ATUALIZAÇÃO
+                  </span>
+                </div>
+                <div class="flex flex-col sm:items-end gap-1 text-xs text-slate-400">
+                  <span class="flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Publicado em: <strong class="text-slate-600">28/06/2026 às 19h00</strong>
+                  </span>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <h3 class="text-lg font-bold text-slate-900">Farmácia Popular: listas EAN de junho de 2026 foram atualizadas</h3>
+                <div class="space-y-3 text-sm leading-relaxed text-slate-700">
+                  <p>
+                    Farmácias credenciadas devem conferir as listas EAN atualizadas para medicamentos, fraldas geriátricas e absorventes higiênicos, evitando divergências cadastrais e operacionais no programa.
+                  </p>
+                  <p>
+                    A conferência deve considerar produtos, cadastros internos, documentos e rotinas de acompanhamento vinculadas ao Farmácia Popular.
+                  </p>
+                </div>
+                <div class="flex flex-wrap items-center gap-4">
+                  <a href="/noticias/farmacia-popular-listas-ean-junho-2026/" class="inline-flex items-center gap-2 rounded-lg border border-yellow-200 px-4 py-2 text-sm font-semibold text-yellow-600 transition-colors duration-200 hover:border-yellow-300 hover:bg-yellow-100 hover:text-yellow-700">
+                    Ver atualização das listas EAN
+                    <span aria-hidden="true">→</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- ═══════════════════════════════════════════════════════
+                 INFORMATIVO — Farmácia Popular: municípios com vagas
+               ═══════════════════════════════════════════════════════ -->
+          <article data-status="informativo" data-category="farmacia-popular" data-updated-at="11/06/2026 às 18h10" data-aviso-history-card class="rounded-2xl border border-orange-200 bg-orange-50 p-6 shadow-sm md:p-8">
+            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+              <div class="flex items-center gap-3">
+                <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">
+                  <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20A10 10 0 0012 2z"/>
+                  </svg>
+                </div>
+                <span class="inline-block rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-orange-600">
+                  Informativo
+                </span>
+              </div>
+              <div class="flex flex-col sm:items-end gap-1 text-xs text-slate-400">
+                <span class="flex items-center gap-1">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  Publicado em: <strong class="text-slate-600">22/05/2026 às 23h30</strong>
+                </span>
+                <span data-aviso-updated class="hidden items-center gap-1 sm:justify-end">
+                  <svg class="h-3.5 w-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4.582 9H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                  </svg>
+                  <span>Atualizado em: <strong class="text-slate-600" data-aviso-updated-at></strong></span>
+                </span>
+                <span data-aviso-resolved class="hidden items-center gap-1 sm:justify-end">
+                  <svg class="h-3.5 w-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  <span>Finalizado em: <strong class="text-slate-600" data-aviso-resolved-at></strong></span>
+                </span>
+              </div>
+            </div>
+
+            <h3 class="text-xl font-bold text-slate-900 mb-3">Farmácia Popular: confira municípios com vagas para credenciamento</h3>
+
+            <div class="space-y-4 text-sm leading-relaxed text-slate-700">
+              <p>
+                A lista oficial de municípios com vagas deve ser conferida antes de iniciar o credenciamento, junto com a documentação e os dados cadastrais da empresa.
+              </p>
+              <p>
+                A análise prévia ajuda a evitar envio com município incompatível, dados inconsistentes ou documentação incompleta.
+              </p>
+            </div>
+
+            <div class="mt-5 rounded-xl border border-orange-200 bg-white/60 p-5">
+              <p class="text-sm font-semibold text-slate-900 mb-2">Vai avaliar uma solicitação de credenciamento?</p>
+              <p class="text-sm leading-relaxed text-slate-700">Confira a lista oficial, revise os dados cadastrais e organize a documentação antes de iniciar o processo.</p>
+              <div class="mt-4 flex flex-wrap items-center gap-3">
+                <a href="/noticias/credenciamento-farmacia-popular-municipios-com-vagas/" class="inline-flex items-center gap-2 rounded-lg border border-orange-200 px-4 py-2 text-sm font-semibold text-orange-600 transition-colors duration-200 hover:border-orange-300 hover:bg-orange-100 hover:text-orange-700">
+                  Leia a notícia completa
+                  <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            </div>
+          </article>
 
           <!-- ═══════════════════════════════════════════════════════
                  URGENTE — CNES/SNCR
@@ -435,7 +594,6 @@
               </div>
             </div>
           </article>
-
           <!-- ═══════════════════════════════════════════════════════
                  ATUALIZAÇÃO — prazo encerrado
                ═══════════════════════════════════════════════════════ -->
