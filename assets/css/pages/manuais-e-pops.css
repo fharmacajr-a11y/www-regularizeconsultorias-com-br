@@ -275,6 +275,12 @@
   margin-top: 0.75rem;
 }
 
+.manuals-card-title--compact {
+  font-size: 0.95rem !important;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
 .manuals-catalog-card p:not(.manuals-card-note) {
   display: -webkit-box;
   line-height: 1.55;
@@ -878,6 +884,10 @@
 }
 
 @media (max-width: 639px) {
+  .manuals-page-drogaria .institutional-hero-lead {
+    max-width: 20rem !important;
+  }
+
   .manuals-hero-break-mobile-wrap {
     white-space: normal;
   }
@@ -940,6 +950,10 @@
 }
 
 @media (min-width: 768px) {
+  .manuals-card-title--compact .manuals-card-title-nowrap {
+    white-space: nowrap;
+  }
+
   .manuals-intro-grid {
     grid-template-columns: minmax(0, 1.25fr) minmax(18rem, 0.75fr);
   }
