@@ -63,6 +63,18 @@
   text-transform: uppercase;
 }
 
+.manuals-page-main .manuals-eyebrow {
+  align-items: center;
+  background-color: rgba(21, 101, 192, 0.1);
+  border-radius: 999px;
+  display: inline-flex;
+  justify-content: center;
+  line-height: 1.1;
+  max-width: 100%;
+  padding: 0.375rem 1rem;
+  text-align: center;
+}
+
 .manuals-intro-section {
   padding-bottom: 2.25rem !important;
   padding-top: 2.5rem !important;
@@ -604,6 +616,27 @@
 .manuals-page-main .manuals-type-grid article {
   padding: 0.8rem 0.875rem;
   text-align: center;
+}
+
+.manuals-page-main .manuals-guidance-card,
+.manuals-page-main .manuals-faq-grid article {
+  text-align: center;
+}
+
+.manuals-page-main .manuals-guidance-card {
+  background-color: rgba(21, 101, 192, 0.055);
+  border-color: rgba(21, 101, 192, 0.2);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.035);
+  padding: 1rem 1.05rem;
+}
+
+.manuals-page-main .manuals-faq-grid article {
+  padding: 0.9rem 0.95rem;
+}
+
+.manuals-page-main .manuals-guidance-card p,
+.manuals-page-main .manuals-faq-grid p {
+  line-height: 1.55;
 }
 
 .manuals-type-grid strong {
