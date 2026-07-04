@@ -207,6 +207,24 @@
   box-shadow: none;
 }
 
+.manuals-page-main .manuals-catalog-grid {
+  gap: 0.75rem;
+}
+
+.manuals-page-main .manuals-catalog-card {
+  border-color: #e2e8f0;
+  box-shadow: none;
+  padding: 0.875rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.manuals-page-main .manuals-catalog-card:hover,
+.manuals-page-main .manuals-catalog-card:has(.manuals-card-link:focus-visible) {
+  border-color: rgba(21, 101, 192, 0.45);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+  transform: translateY(-1px);
+}
+
 .manuals-card-cover {
   align-items: center;
   background: linear-gradient(135deg, #f8fafc 0%, #eef6ff 100%);
@@ -225,6 +243,15 @@
   max-height: none;
   min-height: 7rem;
   padding: 0;
+}
+
+.manuals-page-main .manuals-card-cover {
+  margin-bottom: 0.625rem;
+  min-height: 6rem;
+}
+
+.manuals-page-main .manuals-card-cover--image {
+  min-height: 6rem;
 }
 
 .manuals-card-cover::before {
@@ -358,6 +385,25 @@
   margin: 0 0 0.75rem;
 }
 
+.manuals-page-main .manuals-catalog-card h3 {
+  line-height: 1.25;
+  margin-bottom: 0.45rem;
+  margin-top: 0.6rem;
+  text-align: left;
+}
+
+.manuals-page-main .manuals-catalog-card p:not(.manuals-card-note) {
+  line-height: 1.45;
+  margin-bottom: 0.6rem;
+  text-align: left;
+}
+
+.manuals-page-main .manuals-card-note {
+  line-height: 1.35;
+  margin-bottom: 0.6rem;
+  text-align: left;
+}
+
 .manuals-card-link:hover,
 .manuals-card-link:focus-visible {
   background-color: var(--color-brand-dark);
@@ -471,6 +517,39 @@
   max-width: 42rem;
 }
 
+.manuals-page-main .manuals-section-heading {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.manuals-page-main .manuals-section-heading p {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.manuals-page-main .manuals-flow-card > div:first-child {
+  grid-column: 1 / -1;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 42rem;
+  text-align: center;
+}
+
+.manuals-page-main .manuals-flow-card > div:first-child p {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 42rem;
+}
+
+.manuals-page-main .manuals-flow-steps {
+  grid-column: 1 / -1;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 38rem;
+  width: 100%;
+}
+
 .manuals-catalog-followup {
   margin-top: 1.5rem;
 }
@@ -486,6 +565,7 @@
 }
 
 .manuals-catalog-followup .manuals-card-link {
+  align-self: center;
   margin-top: auto;
 }
 
@@ -515,6 +595,15 @@
 
 .manuals-type-grid article {
   padding: 1rem;
+}
+
+.manuals-page-main .manuals-type-grid {
+  gap: 0.75rem;
+}
+
+.manuals-page-main .manuals-type-grid article {
+  padding: 0.8rem 0.875rem;
+  text-align: center;
 }
 
 .manuals-type-grid strong {
@@ -1095,6 +1184,14 @@
 }
 
 @media (min-width: 1280px) {
+  .manuals-page-main .manuals-catalog-followup .manuals-type-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .manuals-page-main .manuals-flow-steps {
+    max-width: 56rem;
+  }
+
   .manuals-page-farmacia-popular .manuals-product-visual,
   .manuals-page-detail .manuals-product-visual,
   .manuals-page-distribuidora .manuals-intro-section .manuals-product-visual {
