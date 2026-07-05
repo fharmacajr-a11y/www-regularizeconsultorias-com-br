@@ -1254,6 +1254,22 @@
     justify-self: center;
     width: min(100%, calc((100% - 0.75rem) / 2));
   }
+
+  /* Reduz o respiro vertical entre o fim da grade "Por tipo de
+     estabelecimento" (inclui o card centralizado "Cosméticos e
+     Saneantes") e o início da "Vitrine consultiva de documentos
+     técnicos" apenas em tablet/meia-tela. O !important é necessário
+     aqui porque a base de .manuals-type-section/.manuals-catalog-section
+     (linhas acima, fora de media query) já usa !important para
+     neutralizar o padding responsivo do Tailwind (py-10 sm:py-14 /
+     py-12 sm:py-16); sem !important esta regra não teria efeito. */
+  .manuals-page-main .manuals-type-section {
+    padding-bottom: 1.25rem !important;
+  }
+
+  .manuals-page-main .manuals-catalog-section {
+    padding-top: 1.5rem !important;
+  }
 }
 
 @media (max-width: 639px) {
@@ -1274,6 +1290,21 @@
     max-width: 100%;
     min-height: 2.3rem;
     padding: 0.38rem 0.48rem;
+  }
+
+  /* Respiro reduzido de forma perceptível entre "Por tipo de
+     estabelecimento" e a "Vitrine consultiva de documentos técnicos" em
+     mobile (o tablet, aprovado em f14109b, permanece intocado no bloco
+     768px–1023px). O !important é necessário porque a regra-base
+     .manuals-type-section/.manuals-catalog-section (fora de media
+     query) e a regra mobile não escopada em @media (max-width: 639px)
+     já usam !important; sem repetir aqui esta regra não teria efeito. */
+  .manuals-page-main .manuals-type-section {
+    padding-bottom: 1rem !important;
+  }
+
+  .manuals-page-main .manuals-catalog-section {
+    padding-top: 1.25rem !important;
   }
 }
 
@@ -1316,6 +1347,19 @@
   .manuals-faq-grid,
   .manuals-feature-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  /* Respiro reduzido de forma perceptível também em desktop, mantendo
+     folga institucional (não fica "buraco branco"), mas sensivelmente
+     menor que antes. O !important repete o necessário para vencer a
+     regra-base .manuals-type-section/.manuals-catalog-section (fora de
+     media query), que já usa !important. */
+  .manuals-page-main .manuals-type-section {
+    padding-bottom: 1.25rem !important;
+  }
+
+  .manuals-page-main .manuals-catalog-section {
+    padding-top: 1.5rem !important;
   }
 }
 
