@@ -14,10 +14,15 @@
     if (!grid) return;
 
     var cards = Array.prototype.slice.call(grid.querySelectorAll('.manuals-catalog-card')) || [];
-    var tabletColumns = window.matchMedia('(min-width: 768px) and (max-width: 1023px)');
+    function getColumnCount() {
+      var template = window.getComputedStyle(grid).gridTemplateColumns;
+      return template && template !== 'none' ? template.trim().split(/\s+/).length : 1;
+    }
 
     function getInitialVisible() {
-      return tabletColumns.matches ? 4 : 3;
+      var columns = getColumnCount();
+      if (columns === 2) return 4;
+      return 3;
     }
 
     if (cards.length <= getInitialVisible()) {
@@ -89,8 +94,14 @@
       }
     });
 
-    tabletColumns.addEventListener('change', function () {
-      setExpandedState(expanded);
-    });
+    if ('ResizeObserver' in window) {
+      new ResizeObserver(function () {
+        setExpandedState(expanded);
+      }).observe(grid);
+    } else {
+      window.addEventListener('resize', function () {
+        setExpandedState(expanded);
+      });
+    }
   });
 })();
