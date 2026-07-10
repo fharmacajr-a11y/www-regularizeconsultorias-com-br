@@ -14,19 +14,16 @@
     if (!grid) return;
 
     var cards = Array.prototype.slice.call(grid.querySelectorAll('.manuals-catalog-card')) || [];
-    var initialVisible = 3;
+    var tabletColumns = window.matchMedia('(min-width: 768px) and (max-width: 1023px)');
 
-    if (cards.length <= initialVisible) {
+    function getInitialVisible() {
+      return tabletColumns.matches ? 4 : 3;
+    }
+
+    if (cards.length <= getInitialVisible()) {
       // nothing to do — keep all cards visible and no button
       return;
     }
-
-    var extras = cards.slice(initialVisible);
-
-    // hide extras initially
-    extras.forEach(function (card) {
-      try { card.hidden = true; } catch (e) {}
-    });
 
     // create controls wrapper
     var controls = document.createElement('div');
@@ -70,8 +67,9 @@
 
     function setExpandedState(isExpanded) {
       expanded = !!isExpanded;
-      extras.forEach(function (card) {
-        try { card.hidden = !isExpanded; } catch (e) {}
+      var initialVisible = getInitialVisible();
+      cards.forEach(function (card, index) {
+        try { card.hidden = !expanded && index >= initialVisible; } catch (e) {}
       });
       btn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
       label.textContent = isExpanded ? 'Ver menos documentos' : 'Ver mais documentos';
@@ -89,6 +87,10 @@
         e.preventDefault();
         setExpandedState(!expanded);
       }
+    });
+
+    tabletColumns.addEventListener('change', function () {
+      setExpandedState(expanded);
     });
   });
 })();
