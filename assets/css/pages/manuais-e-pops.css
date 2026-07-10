@@ -1328,11 +1328,13 @@
   }
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 1024px) {
   .manuals-page-main .manuals-catalog-followup .manuals-type-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+}
 
+@media (min-width: 1280px) {
   .manuals-page-main .manuals-flow-steps {
     max-width: 56rem;
   }
