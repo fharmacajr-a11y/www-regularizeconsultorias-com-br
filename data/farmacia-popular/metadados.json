@@ -1,0 +1,67 @@
+{
+  "orgao_origem": "Ministério da Saúde",
+  "titulo_oficial": "Anexo I - Lista de municípios - atualizada em 28/07/2026",
+  "data_oficial": "2026-07-28",
+  "url_oficial_visualizacao": "https://www.gov.br/saude/pt-br/composicao/sectics/farmacia-popular/credenciamento",
+  "url_oficial_download": "https://www.gov.br/saude/pt-br/composicao/sectics/farmacia-popular/credenciamento/documentacao/anexo-i-lista-de-municipios-atualizada-em-28-07-2026.xlsx",
+  "data_importacao": "2026-08-04",
+  "sha256_xlsx": "174d93cba8db69d315d28036dca3650dc1a9b40fa8ed3fa3df1a873f01cc849a",
+  "origem_nomes_ibge": "JSON local previamente obtido da API oficial do IBGE: municipios-ibge-2026-08-04.json",
+  "data_ou_versao_referencia_ibge": "2026-08-04",
+  "sha256_referencia_ibge": "86ecdccdf97d72e7e5e46f0854cfcea8bacc28154cc1bc4ed0e6110e3a6c9c02",
+  "quantidade_registros": 1082,
+  "quantidade_ufs": 26,
+  "totais_vagas": {
+    "vagas_totais": 1644,
+    "vagas_preenchidas": 0,
+    "vagas_disponiveis": 1644
+  },
+  "versao_importador": "1.1.0",
+  "avisos": [
+    "O PDF publicado nao foi usado como fonte do JSON.",
+    "O XLSX da fonte usa codigos IBGE de seis digitos; o setimo digito foi obtido por correspondencia de codigo na referencia IBGE."
+  ],
+  "validacao_pdf": {
+    "arquivo": "PDF publicado na pagina oficial de credenciamento",
+    "nomes_a_revisar": [
+      "Passa-Vinte -> Passa Vinte",
+      "São Luiz -> São Luiz do Anauá",
+      "Fortaleza do Tabocão -> Tabocão"
+    ]
+  },
+  "quantidade_nomes_com_diferenca_literal": 1082,
+  "quantidade_nomes_equivalentes_apos_normalizacao": 1077,
+  "quantidade_divergencias_nominais_relevantes": 5,
+  "divergencias_nominais_relevantes": [
+    {
+      "codigo_ibge": "2922250",
+      "uf": "BA",
+      "municipio_fonte_ms": "MUQUEM DE SAO FRANCISCO",
+      "municipio_exibicao": "Muquém do São Francisco"
+    },
+    {
+      "codigo_ibge": "5107008",
+      "uf": "MT",
+      "municipio_fonte_ms": "POXOREO",
+      "municipio_exibicao": "Poxoréu"
+    },
+    {
+      "codigo_ibge": "1502954",
+      "uf": "PA",
+      "municipio_fonte_ms": "ELDORADO DOS CARAJAS",
+      "municipio_exibicao": "Eldorado do Carajás"
+    },
+    {
+      "codigo_ibge": "2800100",
+      "uf": "SE",
+      "municipio_fonte_ms": "AMPARO DE SAO FRANCISCO",
+      "municipio_exibicao": "Amparo do São Francisco"
+    },
+    {
+      "codigo_ibge": "3550001",
+      "uf": "SP",
+      "municipio_fonte_ms": "SAO LUIS DO PARAITINGA",
+      "municipio_exibicao": "São Luiz do Paraitinga"
+    }
+  ]
+}
