@@ -5,9 +5,10 @@
   var ids = ['fp-search', 'fp-uf', 'fp-status', 'fp-clear', 'fp-table-body', 'fp-result-count', 'fp-loading', 'fp-empty', 'fp-error', 'fp-pagination', 'fp-prev', 'fp-next', 'fp-page-info', 'fp-page-size'];
   var el = {};
   ids.forEach(function (id) { el[id] = document.getElementById(id); });
+  var tableContainer = el['fp-table-body'].closest('.fp-table-scroll');
 
   function normalize(value) {
-    return String(value || '').toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[-\s]+/g, ' ').trim();
+    return String(value || '').toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/['\u2019]/g, '').replace(/[-\s]+/g, ' ').trim();
   }
   function formatNumber(value) { return new Intl.NumberFormat('pt-BR').format(value); }
   function formatDate(value) {
@@ -15,22 +16,13 @@
     return parts.length === 3 ? parts[2] + '/' + parts[1] + '/' + parts[0] : '—';
   }
   function setText(id, value) { var node = document.getElementById(id); if (node) node.textContent = value; }
-  function setError(message) {
-    el['fp-error'].textContent = message;
-    el['fp-error'].classList.remove('hidden');
-    el['fp-loading'].classList.add('hidden');
-  }
-  function calculateTotals(records) {
-    return records.reduce(function (result, record) { result.total += record.vagas_totais; result.filled += record.vagas_preenchidas; result.available += record.vagas_disponiveis; return result; }, { total: 0, filled: 0, available: 0 });
-  }
-  function resetIndicators() {
-    ['fp-total-municipios', 'fp-vagas-totais', 'fp-vagas-preenchidas', 'fp-vagas-disponiveis', 'fp-indicator-date'].forEach(function (id) { setText(id, '—'); });
-  }
-  function blockInconsistentData(records, metadata, totals) {
+  function setFatalError(message, error) {
     state.records = [];
     state.filtered = [];
     state.page = 1;
     el['fp-table-body'].replaceChildren();
+    tableContainer.classList.add('hidden');
+    tableContainer.hidden = true;
     el['fp-empty'].classList.add('hidden');
     el['fp-pagination'].classList.add('hidden');
     el['fp-pagination'].hidden = true;
@@ -38,11 +30,30 @@
     el['fp-page-info'].textContent = '';
     ['fp-search', 'fp-uf', 'fp-status', 'fp-clear', 'fp-prev', 'fp-next', 'fp-page-size'].forEach(function (id) { el[id].disabled = true; });
     resetIndicators();
-    console.error('Inconsistência entre a lista de vagas e os metadados: ' + JSON.stringify({ quantidade_calculada: records.length, quantidade_declarada: metadata.quantidade_registros, totais_calculados: totals, totais_declarados: metadata.totais_vagas }));
-    setError('Não foi possível validar a consistência da base carregada. Consulte a fonte oficial.');
+    el['fp-error'].textContent = message;
+    el['fp-error'].classList.remove('hidden');
+    el['fp-loading'].classList.add('hidden');
+    if (error) console.error(error);
+  }
+  function calculateTotals(records) {
+    return records.reduce(function (result, record) { result.total += record.vagas_totais; result.filled += record.vagas_preenchidas; result.available += record.vagas_disponiveis; return result; }, { total: 0, filled: 0, available: 0 });
+  }
+  function resetIndicators() {
+    ['fp-total-municipios', 'fp-vagas-totais', 'fp-vagas-preenchidas', 'fp-vagas-disponiveis', 'fp-indicator-date'].forEach(function (id) { setText(id, '—'); });
   }
   function validRecord(record) {
-    return record && typeof record.codigo_ibge === 'string' && /^\d{7}$/.test(record.codigo_ibge) && typeof record.uf === 'string' && record.uf.length === 2 && typeof record.municipio_exibicao === 'string' && typeof record.municipio_fonte_ms === 'string' && ['vagas_totais', 'vagas_preenchidas', 'vagas_disponiveis'].every(function (key) { return Number.isInteger(record[key]) && record[key] >= 0; });
+    if (!record || typeof record.codigo_ibge !== 'string' || !/^\d{7}$/.test(record.codigo_ibge) || typeof record.uf !== 'string' || !/^[A-Za-z]{2}$/.test(record.uf) || typeof record.municipio_exibicao !== 'string' || !record.municipio_exibicao.trim() || typeof record.municipio_fonte_ms !== 'string' || !record.municipio_fonte_ms.trim()) return false;
+    if (!['vagas_totais', 'vagas_preenchidas', 'vagas_disponiveis'].every(function (key) { return Number.isInteger(record[key]) && record[key] >= 0; })) return false;
+    return record.vagas_preenchidas <= record.vagas_totais && record.vagas_disponiveis <= record.vagas_totais && record.vagas_preenchidas + record.vagas_disponiveis === record.vagas_totais;
+  }
+  function validRecords(records) {
+    if (!Array.isArray(records) || !records.length) return false;
+    var codes = new Set();
+    return records.every(function (record) {
+      if (!validRecord(record) || codes.has(record.codigo_ibge)) return false;
+      codes.add(record.codigo_ibge);
+      return true;
+    });
   }
   function createCell(row, value, className) { var cell = document.createElement('td'); if (className) cell.className = className; cell.textContent = value; row.appendChild(cell); }
   function renderTable() {
@@ -65,6 +76,7 @@
     el['fp-result-count'].textContent = state.filtered.length === 1 ? '1 município encontrado' : formatNumber(state.filtered.length) + ' municípios encontrados';
     el['fp-empty'].classList.toggle('hidden', state.filtered.length !== 0);
     el['fp-pagination'].classList.toggle('hidden', state.filtered.length === 0);
+    el['fp-pagination'].hidden = state.filtered.length === 0;
     el['fp-prev'].disabled = state.page === 1;
     el['fp-next'].disabled = state.page === totalPages;
     el['fp-page-info'].textContent = 'Página ' + state.page + ' de ' + totalPages;
@@ -88,7 +100,8 @@
     setText('fp-indicator-date', formatDate(metadata.data_oficial)); return true;
   }
   function isConsistent(records, metadata, totals) {
-    return metadata.quantidade_registros === records.length && metadata.totais_vagas && metadata.totais_vagas.vagas_totais === totals.total && metadata.totais_vagas.vagas_preenchidas === totals.filled && metadata.totais_vagas.vagas_disponiveis === totals.available;
+    var ufCount = new Set(records.map(function (record) { return record.uf; })).size;
+    return metadata.quantidade_registros === records.length && metadata.quantidade_ufs === ufCount && metadata.totais_vagas && metadata.totais_vagas.vagas_totais === totals.total && metadata.totais_vagas.vagas_preenchidas === totals.filled && metadata.totais_vagas.vagas_disponiveis === totals.available;
   }
   function renderMetadata(metadata) {
     if (!metadata || typeof metadata !== 'object') throw new Error('Metadados inválidos.');
@@ -106,15 +119,18 @@
   document.addEventListener('DOMContentLoaded', function () {
     initializeEvents();
     fetchJson('/data/farmacia-popular/vagas-2026-07-28.json').then(function (records) {
-      if (!Array.isArray(records) || !records.length || !records.every(validRecord)) throw new Error('A lista de municípios está em formato inválido.');
+      if (!validRecords(records)) throw new Error('A lista de municípios está em formato inválido.');
       return fetchJson('/data/farmacia-popular/metadados.json').then(function (metadata) {
         renderMetadata(metadata);
         var totals = calculateTotals(records);
-        if (!isConsistent(records, metadata, totals)) { blockInconsistentData(records, metadata, totals); return; }
+        if (!isConsistent(records, metadata, totals)) {
+          setFatalError('Não foi possível validar a consistência da base carregada. Consulte a fonte oficial.', 'Inconsistência entre a lista de vagas e os metadados: ' + JSON.stringify({ quantidade_calculada: records.length, quantidade_ufs_calculada: new Set(records.map(function (record) { return record.uf; })).size, quantidade_declarada: metadata.quantidade_registros, quantidade_ufs_declarada: metadata.quantidade_ufs, totais_calculados: totals, totais_declarados: metadata.totais_vagas }));
+          return;
+        }
         state.records = records; populateUfs(); applyFilters(); renderIndicators(records, metadata); el['fp-loading'].classList.add('hidden');
       }).catch(function (error) {
         console.error(error); document.getElementById('fp-meta-fallback').classList.remove('hidden'); state.records = records; populateUfs(); applyFilters(); renderIndicators(records, null); el['fp-loading'].classList.add('hidden');
       });
-    }).catch(function (error) { console.error(error); setError('Não foi possível carregar a consulta de municípios neste momento. Tente novamente mais tarde ou consulte a fonte oficial.'); });
+    }).catch(function (error) { setFatalError('Não foi possível carregar a consulta de municípios neste momento. Tente novamente mais tarde ou consulte a fonte oficial.', error); });
   });
 })();

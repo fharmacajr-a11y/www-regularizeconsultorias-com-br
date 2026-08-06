@@ -36,6 +36,7 @@
 .fp-status { border-radius: 999px; display: inline-block; font-size: .75rem; font-weight: 800; padding: .3rem .55rem; white-space: nowrap; }
 .fp-status--available { background: #dcfce7; color: #166534; }.fp-status--unavailable { background: #f1f5f9; color: #475569; }
 .fp-pagination { align-items: center; display: flex; flex-wrap: wrap; gap: .75rem; justify-content: flex-end; margin-top: 1.25rem; }
+.fp-pagination.hidden, .fp-pagination[hidden] { display: none; }
 .fp-pagination button:disabled { cursor: not-allowed; opacity: .5; }.fp-pagination span { color: #475569; font-size: .875rem; margin-right: auto; }.fp-pagination label { margin: 0 0 0 .5rem; }.fp-pagination select { width: auto; }
 .fp-cta { align-items: center; background: linear-gradient(135deg, var(--color-brand-dark), var(--color-brand)); border-radius: 1rem; color: #fff; display: flex; gap: 1.5rem; justify-content: space-between; margin-top: 2rem; padding: 2rem; }.fp-cta h2 { color: #fff; }.fp-cta p { color: #dbeafe; line-height: 1.6; margin: .7rem 0 0; max-width: 42rem; }.fp-cta a { background: #fff; border-radius: .75rem; color: var(--color-brand-dark); font-size: .875rem; font-weight: 800; padding: .85rem 1rem; text-align: center; text-decoration: none; white-space: nowrap; }
 @media (max-width: 1023px) { .fp-indicators { grid-template-columns: repeat(3, minmax(0, 1fr)); }.fp-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }.fp-filters button { grid-column: 1 / -1; justify-self: start; } }
