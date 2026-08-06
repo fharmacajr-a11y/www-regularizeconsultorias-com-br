@@ -67,6 +67,24 @@ def test_sitemap_urls_and_metadata_follow_the_protocol():
         priority = decimal.Decimal(priority_text)
         assert decimal.Decimal("0.0") <= priority <= decimal.Decimal("1.0")
 
+        route_path = parsed.path.strip("/")
+        page_path = ROOT / route_path / "index.html" if route_path else ROOT / "index.html"
+        relative_path = page_path.relative_to(ROOT).as_posix()
+        assert page_path.is_file(), f"Sitemap URL sem arquivo local: {relative_path}"
+
+        parser = _MetadataParser()
+        parser.feed(page_path.read_text(encoding="utf-8"))
+        assert all(
+            "noindex" not in content.casefold() for content in parser.robots
+        ), f"noindex em URL do sitemap: {relative_path}"
+        assert all(
+            "nofollow" not in content.casefold() for content in parser.robots
+        ), f"nofollow em URL do sitemap: {relative_path}"
+        if parser.canonicals:
+            assert location in parser.canonicals, (
+                f"Canonical divergente em URL do sitemap: {relative_path}"
+            )
+
 
 def test_farmacia_popular_has_expected_sitemap_metadata():
     _, urls = _url_elements()
@@ -112,6 +130,7 @@ def test_pops_drogaria_has_expected_sitemap_metadata():
     assert POPS_DROGARIA_URL in parser.canonicals
     assert all("noindex" not in canonical.casefold() for canonical in parser.canonicals)
     assert all("noindex" not in content.casefold() for content in parser.robots)
+    assert all("nofollow" not in content.casefold() for content in parser.robots)
     assert "<main" in page_content.casefold()
     assert "<h1" in page_content.casefold()
     assert len(re.sub(r"<[^>]+>", " ", page_content).split()) > 100
