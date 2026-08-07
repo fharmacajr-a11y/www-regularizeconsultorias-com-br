@@ -62,6 +62,14 @@ main > article > header .category-chip {
   line-height: 1.8;
 }
 
+.article-body .article-spacing-flush-top {
+  margin-top: 0;
+}
+
+.article-body .article-spacing-flush-bottom {
+  margin-bottom: 0;
+}
+
 .article-body h2 {
   color: #0f172a;
   font-size: 1.5rem;
@@ -107,6 +115,14 @@ main > article > header .category-chip {
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+.article-body a.text-white {
+  color: #fff;
+}
+
+.article-body a.no-underline {
+  text-decoration: none;
 }
 
 /* ---------- Aviso, CTA e notícias relacionadas ---------- */
