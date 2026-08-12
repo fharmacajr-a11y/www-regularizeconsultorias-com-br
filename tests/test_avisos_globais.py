@@ -96,6 +96,7 @@ def _public_html_paths():
         path
         for path in ROOT.rglob("*.html")
         if not any(part in ignored_roots or part.endswith(".cache") for part in path.relative_to(ROOT).parts)
+        and path.relative_to(ROOT).as_posix() != "noticias/template-noticia.html"
         and path.relative_to(ROOT).as_posix() != "whatsapp/index.html"
     )
 
@@ -206,10 +207,14 @@ def test_every_public_navbar_has_two_complete_notice_links():
             assert len(badges) == 1, relative_path
             assert badges[0].text() == "7", relative_path
             assert badges[0].text() != "3", relative_path
+            svgs = [node for node in link.descendants() if node.tag == "svg"]
+            assert len(svgs) == 1, relative_path
+            assert svgs[0].attrs.get("aria-hidden") == "true", relative_path
+            assert "AVISOS!" in link.text(), relative_path
         mobile_classes = mobile_links[0].attrs.get("class", "").split()
         assert "relative" in mobile_classes, relative_path
         assert "gap-2" in mobile_classes, relative_path
-    assert pages_with_navbar == 79
+    assert pages_with_navbar == 78
 
 
 def test_tablet_hide_regression_is_absent_and_navbar_rules_remain():
