@@ -10,6 +10,8 @@ from urllib.parse import urlsplit
 ROOT = Path(__file__).parents[1]
 SITEMAP_PATH = ROOT / "sitemap.xml"
 PUBLIC_URL = "https://www.regularizeconsultorias.com.br/farmacia-popular/"
+NEWS_INDEX_URL = "https://www.regularizeconsultorias.com.br/noticias/"
+PORTARIA_NEWS_URL = "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-portaria-12091-2026-novas-regras/"
 POPS_DROGARIA_URL = "https://www.regularizeconsultorias.com.br/manuais-e-pops/pops-drogaria/"
 NAMESPACE = "http://www.sitemaps.org/schemas/sitemap/0.9"
 NS = {"s": NAMESPACE}
@@ -39,7 +41,7 @@ def test_sitemap_is_valid_xml_with_unique_urls():
     locations = [url.findtext("s:loc", namespaces=NS) for url in urls]
 
     assert root.tag == f"{{{NAMESPACE}}}urlset"
-    assert len(urls) == 77
+    assert len(urls) == 78
     assert all(location and location.strip() for location in locations)
     assert len(locations) == len(set(locations))
 
@@ -91,7 +93,7 @@ def test_farmacia_popular_has_expected_sitemap_metadata():
     matches = [url for url in urls if url.findtext("s:loc", namespaces=NS) == PUBLIC_URL]
 
     assert len(matches) == 1
-    assert matches[0].findtext("s:lastmod", namespaces=NS) == "2026-08-06"
+    assert matches[0].findtext("s:lastmod", namespaces=NS) == "2026-08-12"
     assert matches[0].findtext("s:changefreq", namespaces=NS) == "monthly"
     assert matches[0].findtext("s:priority", namespaces=NS) == "0.9"
 
@@ -108,6 +110,16 @@ def test_farmacia_popular_public_page_matches_canonical():
     assert all(not canonical.endswith(".html") for canonical in parser.canonicals)
     assert all("noindex" not in content.casefold() for content in parser.robots)
     assert page_path.parent.resolve() == (ROOT / route_path).resolve()
+
+
+def test_portaria_news_and_news_index_have_expected_sitemap_metadata():
+    _, urls = _url_elements()
+    by_location = {url.findtext("s:loc", namespaces=NS): url for url in urls}
+
+    assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-08-12"
+    assert by_location[PORTARIA_NEWS_URL].findtext("s:lastmod", namespaces=NS) == "2026-08-12"
+    assert by_location[PORTARIA_NEWS_URL].findtext("s:changefreq", namespaces=NS) == "monthly"
+    assert by_location[PORTARIA_NEWS_URL].findtext("s:priority", namespaces=NS) == "0.8"
 
 
 def test_pops_drogaria_has_expected_sitemap_metadata():

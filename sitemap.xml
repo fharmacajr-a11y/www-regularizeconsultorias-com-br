@@ -38,15 +38,21 @@
   </url>
   <url>
     <loc>https://www.regularizeconsultorias.com.br/farmacia-popular/</loc>
-    <lastmod>2026-08-06</lastmod>
+    <lastmod>2026-08-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://www.regularizeconsultorias.com.br/noticias/</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-08-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-portaria-12091-2026-novas-regras/</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.regularizeconsultorias.com.br/noticias/cnes-prorroga-transmissor-competencia-06-2026/</loc>

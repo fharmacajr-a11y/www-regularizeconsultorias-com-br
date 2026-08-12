@@ -7,6 +7,7 @@ NEWS_PATHS = (
     Path("noticias/credenciamento-farmacia-popular-municipios-com-vagas/index.html"),
     Path("noticias/farmacia-popular-adequacao-materiais-periodo-eleitoral/index.html"),
     Path("noticias/farmacia-popular-listas-ean-junho-2026/index.html"),
+    Path("noticias/farmacia-popular-portaria-12091-2026-novas-regras/index.html"),
 )
 
 
@@ -79,7 +80,7 @@ def test_noticias_farmacia_popular_nao_contem_estilos_inline():
 
 
 def test_noticias_farmacia_popular_preservam_substituicoes_de_estilo():
-    for path in NEWS_PATHS:
+    for path in EXPECTED:
         elements = parse_news(path)
         expected = EXPECTED[path]
 

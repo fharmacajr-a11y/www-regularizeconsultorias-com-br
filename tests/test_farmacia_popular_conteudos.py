@@ -5,6 +5,8 @@ from pathlib import Path
 ROOT = Path(__file__).parents[1]
 PAGE_PATH = ROOT / "farmacia-popular" / "index.html"
 HTML = PAGE_PATH.read_text(encoding="utf-8")
+CONSULTATION_JS = (ROOT / "assets" / "js" / "pages" / "farmacia-popular.js").read_text(encoding="utf-8")
+NEWS_URL = "/noticias/farmacia-popular-portaria-12091-2026-novas-regras/"
 
 
 class SectionParser(HTMLParser):
@@ -48,18 +50,29 @@ def parse_page():
     return parser
 
 
-def test_secao_de_farmacias_credenciadas_contem_textos_aprovados():
+def test_secao_de_farmacias_credenciadas_contem_novas_regras_aprovadas():
     text, _ = parse_page().sections["fp-credited"]
-    assert "Farmácias já credenciadas" in text
-    assert "Esta área será destinada a informações sobre estabelecimentos que já participam do Programa Farmácia Popular. As informações serão apresentadas separadamente das oportunidades de credenciamento." in text
-    assert "A consulta será organizada em uma etapa própria, com apresentação simples e objetiva." in text
+    assert "Farmácias já credenciadas: pontos de atenção" in text
+    assert "renovação a cada dois anos" in text
+    assert "15 dias" in text
+    assert "30 dias" in text
+    assert "cinco anos" in text
+    assert "180 dias" in text
+    assert "365 dias" in text
+    assert "prazo atual de guarda previsto pelo PFPB" in text
+    assert "Foi mantida a regra geral" in text
+    assert "Suspensão preventiva" in text
+    assert "bloqueio como penalidade não são a mesma coisa" in text
+    assert "renovação anual" not in text.casefold()
+    assert "Esta área será destinada" not in text
+    assert "A consulta será organizada em uma etapa própria" not in text
 
 
 def test_secao_secundaria_nao_contem_consulta_lista_ou_estilo_inline():
     text, tags = parse_page().sections["fp-credited"]
     assert not any(tag in {"table", "form", "input", "select", "iframe", "button"} for tag, _ in tags)
     assert not any("style" in attributes for _, attributes in tags)
-    assert not any(word in text.lower() for word in ("buscar", "filtro", "paginação", "cnpj", "endereço"))
+    assert not any(word in text.lower() for word in ("buscar", "filtro", "paginação"))
 
 
 def test_pagina_remove_destinos_governamentais_e_preserva_referencias():
@@ -73,13 +86,27 @@ def test_pagina_remove_destinos_governamentais_e_preserva_referencias():
     assert "id=\"fp-table\"" in HTML
     assert "id=\"fp-pagination\"" in HTML
     assert "/noticias/credenciamento-farmacia-popular-municipios-com-vagas/" in HTML
+    assert NEWS_URL in HTML
     assert "/whatsapp/" in HTML
     assert "instagram.com/regularizeconsultoriarc" in HTML
     assert "<iframe" not in lowered
 
 
-def test_secao_fica_entre_consulta_e_cta():
+def test_atualizacao_e_secao_ficam_entre_consulta_e_cta():
     consultation_end = HTML.index("</section>", HTML.index('id="fp-consultation-title"'))
+    update_start = HTML.index('class="fp-regulatory-update"')
     credited_start = HTML.index('class="fp-credited"')
     cta_start = HTML.index('class="fp-cta"')
-    assert consultation_end < credited_start < cta_start
+    assert consultation_end < update_start < credited_start < cta_start
+
+
+def test_bloco_normativo_compacto_aponta_para_nova_noticia():
+    assert "Atualização normativa • 12/08/2026" in HTML
+    assert "Farmácia Popular tem novas regras para participação e acompanhamento" in HTML
+    assert "Entender o que mudou" in HTML
+    assert HTML.count(f'href="{NEWS_URL}"') == 2
+
+
+def test_consulta_continua_apontando_para_as_mesmas_bases():
+    assert "'/data/farmacia-popular/vagas-2026-07-28.json'" in CONSULTATION_JS
+    assert "'/data/farmacia-popular/metadados.json'" in CONSULTATION_JS
