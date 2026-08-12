@@ -255,7 +255,7 @@ def test_news_index_has_exactly_one_new_article_and_consistent_counts():
     assert html.count("data-news-card") == 59
     assert html.count('data-category="farmacia-popular"') == 10
     assert len(article_directories) == 59
-    assert html.count(f'href="/noticias/{SLUG}/"') == 1
+    assert news_card_for_slug(html, SLUG)
     assert "59 notícias encontradas" in html
     assert re.search(r'data-news-category="todos"[^>]*>.*?<span[^>]*>59</span>', html)
     assert re.search(r'data-news-category="farmacia-popular"[^>]*>.*?<span[^>]*>10</span>', html)

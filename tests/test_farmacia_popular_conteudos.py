@@ -104,7 +104,9 @@ def test_bloco_normativo_compacto_aponta_para_nova_noticia():
     assert "Atualização normativa • 12/08/2026" in HTML
     assert "Farmácia Popular tem novas regras para participação e acompanhamento" in HTML
     assert "Entender o que mudou" in HTML
-    assert HTML.count(f'href="{NEWS_URL}"') == 2
+    banner_end = HTML.index("</aside>", HTML.index('<aside class="site-regulatory-banner"')) + len("</aside>")
+    editorial_html = HTML[:HTML.index('<aside class="site-regulatory-banner"')] + HTML[banner_end:]
+    assert editorial_html.count(f'href="{NEWS_URL}"') == 2
 
 
 def test_consulta_continua_apontando_para_as_mesmas_bases():

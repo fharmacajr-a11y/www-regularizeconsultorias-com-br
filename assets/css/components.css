@@ -8,6 +8,8 @@
 
 /* ---------- 3. Navbar: sombra suave ao fazer scroll ---------- */
 /* Classe adicionada via JavaScript (main.js) quando window.scrollY > 10 */
+.site-regulatory-banner{position:sticky;top:0;z-index:60;background-color:#1a3a5c;color:#fff}.site-regulatory-banner__link{display:flex;align-items:center;justify-content:center;gap:.5rem;height:4.8rem;min-height:4.8rem;padding:.625rem 1rem;color:inherit;font-size:.875rem;font-weight:600;line-height:1.35;text-align:center;text-decoration:none}.site-regulatory-banner__link:hover{background-color:#234d78}.site-regulatory-banner__link:focus-visible{outline:3px solid #fbbf24;outline-offset:-3px}.site-regulatory-banner__label{flex:0 0 auto;padding:.125rem .375rem;border-radius:.25rem;background-color:#dc2626;color:#fff;line-height:1.2}.site-regulatory-banner__arrow{flex:0 0 auto;font-size:1rem}#navbar{top:4.8rem}@media (max-width:420px){.site-regulatory-banner__link{position:relative;flex-direction:column;gap:.2rem;height:4.8rem;min-height:4.8rem;padding:.375rem 2.5rem;font-size:.8125rem}.site-regulatory-banner__label{align-self:center;padding:.1rem .325rem;font-size:.75rem;white-space:nowrap}.site-regulatory-banner__arrow{position:absolute;top:50%;right:.875rem;transform:translateY(-50%)}}@media (min-width:768px){.site-regulatory-banner__link{height:2.5rem;min-height:2.5rem;padding-block:.5rem;font-size:.9375rem}#navbar{top:2.5rem}}
+
 #navbar.scrolled {
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
 }
