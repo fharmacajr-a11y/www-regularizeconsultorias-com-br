@@ -276,14 +276,61 @@ def test_portaria_article_explains_cancellation_effects_and_visible_faq():
     )
     assert faq_match
     faq_html = faq_match.group(1)
-    assert faq_html.count("<details") == 9
-    assert faq_html.count("<summary") == 9
+    questions = re.findall(r'<summary class="article-faq__question">(.*?)</summary>', faq_html)
+    assert len(questions) == 12
+    assert faq_html.count("<details") == 12
+    assert faq_html.count("<summary") == 12
     assert not re.search(r"<details\b[^>]*\bopen\b", faq_html)
     assert "name=" not in faq_html
     assert all("article-faq__answer" in item for item in re.findall(r"<details\b.*?</details>", faq_html, re.DOTALL))
     assert "onclick=" not in faq_html.casefold()
+    communications_match = re.search(
+        rf'{re.escape("Como a farmácia deve acompanhar as comunicações do Programa?")}</summary>\s*<div class="article-faq__answer"><p>(.*?)</p>',
+        faq_html,
+        flags=re.DOTALL,
+    )
+    assert communications_match
+    communications_answer = communications_match.group(1).casefold()
+    for expected_text in (
+        "e-mail cadastrado atualizado",
+        "canal oficial de comunicação",
+        "ofício assinado via sei",
+        "@saude.gov.br",
+        "não realiza contato telefônico",
+    ):
+        assert expected_text in communications_answer
+    assert "contato telefônico oficial" not in communications_answer
+    assert questions == [
+        "Minha farmácia já participa do Farmácia Popular. Precisa fazer alguma coisa imediatamente por causa da nova Portaria?",
+        "A renovação agora acontece automaticamente a cada 2 anos?",
+        "Quais alterações da farmácia precisam ser comunicadas e quais são os prazos?",
+        "Como a farmácia deve acompanhar as comunicações do Programa?",
+        "Estar em um município com vaga garante o credenciamento no Farmácia Popular?",
+        "Se a participação for cancelada por irregularidades, quando a farmácia poderá participar novamente?",
+        "Se a saída ocorrer a pedido da farmácia ou por falta de renovação, quando poderá solicitar nova participação?",
+        "Depois do cancelamento ainda é necessário guardar documentos?",
+        "O cancelamento de uma filial afeta automaticamente a matriz ou as outras lojas?",
+        "As penalidades podem ser aplicadas juntas?",
+        "A multa é sempre de 20%? Como ela é calculada?",
+        "Existe recurso contra a aplicação de penalidade?",
+    ]
+    for expected_text in (
+        "não renova automaticamente",
+        "15 dias",
+        "30 dias",
+        "a vaga é uma oportunidade relevante",
+        "individualizada por estabelecimento, endereço e cnpj",
+    ):
+        assert expected_text in faq_html.casefold()
+    for removed_question in (
+        "Depois de 2 anos a farmácia volta automaticamente ao Programa?",
+        "Se a própria farmácia pedir o cancelamento, quando poderá solicitar nova participação?",
+        "Se o cancelamento ocorrer por falta de renovação, quando poderá solicitar nova participação?",
+        "O que acontece se houver valor a ser ressarcido ao Programa?",
+    ):
+        assert removed_question not in faq_html
     assert "recurso administrativo em 10 dias" in lowered
-    assert "ressarcimento depende do procedimento e da decisão correspondentes" in lowered
+    assert "<strong>ressarcimento:</strong> depende do procedimento e da decisão correspondentes" in lowered
     assert '"@type":"faqpage"' not in lowered
     assert '"@type": "faqpage"' not in lowered
     assert '"@type":"qapage"' not in lowered
