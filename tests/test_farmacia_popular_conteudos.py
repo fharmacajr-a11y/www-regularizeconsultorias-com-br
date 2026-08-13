@@ -55,10 +55,10 @@ def parse_page():
 def test_secao_de_farmacias_credenciadas_contem_novas_regras_aprovadas():
     text, _ = parse_page().sections["fp-credited"]
     assert "Farmácias já credenciadas: pontos de atenção" in text
-    assert "renovação a cada dois anos" in text
+    assert "renovação a cada 2 anos" in text
     assert "15 dias" in text
     assert "30 dias" in text
-    assert "cinco anos" in text
+    assert "5 anos" in text
     assert "180 dias" in text
     assert "365 dias" in text
     assert "prazo atual de guarda previsto pelo PFPB" in text
@@ -66,6 +66,8 @@ def test_secao_de_farmacias_credenciadas_contem_novas_regras_aprovadas():
     assert "Suspensão preventiva" in text
     assert "bloqueio como penalidade não são a mesma coisa" in text
     assert "renovação anual" not in text.casefold()
+    assert "dois anos" not in text.casefold()
+    assert "cinco anos" not in text.casefold()
     assert "Esta área será destinada" not in text
     assert "A consulta será organizada em uma etapa própria" not in text
 
