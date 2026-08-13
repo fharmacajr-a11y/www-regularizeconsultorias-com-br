@@ -363,12 +363,12 @@ def test_news_index_has_exactly_one_new_article_and_consistent_counts():
         if path.is_dir() and (path / "index.html").is_file()
     ]
 
-    assert html.count("data-news-card") == 59
+    assert html.count("data-news-card") == 60
     assert html.count('data-category="farmacia-popular"') == 10
-    assert len(article_directories) == 59
+    assert len(article_directories) == 60
     assert news_card_for_slug(html, SLUG)
-    assert "59 notícias encontradas" in html
-    assert re.search(r'data-news-category="todos"[^>]*>.*?<span[^>]*>59</span>', html)
+    assert "60 notícias encontradas" in html
+    assert re.search(r'data-news-category="todos"[^>]*>.*?<span[^>]*>60</span>', html)
     assert re.search(r'data-news-category="farmacia-popular"[^>]*>.*?<span[^>]*>10</span>', html)
     assert f'<time datetime="{PUBLISHED_AT}"' in html
 
@@ -379,7 +379,7 @@ def test_news_index_itemlist_contains_new_article_in_first_position():
     collection = next(item for item in jsonld_objects(parser) if item.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
 
-    assert len(items) == 59
-    assert [item["position"] for item in items] == list(range(1, 60))
-    assert len({item["url"] for item in items}) == 59
+    assert len(items) == 60
+    assert [item["position"] for item in items] == list(range(1, 61))
+    assert len({item["url"] for item in items}) == 60
     assert items[0]["url"] == ARTICLE_URL
