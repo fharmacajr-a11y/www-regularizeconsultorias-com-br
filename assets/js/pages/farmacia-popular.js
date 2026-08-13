@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var state = { records: [], filtered: [], page: 1, pageSize: 25 };
+  var state = { records: [], filtered: [], page: 1, pageSize: 10 };
   var ids = ['fp-search', 'fp-uf', 'fp-status', 'fp-clear', 'fp-table-body', 'fp-result-count', 'fp-loading', 'fp-empty', 'fp-error', 'fp-pagination', 'fp-prev', 'fp-next', 'fp-page-info', 'fp-page-size'];
   var el = {};
   ids.forEach(function (id) { el[id] = document.getElementById(id); });

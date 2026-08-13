@@ -94,6 +94,15 @@ def test_pagina_remove_destinos_governamentais_e_preserva_referencias():
     assert "<iframe" not in lowered
 
 
+def test_card_de_proveniencia_preserva_orgao_e_links_sem_fonte_redundante():
+    assert "Fonte de referência: Ministério da Saúde." not in HTML
+    assert 'id="fp-official-link"' not in HTML
+    assert "Órgão de origem" in HTML
+    assert 'id="fp-source-org"' in HTML
+    assert 'href="/noticias/credenciamento-farmacia-popular-municipios-com-vagas/farmacia-popular-municipios-vagas-28-07-2026.pdf" target="_blank" rel="noopener noreferrer">Ver lista em PDF</a>' in HTML
+    assert 'href="/noticias/credenciamento-farmacia-popular-municipios-com-vagas/">Ler notícia relacionada</a>' in HTML
+
+
 def test_pagina_farmacia_popular_usa_og_especifica():
     assert OG_IMAGE_PATH.is_file()
     assert HTML.count(f'property="og:image" content="{OG_IMAGE_URL}"') == 1

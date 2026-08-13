@@ -1,6 +1,7 @@
 import copy
 import functools
 import json
+import math
 import re
 import threading
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -104,8 +105,10 @@ def test_cenario_a_carga_normal(page, site_url):
     assert page.locator("#fp-vagas-preenchidas").text_content() == "0"
     assert page.locator("#fp-vagas-disponiveis").text_content() == "1.644"
     assert page.locator("#fp-uf option").count() - 1 == 26
-    assert page.locator("#fp-table-body tr").count() == 25
-    assert page.locator("#fp-page-info").text_content() == "Página 1 de 44"
+    assert page.locator("#fp-page-size").input_value() == "10"
+    assert {"10", "25", "50"}.issubset(set(page.locator("#fp-page-size option").evaluate_all("options => options.map(option => option.value)")))
+    assert page.locator("#fp-table-body tr").count() == min(10, len(RECORDS))
+    assert page.locator("#fp-page-info").text_content() == f"Página 1 de {math.ceil(len(RECORDS) / 10)}"
     assert page.locator("#fp-pagination").is_visible()
     assert page.locator("#fp-loading").is_hidden()
     assert page.locator("#fp-error").is_hidden()
@@ -210,7 +213,7 @@ def test_cenario_h_metadados_indisponiveis_usam_fallback(page, site_url):
     open_consultation(page, site_url)
 
     assert page.locator("#fp-meta-fallback").is_visible()
-    assert page.locator("#fp-table-body tr").count() == 25
+    assert page.locator("#fp-table-body tr").count() == min(10, len(RECORDS))
     assert all(page.locator(selector).is_enabled() for selector in ("#fp-search", "#fp-uf", "#fp-status", "#fp-clear", "#fp-page-size"))
     assert page.locator("#fp-total-municipios").text_content() == "1.082"
     assert page.locator("#fp-vagas-totais").text_content() == "1.644"
@@ -220,22 +223,58 @@ def test_cenario_h_metadados_indisponiveis_usam_fallback(page, site_url):
     assert page.locator("#fp-error").is_hidden()
     assert page.locator("#fp-pagination").is_visible()
     page.locator("#fp-next").click()
-    assert page.locator("#fp-page-info").text_content() == "Página 2 de 44"
+    assert page.locator("#fp-page-info").text_content() == f"Página 2 de {math.ceil(len(RECORDS) / 10)}"
 
 
 def test_cenario_i_limites_de_paginacao(page, site_url):
     open_consultation(page, site_url)
     assert page.locator("#fp-prev").is_disabled()
-
-    page.locator("#fp-page-size").select_option("100")
-    assert page.locator("#fp-page-info").text_content() == "Página 1 de 11"
-    assert page.locator("#fp-table-body tr").count() == 100
-    for expected_page in range(2, 12):
-        page.locator("#fp-next").click()
-        assert page.locator("#fp-page-info").text_content() == f"Página {expected_page} de 11"
-    assert page.locator("#fp-next").is_disabled()
-    assert page.locator("#fp-table-body tr").count() == 82
+    assert page.locator("#fp-table-body tr").count() == min(10, len(RECORDS))
 
     page.locator("#fp-page-size").select_option("25")
-    assert page.locator("#fp-page-info").text_content() == "Página 1 de 44"
+    assert page.locator("#fp-page-info").text_content() == f"Página 1 de {math.ceil(len(RECORDS) / 25)}"
+    assert page.locator("#fp-table-body tr").count() == min(25, len(RECORDS))
+    page.locator("#fp-next").click()
+    assert page.locator("#fp-page-info").text_content() == f"Página 2 de {math.ceil(len(RECORDS) / 25)}"
+
+    page.locator("#fp-page-size").select_option("50")
+    total_pages = math.ceil(len(RECORDS) / 50)
+    assert page.locator("#fp-page-info").text_content() == f"Página 1 de {total_pages}"
+    assert page.locator("#fp-table-body tr").count() == min(50, len(RECORDS))
     assert page.locator("#fp-prev").is_disabled()
+    for expected_page in range(2, total_pages + 1):
+        page.locator("#fp-next").click()
+        assert page.locator("#fp-page-info").text_content() == f"Página {expected_page} de {total_pages}"
+    assert page.locator("#fp-next").is_disabled()
+    assert page.locator("#fp-table-body tr").count() == len(RECORDS) - 50 * (total_pages - 1)
+
+    page.locator("#fp-page-size").select_option("10")
+    assert page.locator("#fp-page-info").text_content() == f"Página 1 de {math.ceil(len(RECORDS) / 10)}"
+    assert page.locator("#fp-table-body tr").count() == min(10, len(RECORDS))
+    assert page.locator("#fp-prev").is_disabled()
+
+
+def test_cenario_j_filtros_e_limpeza_preservam_page_size(page, site_url):
+    open_consultation(page, site_url)
+
+    page.locator("#fp-search").fill("Poxoreo")
+    assert page.locator("#fp-table-body tr").count() == 1
+    assert page.locator("#fp-page-size").input_value() == "10"
+    assert page.locator("#fp-page-info").text_content() == "Página 1 de 1"
+
+    page.locator("#fp-search").fill("")
+    page.locator("#fp-uf").select_option("AC")
+    ac_records = [record for record in RECORDS if record["uf"] == "AC"]
+    assert page.locator("#fp-table-body tr").count() == min(10, len(ac_records))
+    assert page.locator("#fp-page-info").text_content() == f"Página 1 de {math.ceil(len(ac_records) / 10)}"
+
+    page.locator("#fp-status").select_option("available")
+    available_ac_records = [record for record in ac_records if record["vagas_disponiveis"] > 0]
+    assert page.locator("#fp-table-body tr").count() == min(10, len(available_ac_records))
+
+    page.locator("#fp-clear").click()
+    assert page.locator("#fp-search").input_value() == ""
+    assert page.locator("#fp-uf").input_value() == ""
+    assert page.locator("#fp-status").input_value() == ""
+    assert page.locator("#fp-page-size").input_value() == "10"
+    assert page.locator("#fp-page-info").text_content() == f"Página 1 de {math.ceil(len(RECORDS) / 10)}"
