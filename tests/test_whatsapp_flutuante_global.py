@@ -61,7 +61,7 @@ def assert_whatsapp_contract(path, canonical_path):
 
 def test_every_public_page_has_canonical_whatsapp_button():
     paths = public_html_paths()
-    assert len(paths) == 81
+    assert len(paths) == 82
     for path in paths:
         assert_whatsapp_contract(path, CANONICAL_PATH)
 
