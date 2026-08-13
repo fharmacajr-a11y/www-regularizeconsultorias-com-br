@@ -7,6 +7,8 @@ PAGE_PATH = ROOT / "farmacia-popular" / "index.html"
 HTML = PAGE_PATH.read_text(encoding="utf-8")
 CONSULTATION_JS = (ROOT / "assets" / "js" / "pages" / "farmacia-popular.js").read_text(encoding="utf-8")
 NEWS_URL = "/noticias/farmacia-popular-portaria-12091-2026-novas-regras/"
+OG_IMAGE_URL = "https://www.regularizeconsultorias.com.br/assets/img/og/farmacia-popular.webp"
+OG_IMAGE_PATH = ROOT / "assets" / "img" / "og" / "farmacia-popular.webp"
 
 
 class SectionParser(HTMLParser):
@@ -90,6 +92,12 @@ def test_pagina_remove_destinos_governamentais_e_preserva_referencias():
     assert "/whatsapp/" in HTML
     assert "instagram.com/regularizeconsultoriarc" in HTML
     assert "<iframe" not in lowered
+
+
+def test_pagina_farmacia_popular_usa_og_especifica():
+    assert OG_IMAGE_PATH.is_file()
+    assert HTML.count(f'property="og:image" content="{OG_IMAGE_URL}"') == 1
+    assert HTML.count(f'name="twitter:image" content="{OG_IMAGE_URL}"') == 1
 
 
 def test_atualizacao_e_secao_ficam_entre_consulta_e_cta():

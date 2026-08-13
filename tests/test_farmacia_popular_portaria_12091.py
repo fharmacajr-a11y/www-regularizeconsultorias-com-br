@@ -9,6 +9,8 @@ ROOT = Path(__file__).parents[1]
 SLUG = "farmacia-popular-portaria-12091-2026-novas-regras"
 ARTICLE_PATH = ROOT / "noticias" / SLUG / "index.html"
 ARTICLE_URL = f"https://www.regularizeconsultorias.com.br/noticias/{SLUG}/"
+OG_IMAGE_URL = f"https://www.regularizeconsultorias.com.br/assets/img/og/noticias/{SLUG}.webp"
+OG_IMAGE_PATH = ROOT / "assets" / "img" / "og" / "noticias" / f"{SLUG}.webp"
 PUBLISHED_AT = "2026-08-12T09:59:00-03:00"
 NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 FARMACIA_POPULAR_PATH = ROOT / "farmacia-popular" / "index.html"
@@ -93,6 +95,18 @@ def test_portaria_article_has_expected_newsarticle_metadata():
     assert news_article["author"] == {"@type": "Person", "name": "Júnior Costa"}
     assert news_article["publisher"]["name"] == "Regularize Consultoria"
     assert news_article["mainEntityOfPage"]["@id"] == ARTICLE_URL
+
+
+def test_portaria_article_uses_specific_og_image():
+    html = ARTICLE_PATH.read_text(encoding="utf-8")
+    news_article = next(item for item in jsonld_objects(parse_article()) if item.get("@type") == "NewsArticle")
+
+    assert OG_IMAGE_PATH.is_file()
+    assert html.count(f'property="og:image" content="{OG_IMAGE_URL}"') == 1
+    assert html.count(f'property="og:image:secure_url" content="{OG_IMAGE_URL}"') == 1
+    assert html.count(f'name="twitter:image" content="{OG_IMAGE_URL}"') == 1
+    assert news_article["image"] == OG_IMAGE_URL
+    assert "assets/img/og/noticias.jpg" not in html
 
 
 def test_portaria_article_preserves_editorial_safeguards_and_internal_flow():
