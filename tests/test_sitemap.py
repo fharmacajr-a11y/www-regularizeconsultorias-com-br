@@ -41,7 +41,7 @@ def test_sitemap_is_valid_xml_with_unique_urls():
     locations = [url.findtext("s:loc", namespaces=NS) for url in urls]
 
     assert root.tag == f"{{{NAMESPACE}}}urlset"
-    assert len(urls) == 83
+    assert len(urls) == 84
     assert all(location and location.strip() for location in locations)
     assert len(locations) == len(set(locations))
 
