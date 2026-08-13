@@ -122,7 +122,7 @@ def test_portaria_article_preserves_editorial_safeguards_and_internal_flow():
         html,
     )
     assert "não a implantação imediata desses serviços" in lowered
-    assert "essas penalidades não são automáticas" in lowered
+    assert "podem ser aplicadas isolada ou cumulativamente" in lowered
     assert "não representa promessa de credenciamento, renovação, aprovação, desbloqueio ou permanência" in lowered
     assert "renovação anual" in lowered
     assert "orientações então vigentes" in lowered
@@ -173,8 +173,8 @@ def test_portaria_article_explains_document_retention_change_and_caution():
 
     assert "regra anterior" in lowered
     assert "10 anos" in lowered
-    assert "cinco anos" in lowered
-    assert "redução de 10 para cinco anos é uma mudança real" in lowered
+    assert "5 anos" in lowered
+    assert "redução de 10 para 5 anos é uma mudança real" in lowered
     assert "prioriza a guarda em meio digital ou eletrônico" in lowered
     assert "integridade, autenticidade, disponibilidade e rastreabilidade" in lowered
     assert "até sua conclusão" in lowered
@@ -187,15 +187,15 @@ def test_portaria_article_distinguishes_current_renewal_and_prescription_rules()
     lowered = ARTICLE_PATH.read_text(encoding="utf-8").casefold()
 
     assert "deverá ser renovada a cada" in lowered
-    assert "dois anos" in lowered
+    assert "2 anos" in lowered
     assert "renovação de 2025" in lowered
     assert "renovação anual" in lowered
-    assert "a nova portaria passa a estabelecer" in lowered
+    assert "a nova portaria passa a estabelecer a renovação da participação a cada 2 anos" in lowered
     assert "não significa renovação automática" in lowered
-    assert "deverá publicar a convocação" in lowered
+    assert "convocação deverá estabelecer prazo, procedimento e condições" in lowered
     assert "validade das prescrições permanece em 180 e 365 dias" in lowered
     assert "mantém a regra geral já conhecida" in lowered
-    assert "esses prazos foram mantidos, e não criados ou alterados" in lowered
+    assert "esses prazos não foram criados ou alterados" in lowered
 
 
 def test_portaria_article_details_fines_without_alarmism():
@@ -208,7 +208,7 @@ def test_portaria_article_details_fines_without_alarmism():
         ("gravíssima", "até 20%"),
     ):
         assert f"{classification}: <strong>{percentage}</strong>" in lowered
-    assert "três meses completos" in lowered
+    assert "3 últimos meses completos das autorizações consolidadas" in lowered
     assert "valor da irregularidade individualizada" in lowered
     assert "prejuízo causado ou potencialmente causado ao erário" in lowered
     assert "vendas realizadas no pfpb nos 12 meses anteriores à decisão" in lowered
@@ -227,7 +227,7 @@ def test_portaria_article_distinguishes_preventive_suspension_and_penalty():
     assert "não significa, por si só, que uma penalidade definitiva já foi aplicada" in lowered
     assert "bloqueio temporário" in lowered
     assert "é uma sanção" in lowered
-    assert "três a seis meses" in lowered
+    assert "3 a 6 meses" in lowered
 
 
 def test_portaria_article_individualizes_headquarters_and_branches():
@@ -245,17 +245,67 @@ def test_portaria_article_individualizes_headquarters_and_branches():
 def test_portaria_article_covers_other_operational_points_without_generalizing():
     lowered = ARTICLE_PATH.read_text(encoding="utf-8").casefold()
 
-    assert "seis meses consecutivos após o início das atividades" in lowered
+    assert "6 meses consecutivos após o início das atividades" in lowered
     assert "situações excepcionais devidamente justificadas e comprovadas" in lowered
-    assert "não se trata de exclusão automática aos seis meses" in lowered
+    assert "não se trata de exclusão automática aos 6 meses" in lowered
     assert "situação cadastral perante a receita federal esteja “baixada”" in lowered
     assert "automaticamente cancelada no pfpb" in lowered
     assert "reanálise em até 60 dias contados da ordem bancária" in lowered
     assert "cancelamento a pedido" in lowered
-    assert "cancelamento por não renovação" in lowered
+    assert "<strong>não renovação:</strong> pode resultar no cancelamento" in lowered
     assert "cancelamento por irregularidades" in lowered
-    assert "após <strong>seis meses</strong>" in lowered
-    assert "após <strong>dois anos</strong>" in lowered
+    assert "após <strong>6 meses</strong>" in lowered
+    assert "após <strong>2 anos</strong>" in lowered
+
+
+def test_portaria_article_explains_cancellation_effects_and_visible_faq():
+    html = ARTICLE_PATH.read_text(encoding="utf-8")
+    lowered = html.casefold()
+
+    assert "cancelamento e possibilidade de nova participação" in lowered
+    assert "não é recredenciamento automático" in lowered
+    assert "<strong>não renovação:</strong> pode resultar no cancelamento" in lowered
+    assert "nova solicitação somente após <strong>6 meses</strong>" in lowered
+    assert "cancelamento a pedido" in lowered
+    assert "o pedido não elimina eventual responsabilização" in lowered
+    assert "o cancelamento da participação não extingue imediatamente" in lowered
+    assert "podem ser aplicadas isolada ou cumulativamente" in lowered
+    assert "dúvidas frequentes sobre as novas regras do farmácia popular" in lowered
+    faq_match = re.search(
+        r'<section class="article-faq"[^>]*>(.*?)</section>', html, flags=re.DOTALL
+    )
+    assert faq_match
+    faq_html = faq_match.group(1)
+    assert faq_html.count("<details") == 9
+    assert faq_html.count("<summary") == 9
+    assert not re.search(r"<details\b[^>]*\bopen\b", faq_html)
+    assert "name=" not in faq_html
+    assert all("article-faq__answer" in item for item in re.findall(r"<details\b.*?</details>", faq_html, re.DOTALL))
+    assert "onclick=" not in faq_html.casefold()
+    assert "recurso administrativo em 10 dias" in lowered
+    assert "ressarcimento depende do procedimento e da decisão correspondentes" in lowered
+    assert '"@type":"faqpage"' not in lowered
+    assert '"@type": "faqpage"' not in lowered
+    assert '"@type":"qapage"' not in lowered
+    assert '"@type": "qapage"' not in lowered
+
+
+def test_portaria_article_uses_digits_for_regulatory_quantities():
+    lowered = ARTICLE_PATH.read_text(encoding="utf-8").casefold()
+
+    for written_quantity in (
+        "dois anos",
+        "cinco anos",
+        "seis meses",
+        "três a seis meses",
+        "três meses completos",
+        "dez dias",
+        "quinze dias",
+        "trinta dias",
+        "doze meses",
+        "sessenta dias",
+    ):
+        assert written_quantity not in lowered
 
 
 def test_news_index_has_exactly_one_new_article_and_consistent_counts():
