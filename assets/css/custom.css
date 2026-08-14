@@ -2277,7 +2277,15 @@ main > article > header .category-chip {
 
 /* WhatsApp – verde oficial */
 .floating-btn--whatsapp {
-  background-color: #25d366;
+  background-color: #128c7e;
+}
+
+.floating-btn--whatsapp:focus-visible {
+  outline-color: #fff;
+}
+
+footer .text-slate-500 {
+  color: #94a3b8;
 }
 
 /* Voltar ao topo – cor da brand; oculto por padrão */
