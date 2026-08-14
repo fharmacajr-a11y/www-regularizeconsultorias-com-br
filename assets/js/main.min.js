@@ -392,6 +392,11 @@
     }
 
     function getCardTimestamp(card) {
+      var updated = card.getAttribute('data-updated');
+      if (updated) {
+        var updatedTimestamp = Date.parse(updated);
+        if (!Number.isNaN(updatedTimestamp)) return updatedTimestamp;
+      }
       var time = card.querySelector('time[datetime]');
       var timestamp = time ? Date.parse(time.getAttribute('datetime')) : 0;
       return Number.isNaN(timestamp) ? 0 : timestamp;

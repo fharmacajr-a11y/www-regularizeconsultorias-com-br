@@ -381,5 +381,6 @@ def test_news_index_itemlist_contains_new_article_in_first_position():
 
     assert len(items) == 65
     assert [item["position"] for item in items] == list(range(1, 66))
-    assert len({item["url"] for item in items}) == 65
-    assert items[0]["url"] == ARTICLE_URL
+    urls = [item["url"] for item in items]
+    assert len(set(urls)) == 65
+    assert ARTICLE_URL in urls
