@@ -100,7 +100,7 @@
     color: #e2e8f0;
   }
 
-  body:has(main a[href*="solicitar%20uma%20an%C3%A1lise"]) aside > div {
+  body:has(main a[href*="solicitar%20uma%20an%C3%A1lise"]) main aside > div {
     padding: 1.75rem 1.75rem 1.875rem;
     border-radius: 1.5rem;
   }
@@ -161,14 +161,14 @@
     justify-content: center;
   }
 
-  body:has(main a[href*="solicitar%20uma%20an%C3%A1lise"]) aside {
+  body:has(main a[href*="solicitar%20uma%20an%C3%A1lise"]) main aside {
     max-width: 46rem;
     width: 100%;
     margin-left: auto;
     margin-right: auto;
   }
 
-  body:has(main a[href*="solicitar%20uma%20an%C3%A1lise"]) aside > div {
+  body:has(main a[href*="solicitar%20uma%20an%C3%A1lise"]) main aside > div {
     padding: 1.5rem 1.5rem 1.625rem;
   }
 
@@ -239,7 +239,7 @@
     line-height: 1.45;
   }
 
-  body:has(main a[href*="solicitar%20uma%20an%C3%A1lise"]) aside > div {
+  body:has(main a[href*="solicitar%20uma%20an%C3%A1lise"]) main aside > div {
     height: 100%;
     padding: 1.5rem 1.5rem 1.625rem;
   }

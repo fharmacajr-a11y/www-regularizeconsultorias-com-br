@@ -114,3 +114,11 @@ def test_banner_css_stays_sticky_and_uses_the_avisos_red():
         assert "height:4.8rem" in compact_css, path.name
         assert "@media(min-width:768px){.site-regulatory-banner__link{height:2.5rem;min-height:2.5rem" in compact_css, path.name
         assert "#navbar{top:2.5rem" in compact_css, path.name
+
+
+def test_contato_responsive_aside_rules_do_not_capture_the_global_banner():
+    contato_css = (ROOT / "assets" / "css" / "pages" / "contato.css").read_text(encoding="utf-8")
+    selector_prefix = r'body:has\(main a\[href\*="solicitar%20uma%20an%C3%A1lise"\]\)'
+
+    assert re.search(selector_prefix + r'\s+aside(?:\s|>|\{)', contato_css) is None
+    assert re.search(selector_prefix + r'\s+main\s+aside\s*\{', contato_css) is not None
