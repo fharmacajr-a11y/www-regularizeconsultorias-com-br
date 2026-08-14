@@ -7,7 +7,9 @@ ROOT = Path(__file__).resolve().parent.parent
 NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 CREDENCIAMENTO_PATH = ROOT / "noticias" / "credenciamento-farmacia-popular-municipios-com-vagas" / "index.html"
 MONITORAMENTO_PATH = ROOT / "noticias" / "farmacia-popular-inconsistencias-prescricoes-monitoramento" / "index.html"
+GLP1_PATH = ROOT / "noticias" / "canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao" / "index.html"
 MONITORAMENTO_URL = "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-inconsistencias-prescricoes-monitoramento/"
+GLP1_URL = "https://www.regularizeconsultorias.com.br/noticias/canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao/"
 CREDENCIAMENTO_URL = "https://www.regularizeconsultorias.com.br/noticias/credenciamento-farmacia-popular-municipios-com-vagas/"
 ALTERACAO_CADASTRAL_URL = "https://www.regularizeconsultorias.com.br/noticias/alteracao-cadastral-farmacia-popular-regularizacao/"
 PORTARIA_URL = "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-portaria-12091-2026-novas-regras/"
@@ -63,6 +65,19 @@ def test_news_index_sorting_rule_and_attributes():
     assert '"datePublished": "2026-06-22T09:40:00-03:00"' in monitoramento_page
     assert f'"dateModified": "{MONITORAMENTO_UPDATED}"' in monitoramento_page
 
+    glp1_card = next(
+        (card for card in _news_cards(html) if _card_url(card) == GLP1_URL),
+        None,
+    )
+    assert glp1_card is not None, "GLP-1 article not found in HTML"
+    assert 'data-updated="2026-08-14T16:13:12-03:00"' in glp1_card
+    assert "Atualização" in glp1_card
+    assert "Ler atualização" in glp1_card
+
+    glp1_page = GLP1_PATH.read_text(encoding="utf-8")
+    assert '"datePublished": "2026-05-31T19:00:00-03:00"' in glp1_page
+    assert '"dateModified": "2026-08-14T16:13:12-03:00"' in glp1_page
+
     credenciamento_match = re.search(r'(<article[^>]*?data-title="Credenciamento no Farmácia Popular exige atenção à lista oficial de municípios com vagas"[^>]*?>.*?)</article>', html, re.DOTALL)
     assert credenciamento_match is not None, "Credenciamento article not found in HTML"
     credenciamento_html = credenciamento_match.group(1)
@@ -86,9 +101,10 @@ def test_news_index_itemlist_ordering():
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
 
-    assert urls[0] == "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
-    assert urls[1] == MONITORAMENTO_URL, "Monitoramento should be at position 2 after its material update"
-    assert urls[2] == CREDENCIAMENTO_URL, "Credenciamento should be at position 3 in JSON-LD"
+    assert urls[0] == GLP1_URL
+    assert urls[1] == "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
+    assert urls[2] == MONITORAMENTO_URL, "Monitoramento should be at position 3 after its material update"
+    assert urls[3] == CREDENCIAMENTO_URL, "Credenciamento should be at position 4 in JSON-LD"
     assert PORTARIA_URL in urls, "Portaria is missing from JSON-LD"
     assert urls.index(PORTARIA_URL) > urls.index(ALTERACAO_CADASTRAL_URL), "Portaria should appear after Alteracao Cadastral"
 
