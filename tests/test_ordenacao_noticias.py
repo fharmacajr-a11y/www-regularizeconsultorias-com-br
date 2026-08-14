@@ -86,9 +86,9 @@ def test_news_index_itemlist_ordering():
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
 
-    assert urls[0] == MONITORAMENTO_URL, "Monitoramento should be at position 1 after its material update"
-    assert urls[1] == CREDENCIAMENTO_URL, "Credenciamento should be at position 2 in JSON-LD"
-    assert urls[2] == ALTERACAO_CADASTRAL_URL, "Alteracao Cadastral should be at position 3 in JSON-LD"
+    assert urls[0] == "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
+    assert urls[1] == MONITORAMENTO_URL, "Monitoramento should be at position 2 after its material update"
+    assert urls[2] == CREDENCIAMENTO_URL, "Credenciamento should be at position 3 in JSON-LD"
     assert PORTARIA_URL in urls, "Portaria is missing from JSON-LD"
     assert urls.index(PORTARIA_URL) > urls.index(ALTERACAO_CADASTRAL_URL), "Portaria should appear after Alteracao Cadastral"
 
@@ -98,8 +98,8 @@ def test_all_news_orders_match_effective_timestamp_sorting():
     cards = _news_cards(html)
     items = _itemlist(html)
 
-    assert len(cards) == 65
-    assert len(items) == 65
+    assert len(cards) == 66
+    assert len(items) == 66
 
     physical_urls = [_card_url(card) for card in cards]
     itemlist_urls = [item["url"] for item in items]
@@ -108,8 +108,8 @@ def test_all_news_orders_match_effective_timestamp_sorting():
         for card in sorted(cards, key=_card_timestamp, reverse=True)
     ]
 
-    assert len(set(physical_urls)) == 65
-    assert [item["position"] for item in items] == list(range(1, 66))
+    assert len(set(physical_urls)) == 66
+    assert [item["position"] for item in items] == list(range(1, 67))
     assert physical_urls == calculated_urls
     assert itemlist_urls == physical_urls
 
