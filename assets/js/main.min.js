@@ -335,10 +335,6 @@
     var activeCategory = 'todos';
     var activeSort = 'desc';
 
-    articleCards.forEach(function (card, index) {
-      card.classList.toggle('news-card-compact', index >= INITIAL_VISIBLE_LIMIT);
-    });
-
     // --- Carregar mais (mobile-first) ---
     // Apenas ativa quando o botão existe na página (somente /noticias/)
     var loadMoreBtn = document.getElementById('btn-carregar-mais');
@@ -434,6 +430,16 @@
       currentLimit = getInitialLimit();
     }
 
+    function updateCardLayouts(matchingCards) {
+      articleCards.forEach(function (card) {
+        card.classList.remove('news-card-compact');
+      });
+
+      matchingCards.forEach(function (card, index) {
+        card.classList.toggle('news-card-compact', index >= INITIAL_VISIBLE_LIMIT);
+      });
+    }
+
     function updateResults() {
       var query = normalizeText(searchInput.value);
       var normalizedCategory = normalizeText(activeCategory);
@@ -460,7 +466,9 @@
         }
       });
 
-      // 2ª passagem: aplica o limite atual (respeitando breakpoint + clicks no botão)
+      // 2ª passagem: recalcula formato e visibilidade sobre o resultado já ordenado
+      updateCardLayouts(matchingCards);
+
       matchingCards.forEach(function (card, index) {
         card.classList.toggle('hidden', index >= currentLimit);
       });
