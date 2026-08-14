@@ -15,6 +15,7 @@ SUPERVISAO_CONTEUDO_URL = "https://www.regularizeconsultorias.com.br/noticias/fa
 RETATRUTIDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-retatrutida-sem-registro-produtos-irregulares/"
 HEMOTERAPIA_URL = "https://www.regularizeconsultorias.com.br/noticias/ministerio-saude-atualiza-procedimentos-hemoterapicos-transicao-2026/"
 DISPOSITIVOS_IRREGULARES_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-medidas-dispositivos-medicos-irregulares-fiscalizacao/"
+PARAMOL_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-recolhe-lote-114053-paramol-750-mg/"
 SEMAGLUTIDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-registra-cinco-medicamentos-semaglutida/"
 CREDENCIAMENTO_URL = "https://www.regularizeconsultorias.com.br/noticias/credenciamento-farmacia-popular-municipios-com-vagas/"
 ALTERACAO_CADASTRAL_URL = "https://www.regularizeconsultorias.com.br/noticias/alteracao-cadastral-farmacia-popular-regularizacao/"
@@ -115,7 +116,11 @@ def test_news_index_itemlist_ordering():
     dispositivos_position = urls.index(DISPOSITIVOS_IRREGULARES_URL)
     assert dispositivos_position == 11
     assert urls[dispositivos_position - 1] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-novas-regras-cannabis-autorizacao-especial/"
-    assert urls[dispositivos_position + 1] == SEMAGLUTIDA_URL
+    assert urls[dispositivos_position + 1] == PARAMOL_URL
+    paramol_position = urls.index(PARAMOL_URL)
+    assert paramol_position == 12
+    assert urls[paramol_position - 1] == DISPOSITIVOS_IRREGULARES_URL
+    assert urls[paramol_position + 1] == SEMAGLUTIDA_URL
     supervisao_position = urls.index(SUPERVISAO_CONTEUDO_URL)
     assert urls[supervisao_position - 1] == RETATRUTIDA_URL
     assert urls[supervisao_position + 1] == HEMOTERAPIA_URL
