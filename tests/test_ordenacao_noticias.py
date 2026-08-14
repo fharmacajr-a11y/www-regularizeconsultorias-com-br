@@ -10,6 +10,9 @@ MONITORAMENTO_PATH = ROOT / "noticias" / "farmacia-popular-inconsistencias-presc
 GLP1_PATH = ROOT / "noticias" / "canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao" / "index.html"
 MONITORAMENTO_URL = "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-inconsistencias-prescricoes-monitoramento/"
 GLP1_URL = "https://www.regularizeconsultorias.com.br/noticias/canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao/"
+SUPERVISAO_CONTEUDO_URL = "https://www.regularizeconsultorias.com.br/noticias/farmaceutico-supervisiona-conteudos-farmacia-redes-sociais-sites/"
+RETATRUTIDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-retatrutida-sem-registro-produtos-irregulares/"
+HEMOTERAPIA_URL = "https://www.regularizeconsultorias.com.br/noticias/ministerio-saude-atualiza-procedimentos-hemoterapicos-transicao-2026/"
 CREDENCIAMENTO_URL = "https://www.regularizeconsultorias.com.br/noticias/credenciamento-farmacia-popular-municipios-com-vagas/"
 ALTERACAO_CADASTRAL_URL = "https://www.regularizeconsultorias.com.br/noticias/alteracao-cadastral-farmacia-popular-regularizacao/"
 PORTARIA_URL = "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-portaria-12091-2026-novas-regras/"
@@ -105,6 +108,9 @@ def test_news_index_itemlist_ordering():
     assert urls[1] == "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
     assert urls[2] == MONITORAMENTO_URL, "Monitoramento should be at position 3 after its material update"
     assert urls[3] == CREDENCIAMENTO_URL, "Credenciamento should be at position 4 in JSON-LD"
+    supervisao_position = urls.index(SUPERVISAO_CONTEUDO_URL)
+    assert urls[supervisao_position - 1] == RETATRUTIDA_URL
+    assert urls[supervisao_position + 1] == HEMOTERAPIA_URL
     assert PORTARIA_URL in urls, "Portaria is missing from JSON-LD"
     assert urls.index(PORTARIA_URL) > urls.index(ALTERACAO_CADASTRAL_URL), "Portaria should appear after Alteracao Cadastral"
 
