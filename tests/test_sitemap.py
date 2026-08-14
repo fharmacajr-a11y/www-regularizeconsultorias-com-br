@@ -6,6 +6,8 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlsplit
 
+from test_rodapes_globais import public_html_paths
+
 
 ROOT = Path(__file__).parents[1]
 SITEMAP_PATH = ROOT / "sitemap.xml"
@@ -39,11 +41,17 @@ class _MetadataParser(HTMLParser):
 def test_sitemap_is_valid_xml_with_unique_urls():
     root, urls = _url_elements()
     locations = [url.findtext("s:loc", namespaces=NS) for url in urls]
+    public_canonicals = set()
+    for path in public_html_paths():
+        parser = _MetadataParser()
+        parser.feed(path.read_text(encoding="utf-8"))
+        assert len(parser.canonicals) == 1, path.relative_to(ROOT)
+        public_canonicals.add(parser.canonicals[0])
 
     assert root.tag == f"{{{NAMESPACE}}}urlset"
-    assert len(urls) == 84
     assert all(location and location.strip() for location in locations)
     assert len(locations) == len(set(locations))
+    assert set(locations) == public_canonicals
 
 
 def test_sitemap_urls_and_metadata_follow_the_protocol():
@@ -116,7 +124,7 @@ def test_portaria_news_and_news_index_have_expected_sitemap_metadata():
     _, urls = _url_elements()
     by_location = {url.findtext("s:loc", namespaces=NS): url for url in urls}
 
-    assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-08-12"
+    assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-08-14"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:lastmod", namespaces=NS) == "2026-08-12"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:changefreq", namespaces=NS) == "monthly"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:priority", namespaces=NS) == "0.8"

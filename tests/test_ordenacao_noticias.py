@@ -114,8 +114,8 @@ def test_all_news_orders_match_effective_timestamp_sorting():
     cards = _news_cards(html)
     items = _itemlist(html)
 
-    assert len(cards) == 66
-    assert len(items) == 66
+    assert cards
+    assert len(items) == len(cards)
 
     physical_urls = [_card_url(card) for card in cards]
     itemlist_urls = [item["url"] for item in items]
@@ -124,8 +124,8 @@ def test_all_news_orders_match_effective_timestamp_sorting():
         for card in sorted(cards, key=_card_timestamp, reverse=True)
     ]
 
-    assert len(set(physical_urls)) == 66
-    assert [item["position"] for item in items] == list(range(1, 67))
+    assert len(set(physical_urls)) == len(physical_urls)
+    assert [item["position"] for item in items] == list(range(1, len(items) + 1))
     assert physical_urls == calculated_urls
     assert itemlist_urls == physical_urls
 

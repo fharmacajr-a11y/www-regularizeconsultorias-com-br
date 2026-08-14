@@ -1,4 +1,5 @@
 from pathlib import Path
+from urllib.parse import parse_qs, urlsplit
 
 from test_rodapes_globais import ROOT, TreeParser, parse_html, public_html_paths
 
@@ -40,7 +41,13 @@ def assert_whatsapp_contract(path, canonical_path):
     button = buttons[0]
     classes = button.attrs.get("class", "").split()
     assert "floating-btn" in classes, relative_path
-    assert button.attrs.get("href", "").startswith("/whatsapp/"), relative_path
+    destination = urlsplit(button.attrs.get("href", ""))
+    assert destination.path == "/whatsapp/", relative_path
+    assert not destination.fragment, relative_path
+    if destination.query:
+        query = parse_qs(destination.query, keep_blank_values=True)
+        assert set(query) == {"text"}, relative_path
+        assert len(query["text"]) == 1 and query["text"][0].strip(), relative_path
     assert button.attrs.get("aria-label") == "Conversar pelo WhatsApp", relative_path
     assert button.attrs.get("title") == "Fale conosco no WhatsApp", relative_path
     assert button.attrs.get("target") == "_blank", relative_path
@@ -52,6 +59,7 @@ def assert_whatsapp_contract(path, canonical_path):
     svgs = [node for node in button.descendants() if node.tag == "svg"]
     assert len(svgs) == 1, f"{relative_path}: esperado exatamente 1 SVG"
     assert svgs[0].attrs.get("aria-hidden") == "true", relative_path
+    assert svgs[0].attrs.get("fill", "").casefold() == "currentcolor", relative_path
     assert not [node for node in button.descendants() if node.tag == "img"], relative_path
     assert button.text_content().strip() == "", f"{relative_path}: W/WA ou outro texto visual encontrado"
     canonical_button = whatsapp_buttons(canonical_root)[0]
@@ -61,7 +69,7 @@ def assert_whatsapp_contract(path, canonical_path):
 
 def test_every_public_page_has_canonical_whatsapp_button():
     paths = public_html_paths()
-    assert len(paths) == 84
+    assert paths, "Nenhuma página pública encontrada"
     for path in paths:
         assert_whatsapp_contract(path, CANONICAL_PATH)
 

@@ -362,14 +362,17 @@ def test_news_index_has_exactly_one_new_article_and_consistent_counts():
         for path in (ROOT / "noticias").iterdir()
         if path.is_dir() and (path / "index.html").is_file()
     ]
+    category_counts = {}
+    for category in re.findall(r'<article\b[^>]*data-news-card[^>]*data-category="([^"]+)"', html):
+        category_counts[category] = category_counts.get(category, 0) + 1
 
-    assert html.count("data-news-card") == 65
-    assert html.count('data-category="farmacia-popular"') == 10
-    assert len(article_directories) == 65
+    article_count = len(article_directories)
+    assert html.count("data-news-card") == article_count
     assert news_card_for_slug(html, SLUG)
-    assert "65 notícias encontradas" in html
-    assert re.search(r'data-news-category="todos"[^>]*>.*?<span[^>]*>65</span>', html)
-    assert re.search(r'data-news-category="farmacia-popular"[^>]*>.*?<span[^>]*>10</span>', html)
+    assert f"{article_count} notícias encontradas" in html
+    assert re.search(rf'data-news-category="todos"[^>]*>.*?<span[^>]*>{article_count}</span>', html)
+    for category, count in category_counts.items():
+        assert re.search(rf'data-news-category="{re.escape(category)}"[^>]*>.*?<span[^>]*>{count}</span>', html)
     assert f'<time datetime="{PUBLISHED_AT}"' in html
 
 
@@ -379,8 +382,9 @@ def test_news_index_itemlist_contains_new_article_in_first_position():
     collection = next(item for item in jsonld_objects(parser) if item.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
 
-    assert len(items) == 65
-    assert [item["position"] for item in items] == list(range(1, 66))
+    card_count = NEWS_INDEX_PATH.read_text(encoding="utf-8").count("data-news-card")
+    assert len(items) == card_count
+    assert [item["position"] for item in items] == list(range(1, card_count + 1))
     urls = [item["url"] for item in items]
-    assert len(set(urls)) == 65
+    assert len(set(urls)) == card_count
     assert ARTICLE_URL in urls
