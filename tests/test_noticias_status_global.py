@@ -6,6 +6,31 @@ from test_rodapes_globais import ROOT, parse_html
 
 NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 STATUS_LABELS = {"atualização", "informativo", "urgente", "orientação"}
+STATUS_CONTRACTS = {
+    "atualização": {
+        "cta": "ler atualização",
+        "card_classes": {"bg-amber-500", "text-white"},
+        "page_badge_classes": {"bg-amber-500", "text-white"},
+        "hero_classes": {"from-amber-600", "via-brand-dark", "to-brand"},
+    },
+    "informativo": {
+        "cta": "ler notícia",
+        "card_classes": {"news-orange-badge"},
+        "page_badge_classes": {"article-badge-informativo"},
+        "hero_classes": {"article-hero-informativo"},
+    },
+    "orientação": {
+        "cta": "ler orientação",
+        "page_badge_classes": {"border", "bg-white/10", "text-white"},
+        "hero_classes": {"from-brand-dark", "to-brand"},
+    },
+    "urgente": {
+        "cta": "ler notícia",
+        "card_classes": {"bg-red-600", "text-white"},
+        "page_badge_classes": {"bg-red-600", "text-white"},
+        "hero_classes": {"from-red-700", "via-brand-dark", "to-brand"},
+    },
+}
 
 
 def descendants(node, tag=None):
@@ -54,28 +79,33 @@ def jsonld_objects(page_root):
         yield json.loads("".join(script.text))
 
 
-def test_explicit_editorial_updates_match_index_page_status_and_classes():
+def test_card_cta_and_internal_hero_follow_the_status_contract():
     index_root = parse_html(NEWS_INDEX_PATH)
     cards = [card for card in descendants(index_root, "article") if "data-news-card" in card.attrs]
-    checked_updates = 0
+    checked_statuses = set()
 
     for card in cards:
         page_path, cta = article_page_for(card)
         card_badge = status_badge(card)
-        if normalized_text(card_badge) != "atualização" or normalized_text(cta) != "ler atualização":
-            continue
-
-        checked_updates += 1
+        status = normalized_text(card_badge)
+        contract = STATUS_CONTRACTS[status]
+        checked_statuses.add(status)
         page_root = parse_html(page_path)
         hero = article_hero(page_root)
         page_badge = status_badge(hero)
+        relative_path = page_path.relative_to(ROOT)
 
-        assert normalized_text(page_badge) == "atualização", page_path.relative_to(ROOT)
-        assert {"bg-amber-500", "text-white"} <= set(card_badge.attrs.get("class", "").split()), page_path.relative_to(ROOT)
-        assert {"bg-amber-500", "text-white"} <= set(page_badge.attrs.get("class", "").split()), page_path.relative_to(ROOT)
-        assert {"from-amber-600", "via-brand-dark", "to-brand"} <= set(hero.attrs.get("class", "").split()), page_path.relative_to(ROOT)
+        assert normalized_text(cta) == contract["cta"], relative_path
+        assert normalized_text(page_badge) == status, relative_path
+        assert contract.get("card_classes", set()) <= set(card_badge.attrs.get("class", "").split()), relative_path
+        assert contract["page_badge_classes"] <= set(page_badge.attrs.get("class", "").split()), relative_path
+        assert contract["hero_classes"] <= set(hero.attrs.get("class", "").split()), relative_path
 
-    assert checked_updates > 0
+        if status == "orientação":
+            card_classes = set(card_badge.attrs.get("class", "").split())
+            assert "bg-brand" in card_classes or {"bg-brand/10", "text-brand"} <= card_classes, relative_path
+
+    assert checked_statuses == set(STATUS_CONTRACTS)
 
 
 def test_data_updated_matches_internal_metadata_and_jsonld():
