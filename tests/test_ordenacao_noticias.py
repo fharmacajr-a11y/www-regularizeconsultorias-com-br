@@ -14,6 +14,7 @@ COSMETICOS_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atua
 SIFAP_SUSPENSAO_URL = "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-suspensao-temporaria-recadastramento-sifap/"
 CBPF_IN451_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-fluxo-cbpf-in451-2026/"
 PRODUTOS_IRREGULARES_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
+FABRICANTES_INTERNACIONAIS_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-dispositivos-medicos/"
 SUPERVISAO_CONTEUDO_URL = "https://www.regularizeconsultorias.com.br/noticias/farmaceutico-supervisiona-conteudos-farmacia-redes-sociais-sites/"
 RETATRUTIDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-retatrutida-sem-registro-produtos-irregulares/"
 HEMOTERAPIA_URL = "https://www.regularizeconsultorias.com.br/noticias/ministerio-saude-atualiza-procedimentos-hemoterapicos-transicao-2026/"
@@ -115,16 +116,17 @@ def test_news_index_itemlist_ordering():
     assert urls[1] == SIFAP_SUSPENSAO_URL
     assert urls[2] == COSMETICOS_URL
     assert urls[3] == PRODUTOS_IRREGULARES_URL
-    assert urls[4] == GLP1_URL
-    assert urls[5] == "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
-    assert urls[6] == MONITORAMENTO_URL, "Monitoramento should be at position 7 after CBPF update"
-    assert urls[7] == CREDENCIAMENTO_URL, "Credenciamento should be at position 8 in JSON-LD"
+    assert urls[4] == FABRICANTES_INTERNACIONAIS_URL
+    assert urls[5] == GLP1_URL
+    assert urls[6] == "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
+    assert urls[7] == MONITORAMENTO_URL, "Monitoramento should be at position 8 after cadastro eletrônico"
+    assert urls[8] == CREDENCIAMENTO_URL, "Credenciamento should be at position 9 in JSON-LD"
     dispositivos_position = urls.index(DISPOSITIVOS_IRREGULARES_URL)
-    assert dispositivos_position == 15
+    assert dispositivos_position == 16
     assert urls[dispositivos_position - 1] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-novas-regras-cannabis-autorizacao-especial/"
     assert urls[dispositivos_position + 1] == PARAMOL_URL
     paramol_position = urls.index(PARAMOL_URL)
-    assert paramol_position == 16
+    assert paramol_position == 17
     assert urls[paramol_position - 1] == DISPOSITIVOS_IRREGULARES_URL
     assert urls[paramol_position + 1] == SEMAGLUTIDA_URL
     supervisao_position = urls.index(SUPERVISAO_CONTEUDO_URL)
