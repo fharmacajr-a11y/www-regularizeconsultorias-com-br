@@ -112,10 +112,10 @@ def test_news_index_itemlist_ordering():
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
 
-    assert urls[0] == CBPF_IN451_URL
-    assert urls[1] == SIFAP_SUSPENSAO_URL
-    assert urls[2] == COSMETICOS_URL
-    assert urls[3] == PRODUTOS_IRREGULARES_URL
+    assert urls[0] == PRODUTOS_IRREGULARES_URL
+    assert urls[1] == CBPF_IN451_URL
+    assert urls[2] == SIFAP_SUSPENSAO_URL
+    assert urls[3] == COSMETICOS_URL
     assert urls[4] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-cosmeticos-saneantes/"
     assert urls[5] == FABRICANTES_INTERNACIONAIS_URL
     assert urls[6] == GLP1_URL
