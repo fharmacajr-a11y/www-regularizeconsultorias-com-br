@@ -13,6 +13,7 @@ GLP1_URL = "https://www.regularizeconsultorias.com.br/noticias/canetas-emagreced
 COSMETICOS_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-listas-substancias-cosmeticos/"
 SIFAP_SUSPENSAO_URL = "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-suspensao-temporaria-recadastramento-sifap/"
 CBPF_IN451_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-fluxo-cbpf-in451-2026/"
+RPBR_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-periodicidade-rpbr-farmacovigilancia/"
 SIPROQUIM_IN338_URL = "https://www.regularizeconsultorias.com.br/noticias/produtos-quimicos-controlados-siproquim2-assinador-pf/"
 PRODUTOS_IRREGULARES_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
 FABRICANTES_INTERNACIONAIS_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-dispositivos-medicos/"
@@ -113,18 +114,19 @@ def test_news_index_itemlist_ordering():
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
 
-    assert urls[0] == SIPROQUIM_IN338_URL
-    assert urls[1] == PRODUTOS_IRREGULARES_URL
-    assert urls[2] == CBPF_IN451_URL
-    assert urls[3] == SIFAP_SUSPENSAO_URL
-    assert urls[4] == COSMETICOS_URL
-    assert urls[5] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-cosmeticos-saneantes/"
-    assert urls[6] == FABRICANTES_INTERNACIONAIS_URL
-    assert urls[7] == GLP1_URL
-    assert urls[8] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-formulario-cbpf-terapias-avancadas/"
-    assert urls[9] == "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
-    assert urls[10] == MONITORAMENTO_URL, "Monitoramento should be at position 11 after cadastro de cosméticos e saneantes"
-    assert urls[11] == CREDENCIAMENTO_URL, "Credenciamento should be at position 12 in JSON-LD"
+    assert urls[0] == RPBR_URL
+    assert urls[1] == SIPROQUIM_IN338_URL
+    assert urls[2] == PRODUTOS_IRREGULARES_URL
+    assert urls[3] == CBPF_IN451_URL
+    assert urls[4] == SIFAP_SUSPENSAO_URL
+    assert urls[5] == COSMETICOS_URL
+    assert urls[6] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-cosmeticos-saneantes/"
+    assert urls[7] == FABRICANTES_INTERNACIONAIS_URL
+    assert urls[8] == GLP1_URL
+    assert urls[9] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-formulario-cbpf-terapias-avancadas/"
+    assert urls[10] == "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
+    assert urls[11] == MONITORAMENTO_URL, "Monitoramento should be at position 12 after cadastro de cosméticos e saneantes"
+    assert urls[12] == CREDENCIAMENTO_URL, "Credenciamento should be at position 13 in JSON-LD"
     dispositivos_position = urls.index(DISPOSITIVOS_IRREGULARES_URL)
     assert dispositivos_position == 19
     assert urls[dispositivos_position - 1] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-novas-regras-cannabis-autorizacao-especial/"
