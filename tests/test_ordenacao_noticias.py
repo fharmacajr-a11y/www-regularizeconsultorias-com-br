@@ -114,11 +114,11 @@ def test_news_index_itemlist_ordering():
     assert urls[3] == MONITORAMENTO_URL, "Monitoramento should be at position 4 after its material update"
     assert urls[4] == CREDENCIAMENTO_URL, "Credenciamento should be at position 5 in JSON-LD"
     dispositivos_position = urls.index(DISPOSITIVOS_IRREGULARES_URL)
-    assert dispositivos_position == 11
+    assert dispositivos_position == 12
     assert urls[dispositivos_position - 1] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-novas-regras-cannabis-autorizacao-especial/"
     assert urls[dispositivos_position + 1] == PARAMOL_URL
     paramol_position = urls.index(PARAMOL_URL)
-    assert paramol_position == 12
+    assert paramol_position == 13
     assert urls[paramol_position - 1] == DISPOSITIVOS_IRREGULARES_URL
     assert urls[paramol_position + 1] == SEMAGLUTIDA_URL
     supervisao_position = urls.index(SUPERVISAO_CONTEUDO_URL)
