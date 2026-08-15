@@ -21,6 +21,7 @@ SUPERVISAO_CONTEUDO_URL = "https://www.regularizeconsultorias.com.br/noticias/fa
 RETATRUTIDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-retatrutida-sem-registro-produtos-irregulares/"
 HEMOTERAPIA_URL = "https://www.regularizeconsultorias.com.br/noticias/ministerio-saude-atualiza-procedimentos-hemoterapicos-transicao-2026/"
 EDITAL_5_2026_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-edital-5-2026-dispositivos-medicos-inovadores/"
+DCB_IN462_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-lista-denominacoes-comuns-brasileiras-in-462-2026/"
 DISPOSITIVOS_IRREGULARES_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-medidas-dispositivos-medicos-irregulares-fiscalizacao/"
 PARAMOL_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-recolhe-lote-114053-paramol-750-mg/"
 SEMAGLUTIDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-registra-cinco-medicamentos-semaglutida/"
@@ -135,10 +136,14 @@ def test_news_index_itemlist_ordering():
     dispositivos_position = urls.index(DISPOSITIVOS_IRREGULARES_URL)
     assert dispositivos_position == 20
     assert urls[dispositivos_position - 1] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-novas-regras-cannabis-autorizacao-especial/"
-    assert urls[dispositivos_position + 1] == PARAMOL_URL
+    assert urls[dispositivos_position + 1] == DCB_IN462_URL
+    dcb_position = urls.index(DCB_IN462_URL)
+    assert dcb_position == 21
+    assert urls[dcb_position - 1] == DISPOSITIVOS_IRREGULARES_URL
+    assert urls[dcb_position + 1] == PARAMOL_URL
     paramol_position = urls.index(PARAMOL_URL)
-    assert paramol_position == 21
-    assert urls[paramol_position - 1] == DISPOSITIVOS_IRREGULARES_URL
+    assert paramol_position == 22
+    assert urls[paramol_position - 1] == DCB_IN462_URL
     assert urls[paramol_position + 1] == SEMAGLUTIDA_URL
     supervisao_position = urls.index(SUPERVISAO_CONTEUDO_URL)
     assert urls[supervisao_position - 1] == RETATRUTIDA_URL
