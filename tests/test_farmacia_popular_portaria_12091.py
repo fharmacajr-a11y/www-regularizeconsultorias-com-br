@@ -148,11 +148,11 @@ def test_portaria_article_and_listing_use_urgent_badge_without_changing_category
     article_html = ARTICLE_PATH.read_text(encoding="utf-8")
     index_html = NEWS_INDEX_PATH.read_text(encoding="utf-8")
     new_card = news_card_for_slug(index_html, SLUG)
-    previous_urgent_card = news_card_for_slug(
-        index_html, "farmacia-popular-suspensao-temporaria-recadastramento-sifap"
-    )
     previous_update_card = news_card_for_slug(
         index_html, "credenciamento-farmacia-popular-municipios-com-vagas"
+    )
+    historical_suspensao_card = news_card_for_slug(
+        index_html, "farmacia-popular-suspensao-temporaria-recadastramento-sifap"
     )
 
     assert ">URGENTE</span>" in article_html
@@ -163,7 +163,8 @@ def test_portaria_article_and_listing_use_urgent_badge_without_changing_category
     assert ">FARMÁCIA POPULAR</span>" in article_html
     assert 'data-category="farmacia-popular"' in new_card
     assert ">FARMÁCIA POPULAR</span>" in new_card
-    assert ">URGENTE</span>" in previous_urgent_card
+    assert ">Atualização</span>" in historical_suspensao_card
+    assert "Ler atualização" in historical_suspensao_card
     assert ">Atualização</span>" in previous_update_card
     assert "news-amber-card" in previous_update_card
 

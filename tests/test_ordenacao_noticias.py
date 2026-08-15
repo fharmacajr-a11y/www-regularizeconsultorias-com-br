@@ -11,6 +11,7 @@ GLP1_PATH = ROOT / "noticias" / "canetas-emagrecedoras-glp1-anvisa-fiscalizacao-
 MONITORAMENTO_URL = "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-inconsistencias-prescricoes-monitoramento/"
 GLP1_URL = "https://www.regularizeconsultorias.com.br/noticias/canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao/"
 COSMETICOS_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-listas-substancias-cosmeticos/"
+SIFAP_SUSPENSAO_URL = "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-suspensao-temporaria-recadastramento-sifap/"
 PRODUTOS_IRREGULARES_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
 SUPERVISAO_CONTEUDO_URL = "https://www.regularizeconsultorias.com.br/noticias/farmaceutico-supervisiona-conteudos-farmacia-redes-sociais-sites/"
 RETATRUTIDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-retatrutida-sem-registro-produtos-irregulares/"
@@ -109,18 +110,19 @@ def test_news_index_itemlist_ordering():
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
 
-    assert urls[0] == COSMETICOS_URL
-    assert urls[1] == PRODUTOS_IRREGULARES_URL
-    assert urls[2] == GLP1_URL
-    assert urls[3] == "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
-    assert urls[4] == MONITORAMENTO_URL, "Monitoramento should be at position 5 after cosmetics update"
-    assert urls[5] == CREDENCIAMENTO_URL, "Credenciamento should be at position 6 in JSON-LD"
+    assert urls[0] == SIFAP_SUSPENSAO_URL
+    assert urls[1] == COSMETICOS_URL
+    assert urls[2] == PRODUTOS_IRREGULARES_URL
+    assert urls[3] == GLP1_URL
+    assert urls[4] == "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
+    assert urls[5] == MONITORAMENTO_URL, "Monitoramento should be at position 6 after SIFAP historical update"
+    assert urls[6] == CREDENCIAMENTO_URL, "Credenciamento should be at position 7 in JSON-LD"
     dispositivos_position = urls.index(DISPOSITIVOS_IRREGULARES_URL)
-    assert dispositivos_position == 13
+    assert dispositivos_position == 14
     assert urls[dispositivos_position - 1] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-novas-regras-cannabis-autorizacao-especial/"
     assert urls[dispositivos_position + 1] == PARAMOL_URL
     paramol_position = urls.index(PARAMOL_URL)
-    assert paramol_position == 14
+    assert paramol_position == 15
     assert urls[paramol_position - 1] == DISPOSITIVOS_IRREGULARES_URL
     assert urls[paramol_position + 1] == SEMAGLUTIDA_URL
     supervisao_position = urls.index(SUPERVISAO_CONTEUDO_URL)
