@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
 
@@ -6,6 +7,29 @@ from test_rodapes_globais import ROOT, TreeParser, parse_html, public_html_paths
 
 TEMPLATE_PATH = ROOT / "noticias" / "template-noticia.html"
 CANONICAL_PATH = ROOT / "index.html"
+NEWS_ROOT = ROOT / "noticias"
+
+CONTEXTUAL_NEWS_EXPECTATIONS = {
+    "anvisa-medidas-dispositivos-medicos-irregulares-fiscalizacao": (
+        {"dispositivos"},
+        {"regularização", "fiscalização"},
+    ),
+    "anvisa-prazo-adequacao-notificacao-alimentos-setembro-2026": (
+        {"alimentos"},
+        {"1º de setembro", "1 de setembro"},
+    ),
+    "canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao": (
+        {"glp-1"},
+        {"manipulação", "fiscalização"},
+    ),
+    "alteracao-cadastral-farmacia-popular-regularizacao": (
+        {"farmácia popular"},
+        {"cadastral", "cadastro"},
+    ),
+}
+
+IN_451_NEWS_SLUG = "anvisa-atualiza-fluxo-cbpf-in451-2026"
+PLATFORM_NEWS_SLUG = "anvisa-proibe-plataforma-consultas-entrega-medicamentos"
 
 
 def whatsapp_buttons(root):
@@ -76,3 +100,59 @@ def test_every_public_page_has_canonical_whatsapp_button():
 
 def test_news_template_has_canonical_whatsapp_button():
     assert_whatsapp_contract(TEMPLATE_PATH, CANONICAL_PATH)
+
+
+def public_news_paths():
+    return sorted(NEWS_ROOT.glob("*/index.html"))
+
+
+def decoded_whatsapp_message(path):
+    buttons = whatsapp_buttons(parse_html(path))
+    assert len(buttons) == 1, path.relative_to(ROOT)
+    destination = urlsplit(buttons[0].attrs.get("href", ""))
+    assert destination.path == "/whatsapp/", path.relative_to(ROOT)
+    assert destination.query, path.relative_to(ROOT)
+    query = parse_qs(destination.query, keep_blank_values=True)
+    assert set(query) == {"text"}, path.relative_to(ROOT)
+    assert len(query["text"]) == 1, path.relative_to(ROOT)
+    message = query["text"][0].strip()
+    assert message, path.relative_to(ROOT)
+    assert message.startswith("Olá!"), path.relative_to(ROOT)
+    assert not re.search(r"%[0-9a-f]{2}", message, re.IGNORECASE), path.relative_to(ROOT)
+    return message
+
+
+def test_every_public_news_page_has_a_nonempty_contextual_whatsapp_message():
+    paths = public_news_paths()
+    assert paths, "Nenhuma notícia pública encontrada"
+    for path in paths:
+        button = whatsapp_buttons(parse_html(path))[0]
+        assert button.attrs.get("href", "").startswith("/whatsapp/?text="), path.relative_to(ROOT)
+        decoded_whatsapp_message(path)
+
+
+def test_four_corrected_news_keep_their_expected_whatsapp_context():
+    for slug, (required, alternatives) in CONTEXTUAL_NEWS_EXPECTATIONS.items():
+        message = decoded_whatsapp_message(NEWS_ROOT / slug / "index.html").casefold()
+        assert all(term in message for term in required), slug
+        assert any(term in message for term in alternatives), slug
+
+        if slug == "canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao":
+            assert "plataforma de consultas" not in message
+            assert "entrega de medicamentos" not in message
+
+
+def test_news_messages_reject_known_generic_and_cross_topic_legacy_texts():
+    for path in public_news_paths():
+        slug = path.parent.name
+        message = decoded_whatsapp_message(path).casefold()
+
+        assert "vim pelo site" not in message, slug
+        assert "prévia de notícia" not in message, slug
+
+        if "plataforma de consultas" in message or "entrega de medicamentos" in message:
+            assert slug == PLATFORM_NEWS_SLUG
+
+        if "in 451/2026" in message:
+            assert slug == IN_451_NEWS_SLUG
+            assert "cbpf" in message
