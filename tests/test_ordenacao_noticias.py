@@ -21,6 +21,7 @@ SUPERVISAO_CONTEUDO_URL = "https://www.regularizeconsultorias.com.br/noticias/fa
 RETATRUTIDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-retatrutida-sem-registro-produtos-irregulares/"
 HEMOTERAPIA_URL = "https://www.regularizeconsultorias.com.br/noticias/ministerio-saude-atualiza-procedimentos-hemoterapicos-transicao-2026/"
 EDITAL_5_2026_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-edital-5-2026-dispositivos-medicos-inovadores/"
+REVISAO_PROPAGANDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-revisao-propaganda-medicamentos-alimentos/"
 DCB_IN462_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-lista-denominacoes-comuns-brasileiras-in-462-2026/"
 DISPOSITIVOS_IRREGULARES_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-medidas-dispositivos-medicos-irregulares-fiscalizacao/"
 PARAMOL_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-recolhe-lote-114053-paramol-750-mg/"
@@ -132,17 +133,20 @@ def test_news_index_itemlist_ordering():
     edital_position = urls.index(EDITAL_5_2026_URL)
     assert edital_position == 18
     assert urls[edital_position - 1] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-amplia-painel-medicamentos-pendentes-registro/"
-    assert urls[edital_position + 1] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-novas-regras-cannabis-autorizacao-especial/"
+    assert urls[edital_position + 1] == REVISAO_PROPAGANDA_URL
+    revisao_position = urls.index(REVISAO_PROPAGANDA_URL)
+    assert revisao_position == 19
+    assert urls[revisao_position + 1] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-novas-regras-cannabis-autorizacao-especial/"
     dispositivos_position = urls.index(DISPOSITIVOS_IRREGULARES_URL)
-    assert dispositivos_position == 20
+    assert dispositivos_position == 21
     assert urls[dispositivos_position - 1] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-novas-regras-cannabis-autorizacao-especial/"
     assert urls[dispositivos_position + 1] == DCB_IN462_URL
     dcb_position = urls.index(DCB_IN462_URL)
-    assert dcb_position == 21
+    assert dcb_position == 22
     assert urls[dcb_position - 1] == DISPOSITIVOS_IRREGULARES_URL
     assert urls[dcb_position + 1] == PARAMOL_URL
     paramol_position = urls.index(PARAMOL_URL)
-    assert paramol_position == 22
+    assert paramol_position == 23
     assert urls[paramol_position - 1] == DCB_IN462_URL
     assert urls[paramol_position + 1] == SEMAGLUTIDA_URL
     supervisao_position = urls.index(SUPERVISAO_CONTEUDO_URL)
