@@ -22,6 +22,7 @@ RETATRUTIDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-ret
 HEMOTERAPIA_URL = "https://www.regularizeconsultorias.com.br/noticias/ministerio-saude-atualiza-procedimentos-hemoterapicos-transicao-2026/"
 EDITAL_5_2026_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-edital-5-2026-dispositivos-medicos-inovadores/"
 REVISAO_PROPAGANDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-revisao-propaganda-medicamentos-alimentos/"
+CANNABIS_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-novas-regras-cannabis-autorizacao-especial/"
 DCB_IN462_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-lista-denominacoes-comuns-brasileiras-in-462-2026/"
 DISPOSITIVOS_IRREGULARES_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-medidas-dispositivos-medicos-irregulares-fiscalizacao/"
 PARAMOL_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-recolhe-lote-114053-paramol-750-mg/"
@@ -117,29 +118,30 @@ def test_news_index_itemlist_ordering():
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
 
-    assert urls[0] == RPBR_URL
-    assert urls[1] == SIPROQUIM_IN338_URL
-    assert urls[2] == PRODUTOS_IRREGULARES_URL
-    assert urls[3] == CBPF_IN451_URL
-    assert urls[4] == SIFAP_SUSPENSAO_URL
-    assert urls[5] == COSMETICOS_URL
-    assert urls[6] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-cosmeticos-saneantes/"
-    assert urls[7] == FABRICANTES_INTERNACIONAIS_URL
-    assert urls[8] == GLP1_URL
-    assert urls[9] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-formulario-cbpf-terapias-avancadas/"
-    assert urls[10] == "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
-    assert urls[11] == MONITORAMENTO_URL, "Monitoramento should be at position 12 after cadastro de cosméticos e saneantes"
-    assert urls[12] == CREDENCIAMENTO_URL, "Credenciamento should be at position 13 in JSON-LD"
+    assert urls[0] == CANNABIS_URL
+    assert urls[1] == RPBR_URL
+    assert urls[2] == SIPROQUIM_IN338_URL
+    assert urls[3] == PRODUTOS_IRREGULARES_URL
+    assert urls[4] == CBPF_IN451_URL
+    assert urls[5] == SIFAP_SUSPENSAO_URL
+    assert urls[6] == COSMETICOS_URL
+    assert urls[7] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-cosmeticos-saneantes/"
+    assert urls[8] == FABRICANTES_INTERNACIONAIS_URL
+    assert urls[9] == GLP1_URL
+    assert urls[10] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-formulario-cbpf-terapias-avancadas/"
+    assert urls[11] == "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
+    assert urls[12] == MONITORAMENTO_URL, "Monitoramento should follow CNES competencia 08"
+    assert urls[13] == CREDENCIAMENTO_URL, "Credenciamento should be at position 14 in JSON-LD"
     edital_position = urls.index(EDITAL_5_2026_URL)
-    assert edital_position == 18
+    assert edital_position == 19
     assert urls[edital_position - 1] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-amplia-painel-medicamentos-pendentes-registro/"
     assert urls[edital_position + 1] == REVISAO_PROPAGANDA_URL
     revisao_position = urls.index(REVISAO_PROPAGANDA_URL)
-    assert revisao_position == 19
-    assert urls[revisao_position + 1] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-novas-regras-cannabis-autorizacao-especial/"
+    assert revisao_position == 20
+    assert urls[revisao_position + 1] == DISPOSITIVOS_IRREGULARES_URL
     dispositivos_position = urls.index(DISPOSITIVOS_IRREGULARES_URL)
     assert dispositivos_position == 21
-    assert urls[dispositivos_position - 1] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-novas-regras-cannabis-autorizacao-especial/"
+    assert urls[dispositivos_position - 1] == REVISAO_PROPAGANDA_URL
     assert urls[dispositivos_position + 1] == DCB_IN462_URL
     dcb_position = urls.index(DCB_IN462_URL)
     assert dcb_position == 22
