@@ -30,6 +30,7 @@ SEMAGLUTIDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-reg
 CREDENCIAMENTO_URL = "https://www.regularizeconsultorias.com.br/noticias/credenciamento-farmacia-popular-municipios-com-vagas/"
 ALTERACAO_CADASTRAL_URL = "https://www.regularizeconsultorias.com.br/noticias/alteracao-cadastral-farmacia-popular-regularizacao/"
 PORTARIA_URL = "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-portaria-12091-2026-novas-regras/"
+PORTARIA_UPDATED = "2026-08-20T18:22:59-03:00"
 MONITORAMENTO_UPDATED = "2026-08-14T12:46:22-03:00"
 
 
@@ -111,6 +112,14 @@ def test_news_index_sorting_rule_and_attributes():
     assert 'data-updated="2026-08-14T09:04:41-03:00"' in article_html, "data-updated attribute missing or incorrect"
     assert '<time datetime="2026-05-22T23:30:00-03:00"' in article_html, "Original datePublished was falsified in the <time> tag"
 
+    portaria_card = next(
+        (card for card in _news_cards(html) if _card_url(card) == PORTARIA_URL),
+        None,
+    )
+    assert portaria_card is not None
+    assert f'data-updated="{PORTARIA_UPDATED}"' in portaria_card
+    assert f'<time datetime="{PORTARIA_UPDATED}"' in portaria_card
+
 def test_news_index_itemlist_ordering():
     html = NEWS_INDEX_PATH.read_text(encoding="utf-8")
     items = _itemlist(html)
@@ -118,20 +127,21 @@ def test_news_index_itemlist_ordering():
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
 
-    assert urls[0] == CANNABIS_URL
-    assert urls[1] == RPBR_URL
-    assert urls[2] == SIPROQUIM_IN338_URL
-    assert urls[3] == PRODUTOS_IRREGULARES_URL
-    assert urls[4] == CBPF_IN451_URL
-    assert urls[5] == SIFAP_SUSPENSAO_URL
-    assert urls[6] == COSMETICOS_URL
-    assert urls[7] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-cosmeticos-saneantes/"
-    assert urls[8] == FABRICANTES_INTERNACIONAIS_URL
-    assert urls[9] == GLP1_URL
-    assert urls[10] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-formulario-cbpf-terapias-avancadas/"
-    assert urls[11] == "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
-    assert urls[12] == MONITORAMENTO_URL, "Monitoramento should follow CNES competencia 08"
-    assert urls[13] == CREDENCIAMENTO_URL, "Credenciamento should be at position 14 in JSON-LD"
+    assert urls[0] == PORTARIA_URL
+    assert urls[1] == CANNABIS_URL
+    assert urls[2] == RPBR_URL
+    assert urls[3] == SIPROQUIM_IN338_URL
+    assert urls[4] == PRODUTOS_IRREGULARES_URL
+    assert urls[5] == CBPF_IN451_URL
+    assert urls[6] == SIFAP_SUSPENSAO_URL
+    assert urls[7] == COSMETICOS_URL
+    assert urls[8] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-cosmeticos-saneantes/"
+    assert urls[9] == FABRICANTES_INTERNACIONAIS_URL
+    assert urls[10] == GLP1_URL
+    assert urls[11] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-formulario-cbpf-terapias-avancadas/"
+    assert urls[12] == "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
+    assert urls[13] == MONITORAMENTO_URL, "Monitoramento should follow CNES competencia 08"
+    assert urls[14] == CREDENCIAMENTO_URL, "Credenciamento should be at position 15 in JSON-LD"
     edital_position = urls.index(EDITAL_5_2026_URL)
     assert edital_position == 19
     assert urls[edital_position - 1] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-amplia-painel-medicamentos-pendentes-registro/"
@@ -155,7 +165,7 @@ def test_news_index_itemlist_ordering():
     assert urls[supervisao_position - 1] == RETATRUTIDA_URL
     assert urls[supervisao_position + 1] == HEMOTERAPIA_URL
     assert PORTARIA_URL in urls, "Portaria is missing from JSON-LD"
-    assert urls.index(PORTARIA_URL) > urls.index(ALTERACAO_CADASTRAL_URL), "Portaria should appear after Alteracao Cadastral"
+    assert urls.index(PORTARIA_URL) == 0
 
 
 def test_all_news_orders_match_effective_timestamp_sorting():

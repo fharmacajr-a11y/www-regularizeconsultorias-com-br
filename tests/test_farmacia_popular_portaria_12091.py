@@ -12,6 +12,7 @@ ARTICLE_URL = f"https://www.regularizeconsultorias.com.br/noticias/{SLUG}/"
 OG_IMAGE_URL = f"https://www.regularizeconsultorias.com.br/assets/img/og/noticias/{SLUG}.webp"
 OG_IMAGE_PATH = ROOT / "assets" / "img" / "og" / "noticias" / f"{SLUG}.webp"
 PUBLISHED_AT = "2026-08-12T09:59:00-03:00"
+MODIFIED_AT = "2026-08-20T18:22:59-03:00"
 NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 FARMACIA_POPULAR_PATH = ROOT / "farmacia-popular" / "index.html"
 
@@ -90,11 +91,29 @@ def test_portaria_article_has_expected_newsarticle_metadata():
     assert news_article["headline"] == "Farmácia Popular tem novas regras com a Portaria GM/MS nº 12.091/2026"
     assert news_article["url"] == ARTICLE_URL
     assert news_article["datePublished"] == PUBLISHED_AT
-    assert news_article["dateModified"] == PUBLISHED_AT
+    assert news_article["dateModified"] == MODIFIED_AT
     assert news_article["articleSection"] == "Farmácia Popular"
     assert news_article["author"] == {"@type": "Person", "name": "Júnior Costa"}
     assert news_article["publisher"]["name"] == "Regularize Consultoria"
     assert news_article["mainEntityOfPage"]["@id"] == ARTICLE_URL
+
+
+def test_portaria_renewal_update_has_consistent_dates_and_operational_guidance():
+    html = ARTICLE_PATH.read_text(encoding="utf-8")
+    card = news_card_for_slug(NEWS_INDEX_PATH.read_text(encoding="utf-8"), SLUG)
+
+    assert f'<time datetime="{PUBLISHED_AT}"' in html
+    assert f'<time datetime="{MODIFIED_AT}"' in html
+    assert f'content="{MODIFIED_AT}"' in html
+    assert f'data-updated="{MODIFIED_AT}"' in card
+    assert f'<time datetime="{MODIFIED_AT}"' in card
+    assert "31 de agosto de 2026" in html
+    assert "processo de renovação" in html
+    assert "regularização cadastral" in html
+    assert "atualização cadastral" in html
+    assert "2027" in html
+    assert "ainda será definida e divulgada pelo Ministério da Saúde" in html
+    assert "Fonte:" not in html
 
 
 def test_portaria_article_uses_specific_og_image():
@@ -126,7 +145,8 @@ def test_portaria_article_preserves_editorial_safeguards_and_internal_flow():
     assert "não representa promessa de credenciamento, renovação, aprovação, desbloqueio ou permanência" in lowered
     assert "renovação anual" in lowered
     assert "orientações então vigentes" in lowered
-    assert "2027" not in lowered
+    assert "31 de agosto de 2026" in lowered
+    assert "2027" in lowered
     assert "2028" not in lowered
     assert "aprovação garantida" not in lowered
     assert "credenciamento garantido" not in lowered
@@ -144,7 +164,7 @@ def test_portaria_article_preserves_editorial_safeguards_and_internal_flow():
     assert not external_government_links
 
 
-def test_portaria_article_and_listing_use_urgent_badge_without_changing_category():
+def test_portaria_article_and_listing_use_update_badge_without_changing_category():
     article_html = ARTICLE_PATH.read_text(encoding="utf-8")
     index_html = NEWS_INDEX_PATH.read_text(encoding="utf-8")
     new_card = news_card_for_slug(index_html, SLUG)
@@ -155,11 +175,10 @@ def test_portaria_article_and_listing_use_urgent_badge_without_changing_category
         index_html, "farmacia-popular-suspensao-temporaria-recadastramento-sifap"
     )
 
-    assert ">URGENTE</span>" in article_html
-    assert "bg-red-600" in article_html
-    assert ">URGENTE</span>" in new_card
-    assert "news-urgent-card" in new_card
-    assert "bg-red-600" in new_card
+    assert ">ATUALIZAÇÃO</span>" in new_card
+    assert "bg-amber-500" in article_html
+    assert "news-amber-card" in new_card
+    assert "bg-amber-500" in new_card
     assert ">FARMÁCIA POPULAR</span>" in article_html
     assert 'data-category="farmacia-popular"' in new_card
     assert ">FARMÁCIA POPULAR</span>" in new_card
@@ -374,7 +393,7 @@ def test_news_index_has_exactly_one_new_article_and_consistent_counts():
     assert re.search(rf'data-news-category="todos"[^>]*>.*?<span[^>]*>{article_count}</span>', html)
     for category, count in category_counts.items():
         assert re.search(rf'data-news-category="{re.escape(category)}"[^>]*>.*?<span[^>]*>{count}</span>', html)
-    assert f'<time datetime="{PUBLISHED_AT}"' in html
+    assert f'<time datetime="{MODIFIED_AT}"' in html
 
 
 def test_news_index_itemlist_contains_new_article_in_first_position():
