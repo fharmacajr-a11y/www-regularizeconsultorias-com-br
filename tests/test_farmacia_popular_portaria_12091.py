@@ -116,6 +116,32 @@ def test_portaria_renewal_update_has_consistent_dates_and_operational_guidance()
     assert "Fonte:" not in html
 
 
+def test_portaria_renewal_update_is_a_single_editorial_callout():
+    html = ARTICLE_PATH.read_text(encoding="utf-8")
+    callout_match = re.search(
+        r'<aside\b[^>]*aria-labelledby="portaria-renewal-update-title"[^>]*>(.*?)</aside>',
+        html,
+        flags=re.DOTALL,
+    )
+
+    assert html.count('aria-labelledby="portaria-renewal-update-title"') == 1
+    assert callout_match
+    callout = callout_match.group(1)
+    assert "bg-yellow-50" in callout_match.group(0)
+    assert ">ATUALIZAÇÃO</span>" in callout
+    assert 'aria-hidden="true"' in callout
+    assert "Ciclo atual de renovação termina em 31 de agosto" in callout
+    assert "31 de agosto de 2026" in callout
+    assert "especificamente para o processo de renovação" in callout
+    assert "regularização cadastral" in callout
+    assert "para renovação da participação neste ciclo" in callout
+    assert "2027" in callout
+    assert "<a" not in callout
+
+    after_callout = html[callout_match.end() :]
+    assert after_callout.lstrip().startswith("<h2>Alterações cadastrais passam a ter prazos expressos</h2>")
+
+
 def test_portaria_article_uses_specific_og_image():
     html = ARTICLE_PATH.read_text(encoding="utf-8")
     news_article = next(item for item in jsonld_objects(parse_article()) if item.get("@type") == "NewsArticle")
