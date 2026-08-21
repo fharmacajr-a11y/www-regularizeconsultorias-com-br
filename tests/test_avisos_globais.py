@@ -157,7 +157,6 @@ def _badge_texts(page):
 
 
 def test_comunicado_has_seven_active_notices_and_two_static_badges():
-    source = COMUNICADO_PATH.read_text(encoding="utf-8")
     root = _parse_html(COMUNICADO_PATH)
     notice_lists = [node for node in root.descendants() if node.attrs.get("id") == "avisos-lista"]
     assert len(notice_lists) == 1
@@ -165,18 +164,227 @@ def test_comunicado_has_seven_active_notices_and_two_static_badges():
     inactive = [
         article
         for article in articles
-        if article.attrs.get("data-status", "").casefold() in {"resolved", "normalizado"}
+        if article.attrs.get("data-status", "").casefold() == "resolved"
         or "data-placeholder" in article.attrs
     ]
     active = [article for article in articles if article not in inactive]
     badges = [node for node in root.descendants() if node.has_class("aviso-badge")]
 
-    assert len(articles) == 10
+    assert len(articles) == 11
     assert len(active) == 7
-    assert Counter(article.attrs.get("data-status", "").casefold() for article in inactive) == {"resolved": 1, "normalizado": 2}
-    assert "data-placeholder" in source
+    assert Counter(article.attrs.get("data-status", "").casefold() for article in inactive) == {"resolved": 4}
+    assert all("data-placeholder" not in article.attrs for article in articles)
     assert len(badges) == 2
     assert [badge.text() for badge in badges] == ["7", "7"]
+
+
+def test_comunicado_editorial_organization_and_active_notice_content():
+    root = _parse_html(COMUNICADO_PATH)
+    notice_list = next(node for node in root.descendants() if node.attrs.get("id") == "avisos-lista")
+    articles = [node for node in notice_list.descendants() if node.tag == "article"]
+    active = [
+        article
+        for article in articles
+        if article.attrs.get("data-status", "").casefold() != "resolved"
+    ]
+    active_text = " ".join(article.text() for article in active)
+    historical_text = " ".join(article.text() for article in articles if article not in active)
+    headings = [node.text() for node in notice_list.descendants() if node.tag == "h2"]
+    renewal = active[0]
+    renewal_links = [node.attrs.get("href") for node in renewal.descendants() if node.tag == "a"]
+
+    assert len(active) == 7
+    assert len(articles) - len(active) == 4
+    assert "Histórico / encerrados" in headings
+    assert "ciclo atual de renovação termina em 31 de agosto" in renewal.text()
+    assert "31/08/2026" in renewal.text()
+    assert renewal_links == ["/noticias/farmacia-popular-portaria-12091-2026-novas-regras/"]
+    assert "suspensao-temporaria-recadastramento-sifap" not in " ".join(renewal_links)
+    assert "período eleitoral" in active_text
+    assert "30/09/2026" in active_text
+    assert "funcionalidades eletrônicas" in active_text
+    assert "28/07/2026" in active_text
+    assert "instabilidade observada" not in active_text
+    assert "junho de 2026" in active_text
+    assert "ciclo de maio de 2026" in historical_text
+    assert "13/05/2026" in historical_text
+    assert "voltou a funcionar" in historical_text
+    assert "SNGPC" in historical_text
+
+
+def test_comunicado_active_dates_order_and_historical_visual_states():
+    source = COMUNICADO_PATH.read_text(encoding="utf-8")
+    root = _parse_html(COMUNICADO_PATH)
+    notice_list = next(node for node in root.descendants() if node.attrs.get("id") == "avisos-lista")
+    articles = [node for node in notice_list.descendants() if node.tag == "article"]
+    active = [
+        article
+        for article in articles
+        if article.attrs.get("data-status", "").casefold() != "resolved"
+    ]
+    historical = [article for article in articles if article not in active]
+    titles = [next(node.text() for node in article.descendants() if node.tag == "h3") for article in active]
+    timestamps = [article.attrs.get("data-effective-at") for article in active]
+
+    assert titles == [
+        "Farmácia Popular: ciclo atual de renovação termina em 31 de agosto",
+        "SNCR: funcionalidades eletrônicas seguem em implantação até 30/09/2026",
+        "Anvisa suspende medicamento e proíbe produtos irregulares",
+        "Farmácia Popular: confira municípios com vagas para credenciamento",
+        "Farmácia Popular: atenção aos materiais no período eleitoral",
+        "Farmácia Popular: confira as listas EAN vigentes e os controles de prescrição",
+        "Cadastro Anvisa/Gov.br: atenção a empresas, usuários e perfis de acesso",
+    ]
+    assert all(timestamp for timestamp in timestamps)
+    assert all(len([node for node in article.descendants() if node.tag == "time"]) == 1 for article in active)
+    assert timestamps[1:] == sorted(timestamps[1:], reverse=True)
+    assert "URGENTE" in active[4].text()
+
+    useful_badge = next(node for node in active[5].descendants() if node.tag == "span" and node.text() == "ÚTIL")
+    useful_cta = next(node for node in active[5].descendants() if node.tag == "a" and "Conferir orientações" in node.text())
+    informative_cta = next(node for node in active[6].descendants() if node.tag == "a" and "Leia a notícia completa" in node.text())
+    assert {"border-emerald-200", "bg-emerald-50", "text-emerald-700"} <= set(useful_badge.attrs["class"].split())
+    assert {"border-emerald-200", "bg-emerald-50"} <= set(active[5].attrs["class"].split())
+    informative_to_useful = {
+        "comunicado-cta--informativo": "comunicado-cta--util",
+        "border-orange-200": "border-emerald-200",
+        "text-orange-600": "text-emerald-700",
+    }
+    assert useful_cta.attrs["class"].split() == [
+        informative_to_useful.get(class_name, class_name)
+        for class_name in informative_cta.attrs["class"].split()
+    ]
+    assert "comunicado-util__cta" not in useful_cta.attrs["class"].split()
+    assert "bg-white" not in useful_cta.attrs["class"].split()
+    assert "bg-emerald-50" not in useful_cta.attrs["class"].split()
+    assert ".comunicado-util__cta" not in source
+    assert "#avisos-lista .comunicado-cta:hover { border-color: var(--comunicado-cta-hover-border); background-color: var(--comunicado-cta-hover-background); color: var(--comunicado-cta-hover-color); }" in source
+    assert "#avisos-lista .comunicado-cta--informativo" in source
+    assert "#avisos-lista .comunicado-cta--util" in source
+
+    active_icon_colors = {
+        "URGENTE": ("bg-red-100", "text-red-600"),
+        "INFORMATIVO": ("bg-orange-100", "text-orange-600"),
+        "ATUALIZAÇÃO": ("bg-yellow-100", "text-yellow-600"),
+        "ÚTIL": ("bg-emerald-100", "text-emerald-600"),
+    }
+    assert all(
+        any("w-9" in node.attrs.get("class", "").split() for node in article.descendants())
+        for article in active
+    )
+    for article in active:
+        badge = next(node for node in article.descendants() if node.tag == "span" and node.text() in active_icon_colors)
+        icon_container = next(node for node in article.descendants() if "w-9" in node.attrs.get("class", "").split())
+        icon_svg = next(node for node in icon_container.descendants() if node.tag == "svg")
+        expected_background, expected_color = active_icon_colors[badge.text()]
+        assert expected_background in icon_container.attrs["class"].split()
+        assert expected_color in icon_svg.attrs["class"].split()
+        assert icon_svg.attrs.get("aria-hidden") == "true"
+    assert all("comunicado-historico" in article.attrs.get("class", "").split() for article in historical)
+    assert all(
+        any("comunicado-historico__meta" in node.attrs.get("class", "").split() for node in article.descendants())
+        for article in historical
+    )
+    assert "HISTÓRICO" in historical[0].text() and "20/05/2026 • 13h00" in historical[0].text()
+    assert "HISTÓRICO • maio de 2026" not in historical[0].text()
+    assert "ENCERRADO" in historical[1].text() and "18/05/2026 • 08h00" in historical[1].text()
+    assert "13/05/2026" in historical[1].text()
+    sifap_attention = next(node for node in historical[1].descendants() if node.tag == "strong" and node.text() == "Atenção:")
+    assert "text-slate-800" in sifap_attention.attrs["class"].split()
+    assert not any(color in sifap_attention.attrs["class"].split() for color in {"text-yellow-600", "text-orange-600", "text-red-600", "text-emerald-600"})
+    assert [next(node.text() for node in article.descendants() if node.has_class("comunicado-historico__badge")) for article in historical] == ["HISTÓRICO", "ENCERRADO", "ENCERRADO", "ENCERRADO"]
+    assert all("NORMALIZADO" not in article.text() for article in historical)
+    assert all("28/04/2026" in article.text() and "12h57" in article.text() for article in historical[2:])
+    historical_icons = [
+        node
+        for article in historical
+        for node in article.descendants()
+        if node.has_class("comunicado-historico__icon")
+    ]
+    assert len(historical_icons) == 4
+    assert all({"bg-slate-100", "w-9", "h-9"} <= set(node.attrs["class"].split()) for node in historical_icons)
+    assert all(
+        "text-slate-600" in next(node for node in icon.descendants() if node.tag == "svg").attrs["class"].split()
+        for icon in historical_icons
+    )
+    historical_controls = [node for article in historical for node in article.descendants() if node.tag in {"a", "button"} and "comunicado-historico__control" in node.attrs.get("class", "").split()]
+    assert len(historical_controls) == 5
+    assert all({"border-slate-300", "text-slate-700", "focus:ring-slate-300"} <= set(node.attrs["class"].split()) for node in historical_controls)
+    assert all(not any("blue" in class_name for class_name in node.attrs["class"].split()) for node in historical_controls)
+    assert "#avisos-lista .comunicado-historico__control:focus { outline: none; box-shadow: none; }" in source
+    assert "#avisos-lista .comunicado-historico__control:focus-visible { outline: 2px solid #475569; outline-offset: 2px; box-shadow: 0 0 0 2px #cbd5e1; }" in source
+    assert "#avisos-lista .comunicado-historico__control:active { border-color: #94a3b8; background: #e2e8f0; color: #334155; }" in source
+    assert "text-slate-700" in next(node for node in notice_list.descendants() if node.tag == "h2" and node.text() == "Histórico / encerrados").attrs["class"]
+
+    legend_cards = [node for node in root.descendants() if node.has_class("aviso-tipo")]
+    assert len(legend_cards) == 6
+    assert [next(node.text() for node in card.descendants() if node.tag == "span") for card in legend_cards] == ["Urgente", "Informativo", "ATUALIZAÇÃO", "Útil", "ENCERRADO", "HISTÓRICO"]
+    assert all("NORMALIZADO" not in card.text() for card in legend_cards)
+    for card in legend_cards[-2:]:
+        assert {"bg-slate-50", "border-slate-300"} <= set(card.attrs["class"].split())
+        icon = next(node for node in card.descendants() if "w-9" in node.attrs.get("class", "").split())
+        assert "text-slate-600" in next(node for node in icon.descendants() if node.tag == "svg").attrs["class"].split()
+
+
+def test_comunicado_useful_cta_computed_states(site_url, browser):
+    context = browser.new_context(viewport={"width": 1280, "height": 900})
+    page = context.new_page()
+    try:
+        page.goto(f"{site_url}/comunicado/", wait_until="networkidle")
+        useful_cta = page.locator('a[href="/noticias/farmacia-popular-listas-ean-junho-2026/"]')
+        informative_cta = page.locator('a[href="/noticias/cadastro-anvisa-govbr-transicao-sistemas/"]')
+
+        def computed_state(locator):
+            return locator.evaluate(
+                """(element) => {
+                    const style = getComputedStyle(element);
+                    return {
+                        hovered: element.matches(':hover'),
+                        focusVisible: element.matches(':focus-visible'),
+                        transparentBackground: style.backgroundColor === 'rgba(0, 0, 0, 0)',
+                        backgroundColor: style.backgroundColor,
+                        color: style.color,
+                        borderColor: style.borderColor,
+                    };
+                }"""
+            )
+
+        page.mouse.move(0, 0)
+        page.wait_for_timeout(250)
+        useful_normal = computed_state(useful_cta)
+        informative_normal = computed_state(informative_cta)
+        assert useful_normal["transparentBackground"]
+        assert informative_normal["transparentBackground"]
+        assert useful_normal["color"] != informative_normal["color"]
+        assert useful_normal["borderColor"] != informative_normal["borderColor"]
+
+        useful_cta.hover()
+        page.wait_for_timeout(250)
+        useful_hover = computed_state(useful_cta)
+        assert useful_hover["hovered"]
+        assert not useful_hover["transparentBackground"]
+        assert useful_hover["backgroundColor"] != useful_normal["backgroundColor"]
+        assert useful_hover["color"] != useful_normal["color"]
+
+        informative_cta.hover()
+        page.wait_for_timeout(250)
+        informative_hover = computed_state(informative_cta)
+        assert informative_hover["hovered"]
+        assert not informative_hover["transparentBackground"]
+        assert informative_hover["backgroundColor"] != informative_normal["backgroundColor"]
+        assert informative_hover["color"] != informative_normal["color"]
+
+        page.mouse.move(0, 0)
+        page.wait_for_timeout(250)
+        assert computed_state(useful_cta)["transparentBackground"]
+        assert computed_state(informative_cta)["transparentBackground"]
+        useful_cta.focus()
+        page.wait_for_timeout(250)
+        useful_focus = computed_state(useful_cta)
+        assert useful_focus["focusVisible"]
+        assert useful_focus["transparentBackground"]
+    finally:
+        context.close()
 
 
 def test_javascript_constants_and_files_are_exactly_equivalent():

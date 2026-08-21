@@ -29,6 +29,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/css/tailwind.min.css">
   <link rel="stylesheet" href="/assets/css/custom.min.css?v=20260506-1" />
+  <style>
+    #avisos-lista .comunicado-historico { border-color: #cbd5e1; background: #f8fafc; }
+    #avisos-lista .comunicado-historico__badge { border-color: #cbd5e1; background: #f1f5f9; color: #475569; }
+    #avisos-lista .comunicado-historico__meta { color: #64748b; }
+    #avisos-lista .comunicado-cta:hover { border-color: var(--comunicado-cta-hover-border); background-color: var(--comunicado-cta-hover-background); color: var(--comunicado-cta-hover-color); }
+    #avisos-lista .comunicado-cta--informativo { --comunicado-cta-hover-border: #fdba74; --comunicado-cta-hover-background: #ffedd5; --comunicado-cta-hover-color: #c2410c; }
+    #avisos-lista .comunicado-cta--util { --comunicado-cta-hover-border: #6ee7b7; --comunicado-cta-hover-background: #d1fae5; --comunicado-cta-hover-color: #065f46; }
+    #avisos-lista .comunicado-historico__control:focus { outline: none; box-shadow: none; }
+    #avisos-lista .comunicado-historico__control:focus-visible { outline: 2px solid #475569; outline-offset: 2px; box-shadow: 0 0 0 2px #cbd5e1; }
+    #avisos-lista .comunicado-historico__control:active { border-color: #94a3b8; background: #e2e8f0; color: #334155; }
+  </style>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -142,10 +153,10 @@
     <section class="py-10 bg-white border-b border-slate-100">
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <p class="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-5">Tipos de aviso</p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
 
           <!-- Urgente -->
-          <div class="flex items-start gap-3 p-4 rounded-xl bg-red-50 border border-red-200">
+          <div class="aviso-tipo flex items-start gap-3 p-4 rounded-xl bg-red-50 border border-red-200">
             <div class="flex-shrink-0 w-9 h-9 rounded-lg bg-red-100 flex items-center justify-center">
               <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -161,7 +172,7 @@
           </div>
 
           <!-- Informativo -->
-          <div class="flex items-start gap-3 p-4 rounded-xl bg-orange-50 border border-orange-200">
+          <div class="aviso-tipo flex items-start gap-3 p-4 rounded-xl bg-orange-50 border border-orange-200">
             <div class="flex-shrink-0 w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center">
               <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -177,7 +188,7 @@
           </div>
 
           <!-- Atualização -->
-          <div class="flex items-start gap-3 p-4 rounded-xl bg-yellow-50 border border-yellow-200">
+          <div class="aviso-tipo flex items-start gap-3 p-4 rounded-xl bg-yellow-50 border border-yellow-200">
             <div class="flex-shrink-0 w-9 h-9 rounded-lg bg-yellow-100 flex items-center justify-center">
               <svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -193,7 +204,7 @@
           </div>
 
           <!-- Útil -->
-          <div class="flex items-start gap-3 p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+          <div class="aviso-tipo flex items-start gap-3 p-4 rounded-xl bg-emerald-50 border border-emerald-200">
             <div class="flex-shrink-0 w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center">
               <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -205,6 +216,32 @@
               <p class="text-xs text-slate-700 leading-relaxed">
                 Avisos leves do dia a dia — dicas práticas e informações úteis do setor.
               </p>
+            </div>
+          </div>
+
+          <!-- Encerrado -->
+          <div class="aviso-tipo flex items-start gap-3 p-4 rounded-xl bg-slate-50 border border-slate-300">
+            <div class="flex-shrink-0 w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center">
+              <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div>
+              <span class="inline-block px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold uppercase tracking-wide border border-slate-300 mb-2">ENCERRADO</span>
+              <p class="text-xs text-slate-700 leading-relaxed">Comunicados cujo prazo, ocorrência ou situação já foi concluída e que permanecem disponíveis para consulta.</p>
+            </div>
+          </div>
+
+          <!-- Histórico -->
+          <div class="aviso-tipo flex items-start gap-3 p-4 rounded-xl bg-slate-50 border border-slate-300">
+            <div class="flex-shrink-0 w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center">
+              <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div>
+              <span class="inline-block px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold uppercase tracking-wide border border-slate-300 mb-2">HISTÓRICO</span>
+              <p class="text-xs text-slate-700 leading-relaxed">Registros de ciclos ou orientações anteriores mantidos para contexto, sem caráter de aviso atual.</p>
             </div>
           </div>
 
@@ -223,474 +260,63 @@
         <!--
           ┌─────────────────────────────────────────────────────────────┐
           │  COMO ADICIONAR UM NOVO AVISO                               │
-          │  1. Copie um dos blocos <article> abaixo                    │
-          │  2. Remova o atributo data-placeholder="true"               │
-          │  3. Preencha o título, texto, datas e categoria             │
-          │  4. Use data-updated-at e data-resolved-at quando precisar  │
-          │  5. O badge do botão é atualizado automaticamente           │
+          │  1. Use um card existente como referência visual             │
+          │  2. Preencha título, texto, datas e categoria                │
+          │  3. Use data-updated-at e data-resolved-at quando precisar   │
+          │  4. O badge do botão é atualizado automaticamente            │
           │                                                             │
           │  CATEGORIAS disponíveis: urgente | informativo | util       │
           └─────────────────────────────────────────────────────────────┘
         -->
         <div id="avisos-lista" class="flex flex-col gap-6">
-          <!-- ═══════════════════════════════════════════════════════
-                 URGENTE — Farmácia Popular no período eleitoral
-               ═══════════════════════════════════════════════════════ -->
-          <article data-status="urgent" data-category="farmacia-popular" class="rounded-2xl border border-red-200 bg-red-50 p-5 shadow-sm md:p-6">
-            <div class="flex flex-col gap-4">
-              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                <div class="flex items-center gap-3">
-                  <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-                    </svg>
-                  </div>
-                  <span class="inline-block rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-red-600">
-                    Urgente
-                  </span>
-                </div>
-                <div class="flex flex-col sm:items-end gap-1 text-xs text-slate-400">
-                  <span class="flex items-center gap-1">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Publicado em: <strong class="text-slate-600">07/07/2026 às 12h00</strong>
-                  </span>
-                </div>
-              </div>
-
-              <div class="space-y-3">
-                <h3 class="text-lg font-bold text-slate-900">Farmácia Popular: atenção aos materiais no período eleitoral</h3>
-                <div class="space-y-3 text-sm leading-relaxed text-slate-700">
-                  <p>
-                    Farmácias e drogarias credenciadas ao Programa Farmácia Popular devem revisar materiais de divulgação, identificação visual e peças expostas ao público durante o período eleitoral.
-                  </p>
-                  <p>
-                    A orientação prática é conferir o material recebido, adequar coberturas temporárias quando aplicável, evitar alterações improvisadas que prejudiquem a leitura das informações e manter registro interno da revisão realizada.
-                  </p>
-                </div>
-                <div class="flex flex-wrap items-center gap-4">
-                  <a href="/noticias/farmacia-popular-adequacao-materiais-periodo-eleitoral/" class="inline-flex items-center gap-2 rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition-colors duration-200 hover:border-red-300 hover:bg-red-100 hover:text-red-700">
-                    Ver orientação completa
-                    <span aria-hidden="true">→</span>
-                  </a>
-                </div>
-              </div>
-            </div>
+          <!-- Comunicados ativos: ordem editorial por prazo, risco e utilidade. -->
+          <article data-status="urgent" data-category="farmacia-popular" data-updated-at="20/08/2026 às 18h58" data-effective-at="2026-08-20T18:58:00-03:00" class="rounded-2xl border border-red-200 bg-red-50 p-5 shadow-sm md:p-6">
+            <div class="space-y-3"><div class="flex flex-wrap items-center gap-2 text-xs text-slate-400"><div class="flex-shrink-0 w-9 h-9 rounded-lg bg-red-100 flex items-center justify-center"><svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div><span class="inline-block rounded-full border border-red-200 bg-red-50 px-3 py-1 font-semibold uppercase tracking-wide text-red-600">URGENTE</span><span aria-hidden="true">•</span><time datetime="2026-08-20T18:58:00-03:00">20/08/2026 • 18h58</time></div><h3 class="text-lg font-bold text-slate-900">Farmácia Popular: ciclo atual de renovação termina em 31 de agosto</h3><div class="space-y-3 text-sm leading-relaxed text-slate-700"><p>O Ministério da Saúde informou às farmácias participantes que o ciclo atual de renovação será encerrado em <strong>31/08/2026</strong>. Esta é a data-limite informada para o encerramento do ciclo.</p><p>Não está prevista nova abertura do SIFAP para renovação da participação neste ciclo. A próxima oportunidade está prevista para o ciclo bienal de 2027, com data específica ainda a ser definida e divulgada.</p><p>Farmácias com situação pendente devem verificar imediatamente o status do processo, comunicações recebidas, documentos, pendências e etapas já realizadas. O encerramento do ciclo não representa cancelamento automático.</p></div><a href="/noticias/farmacia-popular-portaria-12091-2026-novas-regras/" class="inline-flex items-center gap-2 rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition-colors duration-200 hover:border-red-300 hover:bg-red-100 hover:text-red-700">Ver atualização sobre a renovação <span aria-hidden="true">→</span></a></div>
           </article>
 
-          <!-- ═══════════════════════════════════════════════════════
-                 URGENTE — alerta sanitário consolidado
-               ═══════════════════════════════════════════════════════ -->
-          <article data-status="urgent" data-category="anvisa" class="rounded-2xl border border-red-200 bg-red-50 p-5 shadow-sm md:p-6">
-            <div class="flex flex-col gap-4">
-              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                <div class="flex items-center gap-3">
-                  <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-                    </svg>
-                  </div>
-                  <span class="inline-block rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-red-600">
-                    Urgente
-                  </span>
-                </div>
-                <div class="flex flex-col sm:items-end gap-1 text-xs text-slate-400">
-                  <span class="flex items-center gap-1">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Atualizado em: <strong class="text-slate-600">05/07/2026 às 18h30</strong>
-                  </span>
-                </div>
-              </div>
-
-              <div class="space-y-3">
-                <h3 class="text-lg font-bold text-slate-900">Anvisa suspende medicamento e proíbe produtos irregulares</h3>
-                <div class="space-y-3 text-sm leading-relaxed text-slate-700">
-                  <p>
-                    A Anvisa publicou nova medida de fiscalização envolvendo suspensão de medicamento e proibição de produtos irregulares. Farmácias, drogarias, distribuidoras e empresas reguladas devem reforçar a conferência de estoque, fornecedores, origem e documentação antes de manter, adquirir, divulgar ou comercializar produtos sujeitos à vigilância sanitária.
-                  </p>
-                  <p>
-                    A conferência deve incluir registro ou regularização aplicável, procedência, rotulagem, notas fiscais, autorização do fornecedor e situação sanitária do produto. Em caso de dúvida, o produto deve ser segregado para análise documental antes de qualquer movimentação comercial.
-                  </p>
-                </div>
-                <div class="flex flex-wrap items-center gap-4">
-                  <a href="/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/" class="inline-flex items-center gap-2 rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition-colors duration-200 hover:border-red-300 hover:bg-red-100 hover:text-red-700">
-                    Ver alerta sanitário
-                    <span aria-hidden="true">→</span>
-                  </a>
-                </div>
-              </div>
-            </div>
+          <article data-status="atualizacao" data-category="sncr" data-updated-at="20/08/2026 às 18h58" data-effective-at="2026-08-20T18:58:00-03:00" class="rounded-2xl border border-yellow-200 bg-yellow-50 p-5 shadow-sm md:p-6">
+            <div class="space-y-3"><div class="flex flex-wrap items-center gap-2 text-xs text-slate-400"><div class="flex-shrink-0 w-9 h-9 rounded-lg bg-yellow-100 flex items-center justify-center"><svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4.582 9H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg></div><span class="inline-block rounded-full border border-yellow-200 bg-yellow-50 px-3 py-1 font-semibold uppercase tracking-wide text-yellow-600">ATUALIZAÇÃO</span><span aria-hidden="true">•</span><time datetime="2026-08-20T18:58:00-03:00">20/08/2026 • 18h58</time></div><h3 class="text-lg font-bold text-slate-900">SNCR: funcionalidades eletrônicas seguem em implantação até 30/09/2026</h3><div class="space-y-3 text-sm leading-relaxed text-slate-700"><p>A RDC 1.028/2026 ampliou para <strong>30/09/2026</strong> o prazo referente às funcionalidades eletrônicas do SNCR. Isso não suspendeu nem adiou os novos modelos impressos de receituários, que permanecem aplicáveis.</p><p>AFE, Cadastro Anvisa, Gov.br e CNES têm papéis diferentes e não devem ser confundidos. Revise vínculos, perfis de acesso e dados cadastrais conforme o caso.</p></div><a href="/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/" class="inline-flex items-center gap-2 rounded-lg border border-yellow-200 px-4 py-2 text-sm font-semibold text-yellow-600 transition-colors duration-200 hover:border-yellow-300 hover:bg-yellow-100 hover:text-yellow-700">Ver orientação SNCR <span aria-hidden="true">→</span></a></div>
           </article>
 
-          <!-- ═══════════════════════════════════════════════════════
-                 ATUALIZAÇÃO — SNCR/CNES/AFE
-               ═══════════════════════════════════════════════════════ -->
-          <article data-status="atualizacao" data-category="sncr" class="rounded-2xl border border-yellow-200 bg-yellow-50 p-5 shadow-sm md:p-6">
-            <div class="flex flex-col gap-4">
-              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                <div class="flex items-center gap-3">
-                  <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-yellow-100 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-                    </svg>
-                  </div>
-                  <span class="inline-block rounded-full border border-yellow-200 bg-yellow-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-yellow-600">
-                    ATUALIZAÇÃO
-                  </span>
-                </div>
-                <div class="flex flex-col sm:items-end gap-1 text-xs text-slate-400">
-                  <span class="flex items-center gap-1">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Publicado em: <strong class="text-slate-600">29/04/2026 às 11h16</strong>
-                  </span>
-                  <span class="flex flex-wrap items-center gap-1 sm:justify-end">
-                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Atualizado em: <time datetime="2026-07-05T18:30:00-03:00" class="font-semibold text-slate-600">05/07/2026 às 18h30</time>
-                  </span>
-                </div>
-              </div>
-
-              <div class="space-y-3">
-                <h3 class="text-lg font-bold text-slate-900">SNCR/CNES: acompanhe prazo, acesso e cadastro</h3>
-                <div class="space-y-3 text-sm leading-relaxed text-slate-700">
-                  <p>
-                    O SNCR segue em implantação por etapas e exige acompanhamento contínuo de prazo, acesso e cadastro. Para farmácias privadas, a orientação curada pela Regularize considera a relação entre AFE, Cadastro Anvisa, conta gov.br, CNES e documentação interna.
-                  </p>
-                  <p>
-                    O CNES não deve ser tratado como item descartado: ele continua relevante em contextos como Farmácia Popular, vacinação, testes rápidos, serviços clínicos, exigências locais e farmácias públicas. A ação prática é revisar dados cadastrais, AFE, vínculos de acesso e evidências documentais antes de novas etapas do sistema.
-                  </p>
-                </div>
-                <div class="flex flex-wrap items-center gap-4">
-                  <a href="/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/" class="inline-flex items-center gap-2 rounded-lg border border-yellow-200 px-4 py-2 text-sm font-semibold text-yellow-600 transition-colors duration-200 hover:border-yellow-300 hover:bg-yellow-100 hover:text-yellow-700">
-                    Ver orientação SNCR
-                    <span aria-hidden="true">→</span>
-                  </a>
-                </div>
-              </div>
-            </div>
+          <article data-status="atualizacao" data-category="anvisa" data-updated-at="15/08/2026 às 12h14" data-effective-at="2026-08-15T12:14:00-03:00" class="rounded-2xl border border-yellow-200 bg-yellow-50 p-5 shadow-sm md:p-6">
+            <div class="space-y-3"><div class="flex flex-wrap items-center gap-2 text-xs text-slate-400"><div class="flex-shrink-0 w-9 h-9 rounded-lg bg-yellow-100 flex items-center justify-center"><svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4.582 9H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg></div><span class="inline-block rounded-full border border-yellow-200 bg-yellow-50 px-3 py-1 font-semibold uppercase tracking-wide text-yellow-600">ATUALIZAÇÃO</span><span aria-hidden="true">•</span><time datetime="2026-08-15T12:14:00-03:00">15/08/2026 • 12h14</time></div><h3 class="text-lg font-bold text-slate-900">Anvisa suspende medicamento e proíbe produtos irregulares</h3><p class="text-sm leading-relaxed text-slate-700">Medidas recentes envolveram situações distintas relacionadas a medicamentos, saneantes, produtos irregulares e alegações não autorizadas. Confira produto, fabricante, lote, origem, regularização e documentação; uma medida não se estende automaticamente a toda marca, fabricante ou categoria.</p><a href="/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/" class="inline-flex items-center gap-2 rounded-lg border border-yellow-200 px-4 py-2 text-sm font-semibold text-yellow-600 transition-colors duration-200 hover:border-yellow-300 hover:bg-yellow-100 hover:text-yellow-700">Ver atualização <span aria-hidden="true">→</span></a></div>
           </article>
 
-          <!-- ═══════════════════════════════════════════════════════
-                 ATUALIZAÇÃO — Farmácia Popular: listas EAN e prescrições
-               ═══════════════════════════════════════════════════════ -->
-          <article data-status="atualizacao" data-category="farmacia-popular" class="rounded-2xl border border-yellow-200 bg-yellow-50 p-5 shadow-sm md:p-6">
-            <div class="flex flex-col gap-4">
-              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                <div class="flex items-center gap-3">
-                  <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-yellow-100 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4.582 9H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                    </svg>
-                  </div>
-                  <span class="inline-block rounded-full border border-yellow-200 bg-yellow-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-yellow-600">
-                    ATUALIZAÇÃO
-                  </span>
-                </div>
-                <div class="flex flex-col sm:items-end gap-1 text-xs text-slate-400">
-                  <span class="flex items-center gap-1">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Atualizado em: <strong class="text-slate-600">05/07/2026 às 18h30</strong>
-                  </span>
-                </div>
-              </div>
-
-              <div class="space-y-3">
-                <h3 class="text-lg font-bold text-slate-900">Farmácia Popular: confira listas EAN e prescrições</h3>
-                <div class="space-y-3 text-sm leading-relaxed text-slate-700">
-                  <p>
-                    As listas EAN de junho de 2026 do Farmácia Popular foram atualizadas para medicamentos, fraldas geriátricas e absorventes higiênicos. Farmácias credenciadas devem conferir se os produtos habilitados, cadastros internos e rotinas de dispensação estão coerentes com as listas vigentes.
-                  </p>
-                  <p>
-                    O mesmo controle deve alcançar prescrições, CRM, autenticidade documental, dados cadastrais e registros operacionais, reduzindo inconsistências em auditorias, monitoramentos e atendimentos pelo programa.
-                  </p>
-                </div>
-                <div class="flex flex-wrap items-center gap-4">
-                  <a href="/noticias/farmacia-popular-listas-ean-junho-2026/" class="inline-flex items-center gap-2 rounded-lg border border-yellow-200 px-4 py-2 text-sm font-semibold text-yellow-600 transition-colors duration-200 hover:border-yellow-300 hover:bg-yellow-100 hover:text-yellow-700">
-                    Conferir orientações
-                    <span aria-hidden="true">→</span>
-                  </a>
-                </div>
-              </div>
-            </div>
+          <article data-status="informativo" data-category="farmacia-popular" data-updated-at="30/07/2026 às 15h48" data-effective-at="2026-07-30T15:48:00-03:00" class="rounded-2xl border border-orange-200 bg-orange-50 p-5 shadow-sm md:p-6">
+            <div class="space-y-3"><div class="flex flex-wrap items-center gap-2 text-xs text-slate-400"><div class="flex-shrink-0 w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center"><svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20A10 10 0 0012 2z"/></svg></div><span class="inline-block rounded-full border border-orange-200 bg-orange-50 px-3 py-1 font-semibold uppercase tracking-wide text-orange-600">INFORMATIVO</span><span aria-hidden="true">•</span><time datetime="2026-07-30T15:48:00-03:00">30/07/2026 • 15h48</time></div><h3 class="text-lg font-bold text-slate-900">Farmácia Popular: confira municípios com vagas para credenciamento</h3><p class="text-sm leading-relaxed text-slate-700">A lista de municípios com vagas para credenciamento foi atualizada em 28/07/2026. Antes de iniciar uma solicitação, confira se o município permanece contemplado e revise os requisitos do processo.</p><a href="/noticias/credenciamento-farmacia-popular-municipios-com-vagas/" class="inline-flex items-center gap-2 rounded-lg border border-orange-200 px-4 py-2 text-sm font-semibold text-orange-600 transition-colors duration-200 hover:border-orange-300 hover:bg-orange-100 hover:text-orange-700">Ver orientação sobre vagas <span aria-hidden="true">→</span></a></div>
           </article>
 
-          <!-- ═══════════════════════════════════════════════════════
-                 INFORMATIVO — Farmácia Popular: municípios com vagas
-               ═══════════════════════════════════════════════════════ -->
-          <article data-status="informativo" data-category="farmacia-popular" data-updated-at="30/07/2026 às 15h48" data-aviso-history-card class="rounded-2xl border border-orange-200 bg-orange-50 p-6 shadow-sm md:p-8">
-            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
-              <div class="flex items-center gap-3">
-                <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">
-                  <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20A10 10 0 0012 2z"/>
-                  </svg>
-                </div>
-                <span class="inline-block rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-orange-600">
-                  Informativo
-                </span>
-              </div>
-              <div class="flex flex-col sm:items-end gap-1 text-xs text-slate-400">
-                <span class="flex items-center gap-1">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                  </svg>
-                  Publicado em: <strong class="text-slate-600">22/05/2026 às 23h30</strong>
-                </span>
-                <span data-aviso-updated class="hidden items-center gap-1 sm:justify-end">
-                  <svg class="h-3.5 w-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4.582 9H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                  </svg>
-                  <span>Atualizado em: <strong class="text-slate-600" data-aviso-updated-at></strong></span>
-                </span>
-                <span data-aviso-resolved class="hidden items-center gap-1 sm:justify-end">
-                  <svg class="h-3.5 w-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                  </svg>
-                  <span>Finalizado em: <strong class="text-slate-600" data-aviso-resolved-at></strong></span>
-                </span>
-              </div>
-            </div>
-
-            <h3 class="text-xl font-bold text-slate-900 mb-3">Farmácia Popular: confira municípios com vagas para credenciamento</h3>
-
-            <div class="space-y-4 text-sm leading-relaxed text-slate-700">
-              <p>
-                A lista oficial de municípios com vagas deve ser conferida antes de iniciar o credenciamento, junto com a documentação e os dados cadastrais da empresa.
-              </p>
-              <p>
-                A análise prévia ajuda a evitar envio com município incompatível, dados inconsistentes ou documentação incompleta.
-              </p>
-            </div>
-
-            <div class="mt-5 rounded-xl border border-orange-200 bg-white/60 p-5">
-              <p class="text-sm font-semibold text-slate-900 mb-2">Vai avaliar uma solicitação de credenciamento?</p>
-              <p class="text-sm leading-relaxed text-slate-700">Confira a lista oficial, revise os dados cadastrais e organize a documentação antes de iniciar o processo.</p>
-              <div class="mt-4 flex flex-wrap items-center gap-3">
-                <a href="/noticias/credenciamento-farmacia-popular-municipios-com-vagas/" class="inline-flex items-center gap-2 rounded-lg border border-orange-200 px-4 py-2 text-sm font-semibold text-orange-600 transition-colors duration-200 hover:border-orange-300 hover:bg-orange-100 hover:text-orange-700">
-                  Leia a notícia completa
-                  <span aria-hidden="true">→</span>
-                </a>
-              </div>
-            </div>
+          <article data-status="urgent" data-category="farmacia-popular" data-effective-at="2026-07-07T12:00:00-03:00" class="rounded-2xl border border-red-200 bg-red-50 p-5 shadow-sm md:p-6">
+            <div class="space-y-3"><div class="flex flex-wrap items-center gap-2 text-xs text-slate-400"><div class="flex-shrink-0 w-9 h-9 rounded-lg bg-red-100 flex items-center justify-center"><svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div><span class="inline-block rounded-full border border-red-200 bg-red-50 px-3 py-1 font-semibold uppercase tracking-wide text-red-600">URGENTE</span><span aria-hidden="true">•</span><time datetime="2026-07-07T12:00:00-03:00">07/07/2026 • 12h00</time></div><h3 class="text-lg font-bold text-slate-900">Farmácia Popular: atenção aos materiais no período eleitoral</h3><p class="text-sm leading-relaxed text-slate-700">Farmácias e drogarias credenciadas devem revisar materiais de divulgação, identificação visual e peças expostas ao público durante o período eleitoral.</p><a href="/noticias/farmacia-popular-adequacao-materiais-periodo-eleitoral/" class="inline-flex items-center gap-2 rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition-colors duration-200 hover:border-red-300 hover:bg-red-100 hover:text-red-700">Ver orientação completa <span aria-hidden="true">→</span></a></div>
           </article>
 
-          <!-- ═══════════════════════════════════════════════════════
-                 URGENTE — Farmácia Popular: suspensão temporária SIFAP
-               ═══════════════════════════════════════════════════════ -->
-          <article data-status="urgent" data-category="farmacia-popular" data-aviso-history-card class="rounded-2xl border border-red-200 bg-red-50 p-5 shadow-sm md:p-6">
-            <div class="flex flex-col gap-4">
-              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                <div class="flex items-center gap-3">
-                  <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-                    </svg>
-                  </div>
-                  <span class="inline-block rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-red-600">
-                    Urgente
-                  </span>
-                </div>
-                <div class="flex flex-col sm:items-end gap-1 text-xs text-slate-400">
-                  <span class="flex items-center gap-1">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Publicado em: <strong class="text-slate-600">20/05/2026 às 13h00</strong>
-                  </span>
-                </div>
-              </div>
-
-              <div class="space-y-3">
-                <h3 class="text-lg font-bold text-slate-900">Farmácia Popular: aviso de suspensão temporária para empresas sem recadastramento concluído</h3>
-                <div class="space-y-3 text-sm leading-relaxed text-slate-700">
-                  <p>
-                    Farmácias que não concluíram o recadastramento no SIFAP começaram a receber comunicações sobre suspensão temporária no Programa Farmácia Popular, ficando impedidas de realizar novas dispensações até a regularização da situação.
-                  </p>
-                  <p>
-                    A Regularize recomenda verificar imediatamente o status do processo no SIFAP, conferir se há pendências, exigências, inconsistências documentais ou etapa de RTA pendente, e organizar os próximos passos antes de reenviar informações.
-                  </p>
-                </div>
-                <div class="flex flex-wrap items-center gap-4">
-                  <button type="button" data-aviso-history-toggle data-aviso-history-expand-label="O que fazer agora" data-aviso-history-collapse-label="Ocultar orientações" aria-expanded="false" aria-controls="aviso-suspensao-sifap-2005" class="inline-flex items-center gap-2 rounded-lg text-sm font-semibold text-red-600 transition-colors duration-200 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-200 focus:ring-offset-2">
-                    <span data-aviso-history-toggle-label>O que fazer agora</span>
-                    <svg data-aviso-history-toggle-icon class="h-4 w-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                  </button>
-                  <a href="/noticias/farmacia-popular-suspensao-temporaria-recadastramento-sifap/" class="inline-flex items-center gap-2 rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition-colors duration-200 hover:border-red-300 hover:bg-red-100 hover:text-red-700">
-                    Ver orientação completa
-                    <span aria-hidden="true">→</span>
-                  </a>
-                </div>
-              </div>
-
-              <div id="aviso-suspensao-sifap-2005" data-aviso-history-content class="hidden border-t border-red-200 pt-4">
-                <div class="space-y-3 text-sm leading-relaxed text-slate-700">
-                  <div>
-                    <p class="font-semibold text-slate-900 mb-2">O que fazer agora:</p>
-                    <ul class="list-disc pl-5 space-y-1">
-                      <li>Conferir o status atual do processo no SIFAP.</li>
-                      <li>Verificar se há exigência, pendência ou documento recusado.</li>
-                      <li>Observar se existe etapa de RTA pendente.</li>
-                      <li>Organizar protocolos, prints e comunicações oficiais recebidas.</li>
-                      <li>Buscar apoio técnico se não estiver claro qual etapa falta concluir.</li>
-                    </ul>
-                  </div>
-                  <p>
-                    <strong class="text-slate-900">Cuidado com golpes:</strong> Ministério da Saúde e CAIXA não cobram taxa para o processo de recadastramento. Desconfie de boletos, links suspeitos, pedidos de senha e promessas de liberação rápida.
-                  </p>
-                  <p class="text-slate-800">
-                    Canais oficiais:<br>
-                    CAIXA: 4004 0104 — capitais e regiões metropolitanas;<br>
-                    CAIXA: 0800 104 0104 — demais localidades, opção 6;<br>
-                    Disque Saúde: 136;<br>
-                    <a href="mailto:analise.fpopular@saude.gov.br" class="font-medium text-brand hover:text-brand-dark transition-colors duration-200">analise.fpopular@saude.gov.br</a>;<br>
-                    <a href="mailto:cadastrofpopular@saude.gov.br" class="font-medium text-brand hover:text-brand-dark transition-colors duration-200">cadastrofpopular@saude.gov.br</a>.
-                  </p>
-                </div>
-              </div>
-            </div>
+<article data-status="util" data-category="farmacia-popular" data-updated-at="05/07/2026 às 18h30" data-effective-at="2026-07-05T18:30:00-03:00" class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm md:p-6">
+            <div class="space-y-3"><div class="flex flex-wrap items-center gap-2 text-xs text-slate-400"><div class="flex-shrink-0 w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center"><svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><span class="inline-block rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 font-semibold uppercase tracking-wide text-emerald-700">ÚTIL</span><span aria-hidden="true">•</span><time datetime="2026-07-05T18:30:00-03:00">05/07/2026 • 18h30</time></div><h3 class="text-lg font-bold text-slate-900">Farmácia Popular: confira as listas EAN vigentes e os controles de prescrição</h3><p class="text-sm leading-relaxed text-slate-700">As listas EAN vigentes conhecidas são as de junho de 2026 para medicamentos, fraldas geriátricas e absorventes higiênicos. Confira produtos habilitados, prescrições, CRM, autenticidade documental e registros operacionais.</p><a href="/noticias/farmacia-popular-listas-ean-junho-2026/" class="comunicado-cta comunicado-cta--util inline-flex items-center gap-2 rounded-lg border border-emerald-200 px-4 py-2 text-sm font-semibold text-emerald-700 transition-colors duration-200">Conferir orientações <span aria-hidden="true">→</span></a></div>
           </article>
 
-          <!-- ═══════════════════════════════════════════════════════
-                 INFORMATIVO — aviso ativo
-               ═══════════════════════════════════════════════════════ -->
-          <article data-status="informativo" data-updated-at="19/05/2026 às 09h00" data-aviso-history-card class="rounded-2xl border border-orange-200 bg-orange-50 p-6 shadow-sm md:p-8">
-            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
-              <div class="flex items-center gap-3">
-                <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">
-                  <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20A10 10 0 0012 2z"/>
-                  </svg>
-                </div>
-                <span class="inline-block rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-orange-600">
-                  Informativo
-                </span>
-              </div>
-              <div class="flex flex-col sm:items-end gap-1 text-xs text-slate-400">
-                <span class="flex items-center gap-1">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                  </svg>
-                  Publicado em: <strong class="text-slate-600">27/04/2026 às 17h00</strong>
-                </span>
-                <span data-aviso-updated class="hidden items-center gap-1 sm:justify-end">
-                  <svg class="h-3.5 w-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4.582 9H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                  </svg>
-                  <span>Atualizado em: <strong class="text-slate-600" data-aviso-updated-at></strong></span>
-                </span>
-                <span data-aviso-resolved class="hidden items-center gap-1 sm:justify-end">
-                  <svg class="h-3.5 w-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                  </svg>
-                  <span>Finalizado em: <strong class="text-slate-600" data-aviso-resolved-at></strong></span>
-                </span>
-              </div>
-            </div>
-
-            <h3 class="text-xl font-bold text-slate-900 mb-3">Instabilidade e transição do Sistema de Segurança da Anvisa para o Cadastro Anvisa/Gov.br</h3>
-
-            <div class="space-y-4 text-sm leading-relaxed text-slate-700">
-              <p><strong class="text-slate-900">Prezados clientes,</strong></p>
-              <p>
-                Além da instabilidade observada no acesso ao Sistema de Segurança da Anvisa, a Agência está em processo de migração gradual dos cadastros antigos para o novo Cadastro Anvisa, com autenticação pela conta Gov.br.
-              </p>
-              <p>
-                Segundo informações oficiais, o Cadastro Anvisa foi criado para integrar cadastros antes separados, como o Sistema de Cadastramento de Empresas, o Sistema de Segurança, o Cadastro de Instituições e o Cadastro de Usuários. No Sistema Solicita, novos registros de empresas já devem ser realizados pelo novo Cadastro Anvisa via Gov.br.
-              </p>
-              <p>
-                Durante esse período de transição, empresas e usuários podem encontrar dificuldades de acesso, bloqueios, necessidade de validação de conta Gov.br ou ajustes de vínculo entre CPF, CNPJ, responsável legal, gestores e colaboradores.
-              </p>
-            </div>
-
-            <div class="mt-5 rounded-xl border border-orange-200 bg-white/60 p-5">
-              <p class="text-sm font-semibold text-slate-900 mb-2">Precisa de apoio com cadastro, acesso ou perfis na Anvisa?</p>
-              <p class="text-sm leading-relaxed text-slate-700">A Regularize Consultoria auxilia empresas reguladas a revisar vínculos, perfis de acesso, cadastros e pendências relacionadas aos sistemas da Anvisa, incluindo o Cadastro Anvisa, Sistema Solicita e fluxos vinculados à conta Gov.br.</p>
-              <p class="mt-2 text-sm leading-relaxed text-slate-700">Se houver dificuldade de acesso, bloqueio, dúvida sobre responsável legal, gestor ou colaboradores, nossa equipe pode orientar a análise e indicar os próximos passos de forma segura.</p>
-              <div class="mt-4 flex flex-wrap items-center gap-3">
-                <a href="/noticias/cadastro-anvisa-govbr-transicao-sistemas/" class="inline-flex items-center gap-2 rounded-lg border border-orange-200 px-4 py-2 text-sm font-semibold text-orange-600 transition-colors duration-200 hover:border-orange-300 hover:bg-orange-100 hover:text-orange-700">
-                  Leia a notícia completa sobre a transição
-                  <span aria-hidden="true">→</span>
-                </a>
-              </div>
-            </div>
+          <article data-status="informativo" data-category="anvisa" data-updated-at="19/05/2026 às 09h00" data-effective-at="2026-05-19T09:00:00-03:00" class="rounded-2xl border border-orange-200 bg-orange-50 p-5 shadow-sm md:p-6">
+            <div class="space-y-3"><div class="flex flex-wrap items-center gap-2 text-xs text-slate-400"><div class="flex-shrink-0 w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center"><svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20A10 10 0 0012 2z"/></svg></div><span class="inline-block rounded-full border border-orange-200 bg-orange-50 px-3 py-1 font-semibold uppercase tracking-wide text-orange-600">INFORMATIVO</span><span aria-hidden="true">•</span><time datetime="2026-05-19T09:00:00-03:00">19/05/2026 • 09h00</time></div><h3 class="text-lg font-bold text-slate-900">Cadastro Anvisa/Gov.br: atenção a empresas, usuários e perfis de acesso</h3><div class="space-y-3 text-sm leading-relaxed text-slate-700"><p>O Cadastro Anvisa integra cadastros antes separados e utiliza a conta Gov.br. Novos registros de empresas no Sistema Solicita passaram a ser realizados pelo novo Cadastro Anvisa.</p><p>O cadastro anterior permanece em situações específicas de empresas já cadastradas, conforme orientação da Agência. Revise responsável legal, gestores, colaboradores, perfis, vínculos e acesso ao Solicita.</p></div><a href="/noticias/cadastro-anvisa-govbr-transicao-sistemas/" class="comunicado-cta comunicado-cta--informativo inline-flex items-center gap-2 rounded-lg border border-orange-200 px-4 py-2 text-sm font-semibold text-orange-600 transition-colors duration-200">Leia a notícia completa <span aria-hidden="true">→</span></a></div>
           </article>
+
+          <div class="border-t border-slate-200 pt-8"><h2 class="text-2xl font-bold text-slate-700 mb-2">Histórico / encerrados</h2><p class="text-sm text-slate-500">Comunicados preservados para consulta, sem caráter de aviso atual.</p></div>
+
+<article data-status="resolved" data-category="farmacia-popular" class="comunicado-historico rounded-2xl border border-slate-300 bg-slate-50 p-5 shadow-sm md:p-6">
+            <div class="space-y-3"><div class="comunicado-historico__meta flex flex-wrap items-center gap-2 text-xs"><div class="comunicado-historico__icon flex-shrink-0 w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center"><svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><span class="comunicado-historico__badge inline-block rounded-full border px-3 py-1 font-semibold uppercase tracking-wide">HISTÓRICO</span><span aria-hidden="true">•</span><time datetime="2026-05-20T13:00:00-03:00">20/05/2026 • 13h00</time></div><h3 class="text-lg font-bold text-slate-900">Farmácia Popular: suspensão por recadastramento pendente — ciclo de maio de 2026</h3><p class="text-sm leading-relaxed text-slate-700">Este comunicado permanece disponível como registro do ciclo de maio de 2026 e não representa uma nova rodada de suspensão.</p><a href="/noticias/farmacia-popular-suspensao-temporaria-recadastramento-sifap/" class="comunicado-historico__control inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-colors duration-200 hover:border-slate-400 hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:ring-offset-2">Ver contexto histórico <span aria-hidden="true">→</span></a></div>
+          </article>
+
+
           <!-- ═══════════════════════════════════════════════════════
                  ATUALIZAÇÃO — prazo encerrado
                ═══════════════════════════════════════════════════════ -->
-          <article data-status="resolved" data-category="farmacia-popular" data-aviso-history-card class="rounded-2xl border border-yellow-200 bg-yellow-50 p-5 shadow-sm md:p-6">
-            <div class="flex flex-col gap-4">
-              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                <div class="flex items-center gap-3">
-                  <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-yellow-100 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4.582 9H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                    </svg>
-                  </div>
-                  <span class="inline-block rounded-full border border-yellow-200 bg-yellow-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-yellow-600">
-                    ATUALIZAÇÃO
-                  </span>
-                </div>
-                <div class="flex flex-col sm:items-end gap-1 text-xs text-slate-400">
-                  <span class="flex items-center gap-1">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Publicado em: <strong class="text-slate-600">28/04/2026 às 16h12</strong>
-                  </span>
-                  <span class="flex flex-wrap items-center gap-1 sm:justify-end">
-                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4.582 9H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                    </svg>
-                    Atualizado em: <strong class="text-slate-600">18/05/2026 às 08h00</strong>
-                  </span>
-                  <span class="flex flex-wrap items-center gap-1 sm:justify-end">
-                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
-                    Prazo encerrado em: <strong class="text-slate-600">13/05/2026</strong>
-                  </span>
-                </div>
-              </div>
+<article data-status="resolved" data-category="farmacia-popular" data-aviso-history-card class="comunicado-historico rounded-2xl border border-slate-300 bg-slate-50 p-5 shadow-sm md:p-6">
+            <div class="comunicado-historico__body flex flex-col gap-4">
+              <div class="comunicado-historico__meta flex flex-wrap items-center gap-2 text-xs"><div class="comunicado-historico__icon flex-shrink-0 w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center"><svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><span class="comunicado-historico__badge inline-block rounded-full border px-3 py-1 font-semibold uppercase tracking-wide">ENCERRADO</span><span aria-hidden="true">•</span><time datetime="2026-05-18T08:00:00-03:00">18/05/2026 • 08h00</time></div>
 
               <div class="space-y-3">
                 <h3 class="text-lg font-bold text-slate-900">SIFAP: prazo de regularização cadastral informado para 13/05/2026 foi encerrado</h3>
                 <div class="space-y-3 text-sm leading-relaxed text-slate-700">
                   <p>
-                    <strong class="text-yellow-600">Atenção:</strong> o prazo informado para regularização cadastral no SIFAP, destinado às farmácias e drogarias credenciadas ao Programa Farmácia Popular que receberam notificação por e-mail, teve encerramento previsto em <strong class="text-slate-900">13/05/2026</strong>.
+                    <strong class="text-slate-800">Atenção:</strong> o prazo informado para regularização cadastral no SIFAP, destinado às farmácias e drogarias credenciadas ao Programa Farmácia Popular que receberam notificação por e-mail, teve encerramento previsto em <strong class="text-slate-900">13/05/2026</strong>.
                   </p>
                   <p>
                     Até o momento, não identificamos nova prorrogação oficial publicada em fonte pública. As empresas notificadas devem acessar o SIFAP e verificar imediatamente o status do processo, especialmente se houver pendência documental, cadastro pendente, análise em andamento ou etapa de RTA pendente.
@@ -700,20 +326,20 @@
                   </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-4">
-                  <button type="button" data-aviso-history-toggle data-aviso-history-expand-label="O que fazer agora" data-aviso-history-collapse-label="Ocultar orientações" aria-expanded="false" aria-controls="aviso-historico-sifap" class="inline-flex items-center gap-2 rounded-lg text-sm font-semibold text-yellow-600 transition-colors duration-200 hover:text-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-200 focus:ring-offset-2">
+                  <button type="button" data-aviso-history-toggle data-aviso-history-expand-label="O que fazer agora" data-aviso-history-collapse-label="Ocultar orientações" aria-expanded="false" aria-controls="aviso-historico-sifap" class="comunicado-historico__control inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-colors duration-200 hover:border-slate-400 hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:ring-offset-2">
                     <span data-aviso-history-toggle-label>O que fazer agora</span>
                     <svg data-aviso-history-toggle-icon class="h-4 w-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                     </svg>
                   </button>
-                  <a href="/noticias/prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular/" class="inline-flex items-center gap-2 rounded-lg border border-yellow-200 px-4 py-2 text-sm font-semibold text-yellow-600 transition-colors duration-200 hover:border-yellow-300 hover:bg-yellow-100 hover:text-yellow-700">
+                  <a href="/noticias/prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular/" class="comunicado-historico__control inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-colors duration-200 hover:border-slate-400 hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:ring-offset-2">
                     Ver orientação pós-prazo
                     <span aria-hidden="true">→</span>
                   </a>
                 </div>
               </div>
 
-              <div id="aviso-historico-sifap" data-aviso-history-content class="hidden border-t border-yellow-200 pt-4">
+              <div id="aviso-historico-sifap" data-aviso-history-content class="hidden border-t border-slate-200 pt-4">
                 <div class="space-y-3 text-sm leading-relaxed text-slate-700">
                   <div>
                     <p class="font-semibold text-slate-900 mb-2">O que fazer agora:</p>
@@ -747,59 +373,24 @@
           </article>
 
           <!-- ═══════════════════════════════════════════════════════
-                 NORMALIZADO — aviso mantido como histórico
+                 ENCERRADO — aviso mantido como histórico
                ═══════════════════════════════════════════════════════ -->
-          <article data-status="normalizado" data-updated-at="28/04/2026 às 08h28" data-resolved-at="28/04/2026 às 12h57" data-aviso-history-card class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm md:p-6">
-            <div class="flex flex-col gap-4">
-              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-              <div class="flex items-center gap-3">
-                <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
-                  <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                  </svg>
-                </div>
-                <span class="inline-block rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">
-                  Normalizado
-                </span>
-              </div>
-              <div class="flex flex-col sm:items-end gap-1 text-xs text-slate-400">
-                <span class="flex items-center gap-1">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                  </svg>
-                  Publicado em: <strong class="text-slate-600">27/04/2026 às 19h16</strong>
-                </span>
-                <span data-aviso-updated class="hidden items-center gap-1 sm:justify-end">
-                  <svg class="h-3.5 w-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4.582 9H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                  </svg>
-                  <span>Atualizado em: <strong class="text-slate-600" data-aviso-updated-at></strong></span>
-                </span>
-                <span data-aviso-resolved class="hidden items-center gap-1 sm:justify-end">
-                  <svg class="h-3.5 w-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                  </svg>
-                  <span>Finalizado em: <strong class="text-slate-600" data-aviso-resolved-at></strong></span>
-                </span>
-              </div>
-              </div>
+<article data-status="resolved" data-updated-at="28/04/2026 às 08h28" data-resolved-at="28/04/2026 às 12h57" data-aviso-history-card class="comunicado-historico rounded-2xl border border-slate-300 bg-slate-50 p-5 shadow-sm md:p-6">
+            <div class="comunicado-historico__body flex flex-col gap-4">
+              <div class="comunicado-historico__meta flex flex-wrap items-center gap-2 text-xs"><div class="comunicado-historico__icon flex-shrink-0 w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center"><svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><span class="comunicado-historico__badge inline-block rounded-full border px-3 py-1 font-semibold uppercase tracking-wide">ENCERRADO</span><span aria-hidden="true">•</span><time datetime="2026-04-28T12:57:00-03:00">28/04/2026 • 12h57</time></div>
               <div class="space-y-3">
                 <h3 class="text-lg font-bold text-slate-900">Portal de Consultas da Anvisa fora do ar</h3>
                 <p class="text-sm leading-relaxed text-slate-600">
                   Atualização final: o Portal de Consultas da Anvisa voltou a funcionar em nossos testes.
                 </p>
-                <button type="button" data-aviso-history-toggle aria-expanded="false" aria-controls="aviso-historico-portal-consultas" class="inline-flex items-center gap-2 rounded-lg text-sm font-semibold text-emerald-700 transition-colors duration-200 hover:text-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:ring-offset-2">
+                <button type="button" data-aviso-history-toggle aria-expanded="false" aria-controls="aviso-historico-portal-consultas" class="comunicado-historico__control inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-colors duration-200 hover:border-slate-400 hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:ring-offset-2">
                   <span data-aviso-history-toggle-label>Ver histórico completo</span>
                   <svg data-aviso-history-toggle-icon class="h-4 w-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                 </button>
               </div>
-              <div id="aviso-historico-portal-consultas" data-aviso-history-content class="hidden border-t border-emerald-100 pt-4">
+              <div id="aviso-historico-portal-consultas" data-aviso-history-content class="hidden border-t border-slate-200 pt-4">
                 <div class="space-y-3 text-sm leading-relaxed text-slate-600">
                   <p><strong class="text-slate-800">Prezados clientes,</strong></p>
                   <p>
@@ -843,59 +434,24 @@
           </article>
 
           <!-- ═══════════════════════════════════════════════════════
-                 NORMALIZADO — aviso mantido como histórico
+                 ENCERRADO — aviso mantido como histórico
                ═══════════════════════════════════════════════════════ -->
-            <article data-status="normalizado" data-updated-at="28/04/2026 às 08h28" data-resolved-at="28/04/2026 às 12h57" data-aviso-history-card class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm md:p-6">
-              <div class="flex flex-col gap-4">
-                <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                <div class="flex items-center gap-3">
-                  <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                  </div>
-                  <span class="inline-block rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">
-                    Normalizado
-                  </span>
-                </div>
-                <div class="flex flex-col sm:items-end gap-1 text-xs text-slate-400">
-                  <span class="flex items-center gap-1">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Publicado em: <strong class="text-slate-600">27/04/2026 às 17h00</strong>
-                  </span>
-                  <span data-aviso-updated class="hidden items-center gap-1 sm:justify-end">
-                    <svg class="h-3.5 w-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4.582 9H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                    </svg>
-                    <span>Atualizado em: <strong class="text-slate-600" data-aviso-updated-at></strong></span>
-                  </span>
-                  <span data-aviso-resolved class="hidden items-center gap-1 sm:justify-end">
-                    <svg class="h-3.5 w-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <span>Finalizado em: <strong class="text-slate-600" data-aviso-resolved-at></strong></span>
-                  </span>
-                </div>
-                </div>
+<article data-status="resolved" data-updated-at="28/04/2026 às 08h28" data-resolved-at="28/04/2026 às 12h57" data-aviso-history-card class="comunicado-historico rounded-2xl border border-slate-300 bg-slate-50 p-5 shadow-sm md:p-6">
+              <div class="comunicado-historico__body flex flex-col gap-4">
+                <div class="comunicado-historico__meta flex flex-wrap items-center gap-2 text-xs"><div class="comunicado-historico__icon flex-shrink-0 w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center"><svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><span class="comunicado-historico__badge inline-block rounded-full border px-3 py-1 font-semibold uppercase tracking-wide">ENCERRADO</span><span aria-hidden="true">•</span><time datetime="2026-04-28T12:57:00-03:00">28/04/2026 • 12h57</time></div>
                 <div class="space-y-3">
                   <h3 class="text-lg font-bold text-slate-900">Instabilidade no SNGPC</h3>
                   <p class="text-sm leading-relaxed text-slate-600">
                     Atualização final: o acesso ao SNGPC voltou a funcionar em nossos testes. Este aviso foi encerrado e mantido apenas como histórico.
                   </p>
-                  <button type="button" data-aviso-history-toggle aria-expanded="false" aria-controls="aviso-historico-sngpc" class="inline-flex items-center gap-2 rounded-lg text-sm font-semibold text-emerald-700 transition-colors duration-200 hover:text-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:ring-offset-2">
+                  <button type="button" data-aviso-history-toggle aria-expanded="false" aria-controls="aviso-historico-sngpc" class="comunicado-historico__control inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-colors duration-200 hover:border-slate-400 hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:ring-offset-2">
                     <span data-aviso-history-toggle-label>Ver histórico completo</span>
                     <svg data-aviso-history-toggle-icon class="h-4 w-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                     </svg>
                   </button>
                 </div>
-                <div id="aviso-historico-sngpc" data-aviso-history-content class="hidden border-t border-emerald-100 pt-4">
+                <div id="aviso-historico-sngpc" data-aviso-history-content class="hidden border-t border-slate-200 pt-4">
                   <div class="space-y-3 text-sm leading-relaxed text-slate-600">
                     <p><strong class="text-slate-800">Prezados clientes,</strong></p>
                     <p>
@@ -927,51 +483,6 @@
               </div>
           </article>
 
-          <!--
-          ═══════════════════════════════════════════════════════════
-          EXEMPLO DE AVISO REAL — copie este bloco quando for publicar
-          ═══════════════════════════════════════════════════════════
-
-          <article class="bg-white rounded-2xl shadow-sm border border-red-200 p-6 md:p-8">
-            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
-              <div class="flex items-center gap-3">
-                <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
-                  <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-                  </svg>
-                </div>
-                <span class="inline-block px-3 py-1 rounded-full bg-red-50 text-red-600 text-xs font-semibold uppercase tracking-wide border border-red-200">
-                  Urgente
-                </span>
-              </div>
-              <div class="flex flex-col sm:items-end gap-1 text-xs text-slate-400">
-                <span class="flex items-center gap-1">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                  </svg>
-                  Publicado em: <strong class="text-slate-600">24/04/2026</strong>
-                </span>
-                <span class="flex items-center gap-1">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                  </svg>
-                  Válido até: <strong class="text-slate-600">30/06/2026</strong>
-                </span>
-              </div>
-            </div>
-            <h3 class="text-lg font-bold text-slate-900 mb-2">Título do aviso aqui</h3>
-            <p class="text-slate-600 text-sm leading-relaxed">
-              Descrição do aviso aqui.
-            </p>
-          </article>
-
-          ═══════════════════════════════════════════════════════════
-          FIM DO EXEMPLO
-          ═══════════════════════════════════════════════════════════
-          -->
 
         </div>
 
