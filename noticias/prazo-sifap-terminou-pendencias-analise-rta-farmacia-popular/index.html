@@ -32,6 +32,29 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/css/tailwind.min.css">
   <link rel="stylesheet" href="/assets/css/custom.min.css?v=20260506-1" />
+  <style>
+    [data-news-update-callout] {
+      color: #475569;
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+
+    [data-news-update-callout] h3 {
+      color: #1e293b;
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.8;
+      margin: 0 0 0.6rem;
+    }
+
+    [data-news-update-callout] p {
+      margin: 0 0 1.1rem;
+    }
+
+    [data-news-update-callout] .article-spacing-flush-bottom {
+      margin-bottom: 0;
+    }
+  </style>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"NewsArticle","headline":"Prazo do SIFAP terminou: veja como acompanhar pendências, análise e RTA no Farmácia Popular","description":"Prazo do SIFAP para farmácias notificadas terminou em 13/05/2026. Entenda como verificar pendências, status de análise, cadastro pendente e RTA no Farmácia Popular.","image":"https://www.regularizeconsultorias.com.br/assets/img/og/noticias/prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular.webp","url":"https://www.regularizeconsultorias.com.br/noticias/prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular/","datePublished":"2026-05-18T09:00:00-03:00","dateModified":"2026-05-18T09:00:00-03:00","author":{"@type":"Person","name":"Júnior Costa"},"publisher":{"@type":"Organization","name":"Regularize Consultoria","logo":{"@type":"ImageObject","url":"https://www.regularizeconsultorias.com.br/assets/img/logorc2.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.regularizeconsultorias.com.br/noticias/prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular/"},"articleSection":"FARMÁCIA POPULAR","keywords":"Farmácia Popular, SIFAP, RTA, Pendências cadastrais"}
   </script>
@@ -90,11 +113,17 @@
           </div>
         </div>
 
-        <div class="mb-8 rounded-2xl border-2 border-red-300 bg-red-50 p-5 shadow-sm">
-          <p class="mb-1 text-xs font-semibold uppercase tracking-widest text-red-700">Atualização em 20/05/2026</p>
-          <p class="text-sm text-slate-700 leading-relaxed">Farmácias que não concluíram o recadastramento começaram a receber comunicações sobre suspensão temporária no Programa Farmácia Popular. Veja o aviso urgente da Regularize sobre o que verificar no SIFAP e como organizar a regularização.</p>
-          <a href="/noticias/farmacia-popular-suspensao-temporaria-recadastramento-sifap/" class="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-red-600 px-4 py-2 text-sm font-bold text-white no-underline hover:bg-red-700">Ler aviso urgente <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-        </div>
+        <aside data-news-update-callout aria-labelledby="sifap-suspension-update-title" class="mb-8 rounded-2xl border border-yellow-200 bg-yellow-50 p-5 shadow-sm md:p-6">
+          <div class="mb-3 flex flex-wrap items-center gap-2 text-xs">
+            <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-yellow-100">
+              <svg class="h-4 w-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4.582 9H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </div>
+            <span class="inline-block rounded-full border border-yellow-200 bg-yellow-50 px-3 py-1 font-semibold uppercase tracking-wide text-yellow-600">ATUALIZAÇÃO</span>
+          </div>
+          <h3 id="sifap-suspension-update-title" class="article-spacing-flush-top">Suspensão temporária comunicada em 20/05/2026</h3>
+          <p>Farmácias que não concluíram o recadastramento começaram a receber comunicações sobre suspensão temporária no Programa Farmácia Popular. Veja o aviso urgente da Regularize sobre o que verificar no SIFAP e como organizar a regularização.</p>
+          <p class="article-spacing-flush-bottom"><a href="/noticias/farmacia-popular-suspensao-temporaria-recadastramento-sifap/" class="font-semibold text-yellow-700 underline underline-offset-4 hover:text-yellow-800">Ler aviso urgente</a></p>
+        </aside>
 
         <section class="article-body">
           <p>O prazo informado para regularização cadastral no SIFAP, destinado às farmácias e drogarias credenciadas ao Programa Farmácia Popular do Brasil que receberam notificação por e-mail, teve encerramento previsto em 13/05/2026.</p>

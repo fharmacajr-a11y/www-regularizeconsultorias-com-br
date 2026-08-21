@@ -170,6 +170,14 @@
       text-underline-offset: 3px;
     }
 
+    .article-body [data-news-update-callout] h3.article-spacing-flush-top {
+      margin-top: 0;
+    }
+
+    .article-body [data-news-update-callout] p.article-spacing-flush-bottom {
+      margin-bottom: 0;
+    }
+
     @media (max-width: 479px) {
       .article-final-cta__card,
       .article-related-news__card {
@@ -337,10 +345,16 @@
           <p>Esta notícia foi atualizada para refletir o esclarecimento da Anvisa sobre a nova etapa do Sistema Nacional de Controle de Receituários (SNCR). A RDC 1.028/2026 alterou o prazo antes previsto para 1º de junho de 2026 para até 30 de setembro de 2026, exclusivamente para a disponibilização das funcionalidades eletrônicas do sistema.</p>
           <p>A mudança não deve ser lida como cancelamento do SNCR. O ponto central é que a implementação passa por uma etapa técnica de integração, com disponibilização de recursos para que sistemas de prescrição eletrônica se adaptem à plataforma nacional de controle de receituários.</p>
 
-          <div class="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-3 sm:p-4 md:p-5 shadow-sm">
-            <p class="mb-1 text-xs font-semibold uppercase tracking-widest text-amber-700">Atualização oficial</p>
-            <p class="text-sm leading-relaxed text-amber-950">A Anvisa esclareceu que a RDC 1.028/2026 prorrogou somente o prazo para disponibilização das funcionalidades eletrônicas do SNCR, até 30/09/2026. A prorrogação não alterou as demais disposições da RDC 1.000/2025.</p>
-          </div>
+          <aside data-news-update-callout aria-labelledby="sncr-deadline-update-title" class="mb-6 rounded-2xl border border-yellow-200 bg-yellow-50 p-5 shadow-sm md:p-6">
+            <div class="mb-3 flex flex-wrap items-center gap-2 text-xs">
+              <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-yellow-100">
+                <svg class="h-4 w-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M4.582 9H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              </div>
+              <span class="inline-block rounded-full border border-yellow-200 bg-yellow-50 px-3 py-1 font-semibold uppercase tracking-wide text-yellow-600">ATUALIZAÇÃO</span>
+            </div>
+            <h3 id="sncr-deadline-update-title" class="article-spacing-flush-top">Prazo para funcionalidades eletrônicas foi prorrogado</h3>
+            <p class="article-spacing-flush-bottom">A Anvisa esclareceu que a RDC 1.028/2026 prorrogou somente o prazo para disponibilização das funcionalidades eletrônicas do SNCR, até 30/09/2026. A prorrogação não alterou as demais disposições da RDC 1.000/2025.</p>
+          </aside>
 
           <h2>O que a Anvisa informou</h2>
           <p>A nova fase do SNCR começa com a disponibilização de documentação técnica da API e de recursos necessários para que plataformas de prescrição eletrônica possam se integrar ao sistema. Essa etapa é voltada principalmente à adaptação tecnológica de empresas desenvolvedoras e serviços de prescrição eletrônica.</p>
