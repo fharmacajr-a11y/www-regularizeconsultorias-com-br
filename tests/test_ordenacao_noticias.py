@@ -16,6 +16,7 @@ CBPF_IN451_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atua
 RPBR_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-periodicidade-rpbr-farmacovigilancia/"
 SIPROQUIM_IN338_URL = "https://www.regularizeconsultorias.com.br/noticias/produtos-quimicos-controlados-siproquim2-assinador-pf/"
 PRODUTOS_IRREGULARES_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
+PRODUTOS_IRREGULARES_UPDATED = "2026-08-22T13:34:33-03:00"
 FABRICANTES_INTERNACIONAIS_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-dispositivos-medicos/"
 SUPERVISAO_CONTEUDO_URL = "https://www.regularizeconsultorias.com.br/noticias/farmaceutico-supervisiona-conteudos-farmacia-redes-sociais-sites/"
 RETATRUTIDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-retatrutida-sem-registro-produtos-irregulares/"
@@ -121,6 +122,13 @@ def test_news_index_sorting_rule_and_attributes():
     assert f'data-updated="{PORTARIA_UPDATED}"' in portaria_card
     assert f'<time datetime="{PORTARIA_UPDATED}"' in portaria_card
 
+    produtos_irregulares_card = next(
+        (card for card in _news_cards(html) if _card_url(card) == PRODUTOS_IRREGULARES_URL),
+        None,
+    )
+    assert produtos_irregulares_card is not None
+    assert f'data-updated="{PRODUTOS_IRREGULARES_UPDATED}"' in produtos_irregulares_card
+
 def test_news_index_itemlist_ordering():
     html = NEWS_INDEX_PATH.read_text(encoding="utf-8")
     items = _itemlist(html)
@@ -128,12 +136,12 @@ def test_news_index_itemlist_ordering():
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
 
-    assert urls[0] == CREDENCIAMENTO_URL
-    assert urls[1] == PORTARIA_URL
-    assert urls[2] == CANNABIS_URL
-    assert urls[3] == RPBR_URL
-    assert urls[4] == SIPROQUIM_IN338_URL
-    assert urls[5] == PRODUTOS_IRREGULARES_URL
+    assert urls[0] == PRODUTOS_IRREGULARES_URL
+    assert urls[1] == CREDENCIAMENTO_URL
+    assert urls[2] == PORTARIA_URL
+    assert urls[3] == CANNABIS_URL
+    assert urls[4] == RPBR_URL
+    assert urls[5] == SIPROQUIM_IN338_URL
     assert urls[6] == CBPF_IN451_URL
     assert urls[7] == SIFAP_SUSPENSAO_URL
     assert urls[8] == COSMETICOS_URL
@@ -166,7 +174,7 @@ def test_news_index_itemlist_ordering():
     assert urls[supervisao_position - 1] == RETATRUTIDA_URL
     assert urls[supervisao_position + 1] == HEMOTERAPIA_URL
     assert CREDENCIAMENTO_URL in urls, "Credenciamento is missing from JSON-LD"
-    assert urls.index(CREDENCIAMENTO_URL) == 0
+    assert urls.index(CREDENCIAMENTO_URL) == 1
 
 
 def test_all_news_orders_match_effective_timestamp_sorting():
