@@ -28,6 +28,7 @@ DISPOSITIVOS_IRREGULARES_URL = "https://www.regularizeconsultorias.com.br/notici
 PARAMOL_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-recolhe-lote-114053-paramol-750-mg/"
 SEMAGLUTIDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-registra-cinco-medicamentos-semaglutida/"
 CREDENCIAMENTO_URL = "https://www.regularizeconsultorias.com.br/noticias/credenciamento-farmacia-popular-municipios-com-vagas/"
+CREDENCIAMENTO_UPDATED = "2026-08-22T12:09:22-03:00"
 ALTERACAO_CADASTRAL_URL = "https://www.regularizeconsultorias.com.br/noticias/alteracao-cadastral-farmacia-popular-regularizacao/"
 PORTARIA_URL = "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-portaria-12091-2026-novas-regras/"
 PORTARIA_UPDATED = "2026-08-20T18:22:59-03:00"
@@ -99,11 +100,11 @@ def test_news_index_sorting_rule_and_attributes():
     credenciamento_match = re.search(r'(<article[^>]*?data-title="Credenciamento no Farmácia Popular exige atenção à lista oficial de municípios com vagas"[^>]*?>.*?)</article>', html, re.DOTALL)
     assert credenciamento_match is not None, "Credenciamento article not found in HTML"
     credenciamento_html = credenciamento_match.group(1)
-    assert 'data-updated="2026-08-14T10:31:09-03:00"' in credenciamento_html, "Credenciamento data-updated attribute missing or incorrect"
+    assert f'data-updated="{CREDENCIAMENTO_UPDATED}"' in credenciamento_html, "Credenciamento data-updated attribute missing or incorrect"
 
     credenciamento_page = CREDENCIAMENTO_PATH.read_text(encoding="utf-8")
     assert '"datePublished": "2026-05-22T23:30:00-03:00"' in credenciamento_page, "Credenciamento original datePublished was falsified"
-    assert '"dateModified": "2026-08-14T10:31:09-03:00"' in credenciamento_page, "Credenciamento dateModified missing or incorrect"
+    assert f'"dateModified": "{CREDENCIAMENTO_UPDATED}"' in credenciamento_page, "Credenciamento dateModified missing or incorrect"
 
     article_match = re.search(r'(<article[^>]*?data-title="Alteração cadastral no Farmácia Popular exige atenção para evitar pendências no programa"[^>]*?>.*?)</article>', html, re.DOTALL)
     assert article_match is not None, "Article not found in HTML"
@@ -127,21 +128,21 @@ def test_news_index_itemlist_ordering():
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
 
-    assert urls[0] == PORTARIA_URL
-    assert urls[1] == CANNABIS_URL
-    assert urls[2] == RPBR_URL
-    assert urls[3] == SIPROQUIM_IN338_URL
-    assert urls[4] == PRODUTOS_IRREGULARES_URL
-    assert urls[5] == CBPF_IN451_URL
-    assert urls[6] == SIFAP_SUSPENSAO_URL
-    assert urls[7] == COSMETICOS_URL
-    assert urls[8] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-cosmeticos-saneantes/"
-    assert urls[9] == FABRICANTES_INTERNACIONAIS_URL
-    assert urls[10] == GLP1_URL
-    assert urls[11] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-formulario-cbpf-terapias-avancadas/"
-    assert urls[12] == "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
-    assert urls[13] == MONITORAMENTO_URL, "Monitoramento should follow CNES competencia 08"
-    assert urls[14] == CREDENCIAMENTO_URL, "Credenciamento should be at position 15 in JSON-LD"
+    assert urls[0] == CREDENCIAMENTO_URL
+    assert urls[1] == PORTARIA_URL
+    assert urls[2] == CANNABIS_URL
+    assert urls[3] == RPBR_URL
+    assert urls[4] == SIPROQUIM_IN338_URL
+    assert urls[5] == PRODUTOS_IRREGULARES_URL
+    assert urls[6] == CBPF_IN451_URL
+    assert urls[7] == SIFAP_SUSPENSAO_URL
+    assert urls[8] == COSMETICOS_URL
+    assert urls[9] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-cosmeticos-saneantes/"
+    assert urls[10] == FABRICANTES_INTERNACIONAIS_URL
+    assert urls[11] == GLP1_URL
+    assert urls[12] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-formulario-cbpf-terapias-avancadas/"
+    assert urls[13] == "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
+    assert urls[14] == MONITORAMENTO_URL, "Monitoramento should follow CNES competencia 08"
     edital_position = urls.index(EDITAL_5_2026_URL)
     assert edital_position == 19
     assert urls[edital_position - 1] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-amplia-painel-medicamentos-pendentes-registro/"
@@ -164,8 +165,8 @@ def test_news_index_itemlist_ordering():
     supervisao_position = urls.index(SUPERVISAO_CONTEUDO_URL)
     assert urls[supervisao_position - 1] == RETATRUTIDA_URL
     assert urls[supervisao_position + 1] == HEMOTERAPIA_URL
-    assert PORTARIA_URL in urls, "Portaria is missing from JSON-LD"
-    assert urls.index(PORTARIA_URL) == 0
+    assert CREDENCIAMENTO_URL in urls, "Credenciamento is missing from JSON-LD"
+    assert urls.index(CREDENCIAMENTO_URL) == 0
 
 
 def test_all_news_orders_match_effective_timestamp_sorting():
