@@ -203,7 +203,9 @@ def test_comunicado_editorial_organization_and_active_notice_content():
     assert "período eleitoral" in active_text
     assert "30/09/2026" in active_text
     assert "funcionalidades eletrônicas" in active_text
-    assert "28/07/2026" in active_text
+    assert "20/08/2026" in active_text
+    assert "1.206 municípios" in active_text
+    assert "1.770 disponíveis" in active_text
     assert "instabilidade observada" not in active_text
     assert "junho de 2026" in active_text
     assert "ciclo de maio de 2026" in historical_text
@@ -228,9 +230,9 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
 
     assert titles == [
         "Farmácia Popular: ciclo atual de renovação termina em 31 de agosto",
+        "Farmácia Popular: confira municípios com vagas para credenciamento",
         "SNCR: funcionalidades eletrônicas seguem em implantação até 30/09/2026",
         "Anvisa suspende medicamento e proíbe produtos irregulares",
-        "Farmácia Popular: confira municípios com vagas para credenciamento",
         "Farmácia Popular: atenção aos materiais no período eleitoral",
         "Farmácia Popular: confira as listas EAN vigentes e os controles de prescrição",
         "Cadastro Anvisa/Gov.br: atenção a empresas, usuários e perfis de acesso",
