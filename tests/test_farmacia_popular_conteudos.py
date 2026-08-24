@@ -85,7 +85,7 @@ def test_pagina_remove_destinos_governamentais_e_preserva_referencias():
     assert "saude.gov.br" not in lowered
     assert "infoms.saude.gov.br" not in lowered
     assert "ministério da saúde" in lowered
-    assert "farmacia-popular-municipios-vagas-28-07-2026.pdf" in HTML
+    assert "farmacia-popular-municipios-vagas-20-08-2026.pdf" in HTML
     assert "id=\"fp-consultation-title\"" in HTML
     assert "id=\"fp-table\"" in HTML
     assert "id=\"fp-pagination\"" in HTML
@@ -101,8 +101,17 @@ def test_card_de_proveniencia_preserva_orgao_e_links_sem_fonte_redundante():
     assert 'id="fp-official-link"' not in HTML
     assert "Órgão de origem" in HTML
     assert 'id="fp-source-org"' in HTML
-    assert 'href="/noticias/credenciamento-farmacia-popular-municipios-com-vagas/farmacia-popular-municipios-vagas-28-07-2026.pdf" target="_blank" rel="noopener noreferrer">Ver lista em PDF</a>' in HTML
+    assert 'href="/noticias/credenciamento-farmacia-popular-municipios-com-vagas/farmacia-popular-municipios-vagas-20-08-2026.pdf" target="_blank" rel="noopener noreferrer">Ver lista em PDF</a>' in HTML
     assert 'href="/noticias/credenciamento-farmacia-popular-municipios-com-vagas/">Ler notícia relacionada</a>' in HTML
+
+
+def test_arquivos_vinculados_pelos_links_auxiliares_existem():
+    pdf_path = ROOT / "noticias" / "credenciamento-farmacia-popular-municipios-com-vagas" / "farmacia-popular-municipios-vagas-20-08-2026.pdf"
+    news_path = ROOT / "noticias" / "credenciamento-farmacia-popular-municipios-com-vagas" / "index.html"
+    assert pdf_path.is_file(), "Arquivo PDF 20/08 deve existir no caminho referenciado pelo link."
+    assert pdf_path.stat().st_size > 0, "Arquivo PDF não deve ser vazio."
+    assert pdf_path.read_bytes()[:5] == b"%PDF-", "Arquivo deve ser um PDF válido."
+    assert news_path.is_file(), "Página da notícia relacionada deve existir."
 
 
 def test_pagina_farmacia_popular_usa_og_especifica():
@@ -129,5 +138,5 @@ def test_bloco_normativo_compacto_aponta_para_nova_noticia():
 
 
 def test_consulta_continua_apontando_para_as_mesmas_bases():
-    assert "'/data/farmacia-popular/vagas-2026-07-28.json'" in CONSULTATION_JS
+    assert "'/data/farmacia-popular/vagas-2026-08-20.json'" in CONSULTATION_JS
     assert "'/data/farmacia-popular/metadados.json'" in CONSULTATION_JS

@@ -37,7 +37,7 @@ def referencia_nominal():
     ]
 
 
-def criar_xlsx(caminho, rows, headers=None, sheet="Planilha2"):
+def criar_xlsx(caminho, rows, headers=None, sheet="Planilha1"):
     workbook = openpyxl.Workbook()
     worksheet = workbook.active
     worksheet.title = sheet
@@ -56,7 +56,7 @@ def esperados(registros=1, ufs=1, totais=1, preenchidas=0, disponiveis=1):
     return IMPORTADOR.TotaisEsperados(registros, ufs, totais, preenchidas, disponiveis)
 
 
-def importar(tmp_path, rows, referencia=None, esperado=None, headers=None, sheet="Planilha2"):
+def importar(tmp_path, rows, referencia=None, esperado=None, headers=None, sheet="Planilha1"):
     xlsx = tmp_path / "entrada.xlsx"
     criar_xlsx(xlsx, rows, headers=headers, sheet=sheet)
     return IMPORTADOR.importar_registros(
@@ -352,6 +352,50 @@ def test_metadados_contem_exatamente_divergencias_relevantes_e_validacao_pdf():
         "São Luiz -> São Luiz do Anauá",
         "Fortaleza do Tabocão -> Tabocão",
     ]
+
+
+def test_vagas_preenchidas_positivas_e_equacao_sao_aceitas(tmp_path):
+    registros, divergentes = importar(
+        tmp_path,
+        [linha(314780, "MG", "PASSA VINTE", total=2, preenchidas=1, disponiveis=1)],
+        esperado=esperados(registros=1, ufs=1, totais=2, preenchidas=1, disponiveis=1),
+    )
+
+    assert registros == [
+        {
+            "codigo_ibge": "3147808",
+            "regiao": "Sudeste",
+            "uf": "MG",
+            "municipio_fonte_ms": "PASSA VINTE",
+            "municipio_exibicao": "Passa Vinte",
+            "vagas_totais": 2,
+            "vagas_preenchidas": 1,
+            "vagas_disponiveis": 1,
+        }
+    ]
+    assert divergentes["quantidade_divergencias_nominais_relevantes"] == 0
+
+
+def test_base_20_08_tem_totais_e_ordem():
+    base = Path(__file__).parents[1] / "data" / "farmacia-popular" / "vagas-2026-08-20.json"
+    assert base.is_file(), "Arquivo da base 2026-08-20 deve existir."
+    registros = json.loads(base.read_text(encoding="utf-8"))
+    assert len(registros) == 1206
+    assert len({registro["uf"] for registro in registros}) == 26
+    assert sum(registro["vagas_totais"] for registro in registros) == 1780
+    assert sum(registro["vagas_preenchidas"] for registro in registros) == 10
+    assert sum(registro["vagas_disponiveis"] for registro in registros) == 1770
+    assert all(
+        isinstance(registro["codigo_ibge"], str)
+        and len(registro["codigo_ibge"]) == 7
+        and registro["codigo_ibge"].isdigit()
+        for registro in registros
+    )
+    assert len({registro["codigo_ibge"] for registro in registros}) == len(registros)
+    assert registros == sorted(
+        registros,
+        key=lambda registro: (registro["uf"], registro["municipio_exibicao"], registro["codigo_ibge"]),
+    )
 
 
 def test_base_28_07_tem_totais_e_ordem():
