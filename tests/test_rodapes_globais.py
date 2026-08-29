@@ -14,6 +14,7 @@ GLOBAL_NAVIGATION = {
     "/manuais-e-pops/",
     "/farmacia-popular/",
     "/noticias/",
+    "/politica-de-privacidade/",
 }
 
 
