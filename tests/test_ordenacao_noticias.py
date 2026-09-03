@@ -29,7 +29,7 @@ DISPOSITIVOS_IRREGULARES_URL = "https://www.regularizeconsultorias.com.br/notici
 PARAMOL_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-recolhe-lote-114053-paramol-750-mg/"
 SEMAGLUTIDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-registra-cinco-medicamentos-semaglutida/"
 CREDENCIAMENTO_URL = "https://www.regularizeconsultorias.com.br/noticias/credenciamento-farmacia-popular-municipios-com-vagas/"
-CREDENCIAMENTO_UPDATED = "2026-08-22T12:09:22-03:00"
+CREDENCIAMENTO_UPDATED = "2026-09-03T19:15:52-03:00"
 ALTERACAO_CADASTRAL_URL = "https://www.regularizeconsultorias.com.br/noticias/alteracao-cadastral-farmacia-popular-regularizacao/"
 PORTARIA_URL = "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-portaria-12091-2026-novas-regras/"
 PORTARIA_UPDATED = "2026-08-20T18:22:59-03:00"
@@ -136,8 +136,8 @@ def test_news_index_itemlist_ordering():
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
 
-    assert urls[0] == PRODUTOS_IRREGULARES_URL
-    assert urls[1] == CREDENCIAMENTO_URL
+    assert urls[0] == CREDENCIAMENTO_URL
+    assert urls[1] == PRODUTOS_IRREGULARES_URL
     assert urls[2] == PORTARIA_URL
     assert urls[3] == CANNABIS_URL
     assert urls[4] == RPBR_URL
@@ -174,7 +174,7 @@ def test_news_index_itemlist_ordering():
     assert urls[supervisao_position - 1] == RETATRUTIDA_URL
     assert urls[supervisao_position + 1] == HEMOTERAPIA_URL
     assert CREDENCIAMENTO_URL in urls, "Credenciamento is missing from JSON-LD"
-    assert urls.index(CREDENCIAMENTO_URL) == 1
+    assert urls.index(CREDENCIAMENTO_URL) == 0
 
 
 def test_all_news_orders_match_effective_timestamp_sorting():

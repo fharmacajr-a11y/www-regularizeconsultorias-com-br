@@ -47,7 +47,7 @@ EXPECTED = {
     NEWS_PATHS[0]: {
         "top_heading": "Lista de munic\u00edpios com vagas atualizada",
         "bottom_text": "A consulta \u00e9 informativa e n\u00e3o substitui",
-        "button": ("Baixar lista em PDF", "./farmacia-popular-municipios-vagas-20-08-2026.pdf"),
+        "button": ("Baixar lista em PDF", "./farmacia-popular-municipios-vagas-03-09-2026.pdf"),
     },
     NEWS_PATHS[1]: {
         "top_heading": "Anexo de confer\u00eancia",
