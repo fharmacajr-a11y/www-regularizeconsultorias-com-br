@@ -2,7 +2,7 @@
   'use strict';
 
   var state = { records: [], filtered: [], page: 1, pageSize: 10 };
-  var ids = ['fp-search', 'fp-uf', 'fp-status', 'fp-clear', 'fp-table-body', 'fp-result-count', 'fp-loading', 'fp-empty', 'fp-error', 'fp-pagination', 'fp-prev', 'fp-next', 'fp-page-info', 'fp-page-size'];
+  var ids = ['fp-filters', 'fp-search', 'fp-uf', 'fp-status', 'fp-clear', 'fp-table-body', 'fp-result-count', 'fp-loading', 'fp-empty', 'fp-error', 'fp-pagination', 'fp-prev', 'fp-next', 'fp-page-info', 'fp-page-size'];
   var el = {};
   ids.forEach(function (id) { el[id] = document.getElementById(id); });
   var tableContainer = el['fp-table-body'].closest('.fp-table-scroll');
@@ -110,6 +110,7 @@
   }
   function fetchJson(url) { return fetch(url, { cache: 'no-store' }).then(function (response) { if (!response.ok) throw new Error('Falha ao carregar ' + url); return response.json(); }); }
   function initializeEvents() {
+    el['fp-filters'].addEventListener('submit', function (event) { event.preventDefault(); applyFilters(); });
     ['fp-search', 'fp-uf', 'fp-status'].forEach(function (id) { el[id].addEventListener(id === 'fp-search' ? 'input' : 'change', applyFilters); });
     el['fp-clear'].addEventListener('click', function () { el['fp-search'].value = ''; el['fp-uf'].value = ''; el['fp-status'].value = ''; applyFilters(); el['fp-search'].focus(); });
     el['fp-page-size'].addEventListener('change', function () { state.pageSize = Number(el['fp-page-size'].value); state.page = 1; renderTable(); });

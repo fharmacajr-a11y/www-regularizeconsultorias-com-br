@@ -455,3 +455,148 @@ def test_cenario_p_paginacao_reflete_o_tamanho_da_base(page, site_url):
     nomes = page.locator("#fp-table-body tr td:nth-child(2)").all_text_contents()
     assert len(nomes) == len(ac_disponiveis)
     assert len(set(nomes)) == len(nomes)
+
+
+def _track_navigations(page):
+    """Registra navegações do frame principal (reload/submit) após a carga inicial."""
+    navegacoes = []
+    page.on(
+        "framenavigated",
+        lambda frame: navegacoes.append(frame.url) if frame == page.main_frame else None,
+    )
+    return navegacoes
+
+
+def test_cenario_q_enter_na_busca_nao_recarrega_a_pagina(page, site_url):
+    """Enter no campo de busca confirma o filtro; não submete o <form>.
+
+    Os filtros vivem dentro de <form id="fp-filters"> e o campo de busca é o
+    único controle de texto, então o Enter dispara a submissão implícita do
+    formulário. Sem listener de 'submit' o navegador faz um GET na própria URL:
+    a página recarrega, o input é esvaziado e todos os filtros voltam ao estado
+    inicial. Antes da correção este teste falhava na primeira asserção de URL
+    (ia para '/farmacia-popular/?') e também no valor preservado do input.
+    """
+    open_consultation(page, site_url)
+    navegacoes = _track_navigations(page)
+
+    page.fill("#fp-search", "Poxoréu")
+    page.wait_for_timeout(150)
+
+    url_antes = page.url
+    assert page.locator("#fp-result-count").text_content() == "1 município encontrado"
+    assert page.locator("#fp-table-body tr").count() == 1
+
+    page.press("#fp-search", "Enter")
+    page.wait_for_timeout(400)
+
+    assert page.url == url_antes, "Enter não pode navegar/recarregar"
+    assert navegacoes == [], f"houve navegação do frame principal: {navegacoes}"
+    assert page.input_value("#fp-search") == "Poxoréu", "o texto digitado deve permanecer"
+    assert page.locator("#fp-result-count").text_content() == "1 município encontrado"
+    assert page.locator("#fp-table-body tr").count() == 1
+    assert (
+        page.locator("#fp-table-body tr td:nth-child(2)").first.text_content() == "Poxoréu"
+    )
+    assert page.evaluate("document.activeElement.id") == "fp-search", "o foco deve permanecer"
+
+
+def test_cenario_r_enter_com_municipio_inexistente_mantem_empty_state(page, site_url):
+    """Enter sem resultados preserva a busca e o empty-state, sem recarregar."""
+    open_consultation(page, site_url)
+    navegacoes = _track_navigations(page)
+
+    page.fill("#fp-search", "zzzzzznaoexiste")
+    page.wait_for_timeout(150)
+
+    url_antes = page.url
+    page.press("#fp-search", "Enter")
+    page.wait_for_timeout(400)
+
+    assert page.url == url_antes
+    assert navegacoes == []
+    assert page.input_value("#fp-search") == "zzzzzznaoexiste"
+    assert page.locator("#fp-result-count").text_content() == "0 municípios encontrados"
+    assert page.locator("#fp-table-body tr").count() == 0
+    assert page.locator("#fp-empty").is_visible()
+    assert (
+        page.locator("#fp-empty").text_content()
+        == "Nenhum município foi encontrado com os filtros selecionados."
+    )
+
+
+def test_cenario_s_enter_preserva_filtros_combinados(page, site_url):
+    """Enter reaplica o filtro sem resetar UF nem Situação."""
+    open_consultation(page, site_url)
+    navegacoes = _track_navigations(page)
+    url_antes = page.url
+
+    # busca + UF
+    page.fill("#fp-search", "Poxoréu")
+    page.locator("#fp-uf").select_option("MT")
+    page.wait_for_timeout(150)
+    page.press("#fp-search", "Enter")
+    page.wait_for_timeout(300)
+    assert page.url == url_antes
+    assert page.input_value("#fp-search") == "Poxoréu"
+    assert page.input_value("#fp-uf") == "MT"
+    assert page.locator("#fp-result-count").text_content() == "1 município encontrado"
+
+    # busca + UF + Situação
+    page.locator("#fp-status").select_option("available")
+    page.wait_for_timeout(150)
+    page.press("#fp-search", "Enter")
+    page.wait_for_timeout(300)
+    assert page.url == url_antes
+    assert page.input_value("#fp-search") == "Poxoréu"
+    assert page.input_value("#fp-uf") == "MT"
+    assert page.input_value("#fp-status") == "available"
+    assert page.locator("#fp-result-count").text_content() == "1 município encontrado"
+
+    # busca + Situação (sem UF)
+    page.locator("#fp-uf").select_option("")
+    page.wait_for_timeout(150)
+    page.press("#fp-search", "Enter")
+    page.wait_for_timeout(300)
+    assert page.url == url_antes
+    assert page.input_value("#fp-search") == "Poxoréu"
+    assert page.input_value("#fp-status") == "available"
+    assert page.locator("#fp-result-count").text_content() == "1 município encontrado"
+
+    assert navegacoes == [], f"houve navegação do frame principal: {navegacoes}"
+
+
+def test_cenario_t_busca_em_tempo_real_continua_sem_enter(page, site_url):
+    """A filtragem no evento 'input' não pode depender do Enter."""
+    open_consultation(page, site_url)
+    navegacoes = _track_navigations(page)
+
+    page.fill("#fp-search", "Poxoréu")
+    page.wait_for_timeout(200)
+    assert page.locator("#fp-result-count").text_content() == "1 município encontrado"
+    assert page.locator("#fp-table-body tr").count() == 1
+
+    page.fill("#fp-search", "")
+    page.wait_for_timeout(200)
+    assert page.locator("#fp-result-count").text_content() == "1.541 municípios encontrados"
+
+    assert navegacoes == []
+    # aria-live do contador e o botão de limpeza seguem íntegros.
+    assert page.locator("#fp-result-count").get_attribute("aria-live") == "polite"
+    assert page.locator("#fp-clear").get_attribute("type") == "button"
+
+
+def test_cenario_u_correcao_do_enter_nao_usa_captura_global_de_teclado(page, site_url):
+    """A correção é um listener de 'submit' no próprio formulário."""
+    js = (ROOT / "assets" / "js" / "pages" / "farmacia-popular.js").read_text(encoding="utf-8")
+
+    assert "addEventListener('submit'" in js, "listener de submit ausente"
+    assert "event.preventDefault()" in js
+    assert "document.addEventListener('keydown'" not in js, "captura global de teclado proibida"
+    assert "document.addEventListener('keyup'" not in js
+    assert "'keypress'" not in js
+    # O filtro em tempo real segue no evento 'input'.
+    assert "'input' : 'change'" in js
+
+    open_consultation(page, site_url)
+    assert page.locator("#fp-filters").count() == 1, "o <form> deve ser preservado"

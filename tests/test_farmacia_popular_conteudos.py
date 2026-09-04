@@ -170,19 +170,27 @@ def test_script_da_consulta_tem_cache_busting_alinhado_ao_dataset():
 
     Sem ela, um navegador com o JS antigo em cache continua buscando o dataset
     anterior enquanto metadados.json já descreve a base nova; a validação de
-    consistência falha e a página cai em "Consulta indisponível". A versão é
-    derivada da data do dataset vigente, de modo que trocar a base sem bumpar
-    o script quebra este teste.
+    consistência falha e a página cai em "Consulta indisponível".
+
+    A versão nunca pode ser anterior à data do dataset vigente: trocar a base
+    sem bumpar o script quebra este teste. Ela pode, porém, ser posterior —
+    uma correção só de comportamento no JS (sem troca de base) também exige
+    bump para invalidar o cache do navegador.
     """
     dataset = re.search(r"/data/farmacia-popular/vagas-(\d{4})-(\d{2})-(\d{2})\.json", CONSULTATION_JS)
     assert dataset is not None, "dataset vigente não localizado no JS da consulta"
-    versao_esperada = "".join(dataset.groups())
+    versao_minima = "".join(dataset.groups())
 
     tags = re.findall(r'<script[^>]+src="(/assets/js/pages/farmacia-popular\.js[^"]*)"', HTML)
     assert len(tags) == 1, f"esperado exatamente um script da consulta, achei {tags}"
     src = tags[0]
 
-    assert src == f"/assets/js/pages/farmacia-popular.js?v={versao_esperada}-1", src
+    versao = re.fullmatch(r"/assets/js/pages/farmacia-popular\.js\?v=(\d{8})-(\d+)", src)
+    assert versao is not None, f"versão do script fora do padrão AAAAMMDD-N: {src}"
+    assert versao.group(1) >= versao_minima, (
+        f"script ({versao.group(1)}) é anterior ao dataset ({versao_minima}); "
+        "bumpe o cache-busting ao trocar a base"
+    )
     assert '<script src="/assets/js/pages/farmacia-popular.js" defer>' not in HTML
     assert "?v=" in src, "script da consulta deve ter cache-busting"
 
