@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 from test_rodapes_globais import parse_html, public_html_paths
@@ -8,7 +9,13 @@ POLICY_PATH = ROOT / "politica-de-privacidade/index.html"
 POLICY_ROUTE = "/politica-de-privacidade/"
 PUBLISHER_ID = "ca-pub-2993532924249779"
 ADSENSE_SCRIPT_MARKER = "pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+ADSENSE_SCRIPT_SRC = f"https://{ADSENSE_SCRIPT_MARKER}?client={PUBLISHER_ID}"
 ACCOUNT_META_MARKER = 'name="google-adsense-account"'
+NEWS_INDEX_PATH = Path("noticias/index.html")
+NEWS_TEMPLATE_PATH = Path("noticias/template-noticia.html")
+NOINDEX_PATTERN = re.compile(
+    r'<meta[^>]+name="robots"[^>]+content="[^"]*noindex', re.IGNORECASE
+)
 EXCLUDED_FOOTER_PATHS = {
     Path("comunicado/index.html"),
     Path("noticias/template-noticia.html"),
@@ -16,13 +23,68 @@ EXCLUDED_FOOTER_PATHS = {
 }
 
 
+def publishable_news_paths():
+    """Artigos de /noticias/ que são realmente publicáveis.
+
+    Exclui a listagem, o template e qualquer página noindex — nada disso é
+    artigo público e, portanto, nada disso entra no escopo de monetização.
+    """
+    paths = []
+    for path in sorted((ROOT / "noticias").rglob("*.html")):
+        relative_path = path.relative_to(ROOT)
+        if relative_path in {NEWS_INDEX_PATH, NEWS_TEMPLATE_PATH}:
+            continue
+        if NOINDEX_PATTERN.search(path.read_text(encoding="utf-8")):
+            continue
+        paths.append(path)
+    return paths
+
+
+def head_of(path):
+    heads = [node for node in parse_html(path).descendants() if node.tag == "head"]
+    assert len(heads) == 1, path.relative_to(ROOT)
+    return heads[0]
+
+
+def test_every_publishable_news_page_carries_the_canonical_adsense_snippet():
+    """Invariante derivada: toda notícia publicável carrega exatamente um snippet
+    AdSense canônico no <head>. Uma notícia nova sem o snippet quebra aqui."""
+    news_paths = publishable_news_paths()
+    assert news_paths
+
+    for path in news_paths:
+        relative_path = path.relative_to(ROOT)
+        content = path.read_text(encoding="utf-8")
+        assert content.count(ADSENSE_SCRIPT_MARKER) == 1, relative_path
+
+        scripts = [
+            node
+            for node in head_of(path).descendants()
+            if node.tag == "script" and ADSENSE_SCRIPT_MARKER in node.attrs.get("src", "")
+        ]
+        assert len(scripts) == 1, relative_path
+
+        attrs = scripts[0].attrs
+        assert attrs["src"] == ADSENSE_SCRIPT_SRC, relative_path
+        assert "async" in attrs, relative_path
+        assert attrs.get("crossorigin") == "anonymous", relative_path
+
+
+def test_news_template_stays_outside_the_monetized_scope():
+    template = (ROOT / NEWS_TEMPLATE_PATH).read_text(encoding="utf-8")
+
+    assert NOINDEX_PATTERN.search(template)
+    assert ADSENSE_SCRIPT_MARKER not in template
+    assert PUBLISHER_ID not in template
+
+
 def test_publisher_id_scope_and_privacy_footer_on_monetized_pages():
     """Distinção a preservar:
-    - 74 páginas têm o script Auto Ads ativo (adsbygoogle.js). São as páginas
-      efetivamente monetizadas / com AdSense.
+    - as páginas monetizadas (com o script Auto Ads) são exatamente as notícias
+      publicáveis, nenhuma outra área do site.
     - a homepage só declara o identificador em <meta name="google-adsense-account">
       e NÃO carrega o script de anúncios. Não é página com AdSense.
-    - 75 páginas públicas referenciam o publisher ID (74 monetizadas + homepage).
+    - as páginas que referenciam o publisher ID são as monetizadas + a homepage.
     """
     pages_with_publisher_id = [
         path
@@ -39,11 +101,9 @@ def test_publisher_id_scope_and_privacy_footer_on_monetized_pages():
     homepage = ROOT / "index.html"
     home_content = homepage.read_text(encoding="utf-8")
 
-    assert len(pages_with_publisher_id) == 75
-    assert len(monetized_pages) == 74
+    assert set(monetized_pages) == set(publishable_news_paths())
+    assert set(pages_with_publisher_id) == set(monetized_pages) | {homepage}
     assert all("noticias" in path.relative_to(ROOT).parts for path in monetized_pages)
-    assert homepage in pages_with_publisher_id
-    assert homepage not in monetized_pages
     assert ACCOUNT_META_MARKER in home_content
     assert ADSENSE_SCRIPT_MARKER not in home_content
 
