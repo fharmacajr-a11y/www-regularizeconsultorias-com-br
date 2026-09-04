@@ -42,7 +42,7 @@ URL_OFICIAL_VISUALIZACAO = (
 URL_OFICIAL_DOWNLOAD = (
     "https://www.gov.br/saude/pt-br/composicao/sectics/"
     "farmacia-popular/credenciamento/documentacao/"
-    "anexo-i-lista-de-municipios-atualizada-em-20-08-2026.xlsx"
+    "anexo-i-lista-de-municipios-atualizada-em-03-09-2026.xlsx"
 )
 
 
@@ -73,6 +73,14 @@ TOTAIS_BASE_2026_08_20 = TotaisEsperados(
     vagas_totais=1780,
     vagas_preenchidas=10,
     vagas_disponiveis=1770,
+)
+
+TOTAIS_BASE_2026_09_03 = TotaisEsperados(
+    registros=1541,
+    ufs=26,
+    vagas_totais=3082,
+    vagas_preenchidas=963,
+    vagas_disponiveis=2119,
 )
 
 REGIOES_EXIBICAO = {
@@ -316,7 +324,7 @@ def _linhas_planilha(caminho: Path) -> Iterable[tuple[int, tuple[Any, ...]]]:
 def importar_registros(
     caminho_xlsx: Path,
     referencia: dict[str, dict[str, str]],
-    esperados: TotaisEsperados = TOTAIS_BASE_2026_08_20,
+    esperados: TotaisEsperados = TOTAIS_BASE_2026_09_03,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     prefixos: dict[str, list[str]] = {}
     for codigo in referencia:
@@ -416,8 +424,8 @@ def criar_metadados(
 ) -> dict[str, Any]:
     return {
         "orgao_origem": "Ministério da Saúde",
-        "titulo_oficial": "Anexo I - Lista de municípios - atualizada em 20/08/2026",
-        "data_oficial": "2026-08-20",
+        "titulo_oficial": "Anexo I - Lista de municípios - atualizada em 03/09/2026",
+        "data_oficial": "2026-09-03",
         "url_oficial_visualizacao": URL_OFICIAL_VISUALIZACAO,
         "url_oficial_download": URL_OFICIAL_DOWNLOAD,
         "data_importacao": data_importacao,

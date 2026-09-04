@@ -101,7 +101,7 @@ def test_farmacia_popular_has_expected_sitemap_metadata():
     matches = [url for url in urls if url.findtext("s:loc", namespaces=NS) == PUBLIC_URL]
 
     assert len(matches) == 1
-    assert matches[0].findtext("s:lastmod", namespaces=NS) == "2026-08-12"
+    assert matches[0].findtext("s:lastmod", namespaces=NS) == "2026-09-03"
     assert matches[0].findtext("s:changefreq", namespaces=NS) == "monthly"
     assert matches[0].findtext("s:priority", namespaces=NS) == "0.9"
 

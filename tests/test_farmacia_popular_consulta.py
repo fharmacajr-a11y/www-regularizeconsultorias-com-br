@@ -12,11 +12,11 @@ from playwright.sync_api import sync_playwright
 
 
 ROOT = Path(__file__).parents[1]
-RECORDS_PATH = ROOT / "data" / "farmacia-popular" / "vagas-2026-08-20.json"
+RECORDS_PATH = ROOT / "data" / "farmacia-popular" / "vagas-2026-09-03.json"
 METADATA_PATH = ROOT / "data" / "farmacia-popular" / "metadados.json"
 RECORDS = json.loads(RECORDS_PATH.read_text(encoding="utf-8"))
 METADATA = json.loads(METADATA_PATH.read_text(encoding="utf-8"))
-RECORDS_URL = "**/data/farmacia-popular/vagas-2026-08-20.json"
+RECORDS_URL = "**/data/farmacia-popular/vagas-2026-09-03.json"
 METADATA_URL = "**/data/farmacia-popular/metadados.json"
 INDICATORS = (
     "#fp-total-municipios",
@@ -100,11 +100,11 @@ def test_css_paginacao_hidden_prevalece_sobre_display_flex():
 def test_cenario_a_carga_normal(page, site_url):
     open_consultation(page, site_url)
 
-    assert page.locator("#fp-total-municipios").text_content() == "1.206"
-    assert page.locator("#fp-vagas-totais").text_content() == "1.780"
-    assert page.locator("#fp-vagas-preenchidas").text_content() == "10"
-    assert page.locator("#fp-vagas-disponiveis").text_content() == "1.770"
-    assert page.locator("#fp-indicator-date").text_content() == "20/08/2026"
+    assert page.locator("#fp-total-municipios").text_content() == "1.541"
+    assert page.locator("#fp-vagas-totais").text_content() == "3.082"
+    assert page.locator("#fp-vagas-preenchidas").text_content() == "963"
+    assert page.locator("#fp-vagas-disponiveis").text_content() == "2.119"
+    assert page.locator("#fp-indicator-date").text_content() == "03/09/2026"
     assert page.locator("#fp-uf option").count() - 1 == 26
     assert page.locator("#fp-page-size").input_value() == "10"
     assert {"10", "25", "50"}.issubset(set(page.locator("#fp-page-size option").evaluate_all("options => options.map(option => option.value)")))
@@ -146,16 +146,22 @@ def test_cenario_c_busca_sem_apostrofo_e_sem_acentos(page, site_url):
     search.fill("Santa-Cruz")
     assert page.locator("#fp-table-body tr").count() >= 1
 
-    # Busca por município novo da base 20/08 com apóstrofo e acento
+    # Município com apóstrofo, presente na base de 03/09
     search.fill("Tanque Darca")
     assert page.locator("#fp-table-body").get_by_text("Tanque d'Arca", exact=True).count() == 1
 
     search.fill("Tanque d’Arca")
     assert page.locator("#fp-table-body").get_by_text("Tanque d'Arca", exact=True).count() == 1
 
-    # Busca por município novo da base 20/08 no AC
+    # Município do AC presente na base de 03/09
     search.fill("Rodrigues Alves")
     assert page.locator("#fp-table-body").get_by_text("Rodrigues Alves", exact=True).count() == 1
+
+    # Município que ENTROU na relação de 03/09 (ausente na base de 20/08)
+    search.fill("Placido de Castro")
+    assert page.locator("#fp-table-body").get_by_text("Plácido de Castro", exact=True).count() == 1
+    search.fill("PLÁCIDO DE CASTRO")
+    assert page.locator("#fp-table-body").get_by_text("Plácido de Castro", exact=True).count() == 1
 
     sao_tome = copy.deepcopy(RECORDS[0])
     sao_tome["municipio_fonte_ms"] = "SAO TOME"
@@ -227,10 +233,10 @@ def test_cenario_h_metadados_indisponiveis_usam_fallback(page, site_url):
     assert page.locator("#fp-meta-fallback").is_visible()
     assert page.locator("#fp-table-body tr").count() == min(10, len(RECORDS))
     assert all(page.locator(selector).is_enabled() for selector in ("#fp-search", "#fp-uf", "#fp-status", "#fp-clear", "#fp-page-size"))
-    assert page.locator("#fp-total-municipios").text_content() == "1.206"
-    assert page.locator("#fp-vagas-totais").text_content() == "1.780"
-    assert page.locator("#fp-vagas-preenchidas").text_content() == "10"
-    assert page.locator("#fp-vagas-disponiveis").text_content() == "1.770"
+    assert page.locator("#fp-total-municipios").text_content() == "1.541"
+    assert page.locator("#fp-vagas-totais").text_content() == "3.082"
+    assert page.locator("#fp-vagas-preenchidas").text_content() == "963"
+    assert page.locator("#fp-vagas-disponiveis").text_content() == "2.119"
     assert page.locator("#fp-indicator-date").text_content() == "—"
     assert page.locator("#fp-error").is_hidden()
     assert page.locator("#fp-pagination").is_visible()
@@ -296,17 +302,18 @@ def test_cenario_k_filtro_vagas_preenchidas_retorna_registros_reais(page, site_u
     open_consultation(page, site_url)
 
     filled_records = [record for record in RECORDS if record["vagas_preenchidas"] > 0]
-    assert len(filled_records) == 10
+    assert len(filled_records) == 963
 
     page.locator("#fp-status").select_option("filled")
-    assert page.locator("#fp-result-count").text_content() == "10 municípios encontrados"
-    assert page.locator("#fp-table-body tr").count() == 10
+    assert page.locator("#fp-result-count").text_content() == "963 municípios encontrados"
+    assert page.locator("#fp-table-body tr").count() == 10  # primeira página, page size 10
+    assert page.locator("#fp-page-info").text_content() == f"Página 1 de {math.ceil(963 / 10)}"
     assert page.locator("#fp-empty").is_hidden()
     assert page.locator("#fp-pagination").is_visible()
 
     # Validar que todos os registros exibidos possuem vagas_preenchidas > 0
     rows = page.locator("#fp-table-body tr")
-    for idx in range(10):
+    for idx in range(rows.count()):
         row = rows.nth(idx)
         preenchidas_cell = row.locator("td:nth-child(4)").text_content()
         assert int(preenchidas_cell) > 0
@@ -315,22 +322,22 @@ def test_cenario_k_filtro_vagas_preenchidas_retorna_registros_reais(page, site_u
 def test_cenario_l_registro_parcial_2_1_1(page, site_url):
     open_consultation(page, site_url)
 
-    # Belo Monte (AL) possui exatamente 2 vagas totais, 1 preenchida e 1 disponível
+    # Tanque d'Arca (AL) possui exatamente 2 vagas totais, 1 preenchida e 1 disponível
     target = next(
         record for record in RECORDS
-        if record["uf"] == "AL" and record["municipio_exibicao"] == "Belo Monte"
+        if record["uf"] == "AL" and record["municipio_exibicao"] == "Tanque d'Arca"
     )
     assert target["vagas_totais"] == 2
     assert target["vagas_preenchidas"] == 1
     assert target["vagas_disponiveis"] == 1
 
-    page.locator("#fp-search").fill("Belo Monte")
+    page.locator("#fp-search").fill("Tanque d'Arca")
     assert page.locator("#fp-result-count").text_content() == "1 município encontrado"
     assert page.locator("#fp-table-body tr").count() == 1
 
     row = page.locator("#fp-table-body tr").first
     assert row.locator("td:nth-child(1)").text_content() == "AL"
-    assert row.locator("td:nth-child(2)").text_content() == "Belo Monte"
+    assert row.locator("td:nth-child(2)").text_content() == "Tanque d'Arca"
     assert row.locator("td:nth-child(3)").text_content() == "2"
     assert row.locator("td:nth-child(4)").text_content() == "1"
     assert row.locator("td:nth-child(5)").text_content() == "1"
@@ -341,13 +348,13 @@ def test_cenario_l_registro_parcial_2_1_1(page, site_url):
     page.locator("#fp-status").select_option("available")
     assert page.locator("#fp-result-count").text_content() == "1 município encontrado"
     assert page.locator("#fp-table-body tr").count() == 1
-    assert page.locator("#fp-table-body tr").first.locator("td:nth-child(2)").text_content() == "Belo Monte"
+    assert page.locator("#fp-table-body tr").first.locator("td:nth-child(2)").text_content() == "Tanque d'Arca"
 
     # Deve aparecer simultaneamente no filtro 'filled' (vagas_preenchidas > 0)
     page.locator("#fp-status").select_option("filled")
     assert page.locator("#fp-result-count").text_content() == "1 município encontrado"
     assert page.locator("#fp-table-body tr").count() == 1
-    assert page.locator("#fp-table-body tr").first.locator("td:nth-child(2)").text_content() == "Belo Monte"
+    assert page.locator("#fp-table-body tr").first.locator("td:nth-child(2)").text_content() == "Tanque d'Arca"
 
     # NÃO deve aparecer no filtro 'unavailable' (vagas_disponiveis === 0)
     page.locator("#fp-status").select_option("unavailable")
@@ -362,7 +369,7 @@ def test_cenario_m_links_auxiliares_pdf_e_noticia_respondem_com_sucesso(page, si
     pdf_link = page.locator('a:has-text("Ver lista em PDF")')
     assert pdf_link.is_visible()
     pdf_href = pdf_link.get_attribute("href")
-    assert pdf_href == "/noticias/credenciamento-farmacia-popular-municipios-com-vagas/farmacia-popular-municipios-vagas-20-08-2026.pdf"
+    assert pdf_href == "/noticias/credenciamento-farmacia-popular-municipios-com-vagas/farmacia-popular-municipios-vagas-03-09-2026.pdf"
 
     pdf_response = page.request.get(f"{site_url}{pdf_href}")
     assert pdf_response.status == 200
@@ -375,3 +382,76 @@ def test_cenario_m_links_auxiliares_pdf_e_noticia_respondem_com_sucesso(page, si
 
     news_response = page.request.get(f"{site_url}{news_href}")
     assert news_response.status == 200
+
+
+def test_cenario_n_registro_sem_preenchimento_2_0_2(page, site_url):
+    """Belo Monte (AL) na base de 03/09 tem 2 totais, 0 preenchidas e 2 disponíveis."""
+    open_consultation(page, site_url)
+
+    target = next(
+        record for record in RECORDS
+        if record["uf"] == "AL" and record["municipio_exibicao"] == "Belo Monte"
+    )
+    assert target["vagas_totais"] == 2
+    assert target["vagas_preenchidas"] == 0
+    assert target["vagas_disponiveis"] == 2
+
+    page.locator("#fp-search").fill("Belo Monte")
+    assert page.locator("#fp-result-count").text_content() == "1 município encontrado"
+    row = page.locator("#fp-table-body tr").first
+    assert row.locator("td:nth-child(3)").text_content() == "2"
+    assert row.locator("td:nth-child(4)").text_content() == "0"
+    assert row.locator("td:nth-child(5)").text_content() == "2"
+    assert row.locator("td:nth-child(6) span").text_content() == "Com vagas"
+
+    # Aparece em 'available' e NÃO aparece em 'filled'.
+    page.locator("#fp-status").select_option("available")
+    assert page.locator("#fp-result-count").text_content() == "1 município encontrado"
+    page.locator("#fp-status").select_option("filled")
+    assert page.locator("#fp-result-count").text_content() == "0 municípios encontrados"
+
+
+def test_cenario_o_situacoes_refletem_a_base_real(page, site_url):
+    """Contagens dos filtros derivadas do dataset, sem números presumidos."""
+    open_consultation(page, site_url)
+
+    available = [r for r in RECORDS if r["vagas_disponiveis"] > 0]
+    unavailable = [r for r in RECORDS if r["vagas_disponiveis"] == 0]
+    filled = [r for r in RECORDS if r["vagas_preenchidas"] > 0]
+    assert len(available) == len(RECORDS) == 1541
+    assert len(unavailable) == 0
+    assert len(filled) == 963
+
+    page.locator("#fp-status").select_option("available")
+    assert page.locator("#fp-result-count").text_content() == "1.541 municípios encontrados"
+
+    page.locator("#fp-status").select_option("filled")
+    assert page.locator("#fp-result-count").text_content() == "963 municípios encontrados"
+
+    # Nenhum município da relação de 03/09 está sem vaga disponível.
+    page.locator("#fp-status").select_option("unavailable")
+    assert page.locator("#fp-result-count").text_content() == "0 municípios encontrados"
+    assert page.locator("#fp-table-body tr").count() == 0
+    assert page.locator("#fp-empty").is_visible()
+    assert page.locator("#fp-pagination").evaluate("node => getComputedStyle(node).display") == "none"
+
+
+def test_cenario_p_paginacao_reflete_o_tamanho_da_base(page, site_url):
+    """ceil(1541 / page_size) para cada tamanho de página oferecido."""
+    open_consultation(page, site_url)
+    assert len(RECORDS) == 1541
+
+    for page_size in (10, 25, 50, 100):
+        page.locator("#fp-page-size").select_option(str(page_size))
+        esperado = math.ceil(len(RECORDS) / page_size)
+        assert page.locator("#fp-page-info").text_content() == f"Página 1 de {esperado}"
+        assert page.locator("#fp-table-body tr").count() == min(page_size, len(RECORDS))
+
+    # Combinar filtros não pode duplicar registros.
+    page.locator("#fp-page-size").select_option("100")
+    page.locator("#fp-uf").select_option("AC")
+    page.locator("#fp-status").select_option("available")
+    ac_disponiveis = [r for r in RECORDS if r["uf"] == "AC" and r["vagas_disponiveis"] > 0]
+    nomes = page.locator("#fp-table-body tr td:nth-child(2)").all_text_contents()
+    assert len(nomes) == len(ac_disponiveis)
+    assert len(set(nomes)) == len(nomes)

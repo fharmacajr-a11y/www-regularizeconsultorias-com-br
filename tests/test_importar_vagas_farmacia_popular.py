@@ -376,15 +376,20 @@ def test_vagas_preenchidas_positivas_e_equacao_sao_aceitas(tmp_path):
     assert divergentes["quantidade_divergencias_nominais_relevantes"] == 0
 
 
-def test_base_20_08_tem_totais_e_ordem():
-    base = Path(__file__).parents[1] / "data" / "farmacia-popular" / "vagas-2026-08-20.json"
-    assert base.is_file(), "Arquivo da base 2026-08-20 deve existir."
+def test_base_03_09_tem_totais_e_ordem():
+    base = Path(__file__).parents[1] / "data" / "farmacia-popular" / "vagas-2026-09-03.json"
+    assert base.is_file(), "Arquivo da base 2026-09-03 deve existir."
     registros = json.loads(base.read_text(encoding="utf-8"))
-    assert len(registros) == 1206
+    assert len(registros) == 1541
     assert len({registro["uf"] for registro in registros}) == 26
-    assert sum(registro["vagas_totais"] for registro in registros) == 1780
-    assert sum(registro["vagas_preenchidas"] for registro in registros) == 10
-    assert sum(registro["vagas_disponiveis"] for registro in registros) == 1770
+    assert sum(registro["vagas_totais"] for registro in registros) == 3082
+    assert sum(registro["vagas_preenchidas"] for registro in registros) == 963
+    assert sum(registro["vagas_disponiveis"] for registro in registros) == 2119
+    assert all(
+        registro["vagas_totais"] == registro["vagas_preenchidas"] + registro["vagas_disponiveis"]
+        for registro in registros
+    )
+    assert any(registro["vagas_preenchidas"] > 0 for registro in registros)
     assert all(
         isinstance(registro["codigo_ibge"], str)
         and len(registro["codigo_ibge"]) == 7

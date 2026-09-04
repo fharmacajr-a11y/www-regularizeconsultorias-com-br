@@ -1,3 +1,5 @@
+import re
+import json
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -85,7 +87,8 @@ def test_pagina_remove_destinos_governamentais_e_preserva_referencias():
     assert "saude.gov.br" not in lowered
     assert "infoms.saude.gov.br" not in lowered
     assert "ministério da saúde" in lowered
-    assert "farmacia-popular-municipios-vagas-20-08-2026.pdf" in HTML
+    assert "farmacia-popular-municipios-vagas-03-09-2026.pdf" in HTML
+    assert "farmacia-popular-municipios-vagas-20-08-2026.pdf" not in HTML
     assert "id=\"fp-consultation-title\"" in HTML
     assert "id=\"fp-table\"" in HTML
     assert "id=\"fp-pagination\"" in HTML
@@ -101,14 +104,14 @@ def test_card_de_proveniencia_preserva_orgao_e_links_sem_fonte_redundante():
     assert 'id="fp-official-link"' not in HTML
     assert "Órgão de origem" in HTML
     assert 'id="fp-source-org"' in HTML
-    assert 'href="/noticias/credenciamento-farmacia-popular-municipios-com-vagas/farmacia-popular-municipios-vagas-20-08-2026.pdf" target="_blank" rel="noopener noreferrer">Ver lista em PDF</a>' in HTML
+    assert 'href="/noticias/credenciamento-farmacia-popular-municipios-com-vagas/farmacia-popular-municipios-vagas-03-09-2026.pdf" target="_blank" rel="noopener noreferrer">Ver lista em PDF</a>' in HTML
     assert 'href="/noticias/credenciamento-farmacia-popular-municipios-com-vagas/">Ler notícia relacionada</a>' in HTML
 
 
 def test_arquivos_vinculados_pelos_links_auxiliares_existem():
-    pdf_path = ROOT / "noticias" / "credenciamento-farmacia-popular-municipios-com-vagas" / "farmacia-popular-municipios-vagas-20-08-2026.pdf"
+    pdf_path = ROOT / "noticias" / "credenciamento-farmacia-popular-municipios-com-vagas" / "farmacia-popular-municipios-vagas-03-09-2026.pdf"
     news_path = ROOT / "noticias" / "credenciamento-farmacia-popular-municipios-com-vagas" / "index.html"
-    assert pdf_path.is_file(), "Arquivo PDF 20/08 deve existir no caminho referenciado pelo link."
+    assert pdf_path.is_file(), "Arquivo PDF 03/09 deve existir no caminho referenciado pelo link."
     assert pdf_path.stat().st_size > 0, "Arquivo PDF não deve ser vazio."
     assert pdf_path.read_bytes()[:5] == b"%PDF-", "Arquivo deve ser um PDF válido."
     assert news_path.is_file(), "Página da notícia relacionada deve existir."
@@ -138,5 +141,50 @@ def test_bloco_normativo_compacto_aponta_para_nova_noticia():
 
 
 def test_consulta_continua_apontando_para_as_mesmas_bases():
-    assert "'/data/farmacia-popular/vagas-2026-08-20.json'" in CONSULTATION_JS
+    assert "'/data/farmacia-popular/vagas-2026-09-03.json'" in CONSULTATION_JS
+    assert "'/data/farmacia-popular/vagas-2026-08-20.json'" not in CONSULTATION_JS
     assert "'/data/farmacia-popular/metadados.json'" in CONSULTATION_JS
+
+
+def test_pdf_historico_20_08_permanece_no_repositorio():
+    """O PDF de 20/08 deixa de ser o link vigente, mas segue versionado."""
+    historico = ROOT / "noticias" / "credenciamento-farmacia-popular-municipios-com-vagas" / "farmacia-popular-municipios-vagas-20-08-2026.pdf"
+    assert historico.is_file()
+    assert historico.read_bytes()[:5] == b"%PDF-"
+
+
+def test_metadados_expostos_pela_consulta_apontam_para_03_09():
+    metadata = json.loads((ROOT / "data" / "farmacia-popular" / "metadados.json").read_text(encoding="utf-8"))
+    assert metadata["data_oficial"] == "2026-09-03"
+    assert "03/09/2026" in metadata["titulo_oficial"]
+    assert metadata["quantidade_registros"] == 1541
+    assert metadata["totais_vagas"] == {
+        "vagas_totais": 3082,
+        "vagas_preenchidas": 963,
+        "vagas_disponiveis": 2119,
+    }
+
+
+def test_script_da_consulta_tem_cache_busting_alinhado_ao_dataset():
+    """O script da consulta precisa de query-string de versão.
+
+    Sem ela, um navegador com o JS antigo em cache continua buscando o dataset
+    anterior enquanto metadados.json já descreve a base nova; a validação de
+    consistência falha e a página cai em "Consulta indisponível". A versão é
+    derivada da data do dataset vigente, de modo que trocar a base sem bumpar
+    o script quebra este teste.
+    """
+    dataset = re.search(r"/data/farmacia-popular/vagas-(\d{4})-(\d{2})-(\d{2})\.json", CONSULTATION_JS)
+    assert dataset is not None, "dataset vigente não localizado no JS da consulta"
+    versao_esperada = "".join(dataset.groups())
+
+    tags = re.findall(r'<script[^>]+src="(/assets/js/pages/farmacia-popular\.js[^"]*)"', HTML)
+    assert len(tags) == 1, f"esperado exatamente um script da consulta, achei {tags}"
+    src = tags[0]
+
+    assert src == f"/assets/js/pages/farmacia-popular.js?v={versao_esperada}-1", src
+    assert '<script src="/assets/js/pages/farmacia-popular.js" defer>' not in HTML
+    assert "?v=" in src, "script da consulta deve ter cache-busting"
+
+    # O bump não pode ter afetado o versionamento global resolvido antes.
+    assert '/assets/js/main.min.js?v=20260903-1' in HTML
