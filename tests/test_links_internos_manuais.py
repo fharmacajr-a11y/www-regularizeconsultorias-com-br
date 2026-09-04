@@ -65,3 +65,82 @@ def test_pops_drogaria_has_one_contextual_internal_link():
     root = ET.parse(SITEMAP_PATH).getroot()
     locations = [node.findtext("s:loc", namespaces=NS) for node in root.findall("s:url", NS)]
     assert locations.count(PUBLIC_URL) == 1, "Rota dos POPs deve aparecer uma vez no sitemap.xml"
+
+
+class _PageStructureParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.h1_texts = []
+        self.hrefs = []
+        self.scripts = []
+        self.images = []
+        self._h1 = None
+
+    def handle_starttag(self, tag, attrs):
+        attributes = dict(attrs)
+        name = tag.casefold()
+        if name == "h1":
+            self._h1 = []
+            self.h1_texts.append(self._h1)
+        elif name == "a" and "href" in attributes:
+            self.hrefs.append(attributes["href"])
+        elif name == "script" and "src" in attributes:
+            self.scripts.append(attributes["src"])
+        elif name == "img" and "src" in attributes:
+            self.images.append(attributes["src"])
+
+    def handle_data(self, data):
+        if self._h1 is not None:
+            self._h1.append(data)
+
+    def handle_endtag(self, tag):
+        if tag.casefold() == "h1":
+            self._h1 = None
+
+
+def test_pops_drogaria_segue_o_padrao_das_paginas_internas():
+    relative = DESTINATION_PATH.relative_to(ROOT).as_posix()
+    content = DESTINATION_PATH.read_text(encoding="utf-8")
+    parser = _PageStructureParser()
+    parser.feed(content)
+
+    assert len(parser.h1_texts) == 1, f"H1 deve ser único em {relative}"
+    assert "".join(parser.h1_texts[0]).strip() == "POPs para Drogarias"
+
+    for marker in (
+        "manuals-page-detail",
+        "manuals-hero-section",
+        "manuals-hero-actions",
+        "manuals-intro-section",
+        "manuals-type-section",
+        "manuals-flow-section",
+        "manuals-farmacia-popular-advisory-section",
+        "institutional-cta-section",
+    ):
+        assert marker in content, f"Bloco padrão ausente em {relative}: {marker}"
+
+    assert "manuals-detail-layout" not in content, (
+        f"Layout antigo ainda presente em {relative}"
+    )
+
+    assert "/assets/js/main.min.js?v=20260903-1" in parser.scripts
+
+    hero_image = "/assets/img/manuais-e-pops/internas/manual-drogarias-interna.webp"
+    assert hero_image in parser.images
+    assert (ROOT / hero_image.lstrip("/")).is_file()
+
+    assert "/manuais-e-pops/manual-boas-praticas-drogaria/" in parser.hrefs, (
+        f"Link de retorno para o Manual de Drogarias ausente em {relative}"
+    )
+    assert parser.hrefs.count("/manuais-e-pops/") >= 3, (
+        f"Faltam retornos para o catálogo em {relative}"
+    )
+    assert any(
+        href.startswith("/whatsapp/?text=") and "POPs" in href for href in parser.hrefs
+    ), f"CTA de orçamento por WhatsApp ausente em {relative}"
+
+    for href in parser.hrefs:
+        if href.startswith("/") and href.endswith("/"):
+            assert (ROOT / href.strip("/") / "index.html").is_file(), (
+                f"Link interno quebrado em {relative}: {href}"
+            )

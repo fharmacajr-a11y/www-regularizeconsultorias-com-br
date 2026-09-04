@@ -135,7 +135,7 @@ def test_pops_drogaria_has_expected_sitemap_metadata():
     matches = [url for url in urls if url.findtext("s:loc", namespaces=NS) == POPS_DROGARIA_URL]
 
     assert len(matches) == 1
-    assert matches[0].findtext("s:lastmod", namespaces=NS) == "2026-08-06"
+    assert matches[0].findtext("s:lastmod", namespaces=NS) == "2026-09-04"
     assert matches[0].findtext("s:changefreq", namespaces=NS) == "monthly"
     assert matches[0].findtext("s:priority", namespaces=NS) == "0.7"
 
