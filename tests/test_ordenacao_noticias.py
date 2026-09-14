@@ -29,6 +29,8 @@ DISPOSITIVOS_IRREGULARES_URL = "https://www.regularizeconsultorias.com.br/notici
 PARAMOL_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-recolhe-lote-114053-paramol-750-mg/"
 SEMAGLUTIDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-registra-cinco-medicamentos-semaglutida/"
 CREDENCIAMENTO_URL = "https://www.regularizeconsultorias.com.br/noticias/credenciamento-farmacia-popular-municipios-com-vagas/"
+# Notícia SNCR atualizada com o webinar oficial de 17/09/2026 e reposicionada pelo dateModified.
+SNCR_WEBINAR_URL = "https://www.regularizeconsultorias.com.br/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/"
 # Seis notícias Anvisa que receberam conteúdo factual novo e subiram na ordenação.
 PASSIVO_DISPOSITIVOS_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-reducao-passivo-peticoes-dispositivos-medicos/"
 IFAS_GLP1_PETICOES_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-peticoes-ifas-glp1-importados/"
@@ -143,51 +145,53 @@ def test_news_index_itemlist_ordering():
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
 
-    assert urls[0] == PASSIVO_DISPOSITIVOS_URL
-    assert urls[1] == IFAS_GLP1_PETICOES_URL
-    assert urls[2] == DUIMP_URL
-    assert urls[3] == FITOTERAPICOS_URL
-    assert urls[4] == SICERT_URL
-    assert urls[5] == ARMAZENS_ALFANDEGADOS_URL
-    assert urls[6] == CREDENCIAMENTO_URL
-    assert urls[7] == PRODUTOS_IRREGULARES_URL
-    assert urls[8] == PORTARIA_URL
-    assert urls[9] == CANNABIS_URL
-    assert urls[10] == RPBR_URL
-    assert urls[11] == SIPROQUIM_IN338_URL
-    assert urls[12] == CBPF_IN451_URL
-    assert urls[13] == SIFAP_SUSPENSAO_URL
-    assert urls[14] == COSMETICOS_URL
-    assert urls[15] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-cosmeticos-saneantes/"
-    assert urls[16] == FABRICANTES_INTERNACIONAIS_URL
-    assert urls[17] == GLP1_URL
-    assert urls[18] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-formulario-cbpf-terapias-avancadas/"
-    assert urls[19] == "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
-    assert urls[20] == MONITORAMENTO_URL, "Monitoramento should follow CNES competencia 08"
+    assert urls[0] == SNCR_WEBINAR_URL
+    assert urls.count(SNCR_WEBINAR_URL) == 1
+    assert urls[1] == PASSIVO_DISPOSITIVOS_URL
+    assert urls[2] == IFAS_GLP1_PETICOES_URL
+    assert urls[3] == DUIMP_URL
+    assert urls[4] == FITOTERAPICOS_URL
+    assert urls[5] == SICERT_URL
+    assert urls[6] == ARMAZENS_ALFANDEGADOS_URL
+    assert urls[7] == CREDENCIAMENTO_URL
+    assert urls[8] == PRODUTOS_IRREGULARES_URL
+    assert urls[9] == PORTARIA_URL
+    assert urls[10] == CANNABIS_URL
+    assert urls[11] == RPBR_URL
+    assert urls[12] == SIPROQUIM_IN338_URL
+    assert urls[13] == CBPF_IN451_URL
+    assert urls[14] == SIFAP_SUSPENSAO_URL
+    assert urls[15] == COSMETICOS_URL
+    assert urls[16] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-cosmeticos-saneantes/"
+    assert urls[17] == FABRICANTES_INTERNACIONAIS_URL
+    assert urls[18] == GLP1_URL
+    assert urls[19] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-formulario-cbpf-terapias-avancadas/"
+    assert urls[20] == "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
+    assert urls[21] == MONITORAMENTO_URL, "Monitoramento should follow CNES competencia 08"
     edital_position = urls.index(EDITAL_5_2026_URL)
-    assert edital_position == 25
+    assert edital_position == 26
     assert urls[edital_position - 1] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-amplia-painel-medicamentos-pendentes-registro/"
     assert urls[edital_position + 1] == REVISAO_PROPAGANDA_URL
     revisao_position = urls.index(REVISAO_PROPAGANDA_URL)
-    assert revisao_position == 26
+    assert revisao_position == 27
     assert urls[revisao_position + 1] == DISPOSITIVOS_IRREGULARES_URL
     dispositivos_position = urls.index(DISPOSITIVOS_IRREGULARES_URL)
-    assert dispositivos_position == 27
+    assert dispositivos_position == 28
     assert urls[dispositivos_position - 1] == REVISAO_PROPAGANDA_URL
     assert urls[dispositivos_position + 1] == DCB_IN462_URL
     dcb_position = urls.index(DCB_IN462_URL)
-    assert dcb_position == 28
+    assert dcb_position == 29
     assert urls[dcb_position - 1] == DISPOSITIVOS_IRREGULARES_URL
     assert urls[dcb_position + 1] == PARAMOL_URL
     paramol_position = urls.index(PARAMOL_URL)
-    assert paramol_position == 29
+    assert paramol_position == 30
     assert urls[paramol_position - 1] == DCB_IN462_URL
     assert urls[paramol_position + 1] == SEMAGLUTIDA_URL
     supervisao_position = urls.index(SUPERVISAO_CONTEUDO_URL)
     assert urls[supervisao_position - 1] == RETATRUTIDA_URL
     assert urls[supervisao_position + 1] == HEMOTERAPIA_URL
     assert CREDENCIAMENTO_URL in urls, "Credenciamento is missing from JSON-LD"
-    assert urls.index(CREDENCIAMENTO_URL) == 6
+    assert urls.index(CREDENCIAMENTO_URL) == 7
 
 
 def test_all_news_orders_match_effective_timestamp_sorting():

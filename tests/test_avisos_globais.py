@@ -237,8 +237,8 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     timestamps = [article.attrs.get("data-effective-at") for article in active]
 
     assert titles == [
+        "SNCR: webinar da Anvisa em 17/09, às 10h, e funcionalidades eletrônicas até 30/09/2026",
         "Farmácia Popular: confira municípios com vagas para credenciamento",
-        "SNCR: funcionalidades eletrônicas seguem em implantação até 30/09/2026",
         "Anvisa suspende medicamento e proíbe produtos irregulares",
         "Farmácia Popular: atenção aos materiais no período eleitoral",
         "Farmácia Popular: confira as listas EAN vigentes e os controles de prescrição",
