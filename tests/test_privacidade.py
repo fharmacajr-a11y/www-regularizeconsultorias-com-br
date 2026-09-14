@@ -158,7 +158,7 @@ def test_every_public_page_with_a_footer_links_to_the_policy():
         ]
         assert footer_links.count(POLICY_ROUTE) == 1, relative_path
 
-    assert len(paths_with_footer) == 95
+    assert len(paths_with_footer) == 96
 
 
 def test_noindex_technical_pages_do_not_gain_the_policy_footer_link():

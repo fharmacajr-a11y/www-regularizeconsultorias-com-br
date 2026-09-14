@@ -434,7 +434,7 @@ def test_every_public_navbar_has_two_complete_notice_links():
         mobile_classes = mobile_links[0].attrs.get("class", "").split()
         assert "relative" in mobile_classes, relative_path
         assert "gap-2" in mobile_classes, relative_path
-    assert pages_with_navbar == 96
+    assert pages_with_navbar == 97
 
 
 def test_tablet_hide_regression_is_absent_and_navbar_rules_remain():
