@@ -118,7 +118,7 @@ def test_comunicado_keeps_one_sncr_card_and_six_active_notices():
     card_text = _text(sncr_cards[0])
     for term in ("17/09/2026, às 10h", "30/09/2026", "Versão 2", "18/05/2026", "Ver atualização SNCR"):
         assert term in card_text
-    assert active[0] is sncr_cards[0]
+    assert active[1] is sncr_cards[0]
 
 
 def test_sncr_news_has_current_sitemap_lastmod():
