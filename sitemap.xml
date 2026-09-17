@@ -50,9 +50,15 @@
   </url>
   <url>
     <loc>https://www.regularizeconsultorias.com.br/noticias/</loc>
-    <lastmod>2026-09-14</lastmod>
+    <lastmod>2026-09-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.regularizeconsultorias.com.br/noticias/anvisa-rdc-1040-in-468-2026-saneantes-regularizacao/</loc>
+    <lastmod>2026-09-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-09-2026-prazo-transmissao/</loc>

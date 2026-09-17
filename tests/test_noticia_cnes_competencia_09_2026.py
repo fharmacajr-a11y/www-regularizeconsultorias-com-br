@@ -148,7 +148,7 @@ def test_news_index_has_one_card_and_one_itemlist_entry():
     assert f'data-updated="{PUBLISHED}"' in own[0]
     assert f'<time datetime="{PUBLISHED}" class="leading-none">14/09/2026 • 13h31</time>' in own[0]
     assert ">Atualização</span>" in own[0] and "Ler atualização" in own[0]
-    assert len(cards) == 78
+    assert len(cards) == 79
     assert '<span>CNES</span><span class="text-xs text-slate-400">5</span>' in html
 
 
