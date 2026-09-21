@@ -35,7 +35,7 @@ SANEANTES_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-rdc-1
 CNES_COMPETENCIA_09_2026_URL = "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-09-2026-prazo-transmissao/"
 # Nova notícia do Edital de Chamamento 6/2026 (AFE para preparações estéreis).
 EDITAL_6_2026_AFE_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-edital-6-2026-afe-manipulacao-preparacoes-estereis/"
-# Notícia SNCR atualizada com o webinar oficial de 17/09/2026 e reposicionada pelo dateModified.
+# Notícia SNCR atualizada com os webinares de 17/09 e 21/09/2026 e reposicionada pelo dateModified.
 SNCR_WEBINAR_URL = "https://www.regularizeconsultorias.com.br/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/"
 # Seis notícias Anvisa que receberam conteúdo factual novo e subiram na ordenação.
 PASSIVO_DISPOSITIVOS_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-reducao-passivo-peticoes-dispositivos-medicos/"
@@ -151,19 +151,19 @@ def test_news_index_itemlist_ordering():
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
 
+    assert urls[0] == SNCR_WEBINAR_URL
+    assert urls.count(SNCR_WEBINAR_URL) == 1
     # Nova notícia de saneantes: RDC 1.040/2026 e IN 468/2026.
-    assert urls[0] == SANEANTES_URL
+    assert urls[1] == SANEANTES_URL
     assert urls.count(SANEANTES_URL) == 1
     # Nova notícia da competência 09/2026 do CNES.
-    assert urls[1] == CNES_COMPETENCIA_09_2026_URL
+    assert urls[2] == CNES_COMPETENCIA_09_2026_URL
     assert urls.count(CNES_COMPETENCIA_09_2026_URL) == 1
     # Matéria consolidada de produtos irregulares atualizada com a RE nº 3.547/2026.
-    assert urls[2] == PRODUTOS_IRREGULARES_URL
+    assert urls[3] == PRODUTOS_IRREGULARES_URL
     assert urls.count(PRODUTOS_IRREGULARES_URL) == 1
-    assert urls[3] == EDITAL_6_2026_AFE_URL
+    assert urls[4] == EDITAL_6_2026_AFE_URL
     assert urls.count(EDITAL_6_2026_AFE_URL) == 1
-    assert urls[4] == SNCR_WEBINAR_URL
-    assert urls.count(SNCR_WEBINAR_URL) == 1
     assert urls[5] == PASSIVO_DISPOSITIVOS_URL
     assert urls[6] == IFAS_GLP1_PETICOES_URL
     assert urls[7] == DUIMP_URL

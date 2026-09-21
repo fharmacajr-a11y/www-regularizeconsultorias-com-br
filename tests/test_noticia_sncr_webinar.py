@@ -11,7 +11,7 @@ SITEMAP_PATH = ROOT / "sitemap.xml"
 ROUTE = "/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/"
 URL = f"https://www.regularizeconsultorias.com.br{ROUTE}"
 PUBLISHED = "2026-05-28T20:36:00-03:00"
-UPDATED = "2026-09-14T11:13:06-03:00"
+UPDATED = "2026-09-21T00:03:03-03:00"
 ADSENSE_SCRIPT_MARKER = "pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
 # O webinar não comprova que a operação eletrônica do SNCR já foi liberada.
 FORBIDDEN_CLAIMS = (
@@ -23,6 +23,9 @@ FORBIDDEN_CLAIMS = (
     "entrou em operação",
     "entraram em operação",
     "em produção",
+    "prazo foi prorrogado novamente",
+    "nova prorrogação foi anunciada",
+    "prazo passa de 30/09/2026",
 )
 
 
@@ -57,19 +60,24 @@ def test_sncr_news_update_keeps_publication_and_adds_the_webinar_callout():
     assert datetime.fromisoformat(UPDATED) > datetime.fromisoformat(PUBLISHED)
     assert f'<meta property="article:published_time" content="{PUBLISHED}" />' in html
     assert f'<meta property="article:modified_time" content="{UPDATED}" />' in html
-    assert f'<time datetime="{UPDATED}">14/09/2026</time> às 11h13' in html
+    assert f'<time datetime="{UPDATED}">21/09/2026</time> às 00h03' in html
     assert f'<link rel="canonical" href="{URL}" />' in html
     assert html.count(ADSENSE_SCRIPT_MARKER) == 1
     assert html.count("data-news-update-callout") - html.count("[data-news-update-callout]") == 1
 
     assert "ATUALIZAÇÃO" in callout_text
     for term in (
-        "17/09/2026, às 10h",
+        "17/09/2026 já foi realizado",
+        "gravação e a apresentação",
+        "21/09/2026, às 15h",
         "webinar on-line",
         "aberto ao público geral",
         "não exige cadastro prévio",
-        "passarão a ser permitidos em formato eletrônico",
-        "não antecipa a entrada em operação",
+        "foco especial em farmácias e drogarias",
+        "estabelecimentos dispensadores",
+        "não modifica o prazo",
+        "não informa nova prorrogação",
+        "antecipação da entrada em operação",
         "30/09/2026",
         "Versão 2",
         "18/05/2026",
@@ -97,12 +105,12 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     assert html.count(f'href="{ROUTE}"') == 1
     assert len(sncr_cards) == 1
     card = sncr_cards[0]
-    # A posição exata segue a ordenação cronológica global; aqui basta seguir em destaque.
-    assert cards.index(card) < 5
+    assert cards.index(card) == 0
     assert "news-card-compact" not in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
-    assert f'<time datetime="{UPDATED}" class="leading-none">14/09/2026 • 11h13</time>' in card
-    assert "17/09" in card and "30/09/2026" in card
+    assert f'<time datetime="{UPDATED}" class="leading-none">21/09/2026 • 00h03</time>' in card
+    for term in ("21/09", "15h", "farmácias e drogarias", "17/09", "gravação e apresentação", "30/09/2026"):
+        assert term in card
 
 
 def test_comunicado_keeps_one_sncr_card_and_six_active_notices():
@@ -116,13 +124,23 @@ def test_comunicado_keeps_one_sncr_card_and_six_active_notices():
     assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', html) == ["6", "6"]
     assert len(sncr_cards) == 1
     card_text = _text(sncr_cards[0])
-    for term in ("17/09/2026, às 10h", "30/09/2026", "Versão 2", "18/05/2026", "Ver atualização SNCR"):
+    for term in (
+        "21/09/2026, às 15h",
+        "farmácias e drogarias",
+        "estabelecimentos dispensadores",
+        "17/09 já foi realizado",
+        "gravação e apresentação disponíveis",
+        "30/09/2026",
+        "Versão 2",
+        "18/05/2026",
+        "Ver atualização SNCR",
+    ):
         assert term in card_text
-    assert active[1] is sncr_cards[0]
+    assert active[0] is sncr_cards[0]
 
 
 def test_sncr_news_has_current_sitemap_lastmod():
     sitemap = SITEMAP_PATH.read_text(encoding="utf-8")
 
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
-    assert f"<loc>{URL}</loc>\n    <lastmod>2026-09-14</lastmod>" in sitemap
+    assert f"<loc>{URL}</loc>\n    <lastmod>2026-09-21</lastmod>" in sitemap
