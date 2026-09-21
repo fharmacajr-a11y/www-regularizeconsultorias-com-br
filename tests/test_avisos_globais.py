@@ -291,7 +291,7 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     timestamps = [article.attrs.get("data-effective-at") for article in active]
 
     assert titles == [
-        "SNCR: novo webinar em 21/09, às 15h; prazo segue até 30/09/2026",
+        "SNCR: prazo das funcionalidades eletrônicas segue até 30/09/2026",
         "Edital 6/2026: AFE para manipulação de preparações estéreis",
         "Farmácia Popular: confira municípios com vagas para credenciamento",
         "Anvisa suspende medicamento e proíbe produtos irregulares",

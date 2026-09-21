@@ -251,6 +251,6 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
     assert "21/09/2026 • 10h36" in news_index
     assert "Quatro atos distintos alcançam T36, produtos Moringa da Paz, NotShake Protein e Aloe Care" in news_index
     cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', news_index, re.DOTALL)
-    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[0]
+    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[1]
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
     assert f"<loc>{URL}</loc>\n    <lastmod>2026-09-21</lastmod>" in sitemap

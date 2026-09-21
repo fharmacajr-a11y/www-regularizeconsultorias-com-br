@@ -13,6 +13,7 @@ ROOT = Path(__file__).parents[1]
 SITEMAP_PATH = ROOT / "sitemap.xml"
 PUBLIC_URL = "https://www.regularizeconsultorias.com.br/farmacia-popular/"
 NEWS_INDEX_URL = "https://www.regularizeconsultorias.com.br/noticias/"
+COMUNICADO_URL = "https://www.regularizeconsultorias.com.br/comunicado/"
 PORTARIA_NEWS_URL = "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-portaria-12091-2026-novas-regras/"
 POPS_DROGARIA_URL = "https://www.regularizeconsultorias.com.br/manuais-e-pops/pops-drogaria/"
 NAMESPACE = "http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -50,6 +51,7 @@ def test_sitemap_is_valid_xml_with_unique_urls():
 
     assert root.tag == f"{{{NAMESPACE}}}urlset"
     assert all(location and location.strip() for location in locations)
+    assert len(locations) == 100
     assert len(locations) == len(set(locations))
     assert set(locations) == public_canonicals
 
@@ -120,11 +122,12 @@ def test_farmacia_popular_public_page_matches_canonical():
     assert page_path.parent.resolve() == (ROOT / route_path).resolve()
 
 
-def test_portaria_news_and_news_index_have_expected_sitemap_metadata():
+def test_portaria_news_news_index_and_comunicado_have_expected_sitemap_metadata():
     _, urls = _url_elements()
     by_location = {url.findtext("s:loc", namespaces=NS): url for url in urls}
 
     assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-09-21"
+    assert by_location[COMUNICADO_URL].findtext("s:lastmod", namespaces=NS) == "2026-09-21"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:lastmod", namespaces=NS) == "2026-08-20"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:changefreq", namespaces=NS) == "monthly"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:priority", namespaces=NS) == "0.8"

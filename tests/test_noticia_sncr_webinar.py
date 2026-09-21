@@ -11,7 +11,7 @@ SITEMAP_PATH = ROOT / "sitemap.xml"
 ROUTE = "/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/"
 URL = f"https://www.regularizeconsultorias.com.br{ROUTE}"
 PUBLISHED = "2026-05-28T20:36:00-03:00"
-UPDATED = "2026-09-21T00:03:03-03:00"
+UPDATED = "2026-09-21T17:44:51-03:00"
 ADSENSE_SCRIPT_MARKER = "pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
 # O webinar não comprova que a operação eletrônica do SNCR já foi liberada.
 FORBIDDEN_CLAIMS = (
@@ -26,6 +26,12 @@ FORBIDDEN_CLAIMS = (
     "prazo foi prorrogado novamente",
     "nova prorrogação foi anunciada",
     "prazo passa de 30/09/2026",
+    "será em 21/09",
+    "realizará em 21/09",
+    "está marcado para 21/09",
+    "materiais de 21/09 já estão disponíveis",
+    "gravação de 21/09 está disponível",
+    "apresentação de 21/09 está disponível",
 )
 
 
@@ -60,22 +66,22 @@ def test_sncr_news_update_keeps_publication_and_adds_the_webinar_callout():
     assert datetime.fromisoformat(UPDATED) > datetime.fromisoformat(PUBLISHED)
     assert f'<meta property="article:published_time" content="{PUBLISHED}" />' in html
     assert f'<meta property="article:modified_time" content="{UPDATED}" />' in html
-    assert f'<time datetime="{UPDATED}">21/09/2026</time> às 00h03' in html
+    assert f'<time datetime="{UPDATED}">21/09/2026</time> às 17h44' in html
     assert f'<link rel="canonical" href="{URL}" />' in html
     assert html.count(ADSENSE_SCRIPT_MARKER) == 1
     assert html.count("data-news-update-callout") - html.count("[data-news-update-callout]") == 1
 
     assert "ATUALIZAÇÃO" in callout_text
     for term in (
-        "17/09/2026 já foi realizado",
+        "Webinar do SNCR de 21/09 foi realizado",
+        "21/09/2026",
+        "foi realizado",
+        "Eventuais materiais oficiais do encontro devem ser consultados",
+        "17/09/2026 também foi realizado",
         "gravação e a apresentação",
-        "21/09/2026, às 15h",
-        "webinar on-line",
-        "aberto ao público geral",
-        "não exige cadastro prévio",
         "foco especial em farmácias e drogarias",
         "estabelecimentos dispensadores",
-        "não modifica o prazo",
+        "prazo para disponibilização das funcionalidades eletrônicas permanece",
         "não informa nova prorrogação",
         "antecipação da entrada em operação",
         "30/09/2026",
@@ -86,8 +92,8 @@ def test_sncr_news_update_keeps_publication_and_adds_the_webinar_callout():
     assert "href=" not in callout
 
 
-def test_sncr_news_makes_no_claim_that_electronic_operation_is_already_released():
-    for path in (NEWS_PATH, COMUNICADO_PATH):
+def test_sncr_news_makes_no_future_or_unpublished_claims():
+    for path in (NEWS_PATH, NEWS_INDEX_PATH, COMUNICADO_PATH):
         text = _text(path.read_text(encoding="utf-8")).casefold()
         for claim in FORBIDDEN_CLAIMS:
             assert claim not in text, (path.relative_to(ROOT), claim)
@@ -105,11 +111,11 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     assert html.count(f'href="{ROUTE}"') == 1
     assert len(sncr_cards) == 1
     card = sncr_cards[0]
-    assert cards.index(card) == 2
+    assert cards.index(card) == 0
     assert "news-card-compact" not in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
-    assert f'<time datetime="{UPDATED}" class="leading-none">21/09/2026 • 00h03</time>' in card
-    for term in ("21/09", "15h", "farmácias e drogarias", "17/09", "gravação e apresentação", "30/09/2026"):
+    assert f'<time datetime="{UPDATED}" class="leading-none">21/09/2026 • 17h44</time>' in card
+    for term in ("21/09", "foram realizados", "farmácias e drogarias", "17/09", "gravação e apresentação", "30/09/2026"):
         assert term in card
 
 
@@ -125,11 +131,13 @@ def test_comunicado_keeps_one_sncr_card_and_six_active_notices():
     assert len(sncr_cards) == 1
     card_text = _text(sncr_cards[0])
     for term in (
-        "21/09/2026, às 15h",
-        "farmácias e drogarias",
+        "SNCR: prazo das funcionalidades eletrônicas segue até 30/09/2026",
+        "17/09 e 21/09/2026 foram realizados",
+        "farmácias, drogarias",
         "estabelecimentos dispensadores",
-        "17/09 já foi realizado",
-        "gravação e apresentação disponíveis",
+        "Eventuais materiais oficiais devem ser consultados",
+        "gravação e a apresentação de 17/09 já estão disponíveis",
+        "não informa nova prorrogação nem antecipação da entrada em operação",
         "30/09/2026",
         "Versão 2",
         "18/05/2026",
