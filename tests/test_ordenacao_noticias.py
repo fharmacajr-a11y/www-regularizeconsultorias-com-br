@@ -35,7 +35,7 @@ SANEANTES_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-rdc-1
 CNES_COMPETENCIA_09_2026_URL = "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-09-2026-prazo-transmissao/"
 # Nova notícia do Edital de Chamamento 6/2026 (AFE para preparações estéreis).
 EDITAL_6_2026_AFE_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-edital-6-2026-afe-manipulacao-preparacoes-estereis/"
-# Notícia SNCR atualizada com os webinares de 17/09 e 21/09/2026 e reposicionada pelo dateModified.
+# Notícia SNCR atualizada com a etapa de 30/09/2026 e reposicionada pelo dateModified.
 SNCR_WEBINAR_URL = "https://www.regularizeconsultorias.com.br/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/"
 # Nova notícia sobre a IN Anvisa 470/2026.
 IN_470_SUPLEMENTOS_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-in-470-2026-suplementos-ingredientes-limites-alegacoes/"
@@ -153,11 +153,11 @@ def test_news_index_itemlist_ordering():
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
 
-    # A RE 3.717/2026, publicada em 21/09 e incorporada em 22/09, reposiciona a matéria consolidada.
-    assert urls[0] == PRODUTOS_IRREGULARES_URL
-    assert urls.count(PRODUTOS_IRREGULARES_URL) == 1
-    assert urls[1] == SNCR_WEBINAR_URL
+    # A etapa do SNCR em 30/09, atualizada em 22/09 à tarde, reposiciona a matéria canônica.
+    assert urls[0] == SNCR_WEBINAR_URL
     assert urls.count(SNCR_WEBINAR_URL) == 1
+    assert urls[1] == PRODUTOS_IRREGULARES_URL
+    assert urls.count(PRODUTOS_IRREGULARES_URL) == 1
     assert urls[2] == IN_470_SUPLEMENTOS_URL
     assert urls.count(IN_470_SUPLEMENTOS_URL) == 1
     # Nova notícia de saneantes: RDC 1.040/2026 e IN 468/2026.

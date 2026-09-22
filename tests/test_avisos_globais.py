@@ -262,7 +262,8 @@ def test_comunicado_editorial_organization_and_active_notice_content():
     assert "31/08/2026" not in active_text
     assert "período eleitoral" in active_text
     assert "30/09/2026" in active_text
-    assert "funcionalidades eletrônicas" in active_text
+    assert "receituários eletrônicos" in active_text
+    assert "SNCR já existe" in active_text
     assert "03/09/2026" in active_text
     assert "1.541 municípios" in active_text
     assert "3.082 vagas totais" in active_text
@@ -291,8 +292,8 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     timestamps = [article.attrs.get("data-effective-at") for article in active]
 
     assert titles == [
+        "SNCR: nova etapa começa em 30/09",
         "Anvisa suspende medicamento e proíbe produtos irregulares",
-        "SNCR: prazo das funcionalidades eletrônicas segue até 30/09/2026",
         "Edital 6/2026: AFE para manipulação de preparações estéreis",
         "Farmácia Popular: confira municípios com vagas para credenciamento",
         "Farmácia Popular: atenção aos materiais no período eleitoral",

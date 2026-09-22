@@ -262,7 +262,7 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
     assert "22/09/2026 • 14h16" in news_index
     assert "A RE nº 3.717/2026, publicada em 21/09" in news_index
     cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', news_index, re.DOTALL)
-    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[0]
+    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[1]
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
     assert f"<loc>{URL}</loc>\n    <lastmod>2026-09-22</lastmod>" in sitemap
 

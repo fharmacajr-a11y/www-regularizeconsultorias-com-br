@@ -55,7 +55,7 @@
           { "@type": "ListItem", "position": 4, "name": "SNGPC \u2013 Sistema Nacional de Gerenciamento de Produtos Controlados" },
           { "@type": "ListItem", "position": 5, "name": "CRF \u2013 Conselho Regional de Farm\u00e1cia" },
           { "@type": "ListItem", "position": 6, "name": "M.A.P.A \u2013 Minist\u00e9rio da Agricultura, Pecu\u00e1ria e Abastecimento" },
-          { "@type": "ListItem", "position": 7, "name": "SNCR \u2013 Sistema Nacional de Controle de Receitu\u00e1rios" },
+          { "@type": "ListItem", "position": 7, "name": "Implanta\u00e7\u00e3o e habilita\u00e7\u00e3o de acesso ao SNCR" },
           { "@type": "ListItem", "position": 8, "name": "Vigil\u00e2ncia Sanit\u00e1ria (VISA)" },
           { "@type": "ListItem", "position": 9, "name": "Pol\u00edcia Federal \u2013 Produtos Controlados" }
         ]
@@ -499,7 +499,7 @@
           </article>
 
           <!-- 10. SNCR da ANVISA -->
-          <article class="p-5 sm:p-6 lg:p-8 rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-xl transition-all duration-300 group">
+          <article id="servico-sncr" class="scroll-mt-28 p-5 sm:p-6 lg:p-8 rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-xl transition-all duration-300 group">
             <div class="w-14 h-14 mb-4 sm:mb-6 mx-auto sm:mx-0 rounded-2xl bg-brand/10 flex items-center justify-center group-hover:bg-brand transition-colors duration-300">
               <svg class="w-7 h-7 text-brand group-hover:text-white transition-colors duration-300"
                    fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -513,27 +513,32 @@
                   d="M15 13.25l2.75 1.1v1.9c0 1.55-1.15 3.05-2.75 3.75-1.6-.7-2.75-2.2-2.75-3.75v-1.9L15 13.25z"/>
               </svg>
             </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3 text-center sm:text-left">SNCR da ANVISA / Sistema Nacional de Controle de Receituário (Digital)</h3>
+            <h3 class="text-xl font-bold text-slate-900 mb-3 text-center sm:text-left">Implantação e habilitação de acesso ao SNCR</h3>
             <p class="text-slate-500 text-sm leading-relaxed mb-4 text-center sm:text-left">
-              Assessoria para cadastro, regularização e acompanhamento de estabelecimentos
-              no SNCR, sistema da ANVISA que centraliza e digitaliza o controle de receitas
-              de medicamentos controlados em todo o Brasil, com apoio documental e suporte
-              na adequação às exigências regulatórias.
+              Apoio a farmácias e drogarias na preparação para a nova etapa do SNCR, com análise
+              da situação cadastral, conferência das condições de acesso e orientação para
+              habilitação dos responsáveis e usuários. A Regularize não concede acesso ao sistema
+              da Anvisa.
             </p>
             <ul class="space-y-1.5 text-sm text-slate-500">
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Cadastro e regularização do estabelecimento no SNCR de acordo com RDC 1000/2025
+              <li class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-brand flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                Análise cadastral e conferência da situação do estabelecimento
               </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Apoio na adequação às exigências da ANVISA
+              <li class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-brand flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                Análise dos responsáveis e vínculos necessários ao acesso
               </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Acompanhamento do processo de implantação e conformidade
+              <li class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-brand flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                Orientação sobre Cadastro Anvisa, usuários e perfis
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-brand flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                Apoio à habilitação e conferência final da preparação para o uso do sistema
               </li>
             </ul>
+            <a href="/whatsapp/?text=Ol%C3%A1%21%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20o%20servi%C3%A7o%20de%20implanta%C3%A7%C3%A3o%20e%20habilita%C3%A7%C3%A3o%20do%20SNCR%20para%20minha%20farm%C3%A1cia." target="_blank" rel="noopener noreferrer" class="mt-5 inline-flex w-full sm:w-auto items-center justify-center rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-dark transition-colors duration-200">Solicitar análise para o SNCR</a>
           </article>
 
           <!-- 9. Licença Sanitária / Alvará Sanitário -->
