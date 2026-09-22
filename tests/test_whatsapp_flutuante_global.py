@@ -1,6 +1,13 @@
+import http.server
+import json
 import re
+import subprocess
+import sys
+import threading
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
+
+import pytest
 
 from test_rodapes_globais import ROOT, TreeParser, parse_html, public_html_paths
 
@@ -156,3 +163,182 @@ def test_news_messages_reject_known_generic_and_cross_topic_legacy_texts():
         if "in 451/2026" in message:
             assert slug == IN_451_NEWS_SLUG
             assert "cbpf" in message
+
+
+# ---------------------------------------------------------------------------
+# Testes de política responsiva – M11.1
+# ---------------------------------------------------------------------------
+
+NEWS_PAGE = "noticias/index.html"
+LEGACY_PAGE = "noticias/anvisa-alerta-soroterapia-promessas-sem-evidencia/index.html"
+COMUNICADO_PAGE = "comunicado/index.html"
+
+STATIC_CASES = [
+    pytest.param(NEWS_PAGE, 390, 844, "footer", id="noticias-390"),
+    pytest.param(NEWS_PAGE, 768, 1024, "footer", id="noticias-768"),
+    pytest.param(NEWS_PAGE, 1375, 900, "footer", id="noticias-1375"),
+    pytest.param(LEGACY_PAGE, 390, 844, "footer", id="legada-390"),
+    pytest.param(LEGACY_PAGE, 1375, 900, "footer", id="legada-1375"),
+    pytest.param(COMUNICADO_PAGE, 390, 844, "main", id="comunicado-390"),
+]
+DESKTOP_CASES = [
+    pytest.param(NEWS_PAGE, 1376, 900, id="noticias-1376"),
+    pytest.param(NEWS_PAGE, 1440, 900, id="noticias-1440"),
+    pytest.param(LEGACY_PAGE, 1376, 900, id="legada-1376"),
+    pytest.param(LEGACY_PAGE, 1440, 900, id="legada-1440"),
+]
+
+
+@pytest.fixture(scope="module")
+def http_server():
+    class QuietHandler(http.server.SimpleHTTPRequestHandler):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, directory=str(ROOT.resolve()), **kwargs)
+
+        def log_message(self, format, *args):
+            pass
+
+    server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), QuietHandler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        yield server.server_address[1]
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=5)
+
+
+def _browser_probe(port, relative_path, width, height, back_to_top=False):
+    assert (ROOT / relative_path).is_file(), f"Página obrigatória ausente: {relative_path}"
+    script = r'''
+import json
+import sys
+from playwright.sync_api import sync_playwright
+
+url, width, height, back_to_top = sys.argv[1:]
+with sync_playwright() as playwright:
+    browser = playwright.chromium.launch(headless=True)
+    context = browser.new_context(viewport={"width": int(width), "height": int(height)})
+    page = context.new_page()
+    response = page.goto(url, wait_until="domcontentloaded", timeout=15_000)
+    assert response is not None and response.ok, url
+    layout = page.evaluate(
+        """() => {
+            const group = document.querySelector('.floating-buttons');
+            if (!group) return null;
+            const rect = element => {
+                if (!element) return null;
+                const r = element.getBoundingClientRect();
+                return {top:r.top, right:r.right, bottom:r.bottom, left:r.left,
+                        width:r.width, height:r.height};
+            };
+            const intersects = (a, b) => Boolean(a && b && a.left < b.right &&
+                a.right > b.left && a.top < b.bottom && a.bottom > b.top);
+            const groupRect = rect(group);
+            const mainRect = rect(document.querySelector('main'));
+            const footerRect = rect(document.querySelector('footer'));
+            const style = getComputedStyle(group);
+            return {
+                position: style.position,
+                flexDirection: style.flexDirection,
+                bottom: parseFloat(style.bottom),
+                right: parseFloat(style.right),
+                zIndex: style.zIndex,
+                groupRect, mainRect, footerRect,
+                intersectsMain: intersects(groupRect, mainRect),
+                intersectsFooter: intersects(groupRect, footerRect),
+                overflowX: document.documentElement.scrollWidth -
+                           document.documentElement.clientWidth,
+                buttons: Array.from(group.querySelectorAll('.floating-btn')).map(
+                    button => {
+                        const r = rect(button);
+                        return {classes: button.className, width:r.width, height:r.height};
+                    }
+                ),
+                hasWhatsapp: Boolean(group.querySelector('.floating-btn--whatsapp')),
+                hasBackToTop: Boolean(group.querySelector('.floating-btn--top')),
+            };
+        }"""
+    )
+    if back_to_top == "1":
+        page.evaluate(
+            "() => window.scrollTo(0, Math.min(1200, "
+            "document.documentElement.scrollHeight - innerHeight))"
+        )
+        page.wait_for_function("window.scrollY > 300")
+        button = page.locator(".floating-btn--top")
+        assert button.count() == 1
+        page.wait_for_function(
+            "document.querySelector('.floating-btn--top').classList.contains('is-visible')"
+        )
+        assert button.is_visible() and button.is_enabled()
+        button.click()
+        page.wait_for_function("window.scrollY <= 1", timeout=5_000)
+        layout["backToTopWorked"] = True
+    print(json.dumps(layout))
+    context.close()
+    browser.close()
+'''
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            script,
+            f"http://127.0.0.1:{port}/{relative_path}",
+            str(width),
+            str(height),
+            "1" if back_to_top else "0",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    assert result.returncode == 0, result.stderr
+    return json.loads(result.stdout)
+
+
+def _assert_controls(layout, size):
+    assert layout["hasWhatsapp"] and layout["hasBackToTop"], layout
+    assert len(layout["buttons"]) == 2, layout["buttons"]
+    for button in layout["buttons"]:
+        assert button["width"] == pytest.approx(size, abs=0.1), button
+        assert button["height"] == pytest.approx(size, abs=0.1), button
+
+
+@pytest.mark.parametrize("page_path,width,height,after", STATIC_CASES)
+def test_static_floating_buttons_contract(
+    http_server, page_path, width, height, after
+):
+    if page_path in {LEGACY_PAGE, COMUNICADO_PAGE}:
+        assert "custom.min.css" in (ROOT / page_path).read_text(encoding="utf-8")
+
+    layout = _browser_probe(http_server, page_path, width, height)
+    assert layout is not None, ".floating-buttons obrigatório ausente"
+    assert layout["position"] == "static", layout
+    assert layout["flexDirection"] == "row", layout
+    assert layout["overflowX"] <= 0, layout
+    assert not layout["intersectsMain"] and not layout["intersectsFooter"], layout
+    _assert_controls(layout, 44 if width <= 640 else 48)
+    boundary = layout[f"{after}Rect"]
+    assert boundary is not None, layout
+    assert layout["groupRect"]["top"] >= boundary["bottom"], layout
+
+
+@pytest.mark.parametrize("page_path,width,height", DESKTOP_CASES)
+def test_desktop_floating_buttons_contract(
+    http_server, page_path, width, height
+):
+    layout = _browser_probe(http_server, page_path, width, height)
+    assert layout is not None, ".floating-buttons obrigatório ausente"
+    assert layout["position"] == "fixed", layout
+    assert layout["flexDirection"] == "column", layout
+    assert layout["bottom"] == pytest.approx(24, abs=0.1), layout
+    assert layout["right"] == pytest.approx(24, abs=0.1), layout
+    assert layout["zIndex"] == "9999", layout
+    _assert_controls(layout, 48)
+
+
+def test_back_to_top_button_returns_to_page_start(http_server):
+    layout = _browser_probe(http_server, NEWS_PAGE, 1376, 900, back_to_top=True)
+    assert layout["backToTopWorked"]

@@ -2302,13 +2302,25 @@ footer .text-slate-500 {
   pointer-events: auto;
 }
 
-/* Mobile: botões levemente menores para não sobrepor conteúdo */
-@media (max-width: 640px) {
+/* Viewports abaixo de 1376 px: retira do fluxo fixed para eliminar cobertura de conteúdo.
+   Passa a static, disposição horizontal, alinhado à direita.
+   Preserva safe-area-inset-* sem depender deles para resolver o layout. */
+@media (max-width: 1375px) {
   .floating-buttons {
-    bottom: 1rem;
-    right: 1rem;
+    position: static;
+    width: max-content;
+    flex-direction: row;
+    align-items: center;
+    margin: 1rem max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) auto;
+    /* bottom/right/z-index não se aplicam a position: static */
+    bottom: auto;
+    right: auto;
+    z-index: auto;
   }
+}
 
+/* Mobile: botões levemente menores — continua válido dentro de max-width:1375px */
+@media (max-width: 640px) {
   .floating-btn {
     width: 2.75rem;
     height: 2.75rem;
