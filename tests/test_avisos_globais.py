@@ -291,10 +291,10 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     timestamps = [article.attrs.get("data-effective-at") for article in active]
 
     assert titles == [
+        "Anvisa suspende medicamento e proíbe produtos irregulares",
         "SNCR: prazo das funcionalidades eletrônicas segue até 30/09/2026",
         "Edital 6/2026: AFE para manipulação de preparações estéreis",
         "Farmácia Popular: confira municípios com vagas para credenciamento",
-        "Anvisa suspende medicamento e proíbe produtos irregulares",
         "Farmácia Popular: atenção aos materiais no período eleitoral",
         "Farmácia Popular: confira as listas EAN vigentes e os controles de prescrição",
     ]
@@ -306,7 +306,7 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
 
     useful_badge = next(node for node in active[5].descendants() if node.tag == "span" and node.text() == "ÚTIL")
     useful_cta = next(node for node in active[5].descendants() if node.tag == "a" and "Conferir orientações" in node.text())
-    informative_cta = next(node for node in active[1].descendants() if node.tag == "a" and "Ver notícia sobre o Edital 6/2026" in node.text())
+    informative_cta = next(node for node in active[2].descendants() if node.tag == "a" and "Ver notícia sobre o Edital 6/2026" in node.text())
     assert {"border-emerald-200", "bg-emerald-50", "text-emerald-700"} <= set(useful_badge.attrs["class"].split())
     assert {"border-emerald-200", "bg-emerald-50"} <= set(active[5].attrs["class"].split())
     informative_to_useful = {

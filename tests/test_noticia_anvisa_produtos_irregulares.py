@@ -9,12 +9,17 @@ NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 SITEMAP_PATH = ROOT / "sitemap.xml"
 URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
 PUBLISHED = "2026-07-05T18:00:00-03:00"
-UPDATED = "2026-09-21T10:36:45-03:00"
+UPDATED = "2026-09-22T14:16:45-03:00"
 DOBUTAMINA_LOTES = ("24092127", "24102310", "25102244", "25102243", "25112308")
 
 
 def _august_callout(html):
     start = html.index('data-news-update-callout aria-labelledby="novas-medidas-agosto-title"')
+    return html[start:html.index("</aside>", start)]
+
+
+def _re3717_callout(html):
+    start = html.index('data-news-update-callout aria-labelledby="novas-medidas-21-setembro-title"')
     return html[start:html.index("</aside>", start)]
 
 
@@ -31,6 +36,11 @@ def _september_callout(html):
 def _september_section(html):
     start = html.index("<h2>Setembro: RE nº 3.547/2026")
     return html[start:html.index("<h2>Agosto amplia", start)]
+
+
+def _re3717_section(html):
+    start = html.index("<h2>21 de setembro: RE nº 3.717/2026")
+    return html[start:html.index("<h2>16 de setembro: quatro resoluções", start)]
 
 
 def _latest_section(html):
@@ -99,15 +109,16 @@ def test_september_update_reflects_re_3547_and_keeps_history():
     september = _september_callout(html)
     text = _text(september)
 
+    assert html.index("novas-medidas-21-setembro-title") < html.index("novas-medidas-16-setembro-title")
     assert html.index("novas-medidas-16-setembro-title") < html.index("novas-medidas-setembro-title")
     assert html.index("novas-medidas-setembro-title") < html.index("novas-medidas-agosto-title")
-    assert html.count("data-news-update-callout aria-labelledby=") == 3
+    assert html.count("data-news-update-callout aria-labelledby=") == 4
     assert "ATUALIZAÇÃO" in september
     assert "Resolução-RE nº 3.547/2026" in text
     assert "de 09/09/2026 e publicada no DOU em 11/09/2026" in text
     assert "Medidas de julho a setembro mostram" in html
     assert "Medidas de julho e agosto" not in html
-    assert f'<time datetime="{UPDATED}">21/09/2026</time> às 10h36' in html
+    assert f'<time datetime="{UPDATED}">22/09/2026</time> às 14h16' in html
     assert f'<time datetime="{PUBLISHED}">05/07/2026</time> às 18h00' in html
     # Histórico de agosto e julho preservado.
     for term in ("12/08 — saneantes sem registro", "14/08 — Chá Sarapião", "Fiscalização de julho amplia", "Chlorohex 2,0%"):
@@ -248,9 +259,102 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
 
     assert news_index.count('href="/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"') == 1
     assert f'data-updated="{UPDATED}"' in news_index
-    assert "21/09/2026 • 10h36" in news_index
-    assert "Quatro atos distintos alcançam T36, produtos Moringa da Paz, NotShake Protein e Aloe Care" in news_index
+    assert "22/09/2026 • 14h16" in news_index
+    assert "A RE nº 3.717/2026, publicada em 21/09" in news_index
     cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', news_index, re.DOTALL)
-    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[1]
+    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[0]
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
-    assert f"<loc>{URL}</loc>\n    <lastmod>2026-09-21</lastmod>" in sitemap
+    assert f"<loc>{URL}</loc>\n    <lastmod>2026-09-22</lastmod>" in sitemap
+
+
+def test_re_3717_callout_keeps_each_measure_inside_its_own_item():
+    html = NEWS_PATH.read_text(encoding="utf-8")
+    items = [_text(item) for item in _items(_re3717_callout(html))]
+
+    assert len(items) == 5
+    phesgo, dysport, queen, malheiro, cannabis = items
+
+    assert "Phesgo — lote B5011B05" in phesgo
+    assert "fabricação 06/2025" in phesgo
+    assert "33.009.945/0001-23" in phesgo
+    assert "apreensão e proibição de armazenamento, comercialização, distribuição, exportação, importação e uso" in phesgo
+    assert "não determina recolhimento" in phesgo
+    assert "Dysport" not in phesgo and "Queen" not in phesgo and "Malheiro" not in phesgo and "cannabis" not in phesgo
+
+    assert "lotes P08191, P08192 e P22368" in dysport
+    assert "07.718.721/0001-80" in dysport
+    assert "04/2029, 05/2029 e 02/2029" in dysport
+    assert "apreensão e proibição de comercialização, distribuição e uso" in dysport
+    assert "não determina recolhimento nem proíbe armazenamento, exportação, importação ou propaganda" in dysport
+    assert "Phesgo" not in dysport and "Queen" not in dysport and "Malheiro" not in dysport and "cannabis" not in dysport
+
+    assert "48.822.189/0001-24" in queen
+    assert "suspensão da propaganda" in queen
+    assert "não determina recolhimento, apreensão nem proibição de fabricação ou comercialização" in queen
+    assert "Phesgo" not in queen and "Dysport" not in queen and "Malheiro" not in queen and "cannabis" not in queen
+
+    assert "47.843.321/0001-11" in malheiro
+    assert "suspensão da propaganda de todos os manipulados" in malheiro
+    assert "não determina recolhimento, apreensão nem proibição de fabricação" in malheiro
+    assert "comercialização" not in malheiro
+    assert "Phesgo" not in malheiro and "Dysport" not in malheiro and "Queen" not in malheiro and "cannabis" not in malheiro
+
+    assert "proibição de comercialização e propaganda" in cannabis
+    assert "não determina apreensão, recolhimento nem proibição de uso" in cannabis
+    assert "Phesgo" not in cannabis and "Dysport" not in cannabis and "Queen" not in cannabis and "Malheiro" not in cannabis
+    assert "href=" not in _re3717_callout(html)
+
+
+def test_re_3717_body_uses_the_dou_text_and_does_not_mix_measures():
+    html = NEWS_PATH.read_text(encoding="utf-8")
+    section = _re3717_section(html)
+    phesgo = _text(_subsection(section, "Phesgo — lote B5011B05 com fabricação 06/2025", "Dysport — lotes P08191, P08192 e P22368"))
+    dysport = _text(_subsection(section, "Dysport — lotes P08191, P08192 e P22368", "Queen Pharma Aesthetic — suspensão de propaganda"))
+    queen = _text(_subsection(section, "Queen Pharma Aesthetic — suspensão de propaganda", "Farmácia Malheiro — suspensão de propaganda"))
+    malheiro = _text(_subsection(section, "Farmácia Malheiro — suspensão de propaganda", "Cannabis — comercialização e propaganda proibidas"))
+    cannabis = _text(_subsection(section, "Cannabis — comercialização e propaganda proibidas"))
+
+    assert "de 18/09/2026" in _text(section)
+    assert "21/09/2026, edição 178, seção 1, página 183" in _text(section)
+    assert "33.009.945/0001-23" in phesgo
+    assert "CNPJ 3.009.945/0001-23" not in section and "CNPJ <strong>3.009.945/0001-23" not in section
+    assert "quaisquer pessoas físicas ou jurídicas" in phesgo
+    assert "não determina recolhimento do Phesgo" in phesgo
+    for lot, validity in (("P08191", "04/2029"), ("P08192", "05/2029"), ("P22368", "02/2029")):
+        assert lot in dysport and validity in dysport
+    assert "Não há, nesse item, proibição de armazenamento, exportação, importação ou propaganda" in dysport
+    for product in (
+        "lidocaína 2% sem vasoconstritor",
+        "Desinflame",
+        "Morusil Slim+",
+        "Hepato Detox",
+        "Metabolismo Power",
+        "Muscledefin",
+        "glicose 75% com lidocaína",
+        "hialuronidase 3000 UTR",
+        "mescla capilar",
+        "Strill Repair",
+        "Face Body Firm",
+        "Boom de Colágeno",
+        "Cellu Slim",
+        "Soft Lipo",
+        "Slim Flash/Gordura Light",
+        "Lipo Slim",
+        "Liposolve Intensive",
+        "gordura localizada descafeinada",
+        "Skinbooster",
+        "Papada Slim",
+        "Melasma",
+    ):
+        assert product in queen
+    assert "@queenpharmaaesthetic" in queen
+    assert "item 5.14" in queen and "RDC nº 67/2007" in queen
+    assert "não determina recolhimento, apreensão nem proibição de fabricação ou comercialização" in queen
+    assert "todos os manipulados" in malheiro
+    assert "item 5.14" in malheiro
+    assert "não determina recolhimento, apreensão, proibição de fabricação nem interdição do estabelecimento" in malheiro
+    assert "artigos 2º, 12 e 59 da Lei nº 6.360/1976" in cannabis
+    assert "@medicinatural.sac" in cannabis
+    assert "não determina apreensão, recolhimento nem proibição de uso" in cannabis
+    assert "não representa proibição genérica de produtos de cannabis" in cannabis
+    assert "href=" not in section

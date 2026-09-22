@@ -16,7 +16,7 @@ CBPF_IN451_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atua
 RPBR_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-periodicidade-rpbr-farmacovigilancia/"
 SIPROQUIM_IN338_URL = "https://www.regularizeconsultorias.com.br/noticias/produtos-quimicos-controlados-siproquim2-assinador-pf/"
 PRODUTOS_IRREGULARES_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
-PRODUTOS_IRREGULARES_UPDATED = "2026-09-21T10:36:45-03:00"
+PRODUTOS_IRREGULARES_UPDATED = "2026-09-22T14:16:45-03:00"
 FABRICANTES_INTERNACIONAIS_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-dispositivos-medicos/"
 SUPERVISAO_CONTEUDO_URL = "https://www.regularizeconsultorias.com.br/noticias/farmaceutico-supervisiona-conteudos-farmacia-redes-sociais-sites/"
 RETATRUTIDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-retatrutida-sem-registro-produtos-irregulares/"
@@ -153,12 +153,11 @@ def test_news_index_itemlist_ordering():
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
 
-    # Correção temporal do webinar reposiciona o SNCR pelo dateModified real de 21/09/2026.
-    assert urls[0] == SNCR_WEBINAR_URL
-    assert urls.count(SNCR_WEBINAR_URL) == 1
-    # Matéria consolidada de produtos irregulares permanece logo depois do SNCR.
-    assert urls[1] == PRODUTOS_IRREGULARES_URL
+    # A RE 3.717/2026, publicada em 21/09 e incorporada em 22/09, reposiciona a matéria consolidada.
+    assert urls[0] == PRODUTOS_IRREGULARES_URL
     assert urls.count(PRODUTOS_IRREGULARES_URL) == 1
+    assert urls[1] == SNCR_WEBINAR_URL
+    assert urls.count(SNCR_WEBINAR_URL) == 1
     assert urls[2] == IN_470_SUPLEMENTOS_URL
     assert urls.count(IN_470_SUPLEMENTOS_URL) == 1
     # Nova notícia de saneantes: RDC 1.040/2026 e IN 468/2026.

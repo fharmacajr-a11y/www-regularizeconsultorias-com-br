@@ -126,8 +126,8 @@ def test_portaria_news_news_index_and_comunicado_have_expected_sitemap_metadata(
     _, urls = _url_elements()
     by_location = {url.findtext("s:loc", namespaces=NS): url for url in urls}
 
-    assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-09-21"
-    assert by_location[COMUNICADO_URL].findtext("s:lastmod", namespaces=NS) == "2026-09-21"
+    assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-09-22"
+    assert by_location[COMUNICADO_URL].findtext("s:lastmod", namespaces=NS) == "2026-09-22"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:lastmod", namespaces=NS) == "2026-08-20"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:changefreq", namespaces=NS) == "monthly"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:priority", namespaces=NS) == "0.8"

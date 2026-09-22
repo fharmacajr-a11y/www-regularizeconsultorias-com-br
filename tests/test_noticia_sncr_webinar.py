@@ -111,7 +111,7 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     assert html.count(f'href="{ROUTE}"') == 1
     assert len(sncr_cards) == 1
     card = sncr_cards[0]
-    assert cards.index(card) == 0
+    assert cards.index(card) == 1
     assert "news-card-compact" not in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
     assert f'<time datetime="{UPDATED}" class="leading-none">21/09/2026 • 17h44</time>' in card
@@ -144,7 +144,7 @@ def test_comunicado_keeps_one_sncr_card_and_six_active_notices():
         "Ver atualização SNCR",
     ):
         assert term in card_text
-    assert active[0] is sncr_cards[0]
+    assert active[1] is sncr_cards[0]
 
 
 def test_sncr_news_has_current_sitemap_lastmod():
