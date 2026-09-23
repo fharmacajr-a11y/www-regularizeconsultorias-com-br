@@ -88,7 +88,9 @@ def test_sncr_news_keeps_publication_and_updates_the_september_stage():
     assert f'<link rel="canonical" href="{URL}" />' in html
     assert html.count(ADSENSE_SCRIPT_MARKER) == 1
     assert html.count("data-news-update-callout") - html.count("[data-news-update-callout]") == 1
-    assert 'href="https://www.gov.br/anvisa/pt-br/assuntos/medicamentos/controlados/sncr"' in html
+    assert "<h2>Fontes oficiais</h2>" not in html
+    assert "Página oficial do SNCR na Anvisa" not in html
+    assert "https://www.gov.br/anvisa/" not in html
 
     news = next(block for block in _jsonld_blocks(html) if block.get("@type") == "NewsArticle")
     assert news["headline"] == TITLE
@@ -124,7 +126,6 @@ def test_sncr_news_explains_the_stage_without_false_claims():
         "Cadastro Anvisa",
         "análise cadastral do estabelecimento",
         "cartilha oficial da Anvisa",
-        "Fonte",
     ):
         assert term in body or term in html
 
@@ -230,12 +231,11 @@ def test_servicos_sncr_card_describes_the_access_service():
         "Cadastro Anvisa",
         "usuários e perfis",
         "não concede acesso",
-        "Solicitar análise para o SNCR",
     ):
         assert term.casefold() in text.casefold()
 
-    href = re.search(r'href="(/whatsapp/\?text=[^"]+)"', card).group(1)
-    query = parse_qs(urlsplit(href).query)
-    assert unquote(query["text"][0]) == WHATSAPP_SERVICO_TEXT
+    assert "Solicitar análise para o SNCR" not in card
+    assert "/whatsapp/" not in card
+    assert WHATSAPP_SERVICO_TEXT not in unquote(card)
     assert "e-CNPJ" not in card
     assert "Implanta\\u00e7\\u00e3o e habilita\\u00e7\\u00e3o de acesso ao SNCR" in html
