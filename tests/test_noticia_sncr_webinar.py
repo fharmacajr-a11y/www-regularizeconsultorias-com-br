@@ -14,7 +14,7 @@ SITEMAP_PATH = ROOT / "sitemap.xml"
 ROUTE = "/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/"
 URL = f"https://www.regularizeconsultorias.com.br{ROUTE}"
 PUBLISHED = "2026-05-28T20:36:00-03:00"
-UPDATED = "2026-09-22T16:48:26-03:00"
+UPDATED = "2026-09-25T11:48:00-03:00"
 TITLE = "SNCR: nova etapa começa em 30 de setembro; veja o que muda para farmácias e drogarias"
 ADSENSE_SCRIPT_MARKER = "pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
 WHATSAPP_NEWS_TEXT = (
@@ -84,13 +84,16 @@ def test_sncr_news_keeps_publication_and_updates_the_september_stage():
     assert f'<meta property="article:published_time" content="{PUBLISHED}" />' in html
     assert f'<meta property="article:modified_time" content="{UPDATED}" />' in html
     assert f'<time datetime="{PUBLISHED}">28/05/2026</time> às 20h36' in html
-    assert f'<time datetime="{UPDATED}">22/09/2026</time> às 16h48' in html
+    assert f'<time datetime="{UPDATED}">25/09/2026</time> às 11h48' in html
     assert f'<link rel="canonical" href="{URL}" />' in html
     assert html.count(ADSENSE_SCRIPT_MARKER) == 1
     assert html.count("data-news-update-callout") - html.count("[data-news-update-callout]") == 1
     assert "<h2>Fontes oficiais</h2>" not in html
     assert "Página oficial do SNCR na Anvisa" not in html
-    assert "https://www.gov.br/anvisa/" not in html
+    assert "manual_sncr_farmacias_1ed_2026_formatado_vf_publicacao.pdf" not in html
+    assert "cartilha_sncr_farmacias_vf.pdf" not in html
+    assert "manual_sncr_farmacias_1ed_2026_formatado_vf_publicacao.pdf/@@display-file/file" not in html
+    assert "cartilha_sncr_farmacias_vf.pdf/@@display-file/file" not in html
 
     news = next(block for block in _jsonld_blocks(html) if block.get("@type") == "NewsArticle")
     assert news["headline"] == TITLE
@@ -126,6 +129,11 @@ def test_sncr_news_explains_the_stage_without_false_claims():
         "Cadastro Anvisa",
         "análise cadastral do estabelecimento",
         "cartilha oficial da Anvisa",
+        "SNCR-Farmácia",
+        "Responsável Legal",
+        "23 de setembro de 2026",
+        "novas orientações específicas para farmácias e drogarias",
+        "acompanhamento da regularização e habilitação",
     ):
         assert term in body or term in html
 
@@ -152,7 +160,7 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     assert cards.index(card) == 0
     assert "news-card-compact" not in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
-    assert f'<time datetime="{UPDATED}" class="leading-none">22/09/2026 • 16h48</time>' in card
+    assert f'<time datetime="{UPDATED}" class="leading-none">25/09/2026 • 11h48</time>' in card
     for term in (
         "SNCR: nova etapa começa em 30 de setembro",
         "farmácias e drogarias",
@@ -190,7 +198,7 @@ def test_sncr_news_has_current_sitemap_lastmod():
     sitemap = SITEMAP_PATH.read_text(encoding="utf-8")
 
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
-    assert f"<loc>{URL}</loc>\n    <lastmod>2026-09-22</lastmod>" in sitemap
+    assert f"<loc>{URL}</loc>\n    <lastmod>2026-09-25</lastmod>" in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/servicos/</loc>\n"
         "    <lastmod>2026-09-22</lastmod>"
