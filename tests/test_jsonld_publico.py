@@ -32,7 +32,9 @@ class JsonLdParser(HTMLParser):
 
 def tracked_html_files():
     output = subprocess.check_output(
-        ["git", "ls-files", "*.html"], cwd=ROOT, text=True
+        ["git", "ls-files", "--cached", "--others", "--exclude-standard", "*.html"],
+        cwd=ROOT,
+        text=True,
     )
     return [ROOT / relative_path for relative_path in output.splitlines()]
 
@@ -53,4 +55,4 @@ def test_public_jsonld_is_valid():
                     f"bloco {block_number}: {error}"
                 ) from error
 
-    assert block_count == 174
+    assert block_count == 176
