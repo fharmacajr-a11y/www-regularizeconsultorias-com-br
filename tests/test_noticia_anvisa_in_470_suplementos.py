@@ -196,7 +196,7 @@ def test_article_body_has_no_government_links_or_sources_section():
     assert not re.search(r"<h[1-6][^>]*>\s*(Fontes|Bibliografia)", body, re.IGNORECASE)
 
 
-def test_index_has_one_card_in_fourth_position_and_expected_counts():
+def test_index_has_one_card_in_fifth_position_and_expected_counts():
     html = _index_html()
     assert html.count(f'href="/noticias/{SLUG}/"') == 1
     assert html.count(f'"url":"{PUBLIC_URL}"') == 1
@@ -204,13 +204,13 @@ def test_index_has_one_card_in_fourth_position_and_expected_counts():
         r'(<article class="[^"]*"[^>]*data-news-card.*?</article>)', html, re.DOTALL
     )
     classes = [re.search(r'<article class="([^"]*)"', card).group(1) for card in card_blocks]
-    assert len(card_blocks) == 80
-    assert f'/noticias/{SLUG}/' in card_blocks[3]
-    assert "news-card-compact" not in classes[3]
+    assert len(card_blocks) == 81
+    assert f'/noticias/{SLUG}/' in card_blocks[4]
+    assert "news-card-compact" not in classes[4]
     assert all("news-card-compact" not in value for value in classes[:5])
     assert "news-card-compact" in classes[5]
-    assert '>Todos</span><span class="text-xs text-slate-400">80<' in html
-    assert '>ANVISA</span><span class="text-xs text-slate-400">52<' in html
+    assert '>Todos</span><span class="text-xs text-slate-400">81<' in html
+    assert '>ANVISA</span><span class="text-xs text-slate-400">53<' in html
 
 
 def test_index_card_uses_informativo_contract_and_timestamp():
@@ -236,4 +236,4 @@ def test_sitemap_contains_new_url_with_editorial_lastmod():
     ]
     assert len(matches) == 1
     assert matches[0].findtext("s:lastmod", namespaces=namespace) == "2026-09-21"
-    assert len(root.findall("s:url", namespace)) == 100
+    assert len(root.findall("s:url", namespace)) == 101
