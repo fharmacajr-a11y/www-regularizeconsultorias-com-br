@@ -9,7 +9,7 @@ NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 SITEMAP_PATH = ROOT / "sitemap.xml"
 URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
 PUBLISHED = "2026-07-05T18:00:00-03:00"
-UPDATED = "2026-09-22T14:16:45-03:00"
+UPDATED = "2026-09-28T08:28:00-03:00"
 DOBUTAMINA_LOTES = ("24092127", "24102310", "25102244", "25102243", "25112308")
 
 
@@ -109,16 +109,17 @@ def test_september_update_reflects_re_3547_and_keeps_history():
     september = _september_callout(html)
     text = _text(september)
 
+    assert html.index("novas-medidas-25-setembro-title") < html.index("novas-medidas-21-setembro-title")
     assert html.index("novas-medidas-21-setembro-title") < html.index("novas-medidas-16-setembro-title")
     assert html.index("novas-medidas-16-setembro-title") < html.index("novas-medidas-setembro-title")
     assert html.index("novas-medidas-setembro-title") < html.index("novas-medidas-agosto-title")
-    assert html.count("data-news-update-callout aria-labelledby=") == 4
+    assert html.count("data-news-update-callout aria-labelledby=") == 5
     assert "ATUALIZAÇÃO" in september
     assert "Resolução-RE nº 3.547/2026" in text
     assert "de 09/09/2026 e publicada no DOU em 11/09/2026" in text
     assert "Medidas de julho a setembro mostram" in html
     assert "Medidas de julho e agosto" not in html
-    assert f'<time datetime="{UPDATED}">22/09/2026</time> às 14h16' in html
+    assert f'<time datetime="{UPDATED}">28/09/2026</time> às 08h28' in html
     assert f'<time datetime="{PUBLISHED}">05/07/2026</time> às 18h00' in html
     # Histórico de agosto e julho preservado.
     for term in ("12/08 — saneantes sem registro", "14/08 — Chá Sarapião", "Fiscalização de julho amplia", "Chlorohex 2,0%"):
@@ -259,12 +260,12 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
 
     assert news_index.count('href="/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"') == 1
     assert f'data-updated="{UPDATED}"' in news_index
-    assert "22/09/2026 • 14h16" in news_index
-    assert "A RE nº 3.717/2026, publicada em 21/09" in news_index
+    assert "28/09/2026 • 08h28" in news_index
+    assert "Publicações da Anvisa de 21 e 25/09 trazem a RE nº 3.751/2026" in news_index
     cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', news_index, re.DOTALL)
-    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[1]
+    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[0]
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
-    assert f"<loc>{URL}</loc>\n    <lastmod>2026-09-22</lastmod>" in sitemap
+    assert f"<loc>{URL}</loc>\n    <lastmod>2026-09-28</lastmod>" in sitemap
 
 
 def test_re_3717_callout_keeps_each_measure_inside_its_own_item():
@@ -358,3 +359,31 @@ def test_re_3717_body_uses_the_dou_text_and_does_not_mix_measures():
     assert "não determina apreensão, recolhimento nem proibição de uso" in cannabis
     assert "não representa proibição genérica de produtos de cannabis" in cannabis
     assert "href=" not in section
+
+
+def test_new_measures_of_21_and_25_september_keep_their_own_scope():
+    html = NEWS_PATH.read_text(encoding="utf-8")
+    start = html.index('data-news-update-callout aria-labelledby="novas-medidas-25-setembro-title"')
+    callout = html[start:html.index("</aside>", start)]
+    items = [_text(item) for item in _items(callout)]
+    body_start = html.index("<h2>25 de setembro: RE nº 3.751/2026")
+    body = _text(html[body_start:html.index("<h2>21 de setembro: RE nº 3.717/2026", body_start)])
+
+    assert len(items) == 5
+    ocrevus, ict, eleve, dcasa, smart = items
+    assert "H7953B14 e H7953B06" in ocrevus and "restrita aos dois lotes identificados" in ocrevus
+    assert "RE nº 3.751/2026" in ocrevus and "RE nº 3.751/2026" in ict
+    assert "31/08 a 02/09/2026" in ict and "o período citado refere-se ao recolhimento" in ict
+    assert "RE nº 3.712/2026" in eleve and "Gama Suplementos Alimentares" in eleve
+    assert "RE nº 3.714/2026" in dcasa and "Fórmula Química" in dcasa
+    assert "RE nº 3.714/2026" in smart and "não alcança os demais produtos da Klug" in smart
+    assert "href=" not in callout
+
+    # Limites de alcance e de atribuição informados na revisão.
+    assert "falsific" not in ocrevus.casefold()
+    assert "falsific" not in _text(html[body_start:html.index("<h3>ICT Farmacêutica", body_start)]).casefold()
+    assert "o alcance da suspensão deve ser conferido no ato publicado" in body
+    assert "Smart GR" not in dcasa and "saneantes" not in smart
+    assert "3.738" not in html
+    assert "CNPJ" not in dcasa and "CNPJ" not in _text(html[html.index("<h3>D Casa"):html.index("<h3>Smart GR")])
+    assert "href=" not in html[body_start:html.index("<h2>21 de setembro: RE nº 3.717/2026", body_start)]

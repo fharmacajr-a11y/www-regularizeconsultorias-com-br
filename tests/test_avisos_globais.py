@@ -292,8 +292,8 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     timestamps = [article.attrs.get("data-effective-at") for article in active]
 
     assert titles == [
-        "SNCR: nova etapa começa em 30/09",
         "Anvisa suspende medicamento e proíbe produtos irregulares",
+        "SNCR: nova etapa começa em 30/09",
         "Edital 6/2026: AFE para manipulação de preparações estéreis",
         "Farmácia Popular: confira municípios com vagas para credenciamento",
         "Farmácia Popular: atenção aos materiais no período eleitoral",

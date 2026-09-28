@@ -14,7 +14,7 @@ SITEMAP_PATH = ROOT / "sitemap.xml"
 ROUTE = "/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/"
 URL = f"https://www.regularizeconsultorias.com.br{ROUTE}"
 PUBLISHED = "2026-05-28T20:36:00-03:00"
-UPDATED = "2026-09-22T16:48:26-03:00"
+UPDATED = "2026-09-27T21:38:53-03:00"
 TITLE = "SNCR: nova etapa começa em 30 de setembro; veja o que muda para farmácias e drogarias"
 ADSENSE_SCRIPT_MARKER = "pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
 WHATSAPP_NEWS_TEXT = (
@@ -84,7 +84,7 @@ def test_sncr_news_keeps_publication_and_updates_the_september_stage():
     assert f'<meta property="article:published_time" content="{PUBLISHED}" />' in html
     assert f'<meta property="article:modified_time" content="{UPDATED}" />' in html
     assert f'<time datetime="{PUBLISHED}">28/05/2026</time> às 20h36' in html
-    assert f'<time datetime="{UPDATED}">22/09/2026</time> às 16h48' in html
+    assert f'<time datetime="{UPDATED}">27/09/2026</time> às 21h38' in html
     assert f'<link rel="canonical" href="{URL}" />' in html
     assert html.count(ADSENSE_SCRIPT_MARKER) == 1
     assert html.count("data-news-update-callout") - html.count("[data-news-update-callout]") == 1
@@ -149,10 +149,10 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     assert html.count(f'href="{ROUTE}"') == 1
     assert len(sncr_cards) == 1
     card = sncr_cards[0]
-    assert cards.index(card) == 0
+    assert cards.index(card) == 2
     assert "news-card-compact" not in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
-    assert f'<time datetime="{UPDATED}" class="leading-none">22/09/2026 • 16h48</time>' in card
+    assert f'<time datetime="{UPDATED}" class="leading-none">27/09/2026 • 21h38</time>' in card
     for term in (
         "SNCR: nova etapa começa em 30 de setembro",
         "farmácias e drogarias",
@@ -183,14 +183,14 @@ def test_comunicado_keeps_one_sncr_card_and_six_active_notices():
         "Leia a orientação completa",
     ):
         assert term in card_text
-    assert active[0] is sncr_cards[0]
+    assert active[1] is sncr_cards[0]
 
 
 def test_sncr_news_has_current_sitemap_lastmod():
     sitemap = SITEMAP_PATH.read_text(encoding="utf-8")
 
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
-    assert f"<loc>{URL}</loc>\n    <lastmod>2026-09-22</lastmod>" in sitemap
+    assert f"<loc>{URL}</loc>\n    <lastmod>2026-09-27</lastmod>" in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/servicos/</loc>\n"
         "    <lastmod>2026-09-22</lastmod>"
@@ -239,3 +239,40 @@ def test_servicos_sncr_card_describes_the_access_service():
     assert WHATSAPP_SERVICO_TEXT not in unquote(card)
     assert "e-CNPJ" not in card
     assert "Implanta\\u00e7\\u00e3o e habilita\\u00e7\\u00e3o de acesso ao SNCR" in html
+
+
+def test_sncr_news_stays_informative_without_tutorial_or_universal_deadline():
+    html = NEWS_PATH.read_text(encoding="utf-8")
+    body_html = re.search(r'<section class="article-body">(.*?)</section>', html, re.DOTALL).group(1)
+    body = _text(body_html)
+
+    # Corpo editorial sem links nem encaminhamento para fontes, manuais, sistemas ou modelos.
+    assert "href=" not in body_html
+    assert "Essa regra vale para a emissão" in body
+    assert "prazo de validade da prescrição" in body
+    for term in (
+        "implementação será gradual",
+        "ampliou as orientações",
+        "disponibilização oficial",
+        "avaliados individualmente",
+        "escopo e orçamento próprios",
+    ):
+        assert term in body
+    for term in (
+        "SNCR-Farmácia",
+        "Antes de 30 de setembro",
+        "passo a passo",
+        "certificado digital",
+        ".pdf",
+        "modelos oficiais",
+        "indisponibilidade",
+        "dispensários públicos",
+        "CNES",
+    ):
+        assert term.casefold() not in body.casefold()
+
+    news_index = _text(NEWS_INDEX_PATH.read_text(encoding="utf-8"))
+    comunicado = _text(COMUNICADO_PATH.read_text(encoding="utf-8"))
+    assert "implementação gradual" in news_index
+    assert "implementação gradual" in comunicado
+    assert "como preparar o estabelecimento" not in comunicado
