@@ -187,11 +187,26 @@ def test_body_has_no_treatment_dose_or_promotional_claims():
 def test_article_explains_relevance_without_ad_tutorial():
     body = _text(_article_body(_page_html()))
     assert "Por que o caso interessa a farmácias e empresas do setor" in body
-    assert "farmácias e drogarias" in body
-    assert "supervisão do farmacêutico" in body
+    assert "Mídia exterior e ambientes digitais aparecem, assim, lado a lado" in body
+    assert "o ponto central é a distinção feita pela Agência" in body
     lowered = body.casefold()
     for text in ("passo a passo", "como montar", "modelo de anúncio", "checklist"):
         assert text not in lowered, text
+
+
+def test_article_drops_generalizations_without_primary_source():
+    body = _text(_article_body(_page_html())).casefold()
+    for text in (
+        "atenção regulatória crescente",
+        "supervisão do farmacêutico",
+        "glp-1",
+        "governança",
+        "telas instaladas",
+        "está no centro da medida",
+        "não recebe o mesmo tratamento",
+        "a medida noticiada diz respeito",
+    ):
+        assert text not in body, text
 
 
 def test_navigation_contact_and_related_news_follow_site_pattern():
