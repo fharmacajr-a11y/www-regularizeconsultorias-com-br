@@ -376,7 +376,11 @@ def test_new_measures_of_21_and_25_september_keep_their_own_scope():
     assert "31/08 a 02/09/2026" in ict and "o período citado refere-se ao recolhimento" in ict
     assert "RE nº 3.712/2026" in eleve and "Gama Suplementos Alimentares" in eleve
     assert "RE nº 3.714/2026" in dcasa and "Fórmula Química" in dcasa
-    assert "RE nº 3.714/2026" in smart and "não alcança os demais produtos da Klug" in smart
+    assert "RE nº 3.714/2026" in smart
+    assert "A publicação da Anvisa identifica esses três produtos da Klug como atingidos pela medida." in smart
+    assert "A publicação da Anvisa identifica esses três produtos da Klug como atingidos pela medida." in body
+    # Sem afirmação sobre a situação dos demais produtos da empresa.
+    assert "demais produtos da Klug" not in callout and "demais produtos da Klug" not in body
     assert "href=" not in callout
 
     # Limites de alcance e de atribuição informados na revisão.
