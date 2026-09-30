@@ -180,16 +180,16 @@ def test_index_saneantes_card_has_correct_timestamp():
     assert f'data-updated="{DATE_PUBLISHED}"' in html
 
 
-def test_index_saneantes_in_itemlist_position_4():
+def test_index_saneantes_in_itemlist_position_6():
     html = _index_html()
     blocks = _jsonld_blocks(html)
     coll_blocks = [b for b in blocks if b.get("@type") == "CollectionPage"]
     assert coll_blocks, "CollectionPage ausente no índice"
     items = coll_blocks[0]["mainEntity"]["itemListElement"]
-    assert items[3]["url"] == ARTICLE_URL, (
-        f"Posição 4 esperada para {ARTICLE_URL!r}, encontrado {items[3]['url']!r}"
+    assert items[5]["url"] == ARTICLE_URL, (
+        f"Posição 6 esperada para {ARTICLE_URL!r}, encontrado {items[5]['url']!r}"
     )
-    assert items[3]["position"] == 4
+    assert items[5]["position"] == 6
 
 
 def test_index_itemlist_positions_are_sequential():
@@ -201,8 +201,9 @@ def test_index_itemlist_positions_are_sequential():
     assert positions == list(range(1, len(positions) + 1))
 
 
-def test_index_saneantes_card_is_not_compact():
-    """O card deve ser exibido como featured (sem news-card-compact) pois é a notícia mais recente."""
+def test_index_saneantes_card_is_compact_after_newer_entries():
+    """Com cinco notícias mais recentes no topo, o card de saneantes deixa de ser
+    destaque e passa a compacto, pela regra dos 5 cards destacados."""
     html = _index_html()
     article_match = re.search(
         r'(<article[^>]*data-updated="2026-09-15T16:17:00-03:00"[^>]*>.*?</article>)',
@@ -212,8 +213,8 @@ def test_index_saneantes_card_is_not_compact():
     assert article_match, "Card do saneantes não localizado no índice"
     card_html = article_match.group(1)
     opening_tag = card_html.split(">", 1)[0]
-    assert "news-card-compact" not in opening_tag, (
-        "Card do saneantes não deve ter news-card-compact (é featured)"
+    assert "news-card-compact" in opening_tag, (
+        "Card do saneantes deve ter news-card-compact (6º da listagem)"
     )
 
 
@@ -245,15 +246,16 @@ def test_index_keeps_exactly_five_highlighted_cards():
     assert "news-card-compact" in articles[5]
 
 
-def test_index_saneantes_is_fourth_of_five_highlighted():
+def test_index_saneantes_is_first_compact_after_five_highlighted():
     html = _index_html()
     article_blocks = re.findall(
         r'<article class="[^"]*"[^>]*data-news-card.*?</article>', html, re.DOTALL
     )
     assert article_blocks, "Nenhum card encontrado no índice"
-    fourth_block = article_blocks[3]
-    assert "news-card-compact" not in fourth_block
-    assert "anvisa-rdc-1040-in-468-2026-saneantes-regularizacao" in fourth_block
+    sixth_block = article_blocks[5]
+    assert "news-card-compact" in sixth_block.split(">", 1)[0]
+    assert "anvisa-rdc-1040-in-468-2026-saneantes-regularizacao" in sixth_block
+    assert all("news-card-compact" not in block.split(">", 1)[0] for block in article_blocks[:5])
 
 
 # ---------------------------------------------------------------------------
