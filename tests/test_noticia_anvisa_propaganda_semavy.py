@@ -251,10 +251,10 @@ def test_index_card_is_first_informativo_and_counts_are_updated():
     cards = _cards(html)
     assert html.count(f'href="/noticias/{SLUG}/"') == 1
     assert len(cards) == 81
-    card = cards[4]
+    card = cards[5]
     opening = card.split(">", 1)[0]
     assert f'href="/noticias/{SLUG}/"' in card
-    assert "news-card-compact" not in opening
+    assert "news-card-compact" in opening
     assert 'data-category="anvisa"' in opening
     assert f'data-updated="{TIMESTAMP}"' in opening
     assert f'data-title="{TITLE}"' in opening
@@ -268,7 +268,7 @@ def test_index_card_is_first_informativo_and_counts_are_updated():
 
 
 def test_index_card_is_searchable_by_product_substance_and_resolution():
-    card = _cards(_index_html())[4]
+    card = _cards(_index_html())[5]
     opening = card.split(">", 1)[0]
     tags = re.search(r'data-tags="([^"]*)"', opening).group(1).split()
     keywords = re.search(r'data-keywords="([^"]*)"', opening).group(1)
@@ -295,7 +295,7 @@ def test_itemlist_lists_the_new_url_once_in_first_position():
     )
     items = collection["mainEntity"]["itemListElement"]
     urls = [item["url"] for item in items]
-    assert urls[4] == PUBLIC_URL
+    assert urls[5] == PUBLIC_URL
     assert urls.count(PUBLIC_URL) == 1
     assert [item["position"] for item in items] == list(range(1, len(items) + 1))
     assert len(items) == 81
