@@ -157,18 +157,18 @@ def test_news_index_itemlist_ordering():
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
 
-    # Nova notícia inédita sobre a propaganda do Semavy, publicada em 28/09/2026 às 08h58.
-    assert urls[0] == SEMAVY_PROPAGANDA_URL
+    # A etapa do SNCR em 30/09, revisada em 30/09 às 06h40.
+    assert urls[0] == SNCR_WEBINAR_URL
+    assert urls.count(SNCR_WEBINAR_URL) == 1
+    # A notícia da propaganda do Semavy, publicada em 28/09/2026 às 08h58.
+    assert urls[1] == SEMAVY_PROPAGANDA_URL
     assert urls.count(SEMAVY_PROPAGANDA_URL) == 1
-    # O consolidado de fiscalização, revisado em 28/09 às 08h28, é a atualização mais recente.
-    assert urls[1] == PRODUTOS_IRREGULARES_URL
+    # O consolidado de fiscalização, revisado em 28/09 às 08h28.
+    assert urls[2] == PRODUTOS_IRREGULARES_URL
     assert urls.count(PRODUTOS_IRREGULARES_URL) == 1
     # A revisão de CNES/SNCR em 28/09 às 07h00 vem em seguida.
-    assert urls[2] == CNES_SNCR_URL
+    assert urls[3] == CNES_SNCR_URL
     assert urls.count(CNES_SNCR_URL) == 1
-    # A etapa do SNCR em 30/09, revisada em 27/09 às 21h38.
-    assert urls[3] == SNCR_WEBINAR_URL
-    assert urls.count(SNCR_WEBINAR_URL) == 1
     assert urls[4] == IN_470_SUPLEMENTOS_URL
     assert urls.count(IN_470_SUPLEMENTOS_URL) == 1
     # Nova notícia de saneantes: RDC 1.040/2026 e IN 468/2026.

@@ -14,7 +14,7 @@ SITEMAP_PATH = ROOT / "sitemap.xml"
 ROUTE = "/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/"
 URL = f"https://www.regularizeconsultorias.com.br{ROUTE}"
 PUBLISHED = "2026-05-28T20:36:00-03:00"
-UPDATED = "2026-09-27T21:38:53-03:00"
+UPDATED = "2026-09-30T06:40:00-03:00"
 TITLE = "SNCR: nova etapa começa em 30 de setembro; veja o que muda para farmácias e drogarias"
 ADSENSE_SCRIPT_MARKER = "pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
 WHATSAPP_NEWS_TEXT = (
@@ -84,7 +84,7 @@ def test_sncr_news_keeps_publication_and_updates_the_september_stage():
     assert f'<meta property="article:published_time" content="{PUBLISHED}" />' in html
     assert f'<meta property="article:modified_time" content="{UPDATED}" />' in html
     assert f'<time datetime="{PUBLISHED}">28/05/2026</time> às 20h36' in html
-    assert f'<time datetime="{UPDATED}">27/09/2026</time> às 21h38' in html
+    assert f'<time datetime="{UPDATED}">30/09/2026</time> às 06h40' in html
     assert f'<link rel="canonical" href="{URL}" />' in html
     assert html.count(ADSENSE_SCRIPT_MARKER) == 1
     assert html.count("data-news-update-callout") - html.count("[data-news-update-callout]") == 1
@@ -105,6 +105,9 @@ def test_sncr_news_keeps_publication_and_updates_the_september_stage():
         "amplia o suporte ao fluxo eletrônico",
         "prescrição eletrônica continua facultativa",
         "não substitui a escrituração no SNGPC",
+        "29 de setembro de 2026",
+        "perfis de acesso ao SNCR",
+        "etapa preliminar",
     ):
         assert term in callout_text
     assert "href=" not in callout
@@ -149,14 +152,16 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     assert html.count(f'href="{ROUTE}"') == 1
     assert len(sncr_cards) == 1
     card = sncr_cards[0]
-    assert cards.index(card) == 3
+    assert cards.index(card) == 0
     assert "news-card-compact" not in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
-    assert f'<time datetime="{UPDATED}" class="leading-none">27/09/2026 • 21h38</time>' in card
+    assert f'<time datetime="{UPDATED}" class="leading-none">30/09/2026 • 06h40</time>' in card
     for term in (
         "SNCR: nova etapa começa em 30 de setembro",
         "farmácias e drogarias",
         "30/09/2026",
+        "29/09",
+        "Cadastro Anvisa",
         "já existe",
         "SNGPC",
     ):
@@ -181,16 +186,18 @@ def test_comunicado_keeps_one_sncr_card_and_six_active_notices():
         "SNCR já existe",
         "30/09/2026",
         "Leia a orientação completa",
+        "29/09/2026",
+        "etapa preliminar",
     ):
         assert term in card_text
-    assert active[1] is sncr_cards[0]
+    assert active[0] is sncr_cards[0]
 
 
 def test_sncr_news_has_current_sitemap_lastmod():
     sitemap = SITEMAP_PATH.read_text(encoding="utf-8")
 
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
-    assert f"<loc>{URL}</loc>\n    <lastmod>2026-09-27</lastmod>" in sitemap
+    assert f"<loc>{URL}</loc>\n    <lastmod>2026-09-30</lastmod>" in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/servicos/</loc>\n"
         "    <lastmod>2026-09-22</lastmod>"
@@ -256,6 +263,8 @@ def test_sncr_news_stays_informative_without_tutorial_or_universal_deadline():
         "disponibilização oficial",
         "avaliados individualmente",
         "escopo e orçamento próprios",
+        "passariam a funcionar",
+        "29 de setembro de 2026",
     ):
         assert term in body
     for term in (
