@@ -103,7 +103,7 @@ def test_cnes_news_answers_the_question_without_links_or_tutorial():
         assert term not in editorial, term
 
 
-def test_cnes_card_is_unique_current_and_highlighted_in_the_listing():
+def test_cnes_card_is_unique_current_and_compact_after_newer_reviews():
     html = NEWS_INDEX_PATH.read_text(encoding="utf-8")
     cards = re.findall(r"(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)", html, re.DOTALL)
     matches = [card for card in cards if f'href="{ROUTE}"' in card]
@@ -113,7 +113,8 @@ def test_cnes_card_is_unique_current_and_highlighted_in_the_listing():
     assert len(matches) == 1
     card = matches[0]
     opening = card.split(">", 1)[0]
-    assert "news-card-compact" not in opening
+    assert cards.index(card) == 6
+    assert "news-card-compact" in opening
     assert f'data-updated="{UPDATED}"' in opening
     assert f'data-title="{TITLE}"' in opening
     assert f'<time datetime="{UPDATED}" class="leading-none">28/09/2026 • 07h00</time>' in card

@@ -180,16 +180,16 @@ def test_index_saneantes_card_has_correct_timestamp():
     assert f'data-updated="{DATE_PUBLISHED}"' in html
 
 
-def test_index_saneantes_in_itemlist_position_6():
+def test_index_saneantes_in_itemlist_position_9():
     html = _index_html()
     blocks = _jsonld_blocks(html)
     coll_blocks = [b for b in blocks if b.get("@type") == "CollectionPage"]
     assert coll_blocks, "CollectionPage ausente no índice"
     items = coll_blocks[0]["mainEntity"]["itemListElement"]
-    assert items[5]["url"] == ARTICLE_URL, (
-        f"Posição 6 esperada para {ARTICLE_URL!r}, encontrado {items[5]['url']!r}"
+    assert items[8]["url"] == ARTICLE_URL, (
+        f"Posição 9 esperada para {ARTICLE_URL!r}, encontrado {items[8]['url']!r}"
     )
-    assert items[5]["position"] == 6
+    assert items[8]["position"] == 9
 
 
 def test_index_itemlist_positions_are_sequential():
@@ -202,8 +202,7 @@ def test_index_itemlist_positions_are_sequential():
 
 
 def test_index_saneantes_card_is_compact_after_newer_entries():
-    """Com cinco notícias mais recentes no topo, o card de saneantes deixa de ser
-    destaque e passa a compacto, pela regra dos 5 cards destacados."""
+    """O card de saneantes permanece compacto, fora dos cinco destaques."""
     html = _index_html()
     article_match = re.search(
         r'(<article[^>]*data-updated="2026-09-15T16:17:00-03:00"[^>]*>.*?</article>)',
@@ -246,16 +245,21 @@ def test_index_keeps_exactly_five_highlighted_cards():
     assert "news-card-compact" in articles[5]
 
 
-def test_index_saneantes_is_first_compact_after_five_highlighted():
+def test_index_saneantes_stays_compact_after_the_five_highlighted():
     html = _index_html()
     article_blocks = re.findall(
         r'<article class="[^"]*"[^>]*data-news-card.*?</article>', html, re.DOTALL
     )
     assert article_blocks, "Nenhum card encontrado no índice"
-    sixth_block = article_blocks[5]
-    assert "news-card-compact" in sixth_block.split(">", 1)[0]
-    assert "anvisa-rdc-1040-in-468-2026-saneantes-regularizacao" in sixth_block
+    saneantes_index = next(
+        index
+        for index, block in enumerate(article_blocks)
+        if "anvisa-rdc-1040-in-468-2026-saneantes-regularizacao" in block
+    )
+    assert saneantes_index == 8
+    assert "news-card-compact" in article_blocks[saneantes_index].split(">", 1)[0]
     assert all("news-card-compact" not in block.split(">", 1)[0] for block in article_blocks[:5])
+    assert "news-card-compact" in article_blocks[5].split(">", 1)[0]
 
 
 # ---------------------------------------------------------------------------

@@ -205,7 +205,7 @@ def test_index_has_one_card_in_fifth_position_and_expected_counts():
     )
     classes = [re.search(r'<article class="([^"]*)"', card).group(1) for card in card_blocks]
     assert len(card_blocks) == 81
-    assert f'/noticias/{SLUG}/' in card_blocks[4]
+    assert f'/noticias/{SLUG}/' in card_blocks[7]
     assert "news-card-compact" not in classes[4]
     assert all("news-card-compact" not in value for value in classes[:5])
     assert "news-card-compact" in classes[5]
