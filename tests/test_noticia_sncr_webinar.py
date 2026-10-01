@@ -180,16 +180,19 @@ def test_comunicado_keeps_one_sncr_card_and_six_active_notices():
     assert len(sncr_cards) == 1
     card_text = _text(sncr_cards[0])
     for term in (
-        "SNCR: nova etapa começa em 30/09",
+        "SNCR: nova etapa está em operação desde 30/09",
         "Farmácias e drogarias",
         "receituários eletrônicos",
-        "SNCR já existe",
+        "já estava em funcionamento",
+        "implementação gradual",
+        "prescrição eletrônica segue facultativa",
         "30/09/2026",
         "Leia a orientação completa",
-        "29/09/2026",
-        "etapa preliminar",
     ):
         assert term in card_text
+    assert "29/09/2026" not in card_text
+    assert "etapa preliminar" not in card_text
+    assert "como preparar o estabelecimento" not in card_text
     assert active[0] is sncr_cards[0]
 
 
