@@ -87,11 +87,11 @@ def test_cadastro_anvisa_body_states_the_confirmed_scope_without_an_access_scrip
         assert banned not in folded, banned
 
 
-def test_cadastro_anvisa_card_leads_the_listing_and_sitemap():
+def test_cadastro_anvisa_card_stays_second_in_the_listing_and_sitemap():
     index = NEWS_INDEX.read_text(encoding="utf-8")
     cards = re.findall(r"(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)", index, re.DOTALL)
-    assert len(cards) == 81
-    card = cards[0]
+    assert len(cards) == 82
+    card = cards[1]
     opening = card.split(">", 1)[0]
     assert f'href="/noticias/cadastro-anvisa-govbr-transicao-sistemas/"' in card
     assert "news-card-compact" not in opening
@@ -103,9 +103,9 @@ def test_cadastro_anvisa_card_leads_the_listing_and_sitemap():
     assert "Ler atualização" in card
     assert f'<time datetime="{UPDATED}" class="leading-none">30/09/2026 • 17h49</time>' in card
     assert index.count(f'href="/noticias/cadastro-anvisa-govbr-transicao-sistemas/"') == 1
-    assert '>Todos</span><span class="text-xs text-slate-400">81<' in index
-    assert '>ANVISA</span><span class="text-xs text-slate-400">53<' in index
-    assert f'"position":1,"url":"https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/"' in index
+    assert '>Todos</span><span class="text-xs text-slate-400">82<' in index
+    assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in index
+    assert f'"position":2,"url":"https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/"' in index
     sitemap = SITEMAP.read_text(encoding="utf-8")
     assert f"<loc>https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/</loc>\n    <lastmod>2026-09-30</lastmod>" in sitemap
 

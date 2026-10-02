@@ -250,8 +250,8 @@ def test_index_card_is_first_informativo_and_counts_are_updated():
     html = _index_html()
     cards = _cards(html)
     assert html.count(f'href="/noticias/{SLUG}/"') == 1
-    assert len(cards) == 81
-    card = cards[5]
+    assert len(cards) == 82
+    card = cards[6]
     opening = card.split(">", 1)[0]
     assert f'href="/noticias/{SLUG}/"' in card
     assert "news-card-compact" in opening
@@ -262,13 +262,13 @@ def test_index_card_is_first_informativo_and_counts_are_updated():
     assert "news-orange-badge" in card and ">Informativo</span>" in card
     assert "Ler notícia" in card
     assert "Atualização" not in card and "Ler atualização" not in card
-    assert "81 notícias encontradas" in html
-    assert '>Todos</span><span class="text-xs text-slate-400">81<' in html
-    assert '>ANVISA</span><span class="text-xs text-slate-400">53<' in html
+    assert "82 notícias encontradas" in html
+    assert '>Todos</span><span class="text-xs text-slate-400">82<' in html
+    assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in html
 
 
 def test_index_card_is_searchable_by_product_substance_and_resolution():
-    card = _cards(_index_html())[5]
+    card = _cards(_index_html())[6]
     opening = card.split(">", 1)[0]
     tags = re.search(r'data-tags="([^"]*)"', opening).group(1).split()
     keywords = re.search(r'data-keywords="([^"]*)"', opening).group(1)
@@ -288,17 +288,17 @@ def test_index_keeps_five_highlighted_cards_after_new_entry():
     assert all("news-card-compact" in value for value in classes[5:])
 
 
-def test_itemlist_lists_the_new_url_once_in_first_position():
+def test_itemlist_keeps_the_semavy_url_once():
     html = _index_html()
     collection = next(
         block for block in _jsonld_blocks(html) if block.get("@type") == "CollectionPage"
     )
     items = collection["mainEntity"]["itemListElement"]
     urls = [item["url"] for item in items]
-    assert urls[5] == PUBLIC_URL
+    assert urls[6] == PUBLIC_URL
     assert urls.count(PUBLIC_URL) == 1
     assert [item["position"] for item in items] == list(range(1, len(items) + 1))
-    assert len(items) == 81
+    assert len(items) == 82
 
 
 def test_sitemap_contains_new_url_with_editorial_lastmod():

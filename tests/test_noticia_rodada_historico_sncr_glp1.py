@@ -88,9 +88,9 @@ def test_listing_sitemap_and_cards_follow_the_review_timestamps():
     cards = re.findall(r"(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)", index, re.DOTALL)
 
     expected = (
-        ("anvisa-atualiza-acesso-sncr-afe-farmacias-privadas", AFE_UPDATED, "30/09/2026 • 09h32", 1),
-        ("nova-regra-anvisa-cnes-receitas-farmacias", CNES_UPDATED, "30/09/2026 • 09h31", 2),
-        ("canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao", GLP1_UPDATED, "30/09/2026 • 09h30", 3),
+        ("anvisa-atualiza-acesso-sncr-afe-farmacias-privadas", AFE_UPDATED, "30/09/2026 • 09h32", 2),
+        ("nova-regra-anvisa-cnes-receitas-farmacias", CNES_UPDATED, "30/09/2026 • 09h31", 3),
+        ("canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao", GLP1_UPDATED, "30/09/2026 • 09h30", 4),
     )
     for slug, updated, label, position in expected:
         card = _card(index, slug)
@@ -101,7 +101,7 @@ def test_listing_sitemap_and_cards_follow_the_review_timestamps():
         assert f"<loc>https://www.regularizeconsultorias.com.br/noticias/{slug}/</loc>\n    <lastmod>2026-09-30</lastmod>" in sitemap
 
     assert "ausência de acesso direto" not in index
-    assert '>Todos</span><span class="text-xs text-slate-400">81<' in index
-    assert '>ANVISA</span><span class="text-xs text-slate-400">53<' in index
+    assert '>Todos</span><span class="text-xs text-slate-400">82<' in index
+    assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in index
     assert '>CNES</span><span class="text-xs text-slate-400">5<' in index
     assert '>SNCR</span><span class="text-xs text-slate-400">2<' in index
