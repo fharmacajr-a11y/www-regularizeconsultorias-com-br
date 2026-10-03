@@ -114,8 +114,11 @@
     ['fp-search', 'fp-uf', 'fp-status'].forEach(function (id) { el[id].addEventListener(id === 'fp-search' ? 'input' : 'change', applyFilters); });
     el['fp-clear'].addEventListener('click', function () { el['fp-search'].value = ''; el['fp-uf'].value = ''; el['fp-status'].value = ''; applyFilters(); el['fp-search'].focus(); });
     el['fp-page-size'].addEventListener('change', function () { state.pageSize = Number(el['fp-page-size'].value); state.page = 1; renderTable(); });
-    el['fp-prev'].addEventListener('click', function () { if (state.page > 1) { state.page -= 1; renderTable(); } });
-    el['fp-next'].addEventListener('click', function () { if (state.page * state.pageSize < state.filtered.length) { state.page += 1; renderTable(); } });
+    // Na primeira ou na última página o botão usado fica desabilitado; o foco
+    // passa para o outro botão em vez de cair no <body>.
+    function keepPaginationFocus(used, other) { if (used.disabled && !other.disabled) other.focus(); }
+    el['fp-prev'].addEventListener('click', function () { if (state.page > 1) { state.page -= 1; renderTable(); keepPaginationFocus(el['fp-prev'], el['fp-next']); } });
+    el['fp-next'].addEventListener('click', function () { if (state.page * state.pageSize < state.filtered.length) { state.page += 1; renderTable(); keepPaginationFocus(el['fp-next'], el['fp-prev']); } });
   }
   document.addEventListener('DOMContentLoaded', function () {
     initializeEvents();

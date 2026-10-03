@@ -89,6 +89,13 @@
    Nesta fase, os subtítulos abaixo apenas documentam o bloco sem alterar regras. */
 
 /* 15.1 Notícias: filtros e estados ativos da listagem */
+/* Presa, a coluna fica 1rem abaixo da faixa regulatória (2,5rem) e da navbar
+   (6rem). O antigo top-28 (7rem) é anterior à faixa e deixava o topo da coluna
+   sob o cabeçalho. */
+.news-sidebar-sticky {
+  top: 9.5rem;
+}
+
 /* A coluna de filtros é sticky e, abaixo de 1024 px, ocupa a largura do miolo.
    O recuo é só dessa coluna, para os botões não ficarem sob os controles fixos. */
 @media (max-width: 1023px) {

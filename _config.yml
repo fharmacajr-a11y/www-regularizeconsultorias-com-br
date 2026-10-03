@@ -1,0 +1,18 @@
+# Publicação no GitHub Pages (build da branch main, pasta raiz).
+# Nenhum arquivo do site tem front matter: o Jekyll só copia os arquivos,
+# sem layouts nem Liquid. Os caminhos abaixo continuam no repositório, mas
+# ficam fora do site publicado. Arquivos e pastas iniciados por "." ou "_"
+# já ficam fora por padrão. Conferido por tests/seo/test_publicacao_pages.py
+# e pelo build local de scripts/gerar_site_pages.py.
+
+# Sem o tema padrão do GitHub Pages (jekyll-theme-primer), que acrescentaria
+# assets/css/style.css ao site.
+theme: null
+
+exclude:
+  - tests
+  - scripts
+  - pytest.ini
+  - tailwind.config.js
+  - noticias/template-noticia.html
+  - noticias/a-publicar

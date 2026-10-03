@@ -71,6 +71,12 @@
   top: 4.8rem;
 }
 
+/* Âncoras e foco param abaixo da faixa e da navbar fixas, com 1rem de
+   folga: 4,8rem + 5rem no celular e 2,5rem + 6rem a partir de 768 px. */
+html {
+  scroll-padding-top: 10.8rem;
+}
+
 @media (max-width: 420px) {
   .site-regulatory-banner__link {
     position: relative;
@@ -107,6 +113,10 @@
 
   #navbar {
     top: 2.5rem;
+  }
+
+  html {
+    scroll-padding-top: 9.5rem;
   }
 }
 

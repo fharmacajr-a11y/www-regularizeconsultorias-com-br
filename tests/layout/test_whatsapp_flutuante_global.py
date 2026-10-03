@@ -9,7 +9,7 @@ from urllib.parse import parse_qs, urlsplit
 
 import pytest
 
-from support import ROOT, TreeParser, parse_html, public_html_paths
+from support import ROOT, SITE_DIR, TreeParser, parse_html, public_html_paths
 
 
 TEMPLATE_PATH = ROOT / "noticias" / "template-noticia.html"
@@ -199,7 +199,7 @@ CAROUSEL_WIDTHS = [
 def http_server():
     class QuietHandler(http.server.SimpleHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
-            super().__init__(*args, directory=str(ROOT.resolve()), **kwargs)
+            super().__init__(*args, directory=str(SITE_DIR), **kwargs)
 
         def log_message(self, format, *args):
             pass

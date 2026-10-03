@@ -21,7 +21,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from support import ROOT, public_html_paths
+from support import ROOT, SITE_DIR, public_html_paths
 
 
 DETAIL_PAGES = [
@@ -49,6 +49,9 @@ DETAIL_WIDTHS = [
     1023, 1024, 1280, 1359, 1360, 1375, 1376, 1440,
 ]
 GENERAL_WIDTHS = [390, 768, 1280, 1440]
+# Nas larguras mais estreitas, todas as páginas passam só pela checagem de
+# rolagem horizontal: títulos sem quebra e tabelas largas aparecem aqui.
+NARROW_WIDTHS = [320, 360]
 REFERENCE_WIDTH = 1440
 
 # Quebras de linha do 331a974, medidas por este script no fim da rolagem.
@@ -321,7 +324,7 @@ HISTORY_SAMPLER_JS = r"""
 
 class QuietHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, directory=str(ROOT.resolve()), **kwargs)
+        super().__init__(*args, directory=str(SITE_DIR), **kwargs)
 
     def log_message(self, format, *args):
         pass
@@ -475,6 +478,10 @@ def _collect(mode):
                         f"{relative_path} @{width}", data, reference["paddingBottom"],
                         _reference_lines(relative_path, width),
                     ))
+                for width in NARROW_WIDTHS:
+                    overflow = _measure(page, width, "start")["overflowX"]
+                    if overflow > 1:
+                        failures.append(f"{relative_path} @{width}: rolagem horizontal de {overflow} px")
         elif mode == "historico":
             relative_path = "comunicado/index.html"
             for width in HISTORY_WIDTHS:

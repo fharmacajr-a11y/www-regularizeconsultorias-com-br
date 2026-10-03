@@ -9,6 +9,8 @@ from pathlib import Path
 import pytest
 from playwright.sync_api import sync_playwright
 
+from support import SITE_DIR
+
 
 ROOT = Path(__file__).parents[2]
 COMUNICADO_PATH = ROOT / "comunicado" / "index.html"
@@ -125,7 +127,7 @@ class _QuietHandler(SimpleHTTPRequestHandler):
 
 @pytest.fixture(scope="module")
 def site_url():
-    handler = functools.partial(_QuietHandler, directory=str(ROOT))
+    handler = functools.partial(_QuietHandler, directory=str(SITE_DIR))
     server = ThreadingHTTPServer(("127.0.0.1", 0), handler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()

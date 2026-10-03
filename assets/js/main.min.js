@@ -483,15 +483,23 @@
         positionLoadMoreControl(matchingCards);
         loadMoreWrapper.classList.toggle('hidden', !(currentLimit < Infinity && currentLimit < totalMatching));
       }
+
+      return matchingCards;
     }
 
-    // Clique no botão "Carregar mais"
+    // Clique no botão "Carregar mais": o botão some ao expandir, então o foco
+    // segue para o link do primeiro card revelado em vez de cair no <body>.
     if (loadMoreBtn) {
       loadMoreBtn.addEventListener('click', function () {
+        var firstRevealedIndex = currentLimit;
         hasExpandedResults = true;
         currentLimit = Infinity;
-        updateResults();
-        loadMoreBtn.focus();
+        var revealedCard = updateResults()[firstRevealedIndex];
+        var revealedLink = revealedCard ? revealedCard.querySelector('a[href]') : null;
+
+        if (revealedLink) {
+          revealedLink.focus();
+        }
       });
     }
 
@@ -586,8 +594,17 @@
     });
 
     document.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape' && !avisoImageModal.classList.contains('hidden')) {
+      if (avisoImageModal.classList.contains('hidden')) {
+        return;
+      }
+
+      if (event.key === 'Escape') {
         closeAvisoImageModal();
+      } else if (event.key === 'Tab') {
+        // "Fechar" é o único controle do modal: o foco não passa para a
+        // página coberta pela sobreposição.
+        event.preventDefault();
+        avisoImageClose.focus();
       }
     });
   }

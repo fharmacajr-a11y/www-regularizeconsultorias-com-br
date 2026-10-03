@@ -10,6 +10,8 @@ from pathlib import Path
 import pytest
 from playwright.sync_api import sync_playwright
 
+from support import SITE_DIR
+
 
 ROOT = Path(__file__).parents[2]
 RECORDS_PATH = ROOT / "data" / "farmacia-popular" / "vagas-2026-09-03.json"
@@ -35,7 +37,7 @@ class QuietHandler(SimpleHTTPRequestHandler):
 
 @pytest.fixture(scope="session")
 def site_url():
-    handler = functools.partial(QuietHandler, directory=str(ROOT))
+    handler = functools.partial(QuietHandler, directory=str(SITE_DIR))
     server = ThreadingHTTPServer(("127.0.0.1", 0), handler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
@@ -600,3 +602,33 @@ def test_cenario_u_correcao_do_enter_nao_usa_captura_global_de_teclado(page, sit
 
     open_consultation(page, site_url)
     assert page.locator("#fp-filters").count() == 1, "o <form> deve ser preservado"
+
+
+def test_cenario_v_paginacao_pelo_teclado_mantem_o_foco_nos_limites(page, site_url):
+    """Na última e na primeira página o botão usado fica desabilitado; o foco vai para o outro."""
+    open_consultation(page, site_url)
+    page.locator("#fp-uf").select_option("AC")
+    ac_pages = math.ceil(len([record for record in RECORDS if record["uf"] == "AC"]) / 10)
+    assert ac_pages >= 2
+
+    page.locator("#fp-next").focus()
+    for _ in range(ac_pages - 1):
+        page.keyboard.press("Enter")
+    assert page.locator("#fp-page-info").text_content() == f"Página {ac_pages} de {ac_pages}"
+    assert page.locator("#fp-next").is_disabled()
+    assert page.evaluate("document.activeElement.id") == "fp-prev"
+
+    for _ in range(ac_pages - 1):
+        page.keyboard.press("Enter")
+    assert page.locator("#fp-page-info").text_content() == f"Página 1 de {ac_pages}"
+    assert page.locator("#fp-prev").is_disabled()
+    assert page.evaluate("document.activeElement.id") == "fp-next"
+
+
+def test_cenario_w_titulo_dos_indicadores_fica_so_para_leitores_de_tela(page, site_url):
+    open_consultation(page, site_url)
+    heading = page.locator("#fp-indicators-title")
+    assert heading.text_content() == "Indicadores da base"
+    box = heading.bounding_box()
+    assert box is not None and box["width"] <= 1 and box["height"] <= 1, box
+    assert page.locator("section[aria-labelledby='fp-indicators-title']").count() == 1

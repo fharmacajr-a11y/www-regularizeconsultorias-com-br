@@ -125,6 +125,17 @@ main > article > header .category-chip {
   text-decoration: none;
 }
 
+/* Tabela larga no texto: rola dentro da própria caixa em telas estreitas,
+   sem levar a página para os lados. */
+.article-table-scroll {
+  overflow-x: auto;
+}
+
+.article-table-scroll:focus-visible {
+  outline: 3px solid rgba(21, 101, 192, 0.45);
+  outline-offset: 2px;
+}
+
 /* ---------- Perguntas frequentes ---------- */
 .article-faq {
   margin-top: 2.5rem;

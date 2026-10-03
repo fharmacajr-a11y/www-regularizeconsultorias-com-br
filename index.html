@@ -44,7 +44,7 @@
   <!-- CSS personalizado (variáveis de cor, overrides) -->
   <link rel="stylesheet" href="/assets/css/tailwind.min.css">
   <link rel="stylesheet" href="/assets/css/base.css">
-  <link rel="stylesheet" href="/assets/css/components.css?v=20261003-rodape-1">
+  <link rel="stylesheet" href="/assets/css/components.css?v=20261003-auditoria-1">
   <link rel="stylesheet" href="/assets/css/pages/home.css">
 
   <script type="application/ld+json">
@@ -739,10 +739,33 @@
       nextButton.addEventListener('click', function () {
         scrollManualsCarousel(1);
       });
+
+      // Pelo teclado, o card que recebe o foco entra inteiro na vitrine.
+      // Sem isso, abaixo de 768 px o snap devolvia a vitrine ao card anterior
+      // e o foco ficava num card quase todo fora da área visível.
+      carousel.addEventListener('focusin', function (event) {
+        var card = event.target.closest('.home-manuals-card');
+
+        if (!card) {
+          return;
+        }
+
+        var cardBox = card.getBoundingClientRect();
+        var carouselBox = carousel.getBoundingClientRect();
+
+        if (cardBox.left >= carouselBox.left - 1 && cardBox.right <= carouselBox.right + 1) {
+          return;
+        }
+
+        carousel.scrollTo({
+          left: carousel.scrollLeft + cardBox.left - carouselBox.left,
+          behavior: prefersReducedMotion.matches ? 'auto' : 'smooth'
+        });
+      });
     })();
   </script>
 
   <!-- JavaScript principal (navbar, menu mobile, link ativo) -->
-  <script src="/assets/js/main.min.js?v=20261003-rodape-1"></script>
+  <script src="/assets/js/main.min.js?v=20261003-auditoria-1"></script>
 </body>
 </html>

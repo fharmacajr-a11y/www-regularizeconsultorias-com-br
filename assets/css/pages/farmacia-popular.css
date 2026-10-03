@@ -14,6 +14,8 @@
 .fp-notice--warning { background: #fffbeb; border: 1px solid #fcd34d; color: #78350f; }
 .fp-notice--institutional { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a5f; }
 .fp-notice--error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+/* Título dos indicadores só para leitores de tela: o tailwind.min.css não traz o utilitário sr-only. */
+.sr-only { border: 0; clip: rect(0, 0, 0, 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; white-space: nowrap; width: 1px; }
 .fp-indicators { display: grid; gap: .875rem; grid-template-columns: repeat(5, minmax(0, 1fr)); margin: 1.5rem 0; }
 .fp-indicators article { background: #fff; border: 1px solid #e2e8f0; border-radius: .875rem; padding: 1.125rem; }
 .fp-indicators span { color: #64748b; display: block; font-size: .75rem; font-weight: 700; line-height: 1.35; text-transform: uppercase; }

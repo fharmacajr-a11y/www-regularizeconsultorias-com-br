@@ -1,9 +1,13 @@
 """Leitura compartilhada do HTML público do site."""
+import os
 from html.parser import HTMLParser
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+# Pasta servida nos testes de navegador: o repositório ou, com PAGES_SITE_DIR,
+# a saída do build do GitHub Pages gerada por scripts/gerar_site_pages.py.
+SITE_DIR = Path(os.environ.get("PAGES_SITE_DIR") or ROOT).resolve()
 EXCLUDED_PUBLIC_PATHS = {
     Path("noticias/template-noticia.html"),
     Path("whatsapp/index.html"),
