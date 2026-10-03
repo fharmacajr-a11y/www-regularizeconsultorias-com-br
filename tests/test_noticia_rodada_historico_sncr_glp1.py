@@ -88,16 +88,17 @@ def test_listing_sitemap_and_cards_follow_the_review_timestamps():
     cards = re.findall(r"(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)", index, re.DOTALL)
 
     expected = (
-        ("anvisa-atualiza-acesso-sncr-afe-farmacias-privadas", AFE_UPDATED, "30/09/2026 • 09h32", 2),
-        ("nova-regra-anvisa-cnes-receitas-farmacias", CNES_UPDATED, "30/09/2026 • 09h31", 3),
-        ("canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao", GLP1_UPDATED, "30/09/2026 • 09h30", 4),
+        ("anvisa-atualiza-acesso-sncr-afe-farmacias-privadas", AFE_UPDATED, "30/09/2026 • 09h32", 3, False),
+        ("nova-regra-anvisa-cnes-receitas-farmacias", CNES_UPDATED, "30/09/2026 • 09h31", 4, False),
+        ("canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao", GLP1_UPDATED, "30/09/2026 • 09h30", 5, True),
     )
-    for slug, updated, label, position in expected:
+    for slug, updated, label, position, compact in expected:
         card = _card(index, slug)
         assert cards.index(card) == position
         assert f'data-updated="{updated}"' in card
         assert label in card
-        assert "news-card-compact" not in card.split(">", 1)[0]
+        opening = card.split(">", 1)[0]
+        assert ("news-card-compact" in opening) is compact
         assert f"<loc>https://www.regularizeconsultorias.com.br/noticias/{slug}/</loc>\n    <lastmod>2026-09-30</lastmod>" in sitemap
 
     assert "ausência de acesso direto" not in index
