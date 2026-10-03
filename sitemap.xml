@@ -530,7 +530,7 @@
   </url>
   <url>
     <loc>https://www.regularizeconsultorias.com.br/manuais-e-pops/</loc>
-    <lastmod>2026-07-05</lastmod>
+    <lastmod>2026-10-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -585,6 +585,12 @@
   <url>
     <loc>https://www.regularizeconsultorias.com.br/manuais-e-pops/pops-drogaria/</loc>
     <lastmod>2026-09-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.regularizeconsultorias.com.br/manuais-e-pops/pop-sncr/</loc>
+    <lastmod>2026-10-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

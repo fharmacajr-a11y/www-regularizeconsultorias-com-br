@@ -236,4 +236,4 @@ def test_sitemap_contains_new_url_with_editorial_lastmod():
     ]
     assert len(matches) == 1
     assert matches[0].findtext("s:lastmod", namespaces=namespace) == "2026-09-21"
-    assert len(root.findall("s:url", namespace)) == 103
+    assert len(root.findall("s:url", namespace)) == 104

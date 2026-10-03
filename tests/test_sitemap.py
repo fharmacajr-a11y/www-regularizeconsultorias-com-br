@@ -51,7 +51,7 @@ def test_sitemap_is_valid_xml_with_unique_urls():
 
     assert root.tag == f"{{{NAMESPACE}}}urlset"
     assert all(location and location.strip() for location in locations)
-    assert len(locations) == 103
+    assert len(locations) == 104
     assert len(locations) == len(set(locations))
     assert set(locations) == public_canonicals
 
