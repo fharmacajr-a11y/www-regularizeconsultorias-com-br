@@ -102,8 +102,10 @@ def test_portaria_1617_is_published_at_the_public_url():
     assert third["name"] == "Aditivos com antimicrobianos"
     assert third["item"] == PUBLIC_URL
 
+    assert "<h2>Fontes oficiais</h2>" not in html
     for source in SOURCES:
-        assert source in html
+        assert source not in html
+    assert "Aviso institucional" in html
     assert "Precisa avaliar a situação regulatória no MAPA?" in html
     assert "análise regulatória" in html or "situação regulatória" in html
     assert "SIPEAGRO" in html
@@ -112,6 +114,9 @@ def test_portaria_1617_is_published_at_the_public_url():
         "27/04/2026",
         "23/10/2026",
         "21/01/2027",
+        "Ofício-Circular nº 29/2026",
+        "Diário Oficial da União",
+        "edição 77",
         "avoparcina",
         "bacitracina de zinco",
         "bacitracina metileno disalicilato",

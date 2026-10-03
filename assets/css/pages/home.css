@@ -328,6 +328,18 @@
   }
 }
 
+/* Entre 768 e 840 px a fileira de 42rem ainda alcança o WhatsApp.
+   O limite menor mantém os botões centralizados, sem estreitar o título. */
+@media (min-width: 768px) and (max-width: 840px) {
+  main > section.pt-6.pb-10.sm\:py-16.bg-white + .institutional-cta-section .flex.flex-col.sm\:flex-row {
+    max-width: 38rem;
+  }
+
+  main > section.pt-6.pb-10.sm\:py-16.bg-white + .institutional-cta-section .flex.flex-col.sm\:flex-row > a {
+    min-width: 0;
+  }
+}
+
 /* Home: refinamento final do selo/pill e botões em tablet/meia-tela */
 @media (min-width: 768px) and (max-width: 1279px) {
   main > section.pt-6.pb-10.sm\:py-16.bg-white .grid.grid-cols-1.xl\:grid-cols-3 > div:first-child > p {
@@ -378,6 +390,33 @@
     padding: 0.75rem 1rem;
     text-align: center;
     line-height: 1.25;
+  }
+}
+
+/* Em tablet a fileira da home ainda encosta no WhatsApp. O recuo vale
+   só para os botões e deixa o texto do bloco na largura original. */
+@media (max-width: 1023px) {
+  body:has(.home-hero-section) .institutional-cta-section:not(.about-final-cta-section) .flex.flex-col.sm\:flex-row {
+    margin-left: auto;
+    margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - 1.5rem);
+  }
+
+  body:has(.home-hero-section) .institutional-cta-section:not(.about-final-cta-section) .flex.flex-col.sm\:flex-row > a {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 639px) {
+  body:has(.home-hero-section) .institutional-cta-section:not(.about-final-cta-section) .flex.flex-col.sm\:flex-row {
+    margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem - 1rem);
+  }
+}
+
+/* No celular os dois CTAs do hero esticam até a borda e entram no WhatsApp.
+   O recuo vale só para essa fileira. */
+@media (max-width: 639px) {
+  .home-hero-copy > .flex {
+    margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem - 1rem);
   }
 }
 
@@ -503,8 +542,10 @@
   left: 0;
 }
 
+/* Recua só a seta seguinte até livrar a coluna fixa. O cálculo usa a sobra
+   já existente entre a borda do carrossel e a janela; em tela larga fica em zero. */
 .home-manuals-nav--next {
-  right: 0;
+  right: max(0px, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - (100vw - 100%) / 2));
 }
 
 .home-manuals-card {
@@ -644,10 +685,6 @@
 
   .home-manuals-nav--prev {
     left: 0.25rem;
-  }
-
-  .home-manuals-nav--next {
-    right: 0.25rem;
   }
 
   .home-manuals-nav span {

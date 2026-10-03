@@ -173,19 +173,25 @@ NEWS_PAGE = "noticias/index.html"
 LEGACY_PAGE = "noticias/anvisa-alerta-soroterapia-promessas-sem-evidencia/index.html"
 COMUNICADO_PAGE = "comunicado/index.html"
 
-STATIC_CASES = [
-    pytest.param(NEWS_PAGE, 390, 844, "footer", id="noticias-390"),
-    pytest.param(NEWS_PAGE, 768, 1024, "footer", id="noticias-768"),
-    pytest.param(NEWS_PAGE, 1375, 900, "footer", id="noticias-1375"),
-    pytest.param(LEGACY_PAGE, 390, 844, "footer", id="legada-390"),
-    pytest.param(LEGACY_PAGE, 1375, 900, "footer", id="legada-1375"),
-    pytest.param(COMUNICADO_PAGE, 390, 844, "main", id="comunicado-390"),
-]
-DESKTOP_CASES = [
+FIXED_CASES = [
+    pytest.param(NEWS_PAGE, 390, 844, id="noticias-390"),
+    pytest.param(NEWS_PAGE, 768, 1024, id="noticias-768"),
+    pytest.param(NEWS_PAGE, 1375, 900, id="noticias-1375"),
     pytest.param(NEWS_PAGE, 1376, 900, id="noticias-1376"),
     pytest.param(NEWS_PAGE, 1440, 900, id="noticias-1440"),
+    pytest.param(LEGACY_PAGE, 390, 844, id="legada-390"),
+    pytest.param(LEGACY_PAGE, 1375, 900, id="legada-1375"),
     pytest.param(LEGACY_PAGE, 1376, 900, id="legada-1376"),
     pytest.param(LEGACY_PAGE, 1440, 900, id="legada-1440"),
+    pytest.param(COMUNICADO_PAGE, 390, 844, id="comunicado-390"),
+]
+HOME_PAGE = "index.html"
+CAROUSEL_WIDTHS = [
+    pytest.param(390, 844, id="home-390"),
+    pytest.param(768, 1024, id="home-768"),
+    pytest.param(1375, 900, id="home-1375"),
+    pytest.param(1376, 900, id="home-1376"),
+    pytest.param(1440, 900, id="home-1440"),
 ]
 
 
@@ -209,14 +215,14 @@ def http_server():
         thread.join(timeout=5)
 
 
-def _browser_probe(port, relative_path, width, height, back_to_top=False):
+def _browser_probe(port, relative_path, width, height, back_to_top=False, check_end=False):
     assert (ROOT / relative_path).is_file(), f"Página obrigatória ausente: {relative_path}"
     script = r'''
 import json
 import sys
 from playwright.sync_api import sync_playwright
 
-url, width, height, back_to_top = sys.argv[1:]
+url, width, height, back_to_top, check_end = sys.argv[1:]
 with sync_playwright() as playwright:
     browser = playwright.chromium.launch(headless=True)
     context = browser.new_context(viewport={"width": int(width), "height": int(height)})
@@ -276,6 +282,27 @@ with sync_playwright() as playwright:
         button.click()
         page.wait_for_function("window.scrollY <= 1", timeout=5_000)
         layout["backToTopWorked"] = True
+    if check_end == "1":
+        layout["end"] = page.evaluate(
+            """() => {
+                document.documentElement.style.scrollBehavior = 'auto';
+                window.scrollTo(0, document.documentElement.scrollHeight);
+                const group = document.querySelector('.floating-buttons');
+                const gr = group.getBoundingClientRect();
+                const intersects = (r) => r.width > 0 && r.height > 0 && r.left < gr.right &&
+                    r.right > gr.left && r.top < gr.bottom && r.bottom > gr.top;
+                const hits = Array.from(document.querySelectorAll('footer a, footer p, main a, main button'))
+                    .filter(el => intersects(el.getBoundingClientRect()))
+                    .map(el => (el.innerText || el.getAttribute('aria-label') || el.tagName).trim().slice(0, 80));
+                return {
+                    hits,
+                    overflowX: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+                    groupTop: gr.top,
+                    groupBottom: gr.bottom,
+                    innerHeight: window.innerHeight,
+                };
+            }"""
+        )
     print(json.dumps(layout))
     context.close()
     browser.close()
@@ -289,6 +316,7 @@ with sync_playwright() as playwright:
             str(width),
             str(height),
             "1" if back_to_top else "0",
+            "1" if check_end else "0",
         ],
         capture_output=True,
         text=True,
@@ -306,39 +334,84 @@ def _assert_controls(layout, size):
         assert button["height"] == pytest.approx(size, abs=0.1), button
 
 
-@pytest.mark.parametrize("page_path,width,height,after", STATIC_CASES)
-def test_static_floating_buttons_contract(
-    http_server, page_path, width, height, after
+@pytest.mark.parametrize("page_path,width,height", FIXED_CASES)
+def test_floating_buttons_stay_fixed_on_the_viewport(
+    http_server, page_path, width, height
 ):
     if page_path in {LEGACY_PAGE, COMUNICADO_PAGE}:
         assert "custom.min.css" in (ROOT / page_path).read_text(encoding="utf-8")
 
-    layout = _browser_probe(http_server, page_path, width, height)
-    assert layout is not None, ".floating-buttons obrigatório ausente"
-    assert layout["position"] == "static", layout
-    assert layout["flexDirection"] == "row", layout
-    assert layout["overflowX"] <= 0, layout
-    assert not layout["intersectsMain"] and not layout["intersectsFooter"], layout
-    _assert_controls(layout, 44 if width <= 640 else 48)
-    boundary = layout[f"{after}Rect"]
-    assert boundary is not None, layout
-    assert layout["groupRect"]["top"] >= boundary["bottom"], layout
-
-
-@pytest.mark.parametrize("page_path,width,height", DESKTOP_CASES)
-def test_desktop_floating_buttons_contract(
-    http_server, page_path, width, height
-):
-    layout = _browser_probe(http_server, page_path, width, height)
+    layout = _browser_probe(http_server, page_path, width, height, check_end=True)
     assert layout is not None, ".floating-buttons obrigatório ausente"
     assert layout["position"] == "fixed", layout
     assert layout["flexDirection"] == "column", layout
     assert layout["bottom"] == pytest.approx(24, abs=0.1), layout
     assert layout["right"] == pytest.approx(24, abs=0.1), layout
     assert layout["zIndex"] == "9999", layout
-    _assert_controls(layout, 48)
+    assert layout["overflowX"] <= 0, layout
+    group = layout["groupRect"]
+    assert 0 <= group["left"] and group["right"] <= width + 1, group
+    assert 0 <= group["top"] and group["bottom"] <= height + 1, group
+    _assert_controls(layout, 44 if width <= 640 else 48)
+    assert layout["end"]["hits"] == [], layout["end"]
+    assert layout["end"]["overflowX"] <= 0, layout["end"]
 
 
-def test_back_to_top_button_returns_to_page_start(http_server):
-    layout = _browser_probe(http_server, NEWS_PAGE, 1376, 900, back_to_top=True)
+@pytest.mark.parametrize("width,height", CAROUSEL_WIDTHS)
+def test_home_carousel_next_stays_clear_of_floating_buttons(http_server, width, height):
+    script = r'''
+import json
+import sys
+from playwright.sync_api import sync_playwright
+
+url, width, height = sys.argv[1:]
+with sync_playwright() as playwright:
+    browser = playwright.chromium.launch(headless=True)
+    context = browser.new_context(viewport={"width": int(width), "height": int(height)})
+    page = context.new_page()
+    response = page.goto(url, wait_until="domcontentloaded", timeout=15_000)
+    assert response is not None and response.ok, url
+    layout = page.evaluate(
+        """() => {
+            document.documentElement.style.scrollBehavior = 'auto';
+            const nav = document.querySelector('.home-manuals-nav--next');
+            const group = document.querySelector('.floating-buttons');
+            const navRect = nav.getBoundingClientRect();
+            const groupRect = group.getBoundingClientRect();
+            window.scrollBy(0, (navRect.top + navRect.height / 2) - (groupRect.top + groupRect.height / 2));
+            const rect = (el) => {
+                const r = el.getBoundingClientRect();
+                return {top:r.top, right:r.right, bottom:r.bottom, left:r.left, width:r.width, height:r.height};
+            };
+            const a = rect(nav);
+            const b = rect(group);
+            const gap = a.right <= b.left ? b.left - a.right : a.left >= b.right ? a.left - b.right : 0;
+            const overlaps = a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+            return {
+                overlaps, gap,
+                overflowX: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+                nav: a, group: b,
+            };
+        }"""
+    )
+    print(json.dumps(layout))
+    context.close()
+    browser.close()
+'''
+    result = subprocess.run(
+        [sys.executable, "-c", script, f"http://127.0.0.1:{http_server}/{HOME_PAGE}", str(width), str(height)],
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    assert result.returncode == 0, result.stderr
+    layout = json.loads(result.stdout)
+    assert layout["overflowX"] <= 0, layout
+    assert not layout["overlaps"], layout
+    assert layout["gap"] >= 8, layout
+
+
+@pytest.mark.parametrize("width,height", [(390, 844), (1375, 900), (1376, 900)])
+def test_back_to_top_button_returns_to_page_start(http_server, width, height):
+    layout = _browser_probe(http_server, NEWS_PAGE, width, height, back_to_top=True)
     assert layout["backToTopWorked"]

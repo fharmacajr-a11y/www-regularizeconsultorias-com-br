@@ -137,6 +137,19 @@
   padding-top: 3rem !important;
 }
 
+/* No celular o botão único do catálogo entra na coluna fixa.
+   Título e parágrafo do bloco permanecem na largura do miolo. */
+@media (max-width: 639px) {
+  .manuals-cta-section > .max-w-3xl > a.inline-flex {
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    margin-left: 0;
+    margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem - 1rem);
+    width: calc(100% - (max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem - 1rem));
+  }
+}
+
 .manuals-intro-grid {
   align-items: stretch;
   display: grid;

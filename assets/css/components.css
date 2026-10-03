@@ -132,8 +132,8 @@ footer li a {
 /* ---------- 16. Componentes globais: botões flutuantes ---------- */
 .floating-buttons {
   position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
+  bottom: max(1.5rem, env(safe-area-inset-bottom));
+  right: max(1.5rem, env(safe-area-inset-right));
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -173,8 +173,10 @@ footer li a {
   background-color: #128c7e;
 }
 
-.floating-btn--whatsapp:focus-visible {
-  outline-color: #fff;
+.floating-btn:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 2px #fff;
 }
 
 footer .text-slate-500 {
@@ -195,20 +197,18 @@ footer .text-slate-500 {
   pointer-events: auto;
 }
 
-/* Viewports abaixo de 1376 px: retira do fluxo fixed para eliminar cobertura de conteúdo.
-   Passa a static, disposição horizontal, alinhado à direita.
-   Preserva safe-area-inset-* sem depender deles para resolver o layout. */
-@media (max-width: 1375px) {
-  .floating-buttons {
-    position: static;
-    width: max-content;
-    flex-direction: row;
-    align-items: center;
-    margin: 1rem max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) auto;
-    /* bottom/right/z-index não se aplicam a position: static */
-    bottom: auto;
-    right: auto;
-    z-index: auto;
+/* Abaixo de 1360 px o texto centralizado do rodapé entra na coluna fixa.
+   O respiro fica dentro do rodapé e só na altura da coluna: afastamento,
+   botão, intervalo, botão e uma folga. Acima disso o vão lateral já separa. */
+@media (max-width: 1359px) {
+  footer > .max-w-7xl {
+    padding-bottom: calc(max(1.5rem, env(safe-area-inset-bottom, 0px)) + 3rem + 0.75rem + 3rem + 0.5rem);
+  }
+}
+
+@media (max-width: 640px) {
+  footer > .max-w-7xl {
+    padding-bottom: calc(max(1.5rem, env(safe-area-inset-bottom, 0px)) + 2.75rem + 0.75rem + 2.75rem + 0.5rem);
   }
 }
 
@@ -222,6 +222,18 @@ footer .text-slate-500 {
   .floating-btn svg {
     width: 1.375rem;
     height: 1.375rem;
+  }
+}
+
+/* No celular a fileira de botões do CTA institucional chega à borda.
+   O recuo é só dessa fileira, nas páginas em que a medição mostrou a
+   colisão. O CTA final dos manuais já fica livre e não entra aqui. */
+@media (max-width: 639px) {
+  body:has(.home-hero-section) .institutional-cta-section .flex.flex-col.sm\:flex-row,
+  body:has(.services-hero-section) .institutional-cta-section .flex.flex-col.sm\:flex-row,
+  body:has(.team-hero-section) .institutional-cta-section .flex.flex-col.sm\:flex-row,
+  body:has(.about-principles-section) .institutional-cta-section .flex.flex-col.sm\:flex-row {
+    margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem - 1rem);
   }
 }
 
