@@ -102,6 +102,7 @@ def _public_html_paths():
         if not any(part in ignored_roots or part.endswith(".cache") for part in path.relative_to(ROOT).parts)
         and path.relative_to(ROOT).as_posix() != "noticias/template-noticia.html"
         and path.relative_to(ROOT).as_posix() != "whatsapp/index.html"
+        and "a-publicar" not in path.relative_to(ROOT).parts
     )
 
 

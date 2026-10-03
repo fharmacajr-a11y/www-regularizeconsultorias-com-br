@@ -3,7 +3,10 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).parents[1]
-EXCLUDED_PUBLIC_PATHS = {Path("noticias/template-noticia.html"), Path("whatsapp/index.html")}
+EXCLUDED_PUBLIC_PATHS = {
+    Path("noticias/template-noticia.html"),
+    Path("whatsapp/index.html"),
+}
 COMUNICADO_PATH = Path("comunicado/index.html")
 GLOBAL_NAVIGATION = {
     "/",
@@ -71,6 +74,7 @@ def public_html_paths():
         path
         for path in ROOT.rglob("*.html")
         if path.relative_to(ROOT) not in EXCLUDED_PUBLIC_PATHS
+        and "a-publicar" not in path.relative_to(ROOT).parts
     )
 
 

@@ -36,7 +36,12 @@ def tracked_html_files():
         cwd=ROOT,
         text=True,
     )
-    return [ROOT / relative_path for relative_path in output.splitlines()]
+    # Rascunhos em /noticias/a-publicar/ não entram na contagem pública.
+    return [
+        ROOT / relative_path
+        for relative_path in output.splitlines()
+        if not relative_path.replace("\\", "/").startswith("noticias/a-publicar/")
+    ]
 
 
 def test_public_jsonld_is_valid():
