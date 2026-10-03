@@ -44,31 +44,29 @@
 
   if (menuToggle && mobileMenu) {
 
-    menuToggle.addEventListener('click', function () {
-      var isOpen = !mobileMenu.classList.contains('hidden');
+    function setMenuOpen(isOpen) {
+      mobileMenu.classList.toggle('hidden', !isOpen);
+      if (iconHamburger) iconHamburger.classList.toggle('hidden', isOpen);
+      if (iconClose) iconClose.classList.toggle('hidden', !isOpen);
+      menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      menuToggle.setAttribute('aria-label', isOpen ? 'Fechar menu de navegação' : 'Abrir menu de navegação');
+    }
 
-      if (isOpen) {
-        // ---------- Fechar menu ----------
-        mobileMenu.classList.add('hidden');
-        iconHamburger.classList.remove('hidden');
-        iconClose.classList.add('hidden');
-        menuToggle.setAttribute('aria-expanded', 'false');
-      } else {
-        // ---------- Abrir menu ----------
-        mobileMenu.classList.remove('hidden');
-        iconHamburger.classList.add('hidden');
-        iconClose.classList.remove('hidden');
-        menuToggle.setAttribute('aria-expanded', 'true');
+    menuToggle.addEventListener('click', function () {
+      setMenuOpen(mobileMenu.classList.contains('hidden'));
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+        setMenuOpen(false);
+        menuToggle.focus();
       }
     });
 
     // Fechar automaticamente ao clicar em qualquer link do menu mobile
     mobileMenu.querySelectorAll('a').forEach(function (link) {
       link.addEventListener('click', function () {
-        mobileMenu.classList.add('hidden');
-        iconHamburger.classList.remove('hidden');
-        iconClose.classList.add('hidden');
-        menuToggle.setAttribute('aria-expanded', 'false');
+        setMenuOpen(false);
       });
     });
   }
@@ -615,6 +613,106 @@
     btnVoltarTopo.addEventListener('click', function () {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
+  }
+
+  /* =================================================================
+     8. CONTROLES FLUTUANTES: param acima dos créditos no fim da página
+        Abaixo de 1360 px o texto centralizado dos créditos do rodapé (ou
+        do fechamento do comunicado) passaria sob a coluna fixa. Quando o
+        bloco chega à coluna, ela é ancorada 1rem acima dele e passa a
+        rolar com a página. O bloco mantém a largura toda do container.
+        No comunicado, se acima do fechamento a coluna ficar colada num
+        controle do último aviso, ela desce até acima da linha de direitos.
+        → custom.css aplica position: absolute em .floating-buttons.is-docked
+     ================================================================= */
+  var floatingButtons = document.querySelector('.floating-buttons');
+  var floatingStops = [];
+  var footerCredits = document.querySelector('footer > .max-w-7xl > .border-t');
+  var pageCloserLink = document.querySelector('main .mt-12.text-center > a[href="/"]');
+
+  if (footerCredits) {
+    floatingStops.push(footerCredits);
+  } else if (pageCloserLink) {
+    floatingStops.push(pageCloserLink.parentElement);
+
+    var pageCloserCopy = pageCloserLink.parentElement.querySelector(':scope > p');
+    if (pageCloserCopy) {
+      floatingStops.push(pageCloserCopy);
+    }
+  }
+
+  if (floatingButtons && floatingStops.length) {
+    var FLOATING_STOP_GAP = 16;
+    // O anel de foco dos botões flutuantes avança 5 px (contorno de 2 px +
+    // afastamento de 3 px); um controle mais perto que isso seria tocado.
+    var FLOATING_CONTROL_CLEARANCE = 5;
+    var floatingControls = document.querySelectorAll('main a, main button, footer a, footer button');
+    var floatingFrame = 0;
+
+    var crowdsControl = function (top, group) {
+      var bottom = top + group.height;
+
+      for (var i = 0; i < floatingControls.length; i++) {
+        var rect = floatingControls[i].getBoundingClientRect();
+
+        if (!rect.width || !rect.height) continue;
+        if (rect.bottom <= top - FLOATING_CONTROL_CLEARANCE || rect.top >= bottom + FLOATING_CONTROL_CLEARANCE) continue;
+        if (rect.right > group.left - FLOATING_CONTROL_CLEARANCE && rect.left < group.right + FLOATING_CONTROL_CLEARANCE) {
+          return true;
+        }
+      }
+
+      return false;
+    };
+
+    var placeFloatingButtons = function () {
+      if (floatingFrame) {
+        window.cancelAnimationFrame(floatingFrame);
+        floatingFrame = 0;
+      }
+
+      floatingButtons.classList.remove('is-docked');
+      floatingButtons.style.top = '';
+
+      var group = floatingButtons.getBoundingClientRect();
+      var top = null;
+
+      // O primeiro bloco que divide a coluna define a parada; os seguintes
+      // só entram quando essa parada deixaria a coluna colada num controle.
+      for (var i = 0; i < floatingStops.length; i++) {
+        var stop = floatingStops[i].getBoundingClientRect();
+
+        if (stop.left >= group.right || stop.right <= group.left) continue;
+
+        top = stop.top - FLOATING_STOP_GAP - group.height;
+        if (top >= group.top || i === floatingStops.length - 1 || !crowdsControl(top, group)) break;
+      }
+
+      if (top !== null && top < group.top) {
+        floatingButtons.style.top = (window.scrollY + top) + 'px';
+        floatingButtons.classList.add('is-docked');
+      }
+    };
+
+    var requestFloatingPlacement = function () {
+      if (!floatingFrame) {
+        floatingFrame = window.requestAnimationFrame(placeFloatingButtons);
+      }
+    };
+
+    window.addEventListener('scroll', requestFloatingPlacement, { passive: true });
+    window.addEventListener('resize', requestFloatingPlacement);
+    window.addEventListener('load', requestFloatingPlacement);
+
+    // Mudança de altura (histórico aberto ou fechado, imagens, fontes):
+    // reposiciona antes da pintura, sem um quadro na posição antiga.
+    if ('ResizeObserver' in window) {
+      new ResizeObserver(function () {
+        placeFloatingButtons();
+      }).observe(document.body);
+    }
+
+    placeFloatingButtons();
   }
 
 })();

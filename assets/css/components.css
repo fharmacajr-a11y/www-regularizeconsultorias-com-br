@@ -197,19 +197,12 @@ footer .text-slate-500 {
   pointer-events: auto;
 }
 
-/* Abaixo de 1360 px o texto centralizado do rodapé entra na coluna fixa.
-   O respiro fica dentro do rodapé e só na altura da coluna: afastamento,
-   botão, intervalo, botão e uma folga. Acima disso o vão lateral já separa. */
-@media (max-width: 1359px) {
-  footer > .max-w-7xl {
-    padding-bottom: calc(max(1.5rem, env(safe-area-inset-bottom, 0px)) + 3rem + 0.75rem + 3rem + 0.5rem);
-  }
-}
-
-@media (max-width: 640px) {
-  footer > .max-w-7xl {
-    padding-bottom: calc(max(1.5rem, env(safe-area-inset-bottom, 0px)) + 2.75rem + 0.75rem + 2.75rem + 0.5rem);
-  }
+/* Os créditos do rodapé e o fechamento do comunicado ficam na largura toda do
+   container, sem reserva lateral nem inferior. Quando esses blocos chegam à
+   coluna fixa, o main.js a ancora 1rem acima deles e ela rola com a página. */
+.floating-buttons.is-docked {
+  position: absolute;
+  bottom: auto;
 }
 
 /* Mobile: botões levemente menores — continua válido dentro de max-width:1375px */
