@@ -36,21 +36,21 @@ def test_cp_1399_is_recorded_as_closed_on_the_existing_article():
     assert f'<time datetime="{UPDATED}">02/10/2026</time> às 21h50' in html
 
 
-def test_listing_puts_the_updated_card_first_without_changing_counts():
+def test_listing_places_the_updated_cosmetics_card_second():
     html = INDEX.read_text(encoding="utf-8")
     cards = _cards(html)
-    card = cards[0]
+    card = cards[1]
 
-    assert len(cards) == 82
+    assert len(cards) == 83
     assert "/noticias/anvisa-atualiza-listas-substancias-cosmeticos/" in card
     assert f'data-updated="{UPDATED}"' in card
     assert "está encerrada" in card
     assert "recebe contribuições" not in card
     assert "permanece aberta" not in card
-    assert '>Todos</span><span class="text-xs text-slate-400">82<' in html
+    assert '>Todos</span><span class="text-xs text-slate-400">83<' in html
     assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in html
     assert (
-        '"position":1,"url":"https://www.regularizeconsultorias.com.br'
+        '"position":2,"url":"https://www.regularizeconsultorias.com.br'
         '/noticias/anvisa-atualiza-listas-substancias-cosmeticos/"'
     ) in html
     sitemap = SITEMAP.read_text(encoding="utf-8")

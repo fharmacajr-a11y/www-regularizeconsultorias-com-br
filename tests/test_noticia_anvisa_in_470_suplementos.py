@@ -204,12 +204,12 @@ def test_index_has_one_card_in_fifth_position_and_expected_counts():
         r'(<article class="[^"]*"[^>]*data-news-card.*?</article>)', html, re.DOTALL
     )
     classes = [re.search(r'<article class="([^"]*)"', card).group(1) for card in card_blocks]
-    assert len(card_blocks) == 82
-    assert f'/noticias/{SLUG}/' in card_blocks[10]
+    assert len(card_blocks) == 83
+    assert f'/noticias/{SLUG}/' in card_blocks[11]
     assert "news-card-compact" not in classes[4]
     assert all("news-card-compact" not in value for value in classes[:5])
     assert "news-card-compact" in classes[5]
-    assert '>Todos</span><span class="text-xs text-slate-400">82<' in html
+    assert '>Todos</span><span class="text-xs text-slate-400">83<' in html
     assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in html
 
 
@@ -236,4 +236,4 @@ def test_sitemap_contains_new_url_with_editorial_lastmod():
     ]
     assert len(matches) == 1
     assert matches[0].findtext("s:lastmod", namespaces=namespace) == "2026-09-21"
-    assert len(root.findall("s:url", namespace)) == 102
+    assert len(root.findall("s:url", namespace)) == 103

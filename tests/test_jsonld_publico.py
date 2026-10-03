@@ -60,4 +60,4 @@ def test_public_jsonld_is_valid():
                     f"bloco {block_number}: {error}"
                 ) from error
 
-    assert block_count == 178
+    assert block_count == 180

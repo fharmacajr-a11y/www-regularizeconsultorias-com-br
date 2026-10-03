@@ -65,12 +65,12 @@ def test_metadata_preserves_publication_and_records_update():
     assert news["url"] == PUBLIC_URL
 
 
-def test_existing_card_is_updated_once_without_changing_total():
+def test_existing_card_stays_unique_as_the_listing_grows():
     html = INDEX_PATH.read_text(encoding="utf-8")
     assert html.count(f'href="/noticias/{SLUG}/"') == 1
     assert html.count(f'"url":"{PUBLIC_URL}"') == 1
-    assert html.count("data-news-card") == 82
-    assert "82 notícias encontradas" in html
+    assert html.count("data-news-card") == 83
+    assert "83 notícias encontradas" in html
     card = re.search(
         rf'<article\b[^>]*data-news-card[^>]*>.*?href="/noticias/{SLUG}/".*?</article>',
         html,

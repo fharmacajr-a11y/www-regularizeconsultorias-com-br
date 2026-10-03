@@ -180,16 +180,16 @@ def test_index_saneantes_card_has_correct_timestamp():
     assert f'data-updated="{DATE_PUBLISHED}"' in html
 
 
-def test_index_saneantes_in_itemlist_position_12():
+def test_index_saneantes_in_itemlist_position_13():
     html = _index_html()
     blocks = _jsonld_blocks(html)
     coll_blocks = [b for b in blocks if b.get("@type") == "CollectionPage"]
     assert coll_blocks, "CollectionPage ausente no índice"
     items = coll_blocks[0]["mainEntity"]["itemListElement"]
-    assert items[11]["url"] == ARTICLE_URL, (
-        f"Posição 12 esperada para {ARTICLE_URL!r}, encontrado {items[11]['url']!r}"
+    assert items[12]["url"] == ARTICLE_URL, (
+        f"Posição 13 esperada para {ARTICLE_URL!r}, encontrado {items[12]['url']!r}"
     )
-    assert items[11]["position"] == 12
+    assert items[12]["position"] == 13
 
 
 def test_index_itemlist_positions_are_sequential():
@@ -256,7 +256,7 @@ def test_index_saneantes_stays_compact_after_the_five_highlighted():
         for index, block in enumerate(article_blocks)
         if "anvisa-rdc-1040-in-468-2026-saneantes-regularizacao" in block
     )
-    assert saneantes_index == 11
+    assert saneantes_index == 12
     assert "news-card-compact" in article_blocks[saneantes_index].split(">", 1)[0]
     assert all("news-card-compact" not in block.split(">", 1)[0] for block in article_blocks[:5])
     assert "news-card-compact" in article_blocks[5].split(">", 1)[0]
