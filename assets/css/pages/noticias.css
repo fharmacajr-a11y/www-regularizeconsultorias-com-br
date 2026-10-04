@@ -95,18 +95,17 @@
    numa janela com mais de 1.460 px de altura, e presa mais alta que a tela
    deixava os últimos controles fora do alcance. */
 
-/* Abaixo de 1024 px a coluna ocupa a largura do miolo. O recuo é só dessa
-   coluna, para os botões não ficarem sob os controles fixos. */
-@media (max-width: 1023px) {
-  aside .news-sidebar {
-    margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - 1.5rem);
-  }
-}
-
-@media (max-width: 639px) {
-  aside .news-sidebar {
-    margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem - 1rem);
-  }
+/* Abaixo de 1024 px a coluna vem depois da lista e segue a largura do grid,
+   com as mesmas bordas dos outros cards. Não leva recuo próprio à direita:
+   enquanto ela passa pela coluna fixa de voltar ao topo e WhatsApp, o
+   assets/js/pages/noticias.js marca a coluna fixa com inert e os botões
+   recolhem. A regra vai em cada botão, com a transição que eles já têm,
+   porque o voltar ao topo visível declara visibility e pointer-events
+   próprios. */
+.floating-buttons[inert] .floating-btn {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .news-filter-button[aria-pressed="true"] {

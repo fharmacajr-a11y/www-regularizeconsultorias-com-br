@@ -26,6 +26,7 @@ HOOKS = {
     "manuals-catalog-button-label",
     "manuals-hero-content",
     "manuals-hero-section",
+    "news-sidebar",
 }
 HOOK_PREFIXES = ("manuals-page-",)
 SELECTOR_CLASS = re.compile(r"\.((?:\\[0-9a-fA-F]{1,6}[ \t]?|\\[^0-9a-fA-F\n]|[\w-])+)")
