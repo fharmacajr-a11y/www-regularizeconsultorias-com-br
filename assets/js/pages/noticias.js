@@ -12,6 +12,10 @@
    não há ida e volta na borda. Com inert, os botões saem da ordem do Tab e
    o navegador tira deles o foco de mouse deixado por um clique. Um botão
    com foco de teclado não some.
+   A medida vem depois do main.js, que reposiciona a coluna fixa (ancorada
+   ou não acima dos créditos do rodapé) num requestAnimationFrame. Medida no
+   próprio evento de rolagem, ela lia a posição do quadro anterior: num salto
+   do rodapé até a lateral, a coluna ainda ancorada parecia longe dela.
    ================================================================= */
 (function () {
   'use strict';
@@ -22,6 +26,7 @@
   if (!column || !floating) return;
 
   var GAP = 16;
+  var frame = 0;
 
   var keyboardFocusInside = function () {
     var active = document.activeElement;
@@ -44,17 +49,29 @@
     floating.toggleAttribute('inert', crossing && !keyboardFocusInside());
   };
 
-  // A rolagem é tratada no próprio evento, antes da pintura do quadro.
-  window.addEventListener('scroll', update, { passive: true });
-  window.addEventListener('resize', update);
-  window.addEventListener('load', update);
-  floating.addEventListener('focusin', update);
-  // Na saída do foco o destino ainda não está focado: mede depois.
-  floating.addEventListener('focusout', function () {
-    window.setTimeout(update, 0);
-  });
+  // Uma medida por quadro, só quando algum evento pede. Os ouvintes do
+  // main.js foram registrados antes (o script dele carrega primeiro), e os
+  // pedidos de quadro rodam na ordem em que foram feitos: o reposicionamento
+  // dele vem antes desta medida, ainda antes da pintura.
+  var requestUpdate = function () {
+    if (!frame) {
+      frame = window.requestAnimationFrame(function () {
+        frame = 0;
+        update();
+      });
+    }
+  };
 
-  // Filtros, busca e "Ver mais" mudam a altura da lista e movem a coluna.
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate);
+  window.addEventListener('load', requestUpdate);
+  floating.addEventListener('focusin', requestUpdate);
+  // Na saída do foco o destino ainda não está focado; no quadro, já está.
+  floating.addEventListener('focusout', requestUpdate);
+
+  // Filtros, busca e "Ver mais" mudam a altura da lista e movem a coluna. O
+  // observador do main.js, criado antes, já reposicionou a coluna fixa neste
+  // mesmo ciclo; a medida vem na hora, sem esperar outro quadro.
   if ('ResizeObserver' in window) {
     new ResizeObserver(update).observe(document.body);
   }

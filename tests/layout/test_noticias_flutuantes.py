@@ -9,9 +9,12 @@ enquanto eles estão na região da coluna e os devolve ao sair dela.
 Em cada largura o teste reproduz o caso de 960 px (centro de ANVISA na altura
 do centro do WhatsApp), rola com a roda do mouse para baixo e para cima por
 toda a coluna, com passo menor que um botão, percorre os controles dela por
-Tab e por Shift+Tab e aplica um filtro pelo mouse e outro pelo teclado (a lista
-muda de altura e a coluna se move sem rolagem). Em cada parada, com a rolagem e
-as transições terminadas,
+Tab e por Shift+Tab, aplica filtros pelo mouse e pelo teclado e faz uma busca
+(a lista muda de altura e a coluna se move sem rolagem). Também salta, de uma
+vez, do fim da página (coluna fixa ancorada acima dos créditos pelo main.js)
+até as categorias e das categorias até o fim, com a medida logo depois do salto
+e sem outra rolagem, e redimensiona a janela com a coluna sob os botões. Em
+cada parada, com a rolagem e as transições terminadas,
 nenhum botão flutuante visível pode ficar sobre o texto da coluna (nomes e
 contagens das categorias inclusive), sobre os campos ou sobre o anel de foco
 do controle focado. Também confere que os botões estão visíveis longe da
@@ -107,7 +110,31 @@ window.__flutuantes = (() => {
     }
     return found;
   };
+  // Eventos de rolagem desde o último salto: prova que nenhuma rolagem extra
+  // reavaliou os botões entre o salto e a medida.
+  let scrolls = 0;
+  addEventListener('scroll', () => { scrolls += 1; }, {passive: true});
+  const jump = top => { scrolls = 0; window.scrollTo({top, behavior: 'instant'}); };
   return {
+    scrolls: () => scrolls,
+    jumpToBottom() { jump(document.documentElement.scrollHeight); },
+    jumpToAnvisa() {
+      // Centro de ANVISA onde fica o centro do WhatsApp fora da âncora do
+      // rodapé: a coluna fixa termina 1,5rem (24 px) acima do fim da janela.
+      const anvisa = document.querySelector('[data-news-category=anvisa]').getBoundingClientRect();
+      const whatsapp = document.querySelector('.floating-btn--whatsapp');
+      jump(scrollY + anvisa.top + anvisa.height / 2 - (innerHeight - 24 - whatsapp.offsetHeight / 2));
+    },
+    footer() {
+      const g = group(), r = g.getBoundingClientRect();
+      const credits = document.querySelector('footer > .max-w-7xl > .border-t').getBoundingClientRect();
+      const covered = [...g.querySelectorAll('.floating-btn')].filter(shown).flatMap(button => {
+        const b = button.getBoundingClientRect();
+        return [...document.querySelectorAll('footer a, footer p')].filter(node => hits(node.getBoundingClientRect(), b))
+          .map(node => describe(node));
+      });
+      return {docked: g.classList.contains('is-docked'), gapToCredits: credits.top - r.bottom, covered};
+    },
     async settle() {
       // Rolagem parada por 120 ms, transições terminadas e um quadro pintado.
       let last = scrollY, since = performance.now();
@@ -290,6 +317,12 @@ with sync_playwright() as playwright:
         page.keyboard.press("Enter")
         settle()
         check("depois de voltar a Todos pelo teclado")
+        page.locator("#news-search").fill("SNCR")
+        settle()
+        check("depois de buscar SNCR")
+        page.locator("#news-search").fill("")
+        settle()
+        check("depois de limpar a busca")
 
         # 5. Foco de mouse deixado no "voltar ao topo" não fica preso num botão oculto.
         page.evaluate("window.scrollTo(0, 600)")
@@ -317,6 +350,47 @@ with sync_playwright() as playwright:
         state = check("depois de tirar o foco do botão flutuante")
         if not state["collapsed"]:
             failures.append(f"@{width}: sem foco, os botões não recolheram sobre a coluna")
+
+        # 7. Saltos instantâneos entre o rodapé (coluna fixa ancorada pelo
+        #    main.js) e as categorias, nos dois sentidos. A medida vem logo
+        #    depois do salto, sem outra rolagem: o contador tem de dar 1.
+        def jump(call, label):
+            page.evaluate(call)
+            settle()
+            scrolls = page.evaluate("window.__flutuantes.scrolls()")
+            if scrolls != 1:
+                failures.append(f"@{width} {label}: {scrolls} eventos de rolagem; o esperado é só o do salto")
+            return check(label)
+
+        page.evaluate("window.__flutuantes.jumpToBottom()")
+        settle()
+        if not page.evaluate("window.__flutuantes.footer()")["docked"]:
+            failures.append(f"@{width}: a coluna fixa não estava ancorada no rodapé antes do salto")
+        state = jump("window.__flutuantes.jumpToAnvisa()", "salto do rodapé até ANVISA")
+        if not state["collapsed"]:
+            failures.append(f"@{width} salto do rodapé até ANVISA: os botões não recolheram")
+        # O inverso parte de um estado próprio: do topo até ANVISA, rolando.
+        page.evaluate("window.scrollTo(0, 0)")
+        settle()
+        page.evaluate("window.__flutuantes.alignAnvisa()")
+        settle()
+        if not check("ANVISA antes do salto ao rodapé")["collapsed"]:
+            failures.append(f"@{width}: os botões não recolheram antes do salto ao rodapé")
+        jump("window.__flutuantes.jumpToBottom()", "salto de ANVISA até o rodapé")
+        footer = page.evaluate("window.__flutuantes.footer()")
+        if not footer["docked"] or abs(footer["gapToCredits"] - 16) > 0.5 or footer["covered"]:
+            failures.append(f"@{width} salto de ANVISA até o rodapé: ancoragem fora do previsto {footer}")
+
+        # 8. Redimensionar com a coluna sob os botões: no desktop eles voltam
+        #    (a lateral fica ao lado); de volta à largura, nada fica coberto.
+        page.evaluate("window.__flutuantes.alignAnvisa()")
+        settle()
+        page.set_viewport_size({"width": 1440, "height": height})
+        settle()
+        check("redimensionada para 1440 px")
+        page.set_viewport_size({"width": width, "height": height})
+        settle()
+        check(f"de volta a {width} px")
 
     context.close()
     browser.close()
