@@ -34,6 +34,12 @@ select:focus-visible {
   border-radius: 4px;
 }
 
+/* Sobre superfícies escuras (heros em degradê, faixas bg-brand-dark e rodapé) o
+   contorno azul some no fundo; ali o foco fica branco. */
+:is([class*="bg-gradient-to-"], .article-hero-informativo, .bg-brand-dark, footer) :is(a, button, input, textarea, select):focus-visible {
+  outline-color: #fff;
+}
+
 /* ---------- 6. Contato: estilos de formulário ----------
   Base reutilizável dos campos de formulário.
   Não depende da página /contato/ e pode ser usada em outros formulários. */
@@ -56,8 +62,11 @@ select:focus-visible {
   box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.15);
 }
 
+/* slate-500 com opacidade explícita: 4,76:1 sobre o branco do campo (o
+   slate-400 ficava em 2,56:1; o Firefox ainda aplicaria 0,54 por padrão). */
 .form-input::placeholder {
-  color: #94a3b8;
+  color: #64748b;
+  opacity: 1;
 }
 
 /* ---------- 7. Animação de entrada suave (opcional para cards) ---------- */
@@ -247,7 +256,8 @@ footer .text-slate-500 {
 }
 
 .institutional-hero-breadcrumb-list {
-  color: rgba(255, 255, 255, 0.6) !important;
+  /* 90%: o breadcrumb também passa sobre o trecho mais claro do degradê. */
+  color: rgba(255, 255, 255, 0.9) !important;
   font-size: 0.875rem !important;
   line-height: 1.25rem !important;
 }

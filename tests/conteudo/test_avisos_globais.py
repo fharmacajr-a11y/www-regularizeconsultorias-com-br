@@ -344,7 +344,7 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     informative_to_useful = {
         "comunicado-cta--informativo": "comunicado-cta--util",
         "border-orange-200": "border-emerald-200",
-        "text-orange-600": "text-emerald-700",
+        "text-orange-700": "text-emerald-700",
     }
     assert useful_cta.attrs["class"].split() == [
         informative_to_useful.get(class_name, class_name)

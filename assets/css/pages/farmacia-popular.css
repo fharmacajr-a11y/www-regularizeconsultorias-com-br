@@ -25,6 +25,8 @@
 .fp-filters { align-items: end; display: grid; gap: 1rem; grid-template-columns: minmax(12rem, 2fr) minmax(8rem, 1fr) minmax(11rem, 1.25fr) auto; margin-bottom: 1rem; }
 .fp-filters label, .fp-pagination label { color: #334155; display: block; font-size: .8125rem; font-weight: 700; margin-bottom: .4rem; }
 .fp-filters input, .fp-filters select, .fp-pagination select { background: #fff; border: 1px solid #cbd5e1; border-radius: .5rem; color: #1e293b; font: inherit; min-height: 2.75rem; padding: .6rem .75rem; width: 100%; }
+/* Placeholder em slate-500 com opacidade explícita: 4,76:1 sobre o branco do campo (o gray-400 do preflight do Tailwind ficava em 2,54:1). */
+.fp-filters input::placeholder { color: #64748b; opacity: 1; }
 .fp-filters button, .fp-pagination button { background: var(--color-brand); border: 0; border-radius: .5rem; color: #fff; cursor: pointer; font-size: .875rem; font-weight: 700; min-height: 2.75rem; padding: .6rem 1rem; white-space: nowrap; }
 .fp-filters button:hover, .fp-pagination button:hover { background: var(--color-brand-dark); }
 .fp-loading, .fp-empty { color: #475569; padding: 1.25rem 0; text-align: center; }

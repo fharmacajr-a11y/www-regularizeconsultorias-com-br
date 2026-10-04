@@ -1,8 +1,8 @@
 """Versão dos CSS e JS carregados pelas páginas.
 
-Cada página carrega components.css ou custom.min.css, e main.min.js, com um
-parâmetro ?v=. Os CSS de página alterados depois do rodapé de 03/10/2026
-(Farmácia Popular, notícias e artigo) também passaram a ter ?v=. O valor é o
+Cada página carrega tailwind.min.css, components.css ou custom.min.css, e
+main.min.js, com um parâmetro ?v=. Os CSS de página alterados depois do rodapé
+de 03/10/2026 (Farmácia Popular, notícias, artigo e contato) também têm ?v=. O valor é o
 mesmo em todas as páginas para cada arquivo: uma página esquecida na versão
 anterior receberia do cache o CSS ou o JS antigo. Ao mudar outro CSS ou JS de
 página, acrescente ?v= a todas as referências dele e inclua-o em VERSIONED_ASSETS.
@@ -15,12 +15,14 @@ from support import ROOT
 
 
 VERSIONED_ASSETS = (
+    "/assets/css/tailwind.min.css",
     "/assets/css/components.css",
     "/assets/css/custom.min.css",
     "/assets/js/main.min.js",
     "/assets/css/pages/farmacia-popular.css",
     "/assets/css/pages/noticia-detalhe.css",
     "/assets/css/pages/noticias.css",
+    "/assets/css/pages/contato.css",
 )
 ASSET_REFERENCE = re.compile(r'(?:href|src)="(/assets/[^"?]+\.(?:css|js))(\?[^"]*)?"')
 

@@ -7,8 +7,12 @@
   da faixa regulatória e da navbar fixas.
 - carrossel: setas e Tab na vitrine de Manuais da home; cada card focado fica
   inteiro na área visível.
-- noticias: busca sem acento, categoria + busca, vazio, ordenação, "Ver mais"
-  com o foco no primeiro card revelado e a coluna fixa abaixo do cabeçalho.
+- noticias: busca sem acento, categoria + busca, vazio, ordenação e "Ver mais"
+  com o foco no primeiro card revelado.
+- coluna: a coluna lateral das Notícias só fica presa se couber inteira na
+  tela; no topo, no meio e no fim da listagem, em telas baixas e com zoom, cada
+  controle dela aparece inteiro, abaixo do cabeçalho, pela roda do mouse, pelo
+  Tab e pelo Shift+Tab.
 - modal: a imagem ampliada do Comunicado prende o foco em "Fechar".
 
 Cada modo roda num subprocesso, como em layout/test_rodape_espaco.py.
@@ -273,13 +277,116 @@ def _noticias(browser, base):
             failures.append(f"{label}: 'Ver mais' não revelou toda a lista")
         if focused != sixth_link:
             failures.append(f"{label}: depois de 'Ver mais' o foco foi para {focused!r}, não para {sixth_link!r}")
+        context.close()
+    return failures
 
-        if width >= 1024:
-            page.evaluate("() => window.scrollTo(0, 3000)")
-            _settle(page)
-            top = page.locator("aside .sticky").evaluate("node => node.getBoundingClientRect().top")
-            if top < page.evaluate(HEADER_BOTTOM_JS):
-                failures.append(f"{label}: coluna de filtros presa sob o cabeçalho (topo {top:.0f} px)")
+
+SIDEBAR_STATE_JS = """() => {
+    const column = document.querySelector('aside .news-sidebar');
+    const header = document.getElementById('navbar').getBoundingClientRect().bottom;
+    const box = column.getBoundingClientRect();
+    const controls = [...column.querySelectorAll('a[href], button, input')];
+    return {
+        position: getComputedStyle(column).position, top: box.top, bottom: box.bottom,
+        innerScroll: column.scrollHeight - column.clientHeight,
+        docTop: box.top + scrollY, docBottom: box.bottom + scrollY, viewport: innerHeight, header, scrollY,
+        focused: controls.indexOf(document.activeElement),
+        controls: controls.map(node => {
+            const r = node.getBoundingClientRect();
+            const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+            return {
+                label: (node.textContent.trim() || node.id).replace(/\\s+/g, ' ').slice(0, 30), top: r.top, bottom: r.bottom,
+                // Inteiro entre o cabeçalho e o fim da tela, e nada por cima no centro.
+                shown: r.top >= header - 0.5 && r.bottom <= innerHeight + 0.5 && !!hit && (hit === node || node.contains(hit)),
+            };
+        }),
+    };
+}"""
+# (largura, altura, escala). 1024x576 é 1280x720 com 125% de zoom; 1280x720 e
+# 960x540 são 1920x1080 com 150% e 200%. Abaixo de 1024 px a coluna vem depois
+# da lista.
+SIDEBAR_VIEWPORTS = (
+    (1024, 576, 1.25), (1024, 600, 1), (1280, 480, 1), (1280, 720, 1.5),
+    (1366, 768, 1), (1440, 900, 1), (960, 540, 2), (390, 844, 3),
+)
+
+
+def _coluna(browser, base):
+    """Coluna lateral das Notícias: presa só se couber; todo controle alcançável e visível."""
+    failures = []
+    for width, height, scale in SIDEBAR_VIEWPORTS:
+        context = browser.new_context(viewport={"width": width, "height": height}, device_scale_factor=scale)
+        page = context.new_page()
+        page.goto(base + "/noticias/")
+        page.add_style_tag(content="html{scroll-behavior:auto!important}")
+        page.locator("#btn-carregar-mais").click()
+        label = f"@{width}x{height}"
+        state = lambda: page.evaluate(SIDEBAR_STATE_JS)
+        cards = page.locator("#news-article-list [data-news-card]")
+        middle, last = cards.nth(cards.count() // 2), cards.nth(cards.count() - 1)
+        positions = {
+            "topo": 0,
+            "meio": middle.evaluate("node => node.getBoundingClientRect().top + scrollY") - height / 2,
+            "fim": last.evaluate("node => node.getBoundingClientRect().bottom + scrollY") - height / 2,
+        }
+
+        for name, y in positions.items():
+            page.evaluate("y => window.scrollTo(0, y)", y)
+            current = state()
+            # Presa (sticky ou fixed), ela tem de caber inteira entre o cabeçalho e o fim da tela.
+            stuck = current["position"] in ("sticky", "fixed")
+            available = current["viewport"] - current["header"]
+            if stuck and (current["bottom"] - current["top"] > available + 0.5 or current["top"] < current["header"] - 0.5):
+                failures.append(f"{label} {name}: coluna presa com {current['bottom'] - current['top']:.0f} px para {available:.0f} px visíveis")
+            if current["innerScroll"] > 1:
+                failures.append(f"{label} {name}: coluna com rolagem interna de {current['innerScroll']} px")
+
+        # Roda do mouse: de cada posição, a página rola na direção da coluna até
+        # passar por ela inteira (acima de 1024 px a coluna fica ao lado do topo
+        # da lista; abaixo, depois dela).
+        page.mouse.move(width / 2, height * 0.6)
+        for name, y in positions.items():
+            page.evaluate("y => window.scrollTo(0, y)", y)
+            current = state()
+            middle_of_column = (current["docTop"] + current["docBottom"]) / 2
+            direction = 1 if middle_of_column > current["scrollY"] + current["viewport"] / 2 else -1
+            step = max(100, (current["viewport"] - current["header"]) / 2)
+            seen = [control["shown"] for control in current["controls"]]
+            for _ in range(40):
+                band_top, band_bottom = current["scrollY"] + current["header"], current["scrollY"] + current["viewport"]
+                if (band_top >= current["docBottom"]) if direction > 0 else (band_bottom <= current["docTop"]):
+                    break
+                gap = current["docTop"] - band_bottom if direction > 0 else band_top - current["docBottom"]
+                page.mouse.wheel(0, direction * max(step, gap))
+                _settle(page)
+                previous, current = current["scrollY"], state()
+                seen = [old or control["shown"] for old, control in zip(seen, current["controls"])]
+                if current["scrollY"] == previous:
+                    break
+            missing = [control["label"] for control, ok in zip(current["controls"], seen) if not ok]
+            if missing:
+                failures.append(f"{label} mouse a partir do {name}: sem aparecer inteiros {missing[:4]}")
+
+        # Teclado: Tab a partir do topo; Shift+Tab a partir do meio e do fim.
+        for name, start, key in (("Tab do topo", page.locator("main h1"), "Tab"),
+                                 ("Shift+Tab do meio", middle.locator("p").first, "Shift+Tab"),
+                                 ("Shift+Tab do fim", last.locator("p").first, "Shift+Tab")):
+            start.click()
+            reached, entered = set(), False
+            for _ in range(250):
+                page.keyboard.press(key)
+                current = state()
+                if current["focused"] < 0:
+                    if entered:
+                        break
+                    continue
+                entered = True
+                reached.add(current["focused"])
+                control = current["controls"][current["focused"]]
+                if not control["shown"]:
+                    failures.append(f"{label} {name}: '{control['label']}' recebe foco escondido ({control['top']:.0f}–{control['bottom']:.0f} px, cabeçalho até {current['header']:.0f})")
+            if len(reached) < len(current["controls"]):
+                failures.append(f"{label} {name}: {len(reached)} de {len(current['controls'])} controles da coluna alcançados")
         context.close()
     return failures
 
@@ -310,7 +417,7 @@ def _modal(browser, base):
     return failures
 
 
-MODES = {"percursos": _percursos, "ancoras": _ancoras, "carrossel": _carrossel, "noticias": _noticias, "modal": _modal}
+MODES = {"percursos": _percursos, "ancoras": _ancoras, "carrossel": _carrossel, "noticias": _noticias, "coluna": _coluna, "modal": _modal}
 
 
 def _collect(mode):
@@ -361,6 +468,10 @@ def test_home_manuals_carousel_by_arrows_and_keyboard():
 
 def test_news_listing_search_filters_sort_and_load_more_focus():
     _run("noticias")
+
+
+def test_news_sidebar_stays_in_flow_and_reachable_by_mouse_and_keyboard():
+    _run("coluna")
 
 
 def test_comunicado_image_modal_keeps_keyboard_focus():

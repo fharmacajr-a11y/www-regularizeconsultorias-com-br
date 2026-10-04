@@ -1,7 +1,9 @@
 module.exports = {
   content: [
     "./*.html",
-    "./**/*.html"
+    "./**/*.html",
+    // Classes alternadas pelo JavaScript (ex.: rotate-180 na seta do histórico do Comunicado).
+    "./assets/js/**/*.js"
   ],
   theme: {
     extend: {

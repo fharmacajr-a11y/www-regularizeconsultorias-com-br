@@ -179,19 +179,28 @@ select:focus-visible {
   border-radius: 4px;
 }
 
+/* Sobre superfícies escuras (heros em degradê, faixas bg-brand-dark e rodapé) o
+   contorno azul some no fundo; ali o foco fica branco. */
+:is([class*="bg-gradient-to-"], .article-hero-informativo, .bg-brand-dark, footer) :is(a, button, input, textarea, select):focus-visible {
+  outline-color: #fff;
+}
+
 /* ---------- 5.1. Variantes de hero para notícias ---------- */
 main > article > header.bg-gradient-to-r.from-brand-dark.to-brand:has(span[class~="border-white/20"][class~="bg-white/10"]) {
   background-color: var(--color-brand-dark);
   background-image: linear-gradient(90deg, #16466f 0%, var(--color-brand-dark) 52%, var(--color-brand) 100%);
 }
 
+/* Início em orange-800, como o from-amber-800 do hero de atualização: com o
+   orange-700, o texto slate-200 ficava abaixo de 4,5:1 junto à borda esquerda
+   entre 700 e 1023 px. */
 .article-hero-informativo {
   background-color: var(--color-brand-dark);
-  background-image: linear-gradient(90deg, #c2410c 0%, var(--color-brand-dark) 52%, var(--color-brand) 100%);
+  background-image: linear-gradient(90deg, #9a3412 0%, var(--color-brand-dark) 52%, var(--color-brand) 100%);
 }
 
 .article-badge-informativo {
-  background-color: #ea580c;
+  background-color: #c2410c;
   color: #fff;
 }
 
@@ -228,8 +237,11 @@ main > article > header.bg-gradient-to-r.from-brand-dark.to-brand:has(span[class
   box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.15);
 }
 
+/* slate-500 com opacidade explícita: 4,76:1 sobre o branco do campo (o
+   slate-400 ficava em 2,56:1; o Firefox ainda aplicaria 0,54 por padrão). */
 .form-input::placeholder {
-  color: #94a3b8;
+  color: #64748b;
+  opacity: 1;
 }
 
 /* ---------- 6.1. Contato: base responsiva 768–1279px ----------
@@ -2038,6 +2050,18 @@ main > article > header .category-chip {
   color: #1e293b;
   font-size: 1.15rem;
   font-weight: 700;
+  margin-top: 1.75rem;
+  margin-bottom: 0.6rem;
+}
+
+/* Quadro de atualização que abre o texto: o título é h2 na estrutura (vem
+   antes do primeiro h2 do artigo), com a aparência dos h3 dos quadros. */
+[data-news-update-callout] > h2 {
+  color: #1e293b;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: normal;
+  line-height: inherit;
   margin-top: 1.75rem;
   margin-bottom: 0.6rem;
 }

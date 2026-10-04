@@ -7,11 +7,13 @@ from support import ROOT, parse_html
 NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 STATUS_LABELS = {"atualização", "informativo", "urgente", "orientação"}
 STATUS_CONTRACTS = {
+    # Texto escuro sobre o âmbar (6,97:1) e degradê do hero a partir de amber-800:
+    # com branco sobre amber-500 ou textos claros sobre amber-600, o contraste ficava abaixo de 4,5:1.
     "atualização": {
         "cta": "ler atualização",
-        "card_classes": {"bg-amber-500", "text-white"},
-        "page_badge_classes": {"bg-amber-500", "text-white"},
-        "hero_classes": {"from-amber-600", "via-brand-dark", "to-brand"},
+        "card_classes": {"bg-amber-500", "text-amber-950"},
+        "page_badge_classes": {"bg-amber-500", "text-amber-950"},
+        "hero_classes": {"from-amber-800", "via-brand-dark", "to-brand"},
     },
     "informativo": {
         "cta": "ler notícia",
