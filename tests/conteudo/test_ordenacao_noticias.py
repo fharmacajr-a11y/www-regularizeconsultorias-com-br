@@ -16,7 +16,7 @@ CBPF_IN451_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atua
 RPBR_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-periodicidade-rpbr-farmacovigilancia/"
 SIPROQUIM_IN338_URL = "https://www.regularizeconsultorias.com.br/noticias/produtos-quimicos-controlados-siproquim2-assinador-pf/"
 PRODUTOS_IRREGULARES_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
-PRODUTOS_IRREGULARES_UPDATED = "2026-09-28T08:28:00-03:00"
+PRODUTOS_IRREGULARES_UPDATED = "2026-10-05T14:24:00-03:00"
 FABRICANTES_INTERNACIONAIS_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-dispositivos-medicos/"
 SUPERVISAO_CONTEUDO_URL = "https://www.regularizeconsultorias.com.br/noticias/farmaceutico-supervisiona-conteudos-farmacia-redes-sociais-sites/"
 RETATRUTIDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-retatrutida-sem-registro-produtos-irregulares/"
@@ -157,31 +157,31 @@ def test_news_index_itemlist_ordering():
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
 
+    # O consolidado de fiscalização, com o alcance da RE nº 3.751/2026 corrigido em 05/10/2026 às 14h24.
+    assert urls[0] == PRODUTOS_IRREGULARES_URL
+    assert urls.count(PRODUTOS_IRREGULARES_URL) == 1
     # Publicação da Portaria SDA/MAPA nº 1.617/2026 em 03/10/2026 às 00h33.
     mapa_portaria_1617 = "https://www.regularizeconsultorias.com.br/noticias/mapa-portaria-1617-2026-aditivos-antimicrobianos-alimentacao-animal/"
-    assert urls[0] == mapa_portaria_1617
+    assert urls[1] == mapa_portaria_1617
     assert urls.count(mapa_portaria_1617) == 1
     # Correção factual da CP 1.399/2026 em 02/10/2026 às 21h50.
-    assert urls[1] == COSMETICOS_URL
+    assert urls[2] == COSMETICOS_URL
     assert urls.count(COSMETICOS_URL) == 1
     # Notícia de 01/10/2026: textos aprovados para cosméticos artesanais, ainda sem publicação formal.
-    assert urls[2] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-regras-cosmeticos-artesanais/"
+    assert urls[3] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-regras-cosmeticos-artesanais/"
     assert urls.count("https://www.regularizeconsultorias.com.br/noticias/anvisa-regras-cosmeticos-artesanais/") == 1
     # Revisão do Cadastro Anvisa em 30/09 às 17h49, posterior às revisões das 09h32, 09h31 e 09h30.
-    assert urls[3] == "https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/"
+    assert urls[4] == "https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/"
     assert urls.count("https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/") == 1
-    assert urls[4] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-acesso-sncr-afe-farmacias-privadas/"
-    assert urls[5] == "https://www.regularizeconsultorias.com.br/noticias/nova-regra-anvisa-cnes-receitas-farmacias/"
-    assert urls[6] == GLP1_URL
+    assert urls[5] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-acesso-sncr-afe-farmacias-privadas/"
+    assert urls[6] == "https://www.regularizeconsultorias.com.br/noticias/nova-regra-anvisa-cnes-receitas-farmacias/"
+    assert urls[7] == GLP1_URL
     # A etapa do SNCR em 30/09, revisada em 30/09 às 06h40.
-    assert urls[7] == SNCR_WEBINAR_URL
+    assert urls[8] == SNCR_WEBINAR_URL
     assert urls.count(SNCR_WEBINAR_URL) == 1
     # A notícia da propaganda do Semavy, publicada em 28/09/2026 às 08h58.
-    assert urls[8] == SEMAVY_PROPAGANDA_URL
+    assert urls[9] == SEMAVY_PROPAGANDA_URL
     assert urls.count(SEMAVY_PROPAGANDA_URL) == 1
-    # O consolidado de fiscalização, revisado em 28/09 às 08h28.
-    assert urls[9] == PRODUTOS_IRREGULARES_URL
-    assert urls.count(PRODUTOS_IRREGULARES_URL) == 1
     # A revisão de CNES/SNCR em 28/09 às 07h00 vem em seguida.
     assert urls[10] == CNES_SNCR_URL
     assert urls.count(CNES_SNCR_URL) == 1

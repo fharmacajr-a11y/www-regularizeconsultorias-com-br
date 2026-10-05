@@ -88,9 +88,9 @@ def test_listing_sitemap_and_cards_follow_the_review_timestamps():
     cards = re.findall(r"(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)", index, re.DOTALL)
 
     expected = (
-        ("anvisa-atualiza-acesso-sncr-afe-farmacias-privadas", AFE_UPDATED, "30/09/2026 • 09h32", 4, False),
-        ("nova-regra-anvisa-cnes-receitas-farmacias", CNES_UPDATED, "30/09/2026 • 09h31", 5, True),
-        ("canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao", GLP1_UPDATED, "30/09/2026 • 09h30", 6, True),
+        ("anvisa-atualiza-acesso-sncr-afe-farmacias-privadas", AFE_UPDATED, "30/09/2026 • 09h32", 5, True),
+        ("nova-regra-anvisa-cnes-receitas-farmacias", CNES_UPDATED, "30/09/2026 • 09h31", 6, True),
+        ("canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao", GLP1_UPDATED, "30/09/2026 • 09h30", 7, True),
     )
     for slug, updated, label, position, compact in expected:
         card = _card(index, slug)

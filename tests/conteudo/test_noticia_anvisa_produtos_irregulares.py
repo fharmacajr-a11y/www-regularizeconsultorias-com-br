@@ -9,7 +9,7 @@ NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 SITEMAP_PATH = ROOT / "sitemap.xml"
 URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
 PUBLISHED = "2026-07-05T18:00:00-03:00"
-UPDATED = "2026-09-28T08:28:00-03:00"
+UPDATED = "2026-10-05T14:24:00-03:00"
 DOBUTAMINA_LOTES = ("24092127", "24102310", "25102244", "25102243", "25112308")
 
 
@@ -119,7 +119,7 @@ def test_september_update_reflects_re_3547_and_keeps_history():
     assert "de 09/09/2026 e publicada no DOU em 11/09/2026" in text
     assert "Medidas de julho a setembro mostram" in html
     assert "Medidas de julho e agosto" not in html
-    assert f'<time datetime="{UPDATED}">28/09/2026</time> às 08h28' in html
+    assert f'<time datetime="{UPDATED}">05/10/2026</time> às 14h24' in html
     assert f'<time datetime="{PUBLISHED}">05/07/2026</time> às 18h00' in html
     # Histórico de agosto e julho preservado.
     for term in ("12/08 — saneantes sem registro", "14/08 — Chá Sarapião", "Fiscalização de julho amplia", "Chlorohex 2,0%"):
@@ -260,12 +260,14 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
 
     assert news_index.count('href="/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"') == 1
     assert f'data-updated="{UPDATED}"' in news_index
-    assert "28/09/2026 • 08h28" in news_index
+    assert "05/10/2026 • 14h24" in news_index
     assert "Publicações da Anvisa de 21 e 25/09 trazem a RE nº 3.751/2026" in news_index
     cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', news_index, re.DOTALL)
-    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[9]
+    # Correção do alcance da RE nº 3.751/2026 em 05/10/2026 às 14h24: card no topo e grande.
+    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[0]
+    assert "news-card-compact" not in cards[0].split(">", 1)[0]
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
-    assert f"<loc>{URL}</loc>\n    <lastmod>2026-09-28</lastmod>" in sitemap
+    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-05</lastmod>" in sitemap
 
 
 def test_re_3717_callout_keeps_each_measure_inside_its_own_item():
@@ -371,9 +373,19 @@ def test_new_measures_of_21_and_25_september_keep_their_own_scope():
 
     assert len(items) == 5
     ocrevus, ict, eleve, dcasa, smart = items
-    assert "H7953B14 e H7953B06" in ocrevus and "restrita aos dois lotes identificados" in ocrevus
     assert "RE nº 3.751/2026" in ocrevus and "RE nº 3.751/2026" in ict
-    assert "31/08 a 02/09/2026" in ict and "o período citado refere-se ao recolhimento" in ict
+    # RE nº 3.751/2026, LAF MED: os lotes estão no campo de produto, mas a motivação
+    # estende as ações a quaisquer medicamentos, sem proibir o Ocrevus em geral.
+    assert "LAF MED" in ocrevus and "H7953B14 e H7953B06" in ocrevus
+    assert "se aplicam a quaisquer medicamentos" in ocrevus
+    assert "não é uma proibição geral do Ocrevus" in ocrevus
+    assert "restrita aos dois lotes" not in ocrevus
+    # ICT: o campo de produto alcança todos os manipulados estéreis, todos os lotes;
+    # 31/08 a 02/09/2026 é o período da inspeção, não da produção nem do recolhimento.
+    assert "todos os medicamentos manipulados estéreis da empresa, em todos os lotes" in ict
+    assert "suspensão de comercialização, distribuição, manipulação, propaganda e uso" in ict
+    assert "31/08 a 02/09/2026 são as da inspeção" in ict
+    assert "produzidos" not in ict and "refere-se ao recolhimento" not in ict
     assert "RE nº 3.712/2026" in eleve and "Gama Suplementos Alimentares" in eleve
     assert "RE nº 3.714/2026" in dcasa and "Fórmula Química" in dcasa
     assert "RE nº 3.714/2026" in smart
@@ -386,7 +398,23 @@ def test_new_measures_of_21_and_25_september_keep_their_own_scope():
     # Limites de alcance e de atribuição informados na revisão.
     assert "falsific" not in ocrevus.casefold()
     assert "falsific" not in _text(html[body_start:html.index("<h3>ICT Farmacêutica", body_start)]).casefold()
-    assert "o alcance da suspensão deve ser conferido no ato publicado" in body
+    laf_body = _text(html[body_start:html.index("<h3>ICT Farmacêutica", body_start)])
+    ict_body = _text(html[html.index("<h3>ICT Farmacêutica", body_start):html.index("<h2>21 de setembro: RE nº 3.712", body_start)])
+    assert "Resolução-RE nº 3.751, de 24/09/2026, publicada no DOU em 25/09/2026" in body
+    assert "proibição de armazenamento, comercialização, distribuição, exportação, importação, propaganda e transporte" in laf_body
+    assert "o item não determina recolhimento" in laf_body
+    assert "se aplicam a quaisquer medicamentos" in laf_body
+    assert "não é uma proibição geral do Ocrevus" in laf_body
+    assert "art. 7º, inciso XV, da Lei nº 9.782/1999" in laf_body
+    assert "não se estende aos demais lotes" not in laf_body
+    assert "todos os medicamentos manipulados estéreis, em todos os lotes" in ict_body
+    assert "suspensão da comercialização, da distribuição, da manipulação, da propaganda e do uso" in ict_body
+    assert "o item não determina apreensão" in ict_body
+    assert "correspondem à inspeção de boas práticas de manipulação" in ict_body
+    assert "não delimitam a produção nem os lotes alcançados" in ict_body
+    assert "art. 7º da Lei nº 6.360/1976" in ict_body
+    assert "produzidos entre" not in ict_body and "se refere ao recolhimento" not in ict_body
+    assert "o alcance da suspensão deve ser conferido no ato publicado" not in body
     assert "Smart GR" not in dcasa and "saneantes" not in smart
     assert "3.738" not in html
     assert "CNPJ" not in dcasa and "CNPJ" not in _text(html[html.index("<h3>D Casa"):html.index("<h3>Smart GR")])

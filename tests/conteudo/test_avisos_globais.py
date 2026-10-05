@@ -273,7 +273,12 @@ def test_comunicado_editorial_organization_and_active_notice_content():
     assert "toda farmácia" not in cnes_text.casefold()
     assert "Anvisa suspende medicamento e proíbe produtos irregulares" in produtos.text()
     assert "HISTÓRICO" in produtos.text()
-    assert "28/09/2026 • 08h28" in produtos.text()
+    assert "05/10/2026 • 14h24" in produtos.text()
+    # RE nº 3.751/2026: 31/08 a 02/09/2026 é a inspeção da ICT, não o período de produção.
+    assert "todos os manipulados estéreis da ICT Farmacêutica, em todos os lotes" in produtos.text()
+    assert "após inspeção realizada de 31/08 a 02/09/2026" in produtos.text()
+    assert "produzidos de 31/08" not in produtos.text()
+    assert "distribuidora LAF MED" in produtos.text() and "quaisquer medicamentos" in produtos.text()
     assert "reúnem medidas pontuais" in produtos.text()
     assert "Comunicado mantido como registro das medidas sanitárias divulgadas no período" in produtos.text()
     assert "revog" not in produtos.text().casefold()
@@ -381,7 +386,7 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
         any("comunicado-historico__meta" in node.attrs.get("class", "").split() for node in article.descendants())
         for article in historical
     )
-    assert "HISTÓRICO" in historical[0].text() and "28/09/2026 • 08h28" in historical[0].text()
+    assert "HISTÓRICO" in historical[0].text() and "05/10/2026 • 14h24" in historical[0].text()
     assert "Anvisa suspende medicamento e proíbe produtos irregulares" in historical[0].text()
     assert "ENCERRADO" in historical[1].text() and "03/09/2026 • 22h49" in historical[1].text()
     assert "ciclo de renovação foi encerrado em 31 de agosto" in historical[1].text()

@@ -167,11 +167,11 @@ def test_article_keeps_sources_cta_and_natural_internal_links():
     assert "Aviso institucional:" in html
 
 
-def test_listing_places_the_card_third_after_the_mapa_publication():
+def test_listing_places_the_card_fourth_after_the_mapa_publication():
     html = NEWS_INDEX.read_text(encoding="utf-8")
     cards = re.findall(r"(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)", html, re.DOTALL)
     assert len(cards) == 83
-    card = cards[2]
+    card = cards[3]
     opening = card.split(">", 1)[0]
     assert f'href="{ROUTE}"' in card
     assert html.count(f'href="{ROUTE}"') == 1
@@ -192,8 +192,8 @@ def test_listing_places_the_card_third_after_the_mapa_publication():
     collection = next(block for block in _jsonld(html) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
     assert len(items) == 83
-    assert items[2]["position"] == 3
-    assert items[2]["url"] == URL
+    assert items[3]["position"] == 4
+    assert items[3]["url"] == URL
     assert [item["position"] for item in items] == list(range(1, 84))
 
 
@@ -203,7 +203,7 @@ def test_sitemap_adds_only_the_new_url_and_the_listing_lastmod():
     assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-01</lastmod>" in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-10-03</lastmod>"
+        "    <lastmod>2026-10-05</lastmod>"
     ) in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/</loc>\n"

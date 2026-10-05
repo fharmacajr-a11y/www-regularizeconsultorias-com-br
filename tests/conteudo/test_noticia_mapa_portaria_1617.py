@@ -167,7 +167,7 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     assert '>M.A.P.A</span><span class="text-xs text-slate-400">3<' in index
     assert len(re.findall(r'\bdata-category="mapa"', index)) == 3
 
-    card = cards[0]
+    card = cards[1]
     opening = card.split(">", 1)[0]
     assert f'href="/noticias/{SLUG}/"' in card
     assert index.count(f'href="/noticias/{SLUG}/"') == 1
@@ -181,17 +181,17 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     assert f'<time datetime="{STAMP}" class="leading-none">03/10/2026 • 00h33</time>' in card
     assert all("news-card-compact" not in item.split(">", 1)[0] for item in cards[:5])
     assert "news-card-compact" in cards[5].split(">", 1)[0]
-    assert "nova-regra-anvisa-cnes-receitas-farmacias" in cards[5]
+    assert "anvisa-atualiza-acesso-sncr-afe-farmacias-privadas" in cards[5]
 
     collection = next(block for block in _jsonld(index) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
     assert len(items) == 83
-    assert items[0]["position"] == 1
-    assert items[0]["url"] == PUBLIC_URL
+    assert items[1]["position"] == 2
+    assert items[1]["url"] == PUBLIC_URL
     assert [item["position"] for item in items] == list(range(1, 84))
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
     assert f"<loc>{PUBLIC_URL}</loc>\n    <lastmod>2026-10-03</lastmod>" in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-10-03</lastmod>"
+        "    <lastmod>2026-10-05</lastmod>"
     ) in sitemap
