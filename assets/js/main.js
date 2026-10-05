@@ -69,6 +69,25 @@
         setMenuOpen(false);
       });
     });
+
+    // O menu aberto rola por dentro, na altura que sobra abaixo do cabeçalho
+    // (custom.css). Ao girar a tela ou redimensionar, essa altura muda e o
+    // destino com foco podia ficar fora da parte visível: a rolagem do menu
+    // o traz de volta. Só o menu rola; a página por trás fica onde está.
+    window.addEventListener('resize', function () {
+      var active = document.activeElement;
+
+      if (mobileMenu.classList.contains('hidden') || !active || !mobileMenu.contains(active)) return;
+
+      var area = mobileMenu.getBoundingClientRect();
+      var item = active.getBoundingClientRect();
+
+      if (item.bottom > area.bottom) {
+        mobileMenu.scrollTop += item.bottom - area.bottom;
+      } else if (item.top < area.top) {
+        mobileMenu.scrollTop -= area.top - item.top;
+      }
+    });
   }
 
   /* =================================================================

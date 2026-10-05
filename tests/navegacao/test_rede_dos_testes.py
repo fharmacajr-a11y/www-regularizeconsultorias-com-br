@@ -4,7 +4,10 @@ Todo contexto do Chromium nos testes nasce por support.new_context ou
 support.new_page, com a rota já instalada antes da navegação: AdSense e outros
 domínios abortados e a Inter servida do arquivo local. O primeiro teste lê o
 código dos testes; o segundo abre de verdade um artigo com AdSense, num
-subprocesso, como os outros testes de navegador.
+subprocesso, como os outros testes de navegador. Externo é tudo o que não vem
+da origem servida (esquema, host e porta da base), e o resultado conta os
+acessos por origem: aqui a origem é o servidor em 127.0.0.1; numa verificação
+de produção que troque a base, é o domínio testado.
 """
 import json
 import re
@@ -66,8 +69,16 @@ with sync_playwright() as playwright:
         };
     }""")
     browser.close()
-external = [url for url in finished if (urlsplit(url).hostname or "") not in support.LOCAL_HOSTS]
-print(json.dumps({"state": state, "blocked": support.BLOCKED_REQUESTS, "externalFinished": external}))
+# Externo é o que não vem da origem servida (esquema, host e porta da base): no
+# teste, o servidor em 127.0.0.1; numa verificação de produção que troque a
+# base, o domínio testado. Os acessos ficam contados por origem no resultado.
+origin = lambda url: urlsplit(url)._replace(path="", query="", fragment="").geturl()  # noqa: E731
+external = [url for url in finished if origin(url) != origin(base)]
+origins = {}
+for url in finished:
+    origins[origin(url)] = origins.get(origin(url), 0) + 1
+print(json.dumps({"state": state, "blocked": support.BLOCKED_REQUESTS, "externalFinished": external,
+                  "origens": origins, "base": origin(base)}))
 '''
 
 
@@ -103,9 +114,9 @@ def test_article_with_adsense_loads_nothing_outside_localhost():
         f"{route}: o pedido do AdSense não passou pela rota de bloqueio: {result['blocked']}"
     )
     assert result["state"]["adsense"] == "ausente", result["state"]
-    # Só as respostas locais da fonte terminam fora de 127.0.0.1.
+    # Fora da origem servida, só terminam as respostas da Inter servidas pela rota.
     stray = [url for url in result["externalFinished"] if "fonts.g" not in url]
-    assert not stray, f"{route}: requisições externas concluídas: {stray}"
+    assert not stray, f"{route}: requisições externas concluídas (origem servida {result['base']}, acessos {result['origens']}): {stray}"
     assert result["state"]["interLoaded"] and result["state"]["interUsed"], (
         f"{route}: a Inter local não carregou ({result['state']})"
     )

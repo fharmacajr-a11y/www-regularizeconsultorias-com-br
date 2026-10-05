@@ -547,8 +547,33 @@ h1, h2 {
     justify-content: center;
   }
 
+  /* O menu aberto fica na altura que sobra abaixo da faixa (4,8rem) e da
+     linha principal (5rem) e rola por dentro. Sem limite, em paisagem no
+     celular os últimos destinos ficavam abaixo da borda: o cabeçalho é fixo e
+     rolar a janela não o move. dvh acompanha a barra do navegador. */
   #navbar #mobile-menu:not(.hidden) {
     display: block !important;
+    max-height: calc(100vh - 9.8rem);
+    max-height: calc(100dvh - 9.8rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* Com o menu aberto, voltar ao topo e WhatsApp recolhem: em telas baixas
+     ficariam sobre os destinos. Como em pages/noticias.css, a regra vai em
+     cada botão, porque o voltar ao topo visível declara visibility própria. */
+  body:has(#mobile-menu:not(.hidden)) .floating-buttons .floating-btn {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+/* De 768 a 899 px a faixa tem 2,5rem e a linha principal, 6rem. */
+@media (min-width: 768px) and (max-width: 899px) {
+  #navbar #mobile-menu:not(.hidden) {
+    max-height: calc(100vh - 8.5rem);
+    max-height: calc(100dvh - 8.5rem);
   }
 }
 
@@ -2360,10 +2385,14 @@ footer .text-slate-500 {
 
 /* Os créditos do rodapé e o fechamento do comunicado ficam na largura toda do
    container, sem reserva lateral nem inferior. Quando esses blocos chegam à
-   coluna fixa, o main.js a ancora 1rem acima deles e ela rola com a página. */
+   coluna fixa, o main.js a ancora 1rem acima deles e ela rola com a página.
+   Ancorada, ela passa sob a faixa e o cabeçalho fixos, como o resto da
+   página: em telas baixas, no fim da rolagem, a posição acima dos créditos
+   caía sobre o botão do menu (z-index 9999 contra 50). */
 .floating-buttons.is-docked {
   position: absolute;
   bottom: auto;
+  z-index: 40;
 }
 
 /* Mobile: botões levemente menores — continua válido dentro de max-width:1375px */

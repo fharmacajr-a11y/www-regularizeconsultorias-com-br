@@ -532,9 +532,18 @@ def test_tablet_hide_regression_is_absent_and_navbar_rules_remain():
         r'@media\(min-width:768px\)and\(max-width:899px\)\{'
         r'#navbar#mobile-menua\[href="/comunicado/"\]\{display:none!important;?\}\}'
     )
+    # O menu aberto também tem altura máxima e rolagem própria (telas baixas),
+    # com a altura da faixa e da linha principal de cada faixa de largura, e a
+    # coluna flutuante ancorada passa sob o cabeçalho fixo.
     required = (
         re.compile(r'#navbar>div:first-child>div>nav\{display:none!important;?\}'),
-        re.compile(r'#navbar#mobile-menu:not\(\.hidden\)\{display:block!important;?\}'),
+        re.compile(r'#navbar#mobile-menu:not\(\.hidden\)\{display:block!important;max-height:calc\(100vh-9\.8rem\);'
+                   r'max-height:calc\(100dvh-9\.8rem\);overflow-y:auto;overscroll-behavior:contain;?\}'),
+        re.compile(r'body:has\(#mobile-menu:not\(\.hidden\)\)\.floating-buttons\.floating-btn\{opacity:0;visibility:hidden;'
+                   r'pointer-events:none;?\}'),
+        re.compile(r'@media\(min-width:768px\)and\(max-width:899px\)\{#navbar#mobile-menu:not\(\.hidden\)\{'
+                   r'max-height:calc\(100vh-8\.5rem\);max-height:calc\(100dvh-8\.5rem\);?\}\}'),
+        re.compile(r'\.floating-buttons\.is-docked\{position:absolute;bottom:auto;z-index:40;?\}'),
         re.compile(r'@media\(min-width:900px\)and\(max-width:1180px\)\{'),
     )
     for path in CSS_PATHS:
