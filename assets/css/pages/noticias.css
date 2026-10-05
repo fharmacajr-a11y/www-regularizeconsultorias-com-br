@@ -295,14 +295,11 @@
   box-shadow: 0 2px 6px rgba(220, 38, 38, 0.28) !important;
 }
 
-.news-card-compact.news-amber-card > a {
-  background-color: #f59e0b !important;
-}
-
+/* Atualização: o fundo vem de .news-amber-button (15.3.1), o mesmo nos dois
+   formatos; o compacto só acrescenta a sombra do hover e do foco. */
 .news-card-compact.news-amber-card > a:hover,
 .news-card-compact.news-amber-card > a:focus-visible {
-  background-color: #d97706 !important;
-  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.32) !important;
+  box-shadow: 0 2px 6px rgba(180, 83, 9, 0.32) !important;
 }
 
 .news-card-compact:not(.news-orange-card):not(.news-urgent-card):not(.news-amber-card) > a {
@@ -313,6 +310,23 @@
 .news-card-compact:not(.news-orange-card):not(.news-urgent-card):not(.news-amber-card) > a:focus-visible {
   background-color: var(--color-brand-dark) !important;
   box-shadow: 0 2px 6px rgba(21, 101, 192, 0.28) !important;
+}
+
+/* 15.3.1 Atualização: letras brancas no selo e no botão, no card grande e no
+   compacto (preferência confirmada em 04/10/2026, no padrão do Informativo).
+   Branco sobre #b45309 (amber-700): 5,02:1; sobre #92400e (amber-800), no
+   hover e no foco: 7,09:1. Antes o grande usava texto escuro sobre #f59e0b e o
+   compacto forçava branco sobre o mesmo fundo (2,15:1). */
+.news-amber-badge,
+.news-amber-button {
+  background-color: #b45309;
+  color: #fff;
+}
+
+.news-amber-button:hover,
+.news-amber-button:focus-visible {
+  background-color: #92400e;
+  color: #fff;
 }
 
 /* 15.4 Notícias: chips, categorias e reguladores */

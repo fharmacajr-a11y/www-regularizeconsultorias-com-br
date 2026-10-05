@@ -35,7 +35,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
 import pytest
 
-from support import SITE_DIR
+from support import SITE_DIR, subprocess_env
 
 
 # (largura, altura): celular, limites de 640, 768 e 1024 px, meia tela de
@@ -210,6 +210,8 @@ import os
 import sys
 from playwright.sync_api import sync_playwright
 
+from support import new_context
+
 base, width, height, stacked_limit, wheel_step, far = sys.argv[1:]
 helpers = os.environ["NOTICIAS_FLUTUANTES_JS"]
 width, height, stacked_limit, wheel_step, far = map(int, (width, height, stacked_limit, wheel_step, far))
@@ -242,10 +244,9 @@ def toggles(states):
 
 with sync_playwright() as playwright:
     browser = playwright.chromium.launch(headless=True)
-    context = browser.new_context(viewport={"width": width, "height": height})
+    context = new_context(browser, allow=(base,), viewport={"width": width, "height": height})
     context.add_init_script(helpers)
     page = context.new_page()
-    page.route("**/*", lambda route: route.continue_() if route.request.url.startswith(base) else route.abort())
     page.goto(base + "/noticias/", wait_until="load")
     page.add_style_tag(content="html{scroll-behavior:auto!important}")
     settle()
@@ -419,7 +420,7 @@ def probes():
             text=True,
             encoding="utf-8",
             timeout=420,
-            env=dict(os.environ, NOTICIAS_FLUTUANTES_JS=HELPERS, PYTHONIOENCODING="utf-8"),
+            env=subprocess_env(NOTICIAS_FLUTUANTES_JS=HELPERS),
         )
 
     try:

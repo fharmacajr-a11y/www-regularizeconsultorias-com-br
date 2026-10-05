@@ -16,7 +16,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
 import pytest
 
-from support import SITE_DIR
+from support import SITE_DIR, subprocess_env
 
 
 STACKED_WIDTHS = (320, 360, 390, 414, 639, 640, 767, 768, 940, 944, 950, 960, 1023)
@@ -27,6 +27,8 @@ PROBE = r'''
 import json
 import sys
 from playwright.sync_api import sync_playwright
+
+from support import new_context
 
 base, widths = sys.argv[1], json.loads(sys.argv[2])
 MEASURE = """() => {
@@ -72,10 +74,8 @@ results = {}
 with sync_playwright() as playwright:
     browser = playwright.chromium.launch(headless=True)
     for width in widths:
-        context = browser.new_context(viewport={"width": width, "height": 900})
+        context = new_context(browser, allow=(base,), viewport={"width": width, "height": 900})
         page = context.new_page()
-        page.route("**/*", lambda route: route.continue_()
-                   if route.request.url.startswith(base) else route.abort())
         page.goto(base + "/noticias/", wait_until="load")
         state = page.evaluate(MEASURE)
         state["covered"] = page.evaluate(COVERED)
@@ -104,6 +104,7 @@ def geometry():
             text=True,
             encoding="utf-8",
             timeout=180,
+            env=subprocess_env(),
         )
     finally:
         server.shutdown()

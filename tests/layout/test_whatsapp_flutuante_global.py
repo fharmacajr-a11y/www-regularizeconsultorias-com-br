@@ -9,7 +9,7 @@ from urllib.parse import parse_qs, urlsplit
 
 import pytest
 
-from support import ROOT, SITE_DIR, TreeParser, parse_html, public_html_paths
+from support import ROOT, SITE_DIR, TreeParser, parse_html, public_html_paths, subprocess_env
 
 
 TEMPLATE_PATH = ROOT / "noticias" / "template-noticia.html"
@@ -222,10 +222,12 @@ import json
 import sys
 from playwright.sync_api import sync_playwright
 
+from support import new_context
+
 url, width, height, back_to_top, check_end = sys.argv[1:]
 with sync_playwright() as playwright:
     browser = playwright.chromium.launch(headless=True)
-    context = browser.new_context(viewport={"width": int(width), "height": int(height)})
+    context = new_context(browser, viewport={"width": int(width), "height": int(height)})
     page = context.new_page()
     response = page.goto(url, wait_until="domcontentloaded", timeout=15_000)
     assert response is not None and response.ok, url
@@ -323,6 +325,7 @@ with sync_playwright() as playwright:
         capture_output=True,
         text=True,
         timeout=30,
+        env=subprocess_env(),
     )
     assert result.returncode == 0, result.stderr
     return json.loads(result.stdout)
@@ -368,10 +371,12 @@ import json
 import sys
 from playwright.sync_api import sync_playwright
 
+from support import new_context
+
 url, width, height = sys.argv[1:]
 with sync_playwright() as playwright:
     browser = playwright.chromium.launch(headless=True)
-    context = browser.new_context(viewport={"width": int(width), "height": int(height)})
+    context = new_context(browser, viewport={"width": int(width), "height": int(height)})
     page = context.new_page()
     response = page.goto(url, wait_until="domcontentloaded", timeout=15_000)
     assert response is not None and response.ok, url
@@ -407,6 +412,7 @@ with sync_playwright() as playwright:
         capture_output=True,
         text=True,
         timeout=30,
+        env=subprocess_env(),
     )
     assert result.returncode == 0, result.stderr
     layout = json.loads(result.stdout)

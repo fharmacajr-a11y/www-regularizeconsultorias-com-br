@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 from playwright.sync_api import sync_playwright
 
-from support import SITE_DIR
+from support import SITE_DIR, new_context
 
 
 ROOT = Path(__file__).parents[2]
@@ -429,7 +429,7 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
 
 
 def test_comunicado_useful_cta_computed_states(site_url, browser):
-    context = browser.new_context(viewport={"width": 1280, "height": 900})
+    context = new_context(browser, viewport={"width": 1280, "height": 900})
     page = context.new_page()
     try:
         page.goto(f"{site_url}/comunicado/", wait_until="networkidle")
@@ -546,7 +546,7 @@ def test_tablet_hide_regression_is_absent_and_navbar_rules_remain():
 
 
 def test_fallback_is_six_before_delayed_sync(browser, site_url):
-    context = browser.new_context()
+    context = new_context(browser)
     context.add_init_script(
         "const originalFetch = window.fetch.bind(window);"
         "window.fetch = (...args) => String(args[0]).endsWith('/comunicado/') ? new Promise(() => {}) : originalFetch(...args);"
@@ -562,7 +562,7 @@ def test_fallback_is_six_before_delayed_sync(browser, site_url):
 
 
 def test_old_storage_is_ignored_when_sync_fails(browser, site_url):
-    context = browser.new_context()
+    context = new_context(browser)
     context.add_init_script("localStorage.setItem('avisos_count', '3'); localStorage.setItem('avisos_count_version', '2026-05-21-sncr');")
     page = context.new_page()
     page_errors = []
@@ -580,7 +580,7 @@ def test_old_storage_is_ignored_when_sync_fails(browser, site_url):
 
 def test_successful_sync_persists_six_and_hides_zero(browser, site_url):
     for count in (6, 0):
-        context = browser.new_context()
+        context = new_context(browser)
         page = context.new_page()
         try:
             page.route(
@@ -609,7 +609,7 @@ def test_successful_sync_persists_six_and_hides_zero(browser, site_url):
 def test_responsive_notice_visibility_matrix(browser, site_url):
     for route in REPRESENTATIVE_ROUTES:
         for width in VIEWPORT_WIDTHS:
-            context = browser.new_context(viewport={"width": width, "height": 900})
+            context = new_context(browser, viewport={"width": width, "height": 900})
             page = context.new_page()
             try:
                 if route != "/comunicado/":

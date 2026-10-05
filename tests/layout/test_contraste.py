@@ -33,7 +33,6 @@ import io
 import json
 import math
 import os
-import re
 import subprocess
 import sys
 import threading
@@ -43,7 +42,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from support import SITE_DIR
+from support import SITE_DIR, new_context
 
 
 ROUTES = (
@@ -65,7 +64,7 @@ WIDTHS = (390, 1440)
 GRADIENT_WIDTHS = (320, 360, 640, 768, 896, 1024, 1280)
 HOVER_TARGETS = (
     ("/comunicado/", "#avisos-lista a.rounded-lg"),
-    ("/noticias/", "#news-article-list a.bg-amber-500"),
+    ("/noticias/", "#news-article-list a.news-amber-button"),
     ("/contato/", "main a.rounded-xl[href^='/whatsapp/']"),
     ("/noticias/prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular/", "[data-news-update-callout] a"),
 )
@@ -381,12 +380,12 @@ def _open(context, base, route):
 
 
 def _new_context(browser, width):
-    context = browser.new_context(viewport={"width": width, "height": 900}, reduced_motion="reduce")
-    # Fontes externas ficam bloqueadas, para não depender de rede. Com
-    # CONTRASTE_FONTE_EFETIVA=1 a Inter do Google Fonts carrega, como em produção.
-    blocked = "googlesyndication|doubleclick|adtrafficquality" + ("" if EFFECTIVE_FONT else r"|fonts\.g")
-    context.route(re.compile(rf".*({blocked}).*"), lambda route: route.abort())
-    return context
+    # Rota de rede comum (support): AdSense e demais domínios externos ficam
+    # abortados. Por padrão as fontes externas também ficam de fora e o texto é
+    # medido com a fonte de reserva; com CONTRASTE_FONTE_EFETIVA=1 entra a Inter
+    # local (o mesmo arquivo da home), sem depender do Google Fonts.
+    return new_context(browser, fonts="local" if EFFECTIVE_FONT else "block",
+                       viewport={"width": width, "height": 900}, reduced_motion="reduce")
 
 
 def _texto(browser, base, widths=WIDTHS, only_backgrounds=False):

@@ -21,7 +21,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from support import ROOT, SITE_DIR, public_html_paths
+from support import ROOT, SITE_DIR, new_page, public_html_paths
 
 
 DETAIL_PAGES = [
@@ -440,7 +440,9 @@ def _collect(mode):
     failures = []
     browser_cm = _browser()
     port, browser = next(browser_cm)
-    page = browser.new_page() if mode != "menu" else browser.new_page(viewport={"width": 390, "height": 844})
+    # Rota de rede dos testes (support): sem AdSense e com a Inter local, para as
+    # quebras de linha da tabela REFERENCE_LINES não dependerem do Google Fonts.
+    page = new_page(browser) if mode != "menu" else new_page(browser, viewport={"width": 390, "height": 844})
     try:
         if mode == "clearance":
             for relative_path in DETAIL_PAGES:

@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from support import SITE_DIR
+from support import SITE_DIR, subprocess_env
 
 
 ROOT = Path(__file__).parents[2]
@@ -84,6 +84,8 @@ def test_layout_uses_sorted_result_position_instead_of_original_dom_position(sit
         import sys
         from playwright.sync_api import sync_playwright
 
+        from support import new_page
+
         html = base64.b64decode(sys.argv[1]).decode("utf-8")
 
         def card_state(page):
@@ -97,7 +99,7 @@ def test_layout_uses_sorted_result_position_instead_of_original_dom_position(sit
 
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch(headless=True)
-            page = browser.new_page()
+            page = new_page(browser)
             page.set_content(html, wait_until="load")
 
             newest = card_state(page)
@@ -127,5 +129,6 @@ def test_layout_uses_sorted_result_position_instead_of_original_dom_position(sit
         capture_output=True,
         text=True,
         timeout=30,
+        env=subprocess_env(),
     )
     assert completed.returncode == 0, completed.stdout + completed.stderr

@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 from playwright.sync_api import sync_playwright
 
-from support import SITE_DIR
+from support import SITE_DIR, new_context
 
 
 ROOT = Path(__file__).parents[2]
@@ -59,7 +59,7 @@ def browser():
 
 @pytest.fixture
 def page(browser):
-    context = browser.new_context()
+    context = new_context(browser)
     page = context.new_page()
     try:
         yield page

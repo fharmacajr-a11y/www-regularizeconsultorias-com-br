@@ -50,6 +50,25 @@ O pytest descobre os arquivos `test_*.py` dentro das cinco pastas. A saída term
 
 Eles entram no comando principal. Não há relatório HTML.
 
+### Rede
+
+Todo contexto do Chromium nasce por `support.new_context` ou `support.new_page`, com a rota de rede já instalada antes da primeira navegação:
+
+- `127.0.0.1` e `localhost` passam.
+- O CSS do Google Fonts vira o `@font-face` da Inter local: o mesmo `assets/fonts/inter-latin-variable-v20.woff2` e os mesmos descritores da home. As medidas de geometria (quebras de linha do rodapé, colunas, botões flutuantes) não dependem mais da rede, e a mesma fonte vale no fonte e no artefato. Se o arquivo faltar, o teste falha na hora.
+- Todo o resto é abortado e anotado em `support.BLOCKED_REQUESTS`: AdSense (os 83 artigos têm o script), `wa.me`, redes sociais e páginas oficiais.
+
+Os testes que rodam em subprocesso importam `support` pelo `PYTHONPATH` montado em `support.subprocess_env()`. As sondas das Notícias aceitam `allow=(base,)` para rodar contra o domínio público sem liberar outros hosts.
+
+`tests/navegacao/test_rede_dos_testes.py` cuida dessa garantia:
+
+- Lê o código e falha se algum teste criar contexto direto com `browser.new_context`/`browser.new_page`.
+- Abre um artigo com AdSense e confere que o pedido foi abortado, que nada externo terminou de carregar e que a Inter local carregou.
+
+Com `RC_REDE_LOG=<pasta>`, cada acesso externo tratado (fonte local servida ou pedido bloqueado) vira uma linha JSON com o teste e o processo, num arquivo `rede-<pid>.jsonl` por processo. Use para comprovar uma rodada.
+
+O cabeçalho do pytest (`tests/conftest.py`) diz qual site os testes de navegador serviram: o fonte (working tree) ou o artefato (`PAGES_SITE_DIR`). Também mostra o HEAD e a política de rede.
+
 - `tests/layout/test_rodape_espaco.py` abre as páginas num processo separado, varia a largura e mede o rodapé no fim da rolagem. O processo separado evita o loop do Playwright deixado pela consulta da Farmácia Popular.
 - `tests/layout/test_whatsapp_flutuante_global.py` confere posição fixa, tamanho, se o botão não cobre texto e se a coluna continua na janela no fim da página.
 - `tests/layout/test_noticias_cards.py` confere a ordenação visual dos cards.
@@ -73,7 +92,7 @@ Eles entram no comando principal. Não há relatório HTML.
 Limites:
 
 - A captura é em sRGB, 8 bits por canal, com `--force-color-profile=srgb`; sobre degradê e imagem o fundo carrega esse arredondamento (meio nível por canal) e o pontilhado que o Chromium aplica aos degradês. Monitores e perfis de cor reais variam.
-- As fontes externas são bloqueadas para o teste não depender de rede: as páginas carregam a Inter do Google Fonts e, no teste, usam a fonte de reserva. A quebra das linhas muda; a borda esquerda das linhas, que é onde ficam as pontas dos degradês horizontais, não. Com `CONTRASTE_FONTE_EFETIVA=1` o teste deixa a Inter carregar e mede com a fonte de produção (ver "Conferência com a fonte efetiva").
+- Por padrão o teste mede com a fonte de reserva: a rota de rede também aborta as fontes externas (`fonts="block"`). A quebra das linhas muda; a borda esquerda das linhas, que é onde ficam as pontas dos degradês horizontais, não. Com `CONTRASTE_FONTE_EFETIVA=1` entra a Inter local, o mesmo arquivo que as páginas usam (ver "Conferência com a fonte efetiva").
 - Larguras fora das listadas não são medidas; sobre degradê, a posição do texto muda continuamente com a largura. As escolhidas são as dos breakpoints, as menores telas e 896 px, onde o container dos artigos deixa de ocupar a janela.
 - A opacidade de ancestral é tratada como alfa do texto. Isso é exato quando o grupo com opacidade não tem fundo próprio, que é o caso do site hoje (nenhum texto medido tem opacidade abaixo de 1).
 - Ficam de fora: o valor digitado em campos de formulário, o placeholder de campo desabilitado ou já preenchido, texto gerado por `::before`/`::after`, texto dentro de SVG, texto `aria-hidden` ou com opacidade abaixo de 0,1, controles desabilitados, estados de foco e hover fora dos CTAs listados, e o que só aparece por interação além dos `<details>`.
@@ -117,7 +136,7 @@ O log do build fica em `rcp/build.log`. Se o `docker pull` falhar (no WSL, o dae
 
 ### Conferência com a fonte efetiva
 
-O teste de contraste roda sem rede, com a fonte de reserva no lugar da Inter. Na validação da publicação, repita o contraste com a fonte que o site usa de fato, sobre a saída do build:
+O teste de contraste roda por padrão com a fonte de reserva no lugar da Inter. Na validação da publicação, repita o contraste com a Inter, sobre a saída do build:
 
 ```powershell
 $env:PAGES_SITE_DIR = "$env:TEMP\rcp\site"
@@ -126,4 +145,4 @@ python -m pytest tests/layout/test_contraste.py -rs
 Remove-Item Env:CONTRASTE_FONTE_EFETIVA, Env:PAGES_SITE_DIR
 ```
 
-Precisa de acesso a `fonts.googleapis.com` e `fonts.gstatic.com`. Foi essa conferência que achou, em 03/10/2026, o rótulo "Tipos de estabelecimento" de `/sobre/` saindo do card em 320 px: com a Inter, "ESTABELECIMENTO" não cabia e a última letra cruzava a borda (4,34:1). O hífen opcional (`estabele&shy;cimento`) resolveu, e no build final da rodada de acessibilidade os três modos passaram com a Inter.
+Desde 04/10/2026 a Inter vem do arquivo local (`assets/fonts/inter-latin-variable-v20.woff2`) pela rota de rede dos testes, sem acesso ao Google Fonts. Foi essa conferência que achou, em 03/10/2026, o rótulo "Tipos de estabelecimento" de `/sobre/` saindo do card em 320 px: com a Inter, "ESTABELECIMENTO" não cabia e a última letra cruzava a borda (4,34:1). O hífen opcional (`estabele&shy;cimento`) resolveu, e no build final da rodada de acessibilidade os três modos passaram com a Inter.

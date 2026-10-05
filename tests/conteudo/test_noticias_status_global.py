@@ -7,11 +7,14 @@ from support import ROOT, parse_html
 NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 STATUS_LABELS = {"atualização", "informativo", "urgente", "orientação"}
 STATUS_CONTRACTS = {
-    # Texto escuro sobre o âmbar (6,97:1) e degradê do hero a partir de amber-800:
-    # com branco sobre amber-500 ou textos claros sobre amber-600, o contraste ficava abaixo de 4,5:1.
+    # Listagem: letras brancas no selo e no botão sobre amber-700 (5,02:1), hover e
+    # foco em amber-800 (7,09:1), iguais no card grande e no compacto (04/10/2026;
+    # cores em pages/noticias.css). O selo da página interna continua com texto
+    # escuro sobre amber-500 (6,97:1) e o hero começa em amber-800.
     "atualização": {
         "cta": "ler atualização",
-        "card_classes": {"bg-amber-500", "text-amber-950"},
+        "card_classes": {"news-amber-badge"},
+        "cta_classes": {"news-amber-button"},
         "page_badge_classes": {"bg-amber-500", "text-amber-950"},
         "hero_classes": {"from-amber-800", "via-brand-dark", "to-brand"},
     },
@@ -100,6 +103,7 @@ def test_card_cta_and_internal_hero_follow_the_status_contract():
         assert normalized_text(cta) == contract["cta"], relative_path
         assert normalized_text(page_badge) == status, relative_path
         assert contract.get("card_classes", set()) <= set(card_badge.attrs.get("class", "").split()), relative_path
+        assert contract.get("cta_classes", set()) <= set(cta.attrs.get("class", "").split()), relative_path
         assert contract["page_badge_classes"] <= set(page_badge.attrs.get("class", "").split()), relative_path
         assert contract["hero_classes"] <= set(hero.attrs.get("class", "").split()), relative_path
 

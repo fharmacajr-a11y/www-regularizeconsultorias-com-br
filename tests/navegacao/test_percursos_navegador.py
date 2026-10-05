@@ -29,7 +29,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from support import SITE_DIR
+from support import SITE_DIR, new_context
 
 
 WHATSAPP_NUMBER = "5519996275900"
@@ -90,7 +90,7 @@ def _whatsapp_message(context, page, link):
 def _percursos(browser, base):
     failures = []
     for width, height in ((390, 844), (1440, 900)):
-        context = browser.new_context(viewport={"width": width, "height": height})
+        context = new_context(browser, viewport={"width": width, "height": height})
         page = context.new_page()
         label = f"@{width}"
 
@@ -136,7 +136,7 @@ def _percursos(browser, base):
 def _ancoras(browser, base):
     failures = []
     for width, height in ((320, 844), (390, 844), (768, 1024), (1440, 900)):
-        context = browser.new_context(viewport={"width": width, "height": height})
+        context = new_context(browser, viewport={"width": width, "height": height})
         page = context.new_page()
         page.goto(base + "/manuais-e-pops/")
         page.locator("a[href='#catalogo']").click()
@@ -174,7 +174,7 @@ CAROUSEL_STATE_JS = """() => {
 def _carrossel(browser, base):
     failures = []
     for width in (320, 360, 600, 1024, 1440):
-        context = browser.new_context(viewport={"width": width, "height": 900})
+        context = new_context(browser, viewport={"width": width, "height": 900})
         page = context.new_page()
         page.goto(base + "/")
         page.locator(".home-manuals-carousel-shell").scroll_into_view_if_needed()
@@ -229,7 +229,7 @@ NEWS_STATE_JS = """() => {
 def _noticias(browser, base):
     failures = []
     for width, height in ((390, 844), (1440, 900)):
-        context = browser.new_context(viewport={"width": width, "height": height})
+        context = new_context(browser, viewport={"width": width, "height": height})
         page = context.new_page()
         page.goto(base + "/noticias/")
         label = f"@{width}"
@@ -315,7 +315,7 @@ def _coluna(browser, base):
     """Coluna lateral das Notícias: presa só se couber; todo controle alcançável e visível."""
     failures = []
     for width, height, scale in SIDEBAR_VIEWPORTS:
-        context = browser.new_context(viewport={"width": width, "height": height}, device_scale_factor=scale)
+        context = new_context(browser, viewport={"width": width, "height": height}, device_scale_factor=scale)
         page = context.new_page()
         page.goto(base + "/noticias/")
         page.add_style_tag(content="html{scroll-behavior:auto!important}")
@@ -393,7 +393,7 @@ def _coluna(browser, base):
 
 def _modal(browser, base):
     failures = []
-    context = browser.new_context(viewport={"width": 390, "height": 844})
+    context = new_context(browser, viewport={"width": 390, "height": 844})
     page = context.new_page()
     page.goto(base + "/comunicado/")
     trigger = page.locator("[data-aviso-image-trigger]").first
