@@ -242,14 +242,16 @@ def test_comunicado_editorial_organization_and_active_notice_content():
     afe_links = [node for node in afe.descendants() if node.tag == "a"]
     assert afe.attrs.get("data-status") == "informativo"
     assert afe.attrs.get("data-category") == "anvisa"
-    assert afe.attrs.get("data-effective-at") == "2026-09-14T12:20:35-03:00"
+    assert afe.attrs.get("data-effective-at") == "2026-10-05T15:43:00-03:00"
     assert len(afe_links) == 1
     assert afe_links[0].attrs.get("href") == AFE_ROUTE
     assert "Ver notícia sobre o Edital 6/2026" in afe_links[0].text()
     for term in (
-        "A Anvisa convocou estabelecimentos abrangidos pelo chamamento",
-        "atividades constantes da AFE correspondem às atividades efetivamente exercidas",
+        "estabelecimentos com AFE vigente para manipulação de preparações estéreis",
+        "atividades constantes da AFE correspondem às efetivamente exercidas",
         "07/10/2026",
+        "conforme a ficha do AnvisaLegis",
+        "30 dias corridos a partir de um dia útil após a publicação",
         "situação regulatória deve ser analisada para definição da adequação aplicável",
         "A Regularize Consultoria pode avaliar a situação da AFE e conduzir a adequação necessária",
     ):
@@ -259,16 +261,23 @@ def test_comunicado_editorial_organization_and_active_notice_content():
     assert "como preparar o estabelecimento" not in source
     assert "todo estabelecimento" not in afe_text.casefold()
     assert "deferimento" not in afe_text.casefold()
+    # 07/10 é o registro da ficha do AnvisaLegis; a íntegra do edital fixa a regra dos 30 dias.
+    assert "prazo informado no edital permanece" not in afe_text
+    assert "08/10" not in afe_text
     assert len(cnes_active) == 1
     cnes = cnes_active[0]
     cnes_text = cnes.text()
     assert cnes.attrs.get("data-status") == "informativo"
     assert cnes.attrs.get("data-category") == "cnes"
-    assert cnes.attrs.get("data-effective-at") == "2026-09-14T13:31:27-03:00"
+    assert cnes.attrs.get("data-effective-at") == "2026-10-05T15:43:00-03:00"
     assert "INFORMATIVO" in cnes_text
     assert "URGENTE" not in cnes_text
-    assert "CNES: competência 09/2026 segue aberta até 7 de outubro" in cnes_text
-    assert "07/10/2026" in cnes_text
+    # Informe do CNES de 05/10/2026: prazo do transmissor da competência 09/2026 prorrogado até 09/10/2026.
+    assert "CNES: envio da competência 09/2026 prorrogado até 9 de outubro" in cnes_text
+    assert "Em informe de 05/10/2026" in cnes_text
+    assert "09/10/2026" in cnes_text and "antes informado para 07/10/2026" in cnes_text
+    assert "segue aberta até 7 de outubro" not in cnes_text
+    assert "SIA" not in cnes_text and "SIH" not in cnes_text
     assert "gestor municipal ou estadual" in cnes_text
     assert "toda farmácia" not in cnes_text.casefold()
     assert "Anvisa suspende medicamento e proíbe produtos irregulares" in produtos.text()
@@ -328,9 +337,9 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     timestamps = [article.attrs.get("data-effective-at") for article in active]
 
     assert titles == [
-        "SNCR: nova etapa está em operação desde 30/09",
-        "CNES: competência 09/2026 segue aberta até 7 de outubro",
+        "CNES: envio da competência 09/2026 prorrogado até 9 de outubro",
         "Edital 6/2026: AFE para manipulação de preparações estéreis",
+        "SNCR: nova etapa está em operação desde 30/09",
         "Farmácia Popular: confira municípios com vagas para credenciamento",
         "Farmácia Popular: atenção aos materiais no período eleitoral",
         "Farmácia Popular: confira as listas EAN vigentes e os controles de prescrição",
@@ -343,7 +352,7 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
 
     useful_badge = next(node for node in active[5].descendants() if node.tag == "span" and node.text() == "ÚTIL")
     useful_cta = next(node for node in active[5].descendants() if node.tag == "a" and "Conferir orientações" in node.text())
-    informative_cta = next(node for node in active[2].descendants() if node.tag == "a" and "Ver notícia sobre o Edital 6/2026" in node.text())
+    informative_cta = next(node for node in active[1].descendants() if node.tag == "a" and "Ver notícia sobre o Edital 6/2026" in node.text())
     assert {"border-emerald-200", "bg-emerald-50", "text-emerald-700"} <= set(useful_badge.attrs["class"].split())
     assert {"border-emerald-200", "bg-emerald-50"} <= set(active[5].attrs["class"].split())
     informative_to_useful = {

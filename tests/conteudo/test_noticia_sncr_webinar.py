@@ -152,7 +152,7 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     assert html.count(f'href="{ROUTE}"') == 1
     assert len(sncr_cards) == 1
     card = sncr_cards[0]
-    assert cards.index(card) == 8
+    assert cards.index(card) == 9
     assert "news-card-compact" in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
     assert f'<time datetime="{UPDATED}" class="leading-none">30/09/2026 • 06h40</time>' in card
@@ -193,7 +193,8 @@ def test_comunicado_keeps_one_sncr_card_and_six_active_notices():
     assert "29/09/2026" not in card_text
     assert "etapa preliminar" not in card_text
     assert "como preparar o estabelecimento" not in card_text
-    assert active[0] is sncr_cards[0]
+    # CNES 09/2026 e Edital 6/2026, atualizados em 05/10/2026, vêm antes na ordem cronológica.
+    assert active[2] is sncr_cards[0]
 
 
 def test_sncr_news_has_current_sitemap_lastmod():

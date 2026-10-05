@@ -87,14 +87,15 @@ def test_cadastro_anvisa_body_states_the_confirmed_scope_without_an_access_scrip
         assert banned not in folded, banned
 
 
-def test_cadastro_anvisa_card_stays_fifth_in_the_listing_and_sitemap():
+def test_cadastro_anvisa_card_is_sixth_and_compact_in_the_listing_and_sitemap():
     index = NEWS_INDEX.read_text(encoding="utf-8")
     cards = re.findall(r"(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)", index, re.DOTALL)
     assert len(cards) == 83
-    card = cards[4]
+    card = cards[5]
     opening = card.split(">", 1)[0]
     assert f'href="/noticias/cadastro-anvisa-govbr-transicao-sistemas/"' in card
-    assert "news-card-compact" not in opening
+    # Sexto card após a atualização do CNES 09/2026: fora dos cinco destaques.
+    assert "news-card-compact" in opening
     assert f'data-updated="{UPDATED}"' in opening
     assert f'data-title="{TITLE}"' in opening
     assert f'data-summary="{SUMMARY}"' in opening
@@ -105,7 +106,7 @@ def test_cadastro_anvisa_card_stays_fifth_in_the_listing_and_sitemap():
     assert index.count(f'href="/noticias/cadastro-anvisa-govbr-transicao-sistemas/"') == 1
     assert '>Todos</span><span class="text-xs text-slate-400">83<' in index
     assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in index
-    assert f'"position":5,"url":"https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/"' in index
+    assert f'"position":6,"url":"https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/"' in index
     sitemap = SITEMAP.read_text(encoding="utf-8")
     assert f"<loc>https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/</loc>\n    <lastmod>2026-09-30</lastmod>" in sitemap
 

@@ -14,7 +14,10 @@ INDEX_PATH = ROOT / "noticias" / "index.html"
 SITEMAP_PATH = ROOT / "sitemap.xml"
 PUBLIC_URL = f"https://www.regularizeconsultorias.com.br{ROUTE}"
 PUBLISHED = "2026-09-14T13:31:27-03:00"
-TITLE = "CNES abre competência 09/2026 com envio até 7 de outubro"
+# Informe do CNES de 05/10/2026: transmissor da competência 09/2026 prorrogado até 09/10/2026.
+UPDATED = "2026-10-05T15:43:00-03:00"
+TITLE = "CNES prorroga envio da competência 09/2026 até 9 de outubro"
+ORIGINAL_TITLE = "CNES abre competência 09/2026 com envio até 7 de outubro"
 # OG temporária: fallback genérico de notícias por decisão editorial, até existir a OG específica.
 GENERIC_OG_PATH = ROOT / "assets" / "img" / "og" / "noticias.jpg"
 GENERIC_OG_URL = "https://www.regularizeconsultorias.com.br/assets/img/og/noticias.jpg"
@@ -29,7 +32,6 @@ VERSION_CLAIMS = (
     "está disponível a versão",
     "foi disponibilizada a versão",
     "scnes 4.",
-    "prorrog",
 )
 
 
@@ -63,11 +65,13 @@ def test_page_identity_dates_and_newsarticle():
     assert news[0]["headline"] == TITLE
     assert news[0]["url"] == PUBLIC_URL
     assert news[0]["articleSection"] == "CNES"
-    assert news[0]["datePublished"] == news[0]["dateModified"] == PUBLISHED
+    assert news[0]["datePublished"] == PUBLISHED
+    assert news[0]["dateModified"] == UPDATED
     assert f'<meta property="article:published_time" content="{PUBLISHED}" />' in html
-    assert f'<meta property="article:modified_time" content="{PUBLISHED}" />' in html
-    assert "Atualizado em" not in html
+    assert f'<meta property="article:modified_time" content="{UPDATED}" />' in html
     assert f'<time datetime="{PUBLISHED}">14/09/2026</time> às 13h31' in html
+    assert f'Atualizado em:</span> <time datetime="{UPDATED}">05/10/2026</time> às 15h43' in html
+    assert ORIGINAL_TITLE not in html
     assert 'article-badge-atualizacao inline-flex items-center rounded-full px-2.5 py-1 whitespace-nowrap">Atualização</span>' in html
 
 
@@ -78,7 +82,14 @@ def test_transmission_window_and_schedule_dates():
     assert "Em informe publicado em 14 de setembro de 2026" in body
     assert "Módulo Transmissor" in body
     assert "14/09/2026 a 07/10/2026" in body
-    assert "aberto em 14/09/2026, com encerramento informado em 07/10/2026" in body
+    # O informe de 14/09 continua registrado; a prorrogação vem do informe de 05/10/2026.
+    assert "Em novo informe, de 05/10/2026" in body
+    assert "prorrogado até 09/10/2026" in body
+    assert "inicialmente informado para 07/10/2026, foi prorrogado até 09/10/2026 pelo informe de 05/10/2026" in body
+    assert "O cronograma oficial de 2026 continua indicando 07/10/2026 como data de referência" in body
+    assert "O encerramento atualmente informado para a competência 09/2026 é 09/10/2026, conforme o informe de 05/10/2026" in body
+    assert "O encerramento atualmente informado para a competência 09/2026 é 07/10/2026" not in body
+    assert "com encerramento informado em 07/10/2026" not in body
     assert "14/10/2026 para a disponibilização do TXT definitivo" in body
     assert "30/10/2026 como data limite de envio da remessa do SIA/SIH" in body
     assert "08/09/2026" not in body and "13/08/2026" not in body
@@ -97,6 +108,11 @@ def test_competence_is_not_presented_as_a_new_desktop_version():
     assert "O informe de 14/09/2026 trata apenas da abertura do Módulo Transmissor" in body
     for claim in VERSION_CLAIMS:
         assert claim not in lowered, claim
+    # Toda prorrogação citada é a do CNES até 09/10/2026 ou o aviso separado do SIA/SIH.
+    for sentence in re.split(r"(?<=[.!?])\s+", lowered):
+        if "prorrog" in sentence:
+            assert any(token in sentence for token in ("09/10/2026", "9 de outubro", "informe posterior", "sia e do sih")), sentence
+    assert "sia e do sih informada no mesmo dia é um aviso separado" in lowered
     assert not re.search(r"\b4\.8\.\d+\b", html)
 
 
@@ -145,8 +161,13 @@ def test_news_index_has_one_card_and_one_itemlist_entry():
     assert html.count(f'"url":"{PUBLIC_URL}"') == 1
     assert len(own) == 1
     assert 'data-category="cnes"' in own[0]
-    assert f'data-updated="{PUBLISHED}"' in own[0]
-    assert f'<time datetime="{PUBLISHED}" class="leading-none">14/09/2026 • 13h31</time>' in own[0]
+    assert f'data-updated="{UPDATED}"' in own[0]
+    assert f'<time datetime="{UPDATED}" class="leading-none">05/10/2026 • 15h43</time>' in own[0]
+    assert f'data-title="{TITLE}"' in own[0] and f">{TITLE}</h2>" in own[0]
+    assert "prorrogou até 9 de outubro" in own[0]
+    # Alteração material em 05/10/2026: card no topo, grande.
+    assert cards[0] is own[0] or cards.index(own[0]) == 0
+    assert "news-card-compact" not in own[0].split(">", 1)[0]
     assert ">Atualização</span>" in own[0] and "Ler atualização" in own[0]
     assert len(cards) == 83
     assert '<span>CNES</span><span class="text-xs text-slate-400">5</span>' in html
@@ -156,4 +177,4 @@ def test_sitemap_lists_the_new_url_once():
     sitemap = SITEMAP_PATH.read_text(encoding="utf-8")
 
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
-    assert f"<loc>{PUBLIC_URL}</loc>\n    <lastmod>2026-09-14</lastmod>" in sitemap
+    assert f"<loc>{PUBLIC_URL}</loc>\n    <lastmod>2026-10-05</lastmod>" in sitemap

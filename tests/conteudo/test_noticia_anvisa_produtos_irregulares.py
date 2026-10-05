@@ -263,9 +263,9 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
     assert "05/10/2026 • 14h24" in news_index
     assert "Publicações da Anvisa de 21 e 25/09 trazem a RE nº 3.751/2026" in news_index
     cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', news_index, re.DOTALL)
-    # Correção do alcance da RE nº 3.751/2026 em 05/10/2026 às 14h24: card no topo e grande.
-    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[0]
-    assert "news-card-compact" not in cards[0].split(">", 1)[0]
+    # Correção do alcance da RE nº 3.751/2026 em 05/10/2026 às 14h24; o CNES 09/2026 (15h43) vem antes.
+    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[1]
+    assert "news-card-compact" not in cards[1].split(">", 1)[0]
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
     assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-05</lastmod>" in sitemap
 

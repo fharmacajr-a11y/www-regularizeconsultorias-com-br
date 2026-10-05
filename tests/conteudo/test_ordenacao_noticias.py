@@ -157,42 +157,42 @@ def test_news_index_itemlist_ordering():
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
 
+    # Competência 09/2026 do CNES: prorrogação do transmissor (informe de 05/10/2026) registrada às 15h43.
+    assert urls[0] == CNES_COMPETENCIA_09_2026_URL
+    assert urls.count(CNES_COMPETENCIA_09_2026_URL) == 1
     # O consolidado de fiscalização, com o alcance da RE nº 3.751/2026 corrigido em 05/10/2026 às 14h24.
-    assert urls[0] == PRODUTOS_IRREGULARES_URL
+    assert urls[1] == PRODUTOS_IRREGULARES_URL
     assert urls.count(PRODUTOS_IRREGULARES_URL) == 1
     # Publicação da Portaria SDA/MAPA nº 1.617/2026 em 03/10/2026 às 00h33.
     mapa_portaria_1617 = "https://www.regularizeconsultorias.com.br/noticias/mapa-portaria-1617-2026-aditivos-antimicrobianos-alimentacao-animal/"
-    assert urls[1] == mapa_portaria_1617
+    assert urls[2] == mapa_portaria_1617
     assert urls.count(mapa_portaria_1617) == 1
     # Correção factual da CP 1.399/2026 em 02/10/2026 às 21h50.
-    assert urls[2] == COSMETICOS_URL
+    assert urls[3] == COSMETICOS_URL
     assert urls.count(COSMETICOS_URL) == 1
     # Notícia de 01/10/2026: textos aprovados para cosméticos artesanais, ainda sem publicação formal.
-    assert urls[3] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-regras-cosmeticos-artesanais/"
+    assert urls[4] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-regras-cosmeticos-artesanais/"
     assert urls.count("https://www.regularizeconsultorias.com.br/noticias/anvisa-regras-cosmeticos-artesanais/") == 1
     # Revisão do Cadastro Anvisa em 30/09 às 17h49, posterior às revisões das 09h32, 09h31 e 09h30.
-    assert urls[4] == "https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/"
+    assert urls[5] == "https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/"
     assert urls.count("https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/") == 1
-    assert urls[5] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-acesso-sncr-afe-farmacias-privadas/"
-    assert urls[6] == "https://www.regularizeconsultorias.com.br/noticias/nova-regra-anvisa-cnes-receitas-farmacias/"
-    assert urls[7] == GLP1_URL
+    assert urls[6] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-acesso-sncr-afe-farmacias-privadas/"
+    assert urls[7] == "https://www.regularizeconsultorias.com.br/noticias/nova-regra-anvisa-cnes-receitas-farmacias/"
+    assert urls[8] == GLP1_URL
     # A etapa do SNCR em 30/09, revisada em 30/09 às 06h40.
-    assert urls[8] == SNCR_WEBINAR_URL
+    assert urls[9] == SNCR_WEBINAR_URL
     assert urls.count(SNCR_WEBINAR_URL) == 1
     # A notícia da propaganda do Semavy, publicada em 28/09/2026 às 08h58.
-    assert urls[9] == SEMAVY_PROPAGANDA_URL
+    assert urls[10] == SEMAVY_PROPAGANDA_URL
     assert urls.count(SEMAVY_PROPAGANDA_URL) == 1
     # A revisão de CNES/SNCR em 28/09 às 07h00 vem em seguida.
-    assert urls[10] == CNES_SNCR_URL
+    assert urls[11] == CNES_SNCR_URL
     assert urls.count(CNES_SNCR_URL) == 1
-    assert urls[11] == IN_470_SUPLEMENTOS_URL
+    assert urls[12] == IN_470_SUPLEMENTOS_URL
     assert urls.count(IN_470_SUPLEMENTOS_URL) == 1
     # Nova notícia de saneantes: RDC 1.040/2026 e IN 468/2026.
-    assert urls[12] == SANEANTES_URL
+    assert urls[13] == SANEANTES_URL
     assert urls.count(SANEANTES_URL) == 1
-    # Nova notícia da competência 09/2026 do CNES.
-    assert urls[13] == CNES_COMPETENCIA_09_2026_URL
-    assert urls.count(CNES_COMPETENCIA_09_2026_URL) == 1
     assert urls[14] == EDITAL_6_2026_AFE_URL
     assert urls.count(EDITAL_6_2026_AFE_URL) == 1
     assert urls[15] == PASSIVO_DISPOSITIVOS_URL
