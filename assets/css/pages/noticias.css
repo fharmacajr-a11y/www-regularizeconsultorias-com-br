@@ -161,43 +161,13 @@
   opacity: 1;
 }
 
-.news-urgent-card::before {
-  height: 5px;
-  background: linear-gradient(90deg, #dc2626, #ef4444, #991b1b);
-  opacity: 1;
-}
-
-.news-amber-card::before {
-  height: 5px;
-  background: linear-gradient(90deg, #d97706, #f59e0b, #fbbf24);
-  opacity: 1;
-}
-
 .news-history-card::before {
   background: linear-gradient(90deg, #475569, #64748b, #94a3b8);
   opacity: 1;
 }
 
-/* Removida customização de ::before para evitar alterar a barra superior
-   dos cards "Orientação". Em vez disso, aplicar apenas destaque na borda
-   externa no hover para cards com etiqueta bg-brand/10 (Orientação). */
-
-/* Hover da borda externa para cards de Orientação: usa classe semântica
-   `news-card--orientation` aplicada ao <article> correspondente. */
-#news-article-list .news-card.news-card--orientation:hover,
-#news-article-list .news-card.news-card--orientation:focus-within {
-  border-color: var(--color-brand) !important;
-  box-shadow: 0 8px 24px rgba(21,101,192,0.06) !important;
-}
 .news-card > div:first-of-type > div:first-child > span:not(.category-chip):not([aria-hidden="true"]) {
   text-transform: uppercase;
-}
-
-#news-article-list .news-card > div:first-of-type > div:first-child > span.bg-brand\/10:not(.category-chip):not([aria-hidden="true"]) {
-  background-color: var(--color-brand);
-  border-color: var(--color-brand);
-  border-width: 0;
-  color: #fff;
 }
 
 /* 15.3 Notícias: card compacto e CTAs internos */
@@ -208,23 +178,7 @@
   padding: 1.25rem !important;
 }
 
-#news-article-list .news-card.news-orange-card:hover,
-#news-article-list .news-card.news-orange-card:focus-within {
-  border-color: rgba(234, 88, 12, 0.45) !important;
-}
-
-#news-article-list .news-card.news-urgent-card:hover,
-#news-article-list .news-card.news-urgent-card:focus-within {
-  border-color: rgba(220, 38, 38, 0.48) !important;
-}
-
-#news-article-list .news-card.news-amber-card:hover,
-#news-article-list .news-card.news-amber-card:focus-within {
-  border-color: rgba(217, 119, 6, 0.5) !important;
-}
-
-/* Removida regra genérica que aplicava borda semi-transparente a cards não laranja/urgent/amber.
-   Preferimos regras específicas por tipo para evitar clareamento/transparência indesejada. */
+/* Cores, faixas e bordas dos quatro tipos (Atualização, Informativo, Urgente e Orientação) em pages/noticias-tipos.css. */
 
 .news-card-compact::before {
   opacity: 1;
@@ -260,7 +214,6 @@
   font-weight: 600 !important;
   line-height: 1 !important;
   text-decoration: none !important;
-  color: #fff !important;
   box-shadow: none !important;
   transition: background-color 0.2s ease, box-shadow 0.15s ease !important;
 }
@@ -275,59 +228,7 @@
   transform: translateX(2px) !important;
 }
 
-.news-card-compact.news-orange-card > a {
-  background-color: #ea580c !important;
-}
-
-.news-card-compact.news-orange-card > a:hover,
-.news-card-compact.news-orange-card > a:focus-visible {
-  background-color: #c2410c !important;
-  box-shadow: 0 2px 6px rgba(234, 88, 12, 0.28) !important;
-}
-
-.news-card-compact.news-urgent-card > a {
-  background-color: #dc2626 !important;
-}
-
-.news-card-compact.news-urgent-card > a:hover,
-.news-card-compact.news-urgent-card > a:focus-visible {
-  background-color: #b91c1c !important;
-  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.28) !important;
-}
-
-/* Atualização: o fundo vem de .news-amber-button (15.3.1), o mesmo nos dois
-   formatos; o compacto só acrescenta a sombra do hover e do foco. */
-.news-card-compact.news-amber-card > a:hover,
-.news-card-compact.news-amber-card > a:focus-visible {
-  box-shadow: 0 2px 6px rgba(180, 83, 9, 0.32) !important;
-}
-
-.news-card-compact:not(.news-orange-card):not(.news-urgent-card):not(.news-amber-card) > a {
-  background-color: var(--color-brand) !important;
-}
-
-.news-card-compact:not(.news-orange-card):not(.news-urgent-card):not(.news-amber-card) > a:hover,
-.news-card-compact:not(.news-orange-card):not(.news-urgent-card):not(.news-amber-card) > a:focus-visible {
-  background-color: var(--color-brand-dark) !important;
-  box-shadow: 0 2px 6px rgba(21, 101, 192, 0.28) !important;
-}
-
-/* 15.3.1 Atualização: letras brancas no selo e no botão, no card grande e no
-   compacto (preferência confirmada em 04/10/2026, no padrão do Informativo).
-   Branco sobre #b45309 (amber-700): 5,02:1; sobre #92400e (amber-800), no
-   hover e no foco: 7,09:1. Antes o grande usava texto escuro sobre #f59e0b e o
-   compacto forçava branco sobre o mesmo fundo (2,15:1). */
-.news-amber-badge,
-.news-amber-button {
-  background-color: #b45309;
-  color: #fff;
-}
-
-.news-amber-button:hover,
-.news-amber-button:focus-visible {
-  background-color: #92400e;
-  color: #fff;
-}
+/* As cores e hover dos botões vêm exclusivamente de pages/noticias-tipos.css. */
 
 /* 15.4 Notícias: chips, categorias e reguladores */
 .category-chip {
@@ -412,90 +313,9 @@
    Escopo restrito a .news-featured-card — não afeta .news-card-compact.
    Mantém botões destacados separados dos cards compactos da listagem. */
 
-.news-featured-card .news-orange-button {
-  border-radius: 9999px;
-  padding: 0.625rem 1.375rem;
-  gap: 0.5rem;
-  transition: background-color 0.2s ease, box-shadow 0.15s ease;
-}
-
-.news-featured-card .news-orange-button svg[aria-hidden="true"] {
-  display: inline-block;
-  transition: transform 0.15s ease;
-}
-
 /* ===== Correção local de overflow decorativo (tablet / meia-tela) ===== */
 /* (Removidas regras experimentais de overflow decorativo — preservando ajustes aprovados) */
 
-.news-featured-card .news-orange-button:hover {
-  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.28);
-}
-
-.news-featured-card .news-orange-button:hover svg[aria-hidden="true"] {
-  transform: translateX(2px);
-}
-
-.news-featured-card.news-urgent-card > a {
-  border-radius: 9999px;
-  padding: 0.625rem 1.375rem;
-  gap: 0.5rem;
-  transition: background-color 0.2s ease, box-shadow 0.15s ease;
-}
-
-.news-featured-card.news-urgent-card > a svg[aria-hidden="true"] {
-  display: inline-block;
-  transition: transform 0.15s ease;
-}
-
-.news-featured-card.news-urgent-card > a:hover {
-  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.28);
-}
-
-.news-featured-card.news-urgent-card > a:hover svg[aria-hidden="true"] {
-  transform: translateX(2px);
-}
-
-/* ---------- 18. Notícias: borda de destaque dos cards ----------
-   Borda perceptível nos cards em destaque; excluída de .news-card-compact via :not().
-   As variações por cor seguem as classes de destaque já usadas na listagem. */
-
 #news-article-list .news-featured-card:not(.news-card-compact) {
   border-width: 2px;
-}
-
-#news-article-list .news-featured-card.news-orange-card:not(.news-card-compact) {
-  border-color: rgba(234, 88, 12, 0.65);
-}
-
-#news-article-list .news-featured-card.news-urgent-card:not(.news-card-compact) {
-  border-color: rgba(220, 38, 38, 0.65);
-}
-
-#news-article-list .news-featured-card.news-amber-card:not(.news-card-compact) {
-  border-color: rgba(245, 158, 11, 0.70);
-}
-
-#news-article-list .news-featured-card:not(.news-orange-card):not(.news-urgent-card):not(.news-amber-card):not(.news-card-compact) {
-  border-color: rgba(21, 101, 192, 0.60);
-}
-
-/* Hover: borda 100% na cor do tipo, sobrescreve regras genéricas */
-#news-article-list .news-featured-card.news-orange-card:not(.news-card-compact):hover,
-#news-article-list .news-featured-card.news-orange-card:not(.news-card-compact):focus-within {
-  border-color: #ea580c !important;
-}
-
-#news-article-list .news-featured-card.news-urgent-card:not(.news-card-compact):hover,
-#news-article-list .news-featured-card.news-urgent-card:not(.news-card-compact):focus-within {
-  border-color: #dc2626 !important;
-}
-
-#news-article-list .news-featured-card.news-amber-card:not(.news-card-compact):hover,
-#news-article-list .news-featured-card.news-amber-card:not(.news-card-compact):focus-within {
-  border-color: #f59e0b !important;
-}
-
-#news-article-list .news-featured-card:not(.news-orange-card):not(.news-urgent-card):not(.news-amber-card):not(.news-card-compact):hover,
-#news-article-list .news-featured-card:not(.news-orange-card):not(.news-urgent-card):not(.news-amber-card):not(.news-card-compact):focus-within {
-  border-color: var(--color-brand) !important;
 }

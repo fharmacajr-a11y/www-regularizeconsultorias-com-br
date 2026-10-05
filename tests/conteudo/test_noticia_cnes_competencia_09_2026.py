@@ -68,7 +68,7 @@ def test_page_identity_dates_and_newsarticle():
     assert f'<meta property="article:modified_time" content="{PUBLISHED}" />' in html
     assert "Atualizado em" not in html
     assert f'<time datetime="{PUBLISHED}">14/09/2026</time> às 13h31' in html
-    assert 'bg-amber-500 px-2.5 py-1 text-amber-950 whitespace-nowrap">Atualização</span>' in html
+    assert 'article-badge-atualizacao inline-flex items-center rounded-full px-2.5 py-1 whitespace-nowrap">Atualização</span>' in html
 
 
 def test_transmission_window_and_schedule_dates():

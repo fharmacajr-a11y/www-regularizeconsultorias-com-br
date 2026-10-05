@@ -7,33 +7,36 @@ from support import ROOT, parse_html
 NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 STATUS_LABELS = {"atualização", "informativo", "urgente", "orientação"}
 STATUS_CONTRACTS = {
-    # Listagem: letras brancas no selo e no botão sobre amber-700 (5,02:1), hover e
-    # foco em amber-800 (7,09:1), iguais no card grande e no compacto (04/10/2026;
-    # cores em pages/noticias.css). O selo da página interna continua com texto
-    # escuro sobre amber-500 (6,97:1) e o hero começa em amber-800.
+    # Atualização e Informativo: classes semânticas; as cores (fundo vivo, texto
+    # escuro) ficam só em pages/noticias-tipos.css (05/10/2026), iguais no selo e
+    # no botão dos dois formatos e no selo e no cabeçalho do artigo.
     "atualização": {
         "cta": "ler atualização",
         "card_classes": {"news-amber-badge"},
-        "cta_classes": {"news-amber-button"},
-        "page_badge_classes": {"bg-amber-500", "text-amber-950"},
-        "hero_classes": {"from-amber-800", "via-brand-dark", "to-brand"},
+        "cta_classes": {"news-amber-button", "rounded-full"},
+        "page_badge_classes": {"article-badge-atualizacao"},
+        "hero_classes": {"article-hero-atualizacao"},
     },
     "informativo": {
         "cta": "ler notícia",
         "card_classes": {"news-orange-badge"},
+        "cta_classes": {"news-orange-button", "rounded-full"},
         "page_badge_classes": {"article-badge-informativo"},
         "hero_classes": {"article-hero-informativo"},
     },
     "orientação": {
         "cta": "ler orientação",
-        "page_badge_classes": {"border", "bg-white/10", "text-white"},
-        "hero_classes": {"from-brand-dark", "to-brand"},
+        "card_classes": {"news-orientacao-badge"},
+        "cta_classes": {"news-orientacao-button", "rounded-full"},
+        "page_badge_classes": {"article-badge-orientacao"},
+        "hero_classes": {"article-hero-orientacao"},
     },
     "urgente": {
         "cta": "ler notícia",
-        "card_classes": {"bg-red-600", "text-white"},
-        "page_badge_classes": {"bg-red-600", "text-white"},
-        "hero_classes": {"from-red-700", "via-brand-dark", "to-brand"},
+        "card_classes": {"news-urgent-badge"},
+        "cta_classes": {"news-urgent-button", "rounded-full"},
+        "page_badge_classes": {"article-badge-urgente"},
+        "hero_classes": {"article-hero-urgente"},
     },
 }
 
@@ -106,10 +109,6 @@ def test_card_cta_and_internal_hero_follow_the_status_contract():
         assert contract.get("cta_classes", set()) <= set(cta.attrs.get("class", "").split()), relative_path
         assert contract["page_badge_classes"] <= set(page_badge.attrs.get("class", "").split()), relative_path
         assert contract["hero_classes"] <= set(hero.attrs.get("class", "").split()), relative_path
-
-        if status == "orientação":
-            card_classes = set(card_badge.attrs.get("class", "").split())
-            assert "bg-brand" in card_classes or {"bg-brand/10", "text-brand"} <= card_classes, relative_path
 
     assert checked_statuses == set(STATUS_CONTRACTS)
 

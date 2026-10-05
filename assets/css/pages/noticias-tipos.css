@@ -1,0 +1,270 @@
+/* ================================================================
+   Regularize Consultoria — tipos das Notícias: Atualização, Informativo, Urgente e Orientação
+   ----------------------------------------------------------------
+   Arquivo único das cores e estados dos quatro tipos. É carregado pela
+   listagem, por todas as páginas de notícia (das duas famílias de CSS:
+   components.css + noticia-detalhe.css e custom.min.css) e pelo template.
+   O HTML usa só as classes abaixo, sem utilitários de cor; nenhuma outra
+   folha define cor para elas.
+
+   Cores aprovadas:
+     Atualização  #f59e0b  (texto escuro #0f172a: 8,31:1 · hover e foco #d97706  5,60:1)
+     Informativo  #f97316  (texto escuro #0f172a: 6,37:1 · hover e foco #ea580c  5,02:1)
+     Urgente      #dc2626  (texto branco #ffffff: 4,83:1 · hover e foco #b91c1c  6,47:1)
+     Orientação   #1565c0  (texto branco #ffffff: 5,75:1 · hover e foco #1a3a5c 11,64:1)
+   As setas usam currentColor e acompanham o texto.
+   ================================================================ */
+
+:root {
+  --tipo-texto: #0f172a;
+  --tipo-texto-claro: #ffffff;
+  --tipo-atualizacao: #f59e0b;
+  --tipo-atualizacao-forte: #d97706;
+  --tipo-atualizacao-claro: #fbbf24;
+  --tipo-informativo: #f97316;
+  --tipo-informativo-forte: #ea580c;
+  --tipo-informativo-claro: #fb923c;
+  --tipo-urgente: #dc2626;
+  --tipo-urgente-forte: #b91c1c;
+  --tipo-urgente-claro: #ef4444;
+  --tipo-orientacao: #1565c0;
+  --tipo-orientacao-forte: #1a3a5c;
+  --tipo-orientacao-claro: #29b6f6;
+}
+
+/* ---------- 1. Selos: listagem (dois formatos) e cabeçalho do artigo ---------- */
+.news-amber-badge,
+.article-badge-atualizacao {
+  background-color: var(--tipo-atualizacao);
+  color: var(--tipo-texto);
+}
+
+.news-orange-badge,
+.article-badge-informativo {
+  background-color: var(--tipo-informativo);
+  color: var(--tipo-texto);
+}
+
+.news-urgent-badge,
+.article-badge-urgente {
+  background-color: var(--tipo-urgente);
+  color: var(--tipo-texto-claro);
+}
+
+.news-orientacao-badge,
+.article-badge-orientacao {
+  background-color: var(--tipo-orientacao);
+  color: var(--tipo-texto-claro);
+}
+
+/* ---------- 2. Botões nos cards de notícias ----------
+   A mesma cor nos dois formatos. O tamanho vem do formato: no compacto, da
+   regra .news-card-compact > a (pages/noticias.css); nos cinco destaques e
+   nos resultados grandes, daqui, com o mesmo acabamento unificado em pílula. */
+.news-amber-button {
+  background-color: var(--tipo-atualizacao);
+  color: var(--tipo-texto);
+}
+
+.news-orange-button {
+  background-color: var(--tipo-informativo);
+  color: var(--tipo-texto);
+}
+
+.news-urgent-button {
+  background-color: var(--tipo-urgente);
+  color: var(--tipo-texto-claro);
+}
+
+.news-orientacao-button {
+  background-color: var(--tipo-orientacao);
+  color: var(--tipo-texto-claro);
+}
+
+/* Hover e foco iguais. O !important da sombra vence o box-shadow: none
+   !important do compacto (seletor mais forte que .news-card-compact > a). */
+.news-amber-button:is(:hover, :focus-visible) {
+  background-color: var(--tipo-atualizacao-forte);
+  color: var(--tipo-texto);
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.32) !important;
+}
+
+.news-orange-button:is(:hover, :focus-visible) {
+  background-color: var(--tipo-informativo-forte);
+  color: var(--tipo-texto);
+  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.3) !important;
+}
+
+.news-urgent-button:is(:hover, :focus-visible) {
+  background-color: var(--tipo-urgente-forte);
+  color: var(--tipo-texto-claro);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.32) !important;
+}
+
+.news-orientacao-button:is(:hover, :focus-visible) {
+  background-color: var(--tipo-orientacao-forte);
+  color: var(--tipo-texto-claro);
+  box-shadow: 0 2px 8px rgba(21, 101, 192, 0.3) !important;
+}
+
+/* Foco de teclado: o anel da marca, afastado do botão, e a pílula mantida
+   (o foco global aplica border-radius: 4px). */
+:is(.news-amber-button, .news-orange-button, .news-urgent-button, .news-orientacao-button):focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: 9999px;
+}
+
+#news-article-list .news-featured-card:not(.news-card-compact) :is(.news-amber-button, .news-orange-button, .news-urgent-button, .news-orientacao-button) {
+  gap: 0.5rem;
+  padding: 0.625rem 1.375rem;
+  border-radius: 9999px;
+  transition: background-color 0.2s ease, box-shadow 0.15s ease;
+}
+
+#news-article-list .news-featured-card:not(.news-card-compact) :is(.news-amber-button, .news-orange-button, .news-urgent-button, .news-orientacao-button) svg[aria-hidden="true"] {
+  display: inline-block;
+  transition: transform 0.15s ease;
+}
+
+#news-article-list .news-featured-card:not(.news-card-compact) :is(.news-amber-button, .news-orange-button, .news-urgent-button, .news-orientacao-button):is(:hover, :focus-visible) svg[aria-hidden="true"] {
+  transform: translateX(2px);
+}
+
+/* ---------- 3. Cards: faixa superior, sombra e borda ---------- */
+.news-amber-card::before {
+  height: 5px;
+  background: linear-gradient(90deg, var(--tipo-atualizacao-forte), var(--tipo-atualizacao), var(--tipo-atualizacao-claro));
+  opacity: 1;
+}
+
+.news-orange-card::before {
+  height: 5px;
+  background: linear-gradient(90deg, var(--tipo-informativo-forte), var(--tipo-informativo), var(--tipo-informativo-claro));
+  opacity: 1;
+}
+
+.news-urgent-card::before {
+  height: 5px;
+  background: linear-gradient(90deg, var(--tipo-urgente), var(--tipo-urgente-claro), #991b1b);
+  opacity: 1;
+}
+
+.news-card--orientation::before {
+  height: 5px;
+  background: linear-gradient(90deg, var(--tipo-orientacao), var(--tipo-orientacao-claro));
+  opacity: 1;
+}
+
+.news-orange-card {
+  box-shadow: 0 10px 25px rgba(255, 237, 213, 0.6);
+}
+
+.news-urgent-card {
+  box-shadow: 0 10px 25px rgba(254, 226, 226, 0.6);
+}
+
+#news-article-list .news-card.news-amber-card:hover,
+#news-article-list .news-card.news-amber-card:focus-within {
+  border-color: rgba(217, 119, 6, 0.5) !important;
+}
+
+#news-article-list .news-card.news-orange-card:hover,
+#news-article-list .news-card.news-orange-card:focus-within {
+  border-color: rgba(234, 88, 12, 0.45) !important;
+}
+
+#news-article-list .news-card.news-urgent-card:hover,
+#news-article-list .news-card.news-urgent-card:focus-within {
+  border-color: rgba(220, 38, 38, 0.48) !important;
+}
+
+#news-article-list .news-card.news-card--orientation:hover,
+#news-article-list .news-card.news-card--orientation:focus-within {
+  border-color: var(--color-brand) !important;
+  box-shadow: 0 8px 24px rgba(21, 101, 192, 0.06) !important;
+}
+
+#news-article-list .news-featured-card.news-amber-card:not(.news-card-compact) {
+  border-color: rgba(245, 158, 11, 0.65);
+}
+
+#news-article-list .news-featured-card.news-orange-card:not(.news-card-compact) {
+  border-color: rgba(249, 115, 22, 0.65);
+}
+
+#news-article-list .news-featured-card.news-urgent-card:not(.news-card-compact) {
+  border-color: rgba(220, 38, 38, 0.65);
+}
+
+#news-article-list .news-featured-card.news-card--orientation:not(.news-card-compact) {
+  border-color: rgba(21, 101, 192, 0.60);
+}
+
+#news-article-list .news-featured-card.news-amber-card:not(.news-card-compact):hover,
+#news-article-list .news-featured-card.news-amber-card:not(.news-card-compact):focus-within {
+  border-color: var(--tipo-atualizacao) !important;
+}
+
+#news-article-list .news-featured-card.news-orange-card:not(.news-card-compact):hover,
+#news-article-list .news-featured-card.news-orange-card:not(.news-card-compact):focus-within {
+  border-color: var(--tipo-informativo) !important;
+}
+
+#news-article-list .news-featured-card.news-urgent-card:not(.news-card-compact):hover,
+#news-article-list .news-featured-card.news-urgent-card:not(.news-card-compact):focus-within {
+  border-color: var(--tipo-urgente) !important;
+}
+
+#news-article-list .news-featured-card.news-card--orientation:not(.news-card-compact):hover,
+#news-article-list .news-featured-card.news-card--orientation:not(.news-card-compact):focus-within {
+  border-color: var(--tipo-orientacao) !important;
+}
+
+/* ---------- 4. Cabeçalho do artigo ----------
+   O degradê de cada tipo na borda externa e o texto (trilha, selos, título,
+   resumo e datas) num painel azul-escuro da marca a 85% (rgba(26, 58, 92, 0.85)):
+   legibilidade garantida (> 5,5:1 no pior ponto e > 9:1 no título), espaçamento
+   consistente e cantos arredondados (1rem). O degradê continua visível em volta. */
+.article-hero-atualizacao,
+.article-hero-informativo,
+.article-hero-urgente,
+.article-hero-orientacao {
+  background-color: var(--color-brand-dark);
+}
+
+.article-hero-atualizacao {
+  background-image: linear-gradient(to right, var(--tipo-atualizacao), var(--color-brand-dark), var(--color-brand));
+}
+
+.article-hero-informativo {
+  background-image: linear-gradient(to right, var(--tipo-informativo), var(--color-brand-dark), var(--color-brand));
+}
+
+.article-hero-urgente {
+  background-image: linear-gradient(to right, var(--tipo-urgente-forte), var(--color-brand-dark), var(--color-brand));
+}
+
+.article-hero-orientacao {
+  background-image: linear-gradient(90deg, #16466f 0%, var(--color-brand-dark) 52%, var(--color-brand) 100%);
+}
+
+:is(.article-hero-atualizacao, .article-hero-informativo, .article-hero-urgente, .article-hero-orientacao) > div {
+  width: calc(100% - 2rem);
+  margin-inline: auto;
+  padding-block: 1.25rem;
+  border-radius: 1rem;
+  background-color: rgba(26, 58, 92, 0.85);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.2);
+}
+
+@media (min-width: 640px) {
+  :is(.article-hero-atualizacao, .article-hero-informativo, .article-hero-urgente, .article-hero-orientacao) > div {
+    padding-block: 1.75rem;
+  }
+}
+
+/* Foco branco sobre o painel, como nos outros fundos escuros. */
+:is(.article-hero-atualizacao, .article-hero-informativo, .article-hero-urgente, .article-hero-orientacao) :is(a, button):focus-visible {
+  outline-color: #fff;
+}

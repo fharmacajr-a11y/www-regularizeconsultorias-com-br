@@ -1,24 +1,26 @@
-"""Contraste do selo e do botão dos cards da listagem de Notícias.
+"""Contraste, cores e foco do selo e do botão dos cards da listagem de Notícias.
 
 O teste de contraste geral mede o que aparece na carga: os cinco primeiros
 cards, sempre no formato grande. Os compactos (do sexto em diante, depois de
 "Ver mais notícias", de uma busca, de um filtro ou de uma ordenação) ficavam de
-fora, e foi ali que "Ler atualização" saiu com branco sobre #f59e0b (2,15:1).
+fora, e foi ali que "Ler atualização" saiu com branco sobre #f59e0b (2,15:1) e
+"Ler notícia" com branco sobre #ea580c (3,56:1).
 
-Em cada janela (celular, meia tela, 1023/1024 e desktop) o teste percorre a
-carga inicial, "Ver mais notícias", a busca pelo título de um artigo de
-Atualização que começa compacto, a categoria desse artigo e a ordenação das
-mais antigas. O artigo é achado pelo href, nunca pela posição na lista: ele tem
-de aparecer compacto em "Ver mais" e grande na busca e na categoria. Em até dois
-cards por combinação de tipo, formato e classes, mede o selo (normal) e o botão
-(normal, hover e foco de teclado): a cor do texto e o fundo calculados, com os
-fundos dos ancestrais compostos, e o fundo capturado em pixels com o texto
+Atualização, Informativo, Urgente e Orientação têm as cores num arquivo só
+(assets/css/pages/noticias-tipos.css): fundo vivo e texto com alto contraste,
+iguais no selo e no botão dos dois formatos, com hover e foco um passo mais
+escuros. Em cada janela (celular, meia tela, 1023/1024 e desktop) o teste
+percorre a carga inicial, "Ver mais notícias", a busca pelo título de um artigo
+de cada tipo que começa compacto, a categoria desse artigo e a ordenação das
+mais antigas. Os artigos são achados pelo href, nunca pela posição: cada um tem
+de aparecer compacto em "Ver mais" e grande na busca e/ou na categoria. Em até
+dois cards por combinação de tipo, formato e classes, mede o selo (normal) e o
+botão (normal, hover e foco de teclado): a cor do texto e o fundo calculados,
+com os fundos dos ancestrais compostos, e o fundo capturado em pixels com o texto
 oculto, no miolo do botão. Vale o menor dos dois.
 
-Exige 4,5:1 em Atualização em todos os estados e as mesmas cores de texto e
-fundo nos dois formatos. Os outros tipos (Informativo, Orientação e Urgente)
-entram na medição e também têm de passar, exceto o que está em KNOWN_BELOW:
-visual aprovado que fica registrado aqui, sem mudança silenciosa no site.
+Exige, nos quatro tipos, 4,5:1 em todos os estados, as cores de EXPECTED (as
+mesmas nos dois formatos) e, no foco, o anel visível e a pílula mantida.
 
 Roda num subprocesso por janela, como os outros testes de navegador.
 """
@@ -38,18 +40,15 @@ from support import SITE_DIR, subprocess_env
 
 VIEWPORTS = ((390, 844), (960, 900), (1023, 900), (1024, 900), (1440, 900))
 MINIMUM = 4.5
-# Casos abaixo de 4,5:1 com visual aprovado, pela combinação exata (tipo,
-# formato, parte, estado, cor do texto, fundo). Mudar o visual deles é decisão
-# à parte; enquanto isso, o teste exige que continuem iguais ao medido (não
-# pioram e não mudam sem atualizar esta lista). Registrados em 04/10/2026.
-ORANGE_600 = "rgb(234, 88, 12)"
-KNOWN_BELOW = {
-    # Informativo compacto: branco sobre #ea580c (orange-600). O grande usa #c2410c (5,18:1).
-    ("informativo", "compacto", "cta", "normal", "rgb(255, 255, 255)", ORANGE_600): (3.5, 3.6),
-    # Informativo com "Ler notícia" em link de texto (text-orange-600 sobre o
-    # branco do card), visível em formato grande depois de uma busca.
-    ("informativo", "grande", "cta", "normal", ORANGE_600, "rgba(0, 0, 0, 0)"): (3.5, 3.6),
-    ("informativo", "grande", "cta", "foco", ORANGE_600, "rgba(0, 0, 0, 0)"): (3.5, 3.6),
+TYPES = ("atualizacao", "informativo", "urgente", "orientacao")
+TEXT = "rgb(15, 23, 42)"
+TEXT_WHITE = "rgb(255, 255, 255)"
+# Cores esperadas (texto, fundo) do selo e do botão, por tipo e estado.
+EXPECTED = {
+    "atualizacao": {"normal": (TEXT, "rgb(245, 158, 11)"), "hover": (TEXT, "rgb(217, 119, 6)"), "foco": (TEXT, "rgb(217, 119, 6)")},
+    "informativo": {"normal": (TEXT, "rgb(249, 115, 22)"), "hover": (TEXT, "rgb(234, 88, 12)"), "foco": (TEXT, "rgb(234, 88, 12)")},
+    "urgente": {"normal": (TEXT_WHITE, "rgb(220, 38, 38)"), "hover": (TEXT_WHITE, "rgb(185, 28, 28)"), "foco": (TEXT_WHITE, "rgb(185, 28, 28)")},
+    "orientacao": {"normal": (TEXT_WHITE, "rgb(21, 101, 192)"), "hover": (TEXT_WHITE, "rgb(26, 58, 92)"), "foco": (TEXT_WHITE, "rgb(26, 58, 92)")},
 }
 
 PROBE = r'''
@@ -64,6 +63,7 @@ from playwright.sync_api import sync_playwright
 import support
 
 base, width, height = sys.argv[1], int(sys.argv[2]), int(sys.argv[3])
+TYPES = ("atualizacao", "informativo", "urgente", "orientacao")
 
 HELPERS = r"""
 window.__cta = (() => {
@@ -95,7 +95,9 @@ window.__cta = (() => {
     const bg = backdrop(el);
     const text = parse(cs.color);
     return {text: bg ? over(text, bg) : null, background: bg, color: cs.color, backgroundColor: cs.backgroundColor,
-            focusVisible: el.matches(':focus-visible'), hover: el.matches(':hover'), label: el.textContent.trim().replace(/\s+/g, ' ')};
+            focusVisible: el.matches(':focus-visible'), hover: el.matches(':hover'), label: el.textContent.trim().replace(/\s+/g, ' '),
+            radius: parseFloat(cs.borderTopLeftRadius) || 0, height: el.getBoundingClientRect().height,
+            outline: {style: cs.outlineStyle, width: parseFloat(cs.outlineWidth) || 0, color: cs.outlineColor}};
   };
   const describe = card => {
     const {badge, cta} = parts(card);
@@ -158,7 +160,7 @@ def measure(page, href, which, state):
         "foco_visivel": css["focusVisible"], "hover": css["hover"],
         "contraste_css": round(ratio(css["text"], css["background"]), 3) if css["background"] else None,
         "contraste_pixels": round(min(ratio(css["text"] or [0, 0, 0], color) for color in pixels), 3),
-        "cores_de_fundo": len(pixels),
+        "cores_de_fundo": len(pixels), "raio": css["radius"], "altura": round(css["height"], 2), "contorno": css["outline"],
     }
     result["contraste"] = min(value for value in (result["contraste_css"], result["contraste_pixels"]) if value is not None)
     return result
@@ -185,11 +187,11 @@ def collect(page, scenario, cards, extra=()):
         badge = measure(page, card["href"], "badge", "normal")
         rows.append({**common, "parte": "selo", **badge})
         for state in ("normal", "hover", "foco"):
-            rows.append({**common, "parte": "cta", **measure(page, card["href"], "cta", state)})
+            rows.append({**common, "parte": "cta", **measure(page, card["href"], state=state, which="cta")})
     return rows
 
 
-output = {"largura": width, "linhas": [], "alvo": None, "formatos_do_alvo": {}}
+output = {"largura": width, "linhas": [], "alvos": {}, "formatos_dos_alvos": {}}
 with sync_playwright() as playwright:
     browser = playwright.chromium.launch(headless=True, args=["--force-color-profile=srgb"])
     context = support.new_context(browser, viewport={"width": width, "height": height})
@@ -203,34 +205,44 @@ with sync_playwright() as playwright:
         return page.evaluate("window.__cta.all()")
 
     cards = load()
-    # Alvo: Atualização compacta na ordem padrão e entre as cinco primeiras da própria categoria.
-    target = None
-    for card in cards:
-        if card["type"] == "atualizacao" and card["compact"]:
-            same = [other["href"] for other in cards if other["category"] == card["category"]]
-            if same.index(card["href"]) < 5:
-                target = card
-                break
-    assert target, "nenhum artigo de Atualização compacto que fique entre os cinco primeiros da categoria"
-    output["alvo"] = {"href": target["href"], "categoria": target["category"], "titulo": target["title"]}
+    # Alvo de cada tipo: o primeiro compacto na ordem padrão que fica entre os
+    # cinco primeiros da própria categoria (aparece grande no filtro dela).
+    targets = {}
+    for kind in TYPES:
+        for card in cards:
+            if card["type"] == kind and card["compact"]:
+                if kind == "urgente":
+                    targets[kind] = card
+                    break
+                same = [other["href"] for other in cards if other["category"] == card["category"]]
+                if same.index(card["href"]) < 5:
+                    targets[kind] = card
+                    break
+        assert kind in targets, f"nenhum artigo compacto de {kind} encontrado"
+        output["alvos"][kind] = {"href": targets[kind]["href"], "categoria": targets[kind]["category"], "titulo": targets[kind]["title"]}
+        output["formatos_dos_alvos"][kind] = {}
+    hrefs = tuple(t["href"] for t in targets.values())
     output["linhas"] += collect(page, "inicial", cards)
 
     page.locator("#btn-carregar-mais").click()
     cards = page.evaluate("window.__cta.all()")
-    output["formatos_do_alvo"]["ver_mais"] = next(c["compact"] for c in cards if c["href"] == target["href"])
-    output["linhas"] += collect(page, "ver_mais", cards, extra=(target["href"],))
+    for kind, target in targets.items():
+        output["formatos_dos_alvos"][kind]["ver_mais"] = next(c["compact"] for c in cards if c["href"] == target["href"])
+    output["linhas"] += collect(page, "ver_mais", cards, extra=hrefs)
 
-    load()
-    page.locator("#news-search").fill(target["title"])
-    cards = page.evaluate("window.__cta.all()")
-    output["formatos_do_alvo"]["busca"] = next(c["compact"] for c in cards if c["href"] == target["href"])
-    output["linhas"] += collect(page, "busca", [c for c in cards if c["href"] == target["href"]], extra=(target["href"],))
+    for kind, target in targets.items():
+        load()
+        page.locator("#news-search").fill(target["title"])
+        cards = page.evaluate("window.__cta.all()")
+        output["formatos_dos_alvos"][kind]["busca"] = next(c["compact"] for c in cards if c["href"] == target["href"])
+        output["linhas"] += collect(page, "busca", [c for c in cards if c["href"] == target["href"]], extra=(target["href"],))
 
-    load()
-    page.locator(f"[data-news-category='{target['category']}']").click()
-    cards = page.evaluate("window.__cta.all()")
-    output["formatos_do_alvo"]["categoria"] = next(c["compact"] for c in cards if c["href"] == target["href"])
-    output["linhas"] += collect(page, "categoria", cards, extra=(target["href"],))
+        load()
+        page.locator(f"[data-news-category='{target['category']}']").click()
+        cards = page.evaluate("window.__cta.all()")
+        found_cat = [c["compact"] for c in cards if c["href"] == target["href"]]
+        output["formatos_dos_alvos"][kind]["categoria"] = found_cat[0] if found_cat else None
+        output["linhas"] += collect(page, "categoria", cards, extra=(target["href"],))
 
     load()
     page.locator("[data-news-sort='asc']").click()
@@ -273,7 +285,7 @@ def medidas():
     def run(viewport):
         return subprocess.run(
             [sys.executable, "-c", PROBE, base, str(viewport[0]), str(viewport[1])],
-            capture_output=True, text=True, encoding="utf-8", timeout=600, env=subprocess_env(),
+            capture_output=True, text=True, encoding="utf-8", timeout=900, env=subprocess_env(),
         )
 
     try:
@@ -303,10 +315,11 @@ def _rows(medidas, width):
     return [{**row, "largura": width} for row in medidas[width]["linhas"]]
 
 
+@pytest.mark.parametrize("kind", TYPES)
 @pytest.mark.parametrize("width", [w for w, _ in VIEWPORTS])
-def test_atualizacao_badge_and_button_reach_the_minimum_in_every_state(medidas, width):
-    rows = [row for row in _rows(medidas, width) if row["tipo"] == "atualizacao"]
-    assert {row["formato"] for row in rows} == {"grande", "compacto"}, "Atualização não apareceu nos dois formatos"
+def test_type_badge_and_button_reach_the_minimum_in_every_state(medidas, width, kind):
+    rows = [row for row in _rows(medidas, width) if row["tipo"] == kind]
+    assert {row["formato"] for row in rows} == {"grande", "compacto"}, f"{kind} não apareceu nos dois formatos"
     assert {row["estado"] for row in rows if row["parte"] == "cta"} == {"normal", "hover", "foco"}
     for row in rows:
         if row["estado"] == "foco":
@@ -317,39 +330,40 @@ def test_atualizacao_badge_and_button_reach_the_minimum_in_every_state(medidas, 
     assert not below, "abaixo de 4,5:1:\n" + "\n".join(below)
 
 
+@pytest.mark.parametrize("kind", TYPES)
 @pytest.mark.parametrize("width", [w for w, _ in VIEWPORTS])
-def test_atualizacao_uses_the_same_colors_in_both_formats(medidas, width):
-    rows = [row for row in _rows(medidas, width) if row["tipo"] == "atualizacao"]
-    by_state = {}
+def test_type_uses_the_central_colors_in_both_formats(medidas, width, kind):
+    rows = [row for row in _rows(medidas, width) if row["tipo"] == kind]
+    wrong = []
     for row in rows:
-        by_state.setdefault((row["parte"], row["estado"]), set()).add((row["formato"], row["cor"], row["fundo"]))
-    for (part, state), values in sorted(by_state.items()):
-        colors = {(color, background) for _, color, background in values}
-        assert len(colors) == 1, f"@{width} {part} {state}: cores diferentes entre formatos ou cards: {sorted(values)}"
+        expected = EXPECTED[kind]["normal" if row["parte"] == "selo" else row["estado"]]
+        if (row["cor"], row["fundo"]) != expected:
+            wrong.append(f"{_label(row)}: esperado {expected[0]} sobre {expected[1]}")
+    assert not wrong, "\n".join(wrong[:20])
 
 
+@pytest.mark.parametrize("kind", TYPES)
 @pytest.mark.parametrize("width", [w for w, _ in VIEWPORTS])
-def test_the_same_update_article_turns_from_compact_to_large(medidas, width):
+def test_type_button_keeps_the_pill_and_a_visible_ring_on_focus(medidas, width, kind):
+    rows = [row for row in _rows(medidas, width) if row["tipo"] == kind and row["parte"] == "cta" and row["estado"] == "foco"]
+    assert rows
+    for row in rows:
+        assert row["raio"] >= row["altura"] / 2 - 0.5, f"{_label(row)}: raio {row['raio']} px no foco (pílula perdida)"
+        ring = row["contorno"]
+        assert ring["style"] not in ("none", "hidden") and ring["width"] >= 2, f"{_label(row)}: anel de foco {ring}"
+
+
+@pytest.mark.parametrize("kind", TYPES)
+@pytest.mark.parametrize("width", [w for w, _ in VIEWPORTS])
+def test_the_same_type_article_turns_from_compact_to_large(medidas, width, kind):
     result = medidas[width]
-    formats = result["formatos_do_alvo"]
-    assert formats == {"ver_mais": True, "busca": False, "categoria": False}, (result["alvo"], formats)
-    rows = [row for row in _rows(medidas, width) if row["href"] == result["alvo"]["href"] and row["parte"] == "cta"]
+    formats = result["formatos_dos_alvos"][kind]
+    target = result["alvos"][kind]["href"]
+    if kind == "urgente":
+        assert formats["ver_mais"] is True and formats["busca"] is False, (result["alvos"][kind], formats)
+    else:
+        assert formats == {"ver_mais": True, "busca": False, "categoria": False}, (result["alvos"][kind], formats)
+    rows = [row for row in _rows(medidas, width) if row["href"] == target and row["parte"] == "cta"]
     compact = {row["estado"]: (row["cor"], row["fundo"]) for row in rows if row["formato"] == "compacto"}
     large = {row["estado"]: (row["cor"], row["fundo"]) for row in rows if row["formato"] == "grande"}
-    assert compact and compact == large, f"@{width} {result['alvo']['href']}: compacto {compact} x grande {large}"
-
-
-@pytest.mark.parametrize("width", [w for w, _ in VIEWPORTS])
-def test_other_card_types_reach_the_minimum_or_stay_as_registered(medidas, width):
-    rows = [row for row in _rows(medidas, width) if row["tipo"] != "atualizacao"]
-    assert {"informativo", "orientacao", "urgente"} <= {row["tipo"] for row in rows}
-    failures = []
-    for row in rows:
-        key = (row["tipo"], row["formato"], row["parte"], row["estado"], row["cor"], row["fundo"])
-        if key in KNOWN_BELOW:
-            low, high = KNOWN_BELOW[key]
-            if not low <= row["contraste"] <= high:
-                failures.append(f"{_label(row)}: {row['contraste']:.2f}:1 mudou do registrado ({low}–{high})")
-        elif row["contraste"] < MINIMUM:
-            failures.append(f"{_label(row)}: {row['contraste']:.2f}:1")
-    assert not failures, "\n".join(failures)
+    assert compact and compact == large, f"@{width} {target}: compacto {compact} x grande {large}"

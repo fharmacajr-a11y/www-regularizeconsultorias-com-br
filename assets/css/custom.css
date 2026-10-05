@@ -186,23 +186,7 @@ select:focus-visible {
 }
 
 /* ---------- 5.1. Variantes de hero para notícias ---------- */
-main > article > header.bg-gradient-to-r.from-brand-dark.to-brand:has(span[class~="border-white/20"][class~="bg-white/10"]) {
-  background-color: var(--color-brand-dark);
-  background-image: linear-gradient(90deg, #16466f 0%, var(--color-brand-dark) 52%, var(--color-brand) 100%);
-}
-
-/* Início em orange-800, como o from-amber-800 do hero de atualização: com o
-   orange-700, o texto slate-200 ficava abaixo de 4,5:1 junto à borda esquerda
-   entre 700 e 1023 px. */
-.article-hero-informativo {
-  background-color: var(--color-brand-dark);
-  background-image: linear-gradient(90deg, #9a3412 0%, var(--color-brand-dark) 52%, var(--color-brand) 100%);
-}
-
-.article-badge-informativo {
-  background-color: #c2410c;
-  color: #fff;
-}
+/* Hero e selo dos quatro tipos de notícia: pages/noticias-tipos.css. */
 
 .news-topic-shortcuts > span {
   display: inline-flex;

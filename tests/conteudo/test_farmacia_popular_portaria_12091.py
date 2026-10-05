@@ -202,7 +202,7 @@ def test_portaria_article_and_listing_use_update_badge_without_changing_category
     )
 
     assert ">ATUALIZAÇÃO</span>" in new_card
-    assert "bg-amber-500" in article_html
+    assert "article-badge-atualizacao" in article_html
     assert "news-amber-card" in new_card
     assert "news-amber-badge" in new_card and "news-amber-button" in new_card
     assert ">FARMÁCIA POPULAR</span>" in article_html

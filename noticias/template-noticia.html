@@ -29,7 +29,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/css/tailwind.min.css?v=20261003-acessibilidade-1">
-  <link rel="stylesheet" href="/assets/css/custom.min.css?v=20261005-menu-mobile-1" />
+  <link rel="stylesheet" href="/assets/css/custom.min.css?v=20261005-tipos-1" />
+  <link rel="stylesheet" href="/assets/css/pages/noticias-tipos.css?v=20261005-tipos-1" />
 
   <!-- CHANGE: JSON-LD fields (headline, description, url, datePublished, dateModified, articleSection) -->
   <script type="application/ld+json">
@@ -113,7 +114,19 @@
 
   <main>
     <article>
-      <header class="bg-gradient-to-r from-brand-dark to-brand py-14 md:py-20">
+      <!-- CHANGE: tipo da notícia. Cores só em /assets/css/pages/noticias-tipos.css; não use utilitários de cor.
+           Informativo (padrão): <header class="article-hero-informativo py-10 sm:py-12 md:py-20">
+                                 selo <span class="article-badge-informativo inline-flex items-center rounded-full px-2.5 py-1 whitespace-nowrap">Informativo</span>
+           Atualização:          <header class="article-hero-atualizacao py-10 sm:py-12 md:py-20">
+                                 selo <span class="article-badge-atualizacao inline-flex items-center rounded-full px-2.5 py-1 whitespace-nowrap">Atualização</span>
+           Urgente:              <header class="article-hero-urgente py-10 sm:py-12 md:py-20">
+                                 selo <span class="article-badge-urgente inline-flex items-center rounded-full px-2.5 py-1 whitespace-nowrap">URGENTE</span>
+           Orientação:           <header class="article-hero-orientacao py-10 sm:py-12 md:py-20">
+                                 selo <span class="article-badge-orientacao inline-flex items-center rounded-full px-2.5 py-1 whitespace-nowrap">Orientação</span>
+           Na listagem: card news-amber-card / news-orange-card / news-urgent-card / news-card--orientation,
+                        selo news-amber-badge / news-orange-badge / news-urgent-badge / news-orientacao-badge,
+                        botão news-amber-button / news-orange-button / news-urgent-button / news-orientacao-button (rounded-full), sem cor no HTML. -->
+      <header class="article-hero-informativo py-10 sm:py-12 md:py-20">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav aria-label="Breadcrumb" class="mb-5">
             <ol class="flex flex-wrap items-center gap-2 text-sm text-white/90">
@@ -125,23 +138,28 @@
               <li class="text-white" aria-current="page">Título curto</li>
             </ol>
           </nav>
-          <!-- CHANGE: category -->
-          <p class="text-brand-light text-sm font-semibold mb-3">Categoria</p>
-          <!-- CHANGE: h1 -->
-          <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-5">Título principal da notícia</h1>
-          <p class="text-slate-200 text-lg leading-relaxed">Escreva uma introdução curta com a palavra-chave principal nos primeiros 100 termos.</p>
-          <div class="mt-6 flex flex-wrap gap-3 text-sm text-slate-200">
-            <!-- CHANGE: publication date -->
-            <span>Publicado em <time datetime="2026-04-28">28/04/2026</time></span>
-            <span aria-hidden="true">•</span>
-            <span>Atualizado em <time datetime="2026-04-28">28/04/2026</time></span>
+          <!-- CHANGE: tipo e categoria da notícia. Exemplo padrão: Informativo.
+               Para outro tipo, troque a classe do header e do selo conforme o comentário acima. -->
+          <div class="mb-4 flex flex-nowrap items-center gap-2 text-xs font-semibold uppercase tracking-wide text-white/80">
+            <span class="article-badge-informativo inline-flex items-center rounded-full px-2.5 py-1 whitespace-nowrap">Informativo</span>
+            <span class="category-chip category-chip--anvisa rounded-full bg-white/15 px-2.5 py-1 text-slate-100 whitespace-nowrap">Categoria</span>
           </div>
+          <!-- CHANGE: h1 -->
+          <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight text-white mb-5">Título principal da notícia</h1>
+          <p class="text-slate-200 text-base sm:text-lg leading-relaxed">Escreva uma introdução curta com a palavra-chave principal nos primeiros 100 termos.</p>
         </div>
       </header>
 
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <div class="mb-8 rounded-2xl border border-slate-100 bg-white p-6 text-sm text-slate-600 shadow-sm">
-          Conteúdo informativo produzido pela Regularize Consultoria.
+        <div class="article-meta-card mb-8 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+          <p class="text-sm text-slate-600">Conteúdo informativo produzido pela Regularize Consultoria.</p>
+          <div class="article-meta-groups mt-3 pt-3 border-t border-slate-100 text-xs text-slate-500">
+            <div class="article-meta-block">
+              <!-- CHANGE: publication date -->
+              <span><span class="font-medium text-slate-500">Publicado em:</span> <time datetime="2026-04-28">28/04/2026</time></span>
+              <span><span class="font-medium text-slate-500">Atualizado em:</span> <time datetime="2026-04-28">28/04/2026</time></span>
+            </div>
+          </div>
         </div>
 
         <!-- CHANGE: article body -->

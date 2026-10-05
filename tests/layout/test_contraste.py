@@ -55,8 +55,11 @@ ROUTES = (
     "/noticias/farmacia-popular-adequacao-materiais-periodo-eleitoral/",
     "/noticias/o-que-e-afe-e-por-que-e-importante/",
     "/noticias/prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular/",
-    # Informativo com o hero do custom.min.css (o do MAPA vem do noticia-detalhe.css).
+    # Informativo da família custom.min.css (o do MAPA é da família components.css);
+    # nos dois, o hero vem de pages/noticias-tipos.css.
     "/noticias/anvisa-proibe-plataforma-consultas-entrega-medicamentos/",
+    # Artigo Urgente: hero com o degradê vermelho/azul e painel escuro.
+    "/noticias/anvisa-prazo-adequacao-notificacao-alimentos-setembro-2026/",
 )
 WIDTHS = (390, 1440)
 # Breakpoints sm, md, lg e xl, e 896 px: o container dos artigos (max-w-4xl)
@@ -65,6 +68,7 @@ GRADIENT_WIDTHS = (320, 360, 640, 768, 896, 1024, 1280)
 HOVER_TARGETS = (
     ("/comunicado/", "#avisos-lista a.rounded-lg"),
     ("/noticias/", "#news-article-list a.news-amber-button"),
+    ("/noticias/", "#news-article-list a.news-orange-button"),
     ("/contato/", "main a.rounded-xl[href^='/whatsapp/']"),
     ("/noticias/prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular/", "[data-news-update-callout] a"),
 )

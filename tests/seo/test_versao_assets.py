@@ -22,6 +22,7 @@ VERSIONED_ASSETS = (
     "/assets/css/pages/farmacia-popular.css",
     "/assets/css/pages/noticia-detalhe.css",
     "/assets/css/pages/noticias.css",
+    "/assets/css/pages/noticias-tipos.css",
     "/assets/css/pages/contato.css",
     "/assets/js/pages/noticias.js",
 )
