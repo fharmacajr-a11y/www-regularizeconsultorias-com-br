@@ -9,7 +9,7 @@ NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 SITEMAP_PATH = ROOT / "sitemap.xml"
 URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
 PUBLISHED = "2026-07-05T18:00:00-03:00"
-UPDATED = "2026-10-06T11:31:00-03:00"
+UPDATED = "2026-10-06T12:26:00-03:00"
 DOBUTAMINA_LOTES = ("24092127", "24102310", "25102244", "25102243", "25112308")
 
 
@@ -35,12 +35,14 @@ def _september_callout(html):
 
 def _september_section(html):
     start = html.index("<h2>Setembro: RE nº 3.547/2026")
-    return html[start:html.index("<h2>Agosto amplia", start)]
+    # A revogação da RE nº 3.436/2026 (01/09) fica entre a RE nº 3.547 e agosto.
+    return html[start:html.index("<h2>1º de setembro: RE nº 3.436/2026", start)]
 
 
 def _re3717_section(html):
     start = html.index("<h2>21 de setembro: RE nº 3.717/2026")
-    return html[start:html.index("<h2>16 de setembro: quatro resoluções", start)]
+    # A revogação da RE nº 3.718/2026, também de 21/09, vem logo depois e fica fora da fatia.
+    return html[start:html.index("<h2>21 de setembro: RE nº 3.718/2026", start)]
 
 
 def _latest_section(html):
@@ -119,7 +121,7 @@ def test_september_update_reflects_re_3547_and_keeps_history():
     assert "de 09/09/2026 e publicada no DOU em 11/09/2026" in text
     assert "Medidas de julho a setembro mostram" in html
     assert "Medidas de julho e agosto" not in html
-    assert f'<time datetime="{UPDATED}">06/10/2026</time> às 11h31' in html
+    assert f'<time datetime="{UPDATED}">06/10/2026</time> às 12h26' in html
     assert f'<time datetime="{PUBLISHED}">05/07/2026</time> às 18h00' in html
     # Histórico de agosto e julho preservado.
     for term in ("12/08 — saneantes sem registro", "14/08 — Chá Sarapião", "Fiscalização de julho amplia", "Chlorohex 2,0%"):
@@ -260,12 +262,13 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
 
     assert news_index.count('href="/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"') == 1
     assert f'data-updated="{UPDATED}"' in news_index
-    assert "06/10/2026 • 11h31" in news_index
-    assert "Publicações da Anvisa de 21 a 28/09 trazem a suspensão das operações da Reach Latam" in news_index
-    assert "a revogação da medida referente à Higia (RE nº 3.743/2026)" in news_index
+    assert "06/10/2026 • 12h26" in news_index
+    assert "Publicações da Anvisa de 01 a 28/09 trazem a suspensão das operações da Reach Latam" in news_index
+    assert "revogações de medidas referentes à Higia, à Tha &amp; Thi e à Terapêutica (RE nº 3.743, 3.718 e 3.436/2026)" in news_index
+    assert "Publicações da Anvisa de 21 a 28/09" not in news_index
     assert "Publicações da Anvisa de 21 e 25/09" not in news_index
     cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', news_index, re.DOTALL)
-    # RE nº 3.764 e RE nº 3.743/2026 acrescentadas em 06/10/2026 às 11h31: card no topo,
+    # RE nº 3.764 e 3.743/2026 (06/10, 11h31) e RE nº 3.718 e 3.436/2026 (06/10, 12h26): card no topo,
     # antes da Portaria MAPA 1.617 (06/10, 08h00) e do CNES 09/2026 (05/10, 15h43).
     assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[0]
     assert "news-card-compact" not in cards[0].split(">", 1)[0]
@@ -374,8 +377,8 @@ def test_new_measures_of_21_and_25_september_keep_their_own_scope():
     body_start = html.index("<h2>25 de setembro: RE nº 3.751/2026")
     body = _text(html[body_start:html.index("<h2>21 de setembro: RE nº 3.717/2026", body_start)])
 
-    assert len(items) == 7
-    reach, ocrevus, ict, higia, eleve, dcasa, smart = items
+    assert len(items) == 9
+    reach, ocrevus, ict, higia, eleve, dcasa, smart, thathi, terapeutica = items
     assert "RE nº 3.751/2026" in ocrevus and "RE nº 3.751/2026" in ict
     # RE nº 3.751/2026, LAF MED: os lotes estão no campo de produto, mas a motivação
     # estende as ações a quaisquer medicamentos, sem proibir o Ocrevus em geral.
@@ -437,9 +440,9 @@ def test_re_3764_and_re_3743_keep_suspension_and_revocation_apart():
 
     # Quadro de atualização reaproveitado, sem callout novo.
     assert html.count("data-news-update-callout aria-labelledby=") == 5
-    assert "Atualização: medidas e revogação divulgadas pela Anvisa de 21 a 28/09/2026" in _text(callout)
-    assert "publicações de 21, 23, 25 e 28/09/2026" in _text(callout)
-    assert "A RE nº 3.743/2026 revoga uma medida anterior referente a uma empresa" in _text(callout)
+    assert "Atualização: medidas de 21 a 28/09/2026 e revogações de 01, 21 e 23/09/2026" in _text(callout)
+    assert "publicações de 01, 21, 23, 25 e 28/09/2026" in _text(callout)
+    assert "As RE nº 3.436, 3.718 e 3.743/2026 revogam, cada uma, uma medida anterior referente a uma empresa" in _text(callout)
     # Ordem cronológica das seções: 28/09, 25/09, 23/09, 21/09.
     assert reach_start < html.index("<h2>25 de setembro: RE nº 3.751/2026") < higia_start
     assert higia_start < html.index("<h2>21 de setembro: RE nº 3.712")
@@ -478,3 +481,58 @@ def test_re_3764_and_re_3743_keep_suspension_and_revocation_apart():
         assert wrong not in higia and wrong not in higia_item
     assert "href=" not in html[reach_start:html.index("<h2>25 de setembro", reach_start)]
     assert "href=" not in html[higia_start:html.index("<h2>21 de setembro: RE nº 3.712", higia_start)]
+
+
+def test_re_3718_and_re_3436_revoke_only_their_own_items():
+    html = NEWS_PATH.read_text(encoding="utf-8")
+    start = html.index('data-news-update-callout aria-labelledby="novas-medidas-25-setembro-title"')
+    callout = html[start:html.index("</aside>", start)]
+    items = [_text(item) for item in _items(callout)]
+    thathi_item, terapeutica_item = items[7], items[8]
+    thathi_start = html.index("<h2>21 de setembro: RE nº 3.718/2026")
+    thathi = _text(html[thathi_start:html.index("<h2>16 de setembro: quatro resoluções", thathi_start)])
+    terapeutica_start = html.index("<h2>1º de setembro: RE nº 3.436/2026")
+    terapeutica = _text(html[terapeutica_start:html.index("<h2>Agosto amplia", terapeutica_start)])
+
+    # Quadro do topo reaproveitado: título e fecho cobrem 01/09; cada item novo traz sua publicação.
+    assert html.count("data-news-update-callout aria-labelledby=") == 5
+    assert "Atualização: medidas de 21 a 28/09/2026 e revogações de 01, 21 e 23/09/2026" in _text(callout)
+    assert "publicações de 01, 21, 23, 25 e 28/09/2026" in _text(callout)
+    assert "As RE nº 3.436, 3.718 e 3.743/2026 revogam, cada uma, uma medida anterior referente a uma empresa" in _text(callout)
+    # Seções por data de publicação; no dia 21/09, a revogação vem depois das medidas preventivas.
+    assert html.index("<h2>21 de setembro: RE nº 3.717/2026") < thathi_start < html.index("<h2>16 de setembro")
+    assert html.index("<h2>Setembro: RE nº 3.547/2026") < terapeutica_start < html.index("<h2>Agosto amplia")
+
+    # RE nº 3.718/2026 (18/09, DOU 21/09): só a medida nº 2 da RE nº 3.357/2026; proibição revogada.
+    assert "RE nº 3.718/2026, revogação, DOU de 21/09/2026" in thathi_item and "Tha &amp; Thi" in thathi_item
+    assert "medida preventiva nº 2 do anexo da RE nº 3.357/2026" in thathi_item
+    assert "apreensão e a proibição de comercialização, manipulação, propaganda e uso" in thathi_item
+    assert "não a RE nº 3.357/2026 inteira" in thathi_item
+    assert "Resolução-RE nº 3.718, de 18/09/2026, publicada no DOU em 21/09/2026" in thathi
+    assert "medida preventiva nº 2 do anexo da Resolução-RE nº 3.357, de 26/08/2026, publicada no DOU em 27/08/2026" in thathi
+    assert "06.177.615/0001-74" in thathi and "preparações magistrais estéreis" in thathi
+    assert "apreensão e a proibição de comercialização, manipulação, propaganda e uso" in thathi
+    assert "AFE vigente para a manipulação de produtos estéreis" in thathi
+    assert "o ato não concede nova autorização" in thathi
+    assert "item 5.10 da RDC nº 67/2007" in thathi
+    assert "o art. 1º revoga apenas a medida nº 2, referente à Tha &amp; Thi" in thathi
+    assert "não equivale a uma certificação de toda a produção da empresa" in thathi
+    for wrong in ("suspensão", "distribuição", "recolhimento", "estudo complementar", "Satisfatória", "concede AFE", "nova AFE"):
+        assert wrong not in thathi_item and wrong not in thathi, wrong
+
+    # RE nº 3.436/2026 (28/08, DOU 01/09): só a medida nº 3 da RE nº 1.380/2026; suspensão revogada.
+    assert "RE nº 3.436/2026, revogação, DOU de 01/09/2026" in terapeutica_item and "Terapêutica" in terapeutica_item
+    assert "medida preventiva nº 3 do anexo da RE nº 1.380/2026" in terapeutica_item
+    assert "apreensão e a suspensão de comercialização, distribuição, manipulação, propaganda e uso" in terapeutica_item
+    assert "Resolução-RE nº 3.436, de 28/08/2026, publicada no DOU em 01/09/2026" in terapeutica
+    assert "medida preventiva nº 3 do anexo da Resolução-RE nº 1.380, de 07/04/2026, publicada no DOU em 08/04/2026" in terapeutica
+    assert "47.545.371/0001-12" in terapeutica and "todos os medicamentos manipulados estéreis" in terapeutica
+    assert "apreensão e a suspensão de comercialização, distribuição, manipulação, propaganda e uso" in terapeutica
+    assert "Vigilância Sanitária de São José dos Campos" in terapeutica and "04/08/2026" in terapeutica
+    assert "não se estende às demais medidas do mesmo ato" in terapeutica
+    assert "atribuída pelo ato à fiscalização municipal" in terapeutica
+    # O anexo da RE nº 3.436 não lista recolhimento: o texto não o acrescenta nem conclui que ele permanece.
+    for wrong in ("recolhimento", "proibição de", "AFE", "estudo complementar", "Satisfatória", "denúncia"):
+        assert wrong not in terapeutica_item and wrong not in terapeutica, wrong
+    assert "href=" not in html[thathi_start:html.index("<h2>16 de setembro", thathi_start)]
+    assert "href=" not in html[terapeutica_start:html.index("<h2>Agosto amplia", terapeutica_start)]

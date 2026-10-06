@@ -342,7 +342,7 @@ def test_comunicado_editorial_organization_and_active_notice_content():
     assert "URGENTE" not in mapa_text
     assert "Anvisa suspende medicamento e proíbe produtos irregulares" in produtos.text()
     assert "HISTÓRICO" in produtos.text()
-    assert "06/10/2026 • 11h31" in produtos.text()
+    assert "06/10/2026 • 12h26" in produtos.text()
     # RE nº 3.751/2026: 31/08 a 02/09/2026 é a inspeção da ICT, não o período de produção.
     assert "todos os manipulados estéreis da ICT Farmacêutica, em todos os lotes" in produtos.text()
     assert "após inspeção realizada de 31/08 a 02/09/2026" in produtos.text()
@@ -350,13 +350,18 @@ def test_comunicado_editorial_organization_and_active_notice_content():
     assert "distribuidora LAF MED" in produtos.text() and "quaisquer medicamentos" in produtos.text()
     assert "reúnem medidas pontuais" in produtos.text()
     assert "Comunicado mantido como registro das medidas sanitárias divulgadas no período" in produtos.text()
-    # RE nº 3.764/2026 (Reach Latam) e RE nº 3.743/2026 (revogação referente à Higia) acompanham a síntese.
+    # RE nº 3.764/2026 (Reach Latam) e as revogações das RE nº 3.743/2026 (Higia) e 3.718/2026 (Tha & Thi),
+    # publicadas entre 21 e 28/09, acompanham a síntese. A RE nº 3.436/2026 (01/09) fica fora desse recorte.
     assert "insumos sujeitos a controle especial da Reach Latam, incluindo tirzepatida" in produtos.text()
     assert "a RE nº 3.743/2026 revogou a medida preventiva referente à Higia Pharmaceutical, com restrições registradas na motivação" in produtos.text()
+    assert "a RE nº 3.718/2026 revogou a medida preventiva referente à Tha & Thi Farmácia de Manipulação" in produtos.text()
     assert "o arquivamento deste aviso não significa revogação das medidas" in produtos.text()
-    # Fora dessas duas frases, nenhuma menção a revogação.
+    assert "Terapêutica" not in produtos.text() and "3.436" not in produtos.text()
+    # Fora dessas três frases, nenhuma menção a revogação.
     produtos_resto = produtos.text().replace(
         "a RE nº 3.743/2026 revogou a medida preventiva referente à Higia Pharmaceutical", ""
+    ).replace(
+        "a RE nº 3.718/2026 revogou a medida preventiva referente à Tha & Thi Farmácia de Manipulação", ""
     ).replace("o arquivamento deste aviso não significa revogação das medidas", "")
     assert "revog" not in produtos_resto.casefold()
     assert produtos_links == [PRODUTOS_ROUTE]
@@ -465,7 +470,7 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
         any("comunicado-historico__meta" in node.attrs.get("class", "").split() for node in article.descendants())
         for article in historical
     )
-    assert "HISTÓRICO" in historical[0].text() and "06/10/2026 • 11h31" in historical[0].text()
+    assert "HISTÓRICO" in historical[0].text() and "06/10/2026 • 12h26" in historical[0].text()
     assert "Anvisa suspende medicamento e proíbe produtos irregulares" in historical[0].text()
     assert "ENCERRADO" in historical[1].text() and "03/09/2026 • 22h49" in historical[1].text()
     assert "ciclo de renovação foi encerrado em 31 de agosto" in historical[1].text()
