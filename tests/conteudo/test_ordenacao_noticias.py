@@ -16,7 +16,7 @@ CBPF_IN451_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atua
 RPBR_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-periodicidade-rpbr-farmacovigilancia/"
 SIPROQUIM_IN338_URL = "https://www.regularizeconsultorias.com.br/noticias/produtos-quimicos-controlados-siproquim2-assinador-pf/"
 PRODUTOS_IRREGULARES_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
-PRODUTOS_IRREGULARES_UPDATED = "2026-10-06T14:27:00-03:00"
+PRODUTOS_IRREGULARES_UPDATED = "2026-10-06T16:32:00-03:00"
 FABRICANTES_INTERNACIONAIS_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-dispositivos-medicos/"
 SUPERVISAO_CONTEUDO_URL = "https://www.regularizeconsultorias.com.br/noticias/farmaceutico-supervisiona-conteudos-farmacia-redes-sociais-sites/"
 RETATRUTIDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-retatrutida-sem-registro-produtos-irregulares/"
@@ -159,7 +159,8 @@ def test_news_index_itemlist_ordering():
 
     # O consolidado de fiscalização: RE nº 3.751/2026 corrigida em 05/10/2026 às 14h24 e
     # RE nº 3.764 e 3.743/2026 acrescentadas em 06/10/2026 às 11h31, RE nº 3.718 e 3.436/2026 às 12h26
-    # e RE nº 3.440, 3.479, 3.480, 3.546 e 3.738/2026 às 13h49 (redação corrigida às 14h27).
+    # e RE nº 3.440, 3.479, 3.480, 3.546 e 3.738/2026 às 13h49 (redação corrigida às 14h27);
+    # as seis REs publicadas no DOU em 02/10/2026 (RE nº 3.850 a 3.857, exceto 3.851 e 3.853) às 16h32.
     assert urls[0] == PRODUTOS_IRREGULARES_URL
     assert urls.count(PRODUTOS_IRREGULARES_URL) == 1
     # Portaria SDA/MAPA nº 1.617/2026: publicada em 03/10/2026 às 00h33 e atualizada em 06/10/2026 às 08h00

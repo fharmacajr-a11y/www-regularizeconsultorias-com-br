@@ -9,7 +9,7 @@ NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 SITEMAP_PATH = ROOT / "sitemap.xml"
 URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
 PUBLISHED = "2026-07-05T18:00:00-03:00"
-UPDATED = "2026-10-06T14:27:00-03:00"
+UPDATED = "2026-10-06T16:32:00-03:00"
 DOBUTAMINA_LOTES = ("24092127", "24102310", "25102244", "25102243", "25112308")
 
 
@@ -111,17 +111,20 @@ def test_september_update_reflects_re_3547_and_keeps_history():
     september = _september_callout(html)
     text = _text(september)
 
+    assert html.index("novas-medidas-02-outubro-title") < html.index("novas-medidas-25-setembro-title")
     assert html.index("novas-medidas-25-setembro-title") < html.index("novas-medidas-21-setembro-title")
     assert html.index("novas-medidas-21-setembro-title") < html.index("novas-medidas-16-setembro-title")
     assert html.index("novas-medidas-16-setembro-title") < html.index("novas-medidas-setembro-title")
     assert html.index("novas-medidas-setembro-title") < html.index("novas-medidas-agosto-title")
-    assert html.count("data-news-update-callout aria-labelledby=") == 5
+    # Seis quadros desde a Fase 1G (02/10/2026 acrescentado antes dos cinco anteriores).
+    assert html.count("data-news-update-callout aria-labelledby=") == 6
     assert "ATUALIZAÇÃO" in september
     assert "Resolução-RE nº 3.547/2026" in text
     assert "de 09/09/2026 e publicada no DOU em 11/09/2026" in text
-    assert "Medidas de julho a setembro mostram" in html
+    assert "Medidas de julho a outubro mostram" in html
+    assert "Medidas de julho a setembro" not in html
     assert "Medidas de julho e agosto" not in html
-    assert f'<time datetime="{UPDATED}">06/10/2026</time> às 14h27' in html
+    assert f'<time datetime="{UPDATED}">06/10/2026</time> às 16h32' in html
     assert f'<time datetime="{PUBLISHED}">05/07/2026</time> às 18h00' in html
     # Histórico de agosto e julho preservado.
     for term in ("12/08 — saneantes sem registro", "14/08 — Chá Sarapião", "Fiscalização de julho amplia", "Chlorohex 2,0%"):
@@ -262,18 +265,21 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
 
     assert news_index.count('href="/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"') == 1
     assert f'data-updated="{UPDATED}"' in news_index
-    assert "06/10/2026 • 14h27" in news_index
+    assert "06/10/2026 • 16h32" in news_index
     assert "medidas sobre United Labz, Mounjcaps, lotes falsificados de Enhertu e Dysport e um lote do TYG" in news_index
     for term in ("Hytamicina", "Pangastri", "Gripinew", "Lipo Top Gold", "Anagalis", "RE 3.440/2026", "RE 3.479/2026",
                  "RE 3.480/2026", "RE 3.546/2026", "RE 3.738/2026"):
         assert term in news_index.split('data-keywords="', 2)[1].split('"', 1)[0]
-    assert "Publicações da Anvisa de 01 a 28/09 trazem a suspensão das operações da Reach Latam" in news_index
+    assert ("Publicações da Anvisa de 01/09 a 02/10 trazem seis resoluções de 02/10 sobre dispositivos médicos "
+            "(um lote de tiras G TECH e um lote falsificado do Hidrafemme), cosméticos e saneantes, a suspensão das "
+            "operações da Reach Latam") in news_index
+    assert "Publicações da Anvisa de 01 a 28/09" not in news_index
     assert "revogações de medidas referentes à Higia, à Tha &amp; Thi e à Terapêutica (RE nº 3.743, 3.718 e 3.436/2026)" in news_index
     assert "Publicações da Anvisa de 21 a 28/09" not in news_index
     assert "Publicações da Anvisa de 21 e 25/09" not in news_index
     cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', news_index, re.DOTALL)
     # RE nº 3.764 e 3.743/2026 (06/10, 11h31), RE nº 3.718 e 3.436/2026 (06/10, 12h26) e
-    # RE nº 3.440, 3.479, 3.480, 3.546 e 3.738/2026 (06/10, 13h49): card no topo,
+    # RE nº 3.440, 3.479, 3.480, 3.546 e 3.738/2026 (06/10, 13h49) e as seis REs de 02/10 (06/10, 16h32): card no topo,
     # antes da Portaria MAPA 1.617 (06/10, 08h00) e do CNES 09/2026 (05/10, 15h43).
     assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[0]
     assert "news-card-compact" not in cards[0].split(">", 1)[0]
@@ -446,8 +452,8 @@ def test_re_3764_and_re_3743_keep_suspension_and_revocation_apart():
     higia_start = html.index("<h2>23 de setembro: RE nº 3.743/2026")
     higia = _text(html[higia_start:html.index("<h2>21 de setembro: RE nº 3.712", higia_start)])
 
-    # Quadro de atualização reaproveitado, sem callout novo.
-    assert html.count("data-news-update-callout aria-labelledby=") == 5
+    # A Fase 1D reaproveitou o quadro de 21 a 28/09; o de outubro (Fase 1G) é o sexto.
+    assert html.count("data-news-update-callout aria-labelledby=") == 6
     assert "Atualização: medidas de 21 a 28/09/2026 e revogações de 01, 21 e 23/09/2026" in _text(callout)
     assert "publicações de 01, 21, 23, 25 e 28/09/2026" in _text(callout)
     assert "As RE nº 3.436, 3.718 e 3.743/2026 revogam, cada uma, uma medida anterior referente a uma empresa" in _text(callout)
@@ -502,8 +508,8 @@ def test_re_3718_and_re_3436_revoke_only_their_own_items():
     terapeutica_start = html.index("<h2>1º de setembro: RE nº 3.436/2026")
     terapeutica = _text(html[terapeutica_start:html.index("<h2>Agosto amplia", terapeutica_start)])
 
-    # Quadro do topo reaproveitado: título e fecho cobrem 01/09; cada item novo traz sua publicação.
-    assert html.count("data-news-update-callout aria-labelledby=") == 5
+    # Quadro de 21 a 28/09 reaproveitado: título e fecho cobrem 01/09; cada item novo traz sua publicação.
+    assert html.count("data-news-update-callout aria-labelledby=") == 6
     assert "Atualização: medidas de 21 a 28/09/2026 e revogações de 01, 21 e 23/09/2026" in _text(callout)
     assert "publicações de 01, 21, 23, 25 e 28/09/2026" in _text(callout)
     assert "As RE nº 3.436, 3.718 e 3.743/2026 revogam, cada uma, uma medida anterior referente a uma empresa" in _text(callout)
@@ -576,7 +582,7 @@ def test_september_measures_of_re_3440_3479_3480_3546_and_3738_keep_their_own_sc
         "<h2>8 de setembro: RE nº 3.479/2026", "<h2>8 de setembro: RE nº 3.480/2026",
         "<h2>1º de setembro: RE nº 3.440/2026", "<h2>1º de setembro: RE nº 3.436/2026", "<h2>Agosto amplia")]
     assert positions == sorted(positions)
-    assert html.count("data-news-update-callout aria-labelledby=") == 5
+    assert html.count("data-news-update-callout aria-labelledby=") == 6
 
     # Quadros: dois itens da RE nº 3.738 no quadro do topo; referência separada no quadro de setembro.
     start = html.index('data-news-update-callout aria-labelledby="novas-medidas-25-setembro-title"')
@@ -698,3 +704,210 @@ def test_september_measures_of_re_3440_3479_3480_3546_and_3738_keep_their_own_sc
     assert "href=" not in html[html.index("<h2>23 de setembro: RE nº 3.738/2026"):html.index("<h2>23 de setembro: RE nº 3.743/2026")]
     assert "href=" not in html[html.index("<h2>11 de setembro: RE nº 3.546/2026"):html.index("<h2>1º de setembro: RE nº 3.436/2026")]
     assert "gopharma.shop/" not in html and "http://gopharma" not in html and "https://gopharma" not in html
+
+
+def _october_callout(html):
+    start = html.index('data-news-update-callout aria-labelledby="novas-medidas-02-outubro-title"')
+    return html[start:html.index("</aside>", start)]
+
+
+def _normalize_search(value):
+    # Mesma normalização de normalizeText() em assets/js/main.js: minúsculas, NFD e sem diacríticos.
+    import unicodedata
+    value = unicodedata.normalize("NFD", value.lower())
+    return "".join(ch for ch in value if not "\u0300" <= ch <= "\u036f").strip()
+
+
+def test_october_callout_keeps_each_measure_bound_to_its_own_act_and_scope():
+    html = NEWS_PATH.read_text(encoding="utf-8")
+    callout = _october_callout(html)
+    items = [_text(item) for item in _items(callout)]
+
+    # Quadro de 02/10/2026 antes dos cinco anteriores, que permanecem.
+    assert html.count("data-news-update-callout aria-labelledby=") == 6
+    assert html.index("novas-medidas-02-outubro-title") < html.index("novas-medidas-25-setembro-title")
+    assert "Atualização: medidas publicadas no DOU em 02/10/2026" in callout and "ATUALIZAÇÃO" in callout
+    assert len(items) == 7
+    gtech, hidrafemme, cosmeticos, multjet, lgr, brmega, biojet = items
+
+    # RE nº 3.850/2026: só o lote da C & P, só três operações suspensas.
+    assert "G TECH" in gtech and "lote Z25J215F1 (RE nº 3.850/2026, suspensão)" in gtech
+    assert "suspensão de comercialização, distribuição e propaganda do lote" in gtech
+    assert "C &amp; P Comércio de Produtos Médicos, Farmacêuticos e Hospitalares Ltda." in gtech
+    assert "venda ao consumidor final" in gtech
+    for wrong in ("recolhimento", "apreensão", "proibição", "falsific", "desvio", "importação", "fabricação", "propaganda e uso"):
+        assert wrong not in gtech, wrong
+
+    # RE nº 3.852/2026: lote “lot 2 2511006”, origem desconhecida, Helianto como detentora que comunicou.
+    assert "lote “lot 2 2511006” (RE nº 3.852/2026)" in hidrafemme
+    assert "recolhimento e proibição de comercialização, distribuição, fabricação, importação, propaganda e uso" in hidrafemme
+    assert "de empresa desconhecida" in hidrafemme and "Helianto Farmacêutica, detentora do registro" in hidrafemme
+    assert "a falsificação não é atribuída a ela" in hidrafemme
+    assert "apreensão" not in hidrafemme
+
+    # RE nº 3.854/2026, itens 1, 2 e 4: apreensão de cosméticos; Perspirex só nos dois lotes.
+    assert "Perspirex Strong (lotes 614326 e 614323), MAV C-22 e GhostBond XL (todos os lotes) — RE nº 3.854/2026, itens 1, 2 e 4" in cosmeticos
+    assert "apreensão e proibição de comercialização, distribuição, fabricação, importação, propaganda e uso" in cosmeticos
+    assert "a Megalabs desconhece a fabricação das unidades" in cosmeticos
+    assert "no MAV C-22 e no GhostBond XL, o motivo é a falta de regularização sanitária" in cosmeticos
+    for wrong in ("recolhimento", "Mult Jet", "item 3"):
+        assert wrong not in cosmeticos, wrong
+
+    # RE nº 3.854/2026, item 3: recolhimento dos dois saneantes Mult Jet, sem apreensão.
+    assert "Mult Jet — Desincrustante Ácido DX 1:40 Mult-Cap e Água Sanitária, todos os lotes (RE nº 3.854/2026, item 3)" in multjet
+    assert "recolhimento e proibição de comercialização, distribuição, fabricação, importação, propaganda e uso desses dois saneantes" in multjet
+    for wrong in ("apreensão", "Perspirex", "todos os saneantes"):
+        assert wrong not in multjet, wrong
+
+    # RE nº 3.855/2026: suspensão geral de três operações (item 1) separada do recorte dos três produtos (item 2).
+    assert "LGR Indústria e Comércio de Produtos de Limpeza (RE nº 3.855/2026)" in lgr
+    item1, item2 = lgr.split("o item 2", 1)
+    assert "o item 1 suspende a comercialização, a distribuição e a fabricação de todos os saneantes da empresa" in item1
+    assert "inspeção de 14 a 18/09/2026" in item1
+    assert "recolhimento" not in item1 and "uso" not in item1
+    assert "determina recolhimento e suspensão de comercialização, distribuição, fabricação e uso apenas do Medicpro Zime, do Medicpro Zime Ultra e do Lapzyme" in item2
+
+    # RE nº 3.856/2026: todos os saneantes, com a marca BR MT LIMP; sem importação nem recolhimento.
+    assert "BR Mega Limp — todos os saneantes, incluindo os da marca BR MT LIMP (RE nº 3.856/2026)" in brmega
+    assert "apreensão e proibição de comercialização, distribuição, fabricação, propaganda e uso" in brmega
+    for wrong in ("importação", "transporte", "recolhimento"):
+        assert wrong not in brmega, wrong
+
+    # RE nº 3.857/2026: só os dois produtos da Biojet.
+    assert "Biojet — Bio Lavanda Limpador de Uso Geral e Bio Água Sanitária, todos os lotes (RE nº 3.857/2026)" in biojet
+    assert "recolhimento e proibição de comercialização, distribuição, fabricação, importação, propaganda e uso desses dois produtos" in biojet
+    for wrong in ("todos os saneantes", "toda a produção", "apreensão"):
+        assert wrong not in biojet, wrong
+
+    # Assinatura em setembro, publicação e vigência em 02/10; nenhum item mistura atos.
+    closing = _text(callout.split("</ul>", 1)[1])
+    assert "assinadas em 29 e 30/09/2026 e publicadas no DOU em 02/10/2026, data em que entraram em vigor" in closing
+    for item, own in zip(items, ("3.850", "3.852", "3.854", "3.854", "3.855", "3.856", "3.857")):
+        assert all(other not in item for other in ("3.850", "3.852", "3.854", "3.855", "3.856", "3.857") if other != own)
+    assert "href=" not in callout
+
+
+def test_october_body_sections_preserve_products_lots_operations_and_limits():
+    html = NEWS_PATH.read_text(encoding="utf-8")
+
+    def section(start, end):
+        begin = html.index(start)
+        return _text(html[begin:html.index(end, begin)])
+
+    heads = ("<h2>2 de outubro: RE nº 3.850/2026", "<h2>2 de outubro: RE nº 3.852/2026", "<h2>2 de outubro: RE nº 3.854/2026",
+             "<h2>2 de outubro: RE nº 3.855/2026", "<h2>2 de outubro: RE nº 3.856/2026", "<h2>2 de outubro: RE nº 3.857/2026",
+             "<h2>28 de setembro: RE nº 3.764/2026")
+    positions = [html.index(h) for h in heads]
+    # Bloco de 02/10 depois do resumo regulatório e antes dos atos de setembro.
+    assert html.index("Resumo regulatório") < positions[0] and positions == sorted(positions)
+    gtech, hidrafemme, re3854, lgr, brmega, biojet = (_text(html[a:b]) for a, b in zip(positions, positions[1:]))
+    perspirex = section("<h3>Item 1 — Perspirex Strong", "<h3>Item 2 — MAV C-22")
+    mav = section("<h3>Item 2 — MAV C-22", "<h3>Item 4 — GhostBond XL")
+    ghost = section("<h3>Item 4 — GhostBond XL", "<h3>Item 3 — Mult Jet")
+    mult = section("<h3>Item 3 — Mult Jet", "<h2>2 de outubro: RE nº 3.855/2026")
+    lgr1 = section("<h3>Item 1 — todos os saneantes da LGR", "<h3>Item 2 — Medicpro Zime")
+    lgr2 = section("<h3>Item 2 — Medicpro Zime", "<h2>2 de outubro: RE nº 3.856/2026")
+
+    for part, number, signed in ((gtech, "3.850", "29/09/2026"), (hidrafemme, "3.852", "29/09/2026"), (re3854, "3.854", "30/09/2026"),
+                                 (lgr, "3.855", "30/09/2026"), (brmega, "3.856", "30/09/2026"), (biojet, "3.857", "30/09/2026")):
+        assert f"Resolução-RE nº {number}, de {signed}, publicada no DOU em 02/10/2026" in part, number
+
+    # G TECH: empresa e lote do anexo, três operações suspensas, sem recolhimento, apreensão ou falsificação.
+    assert "C &amp; P Comércio de Produtos Médicos, Farmacêuticos e Hospitalares Ltda." in gtech and "36.470.048/0001-00" in gtech
+    assert "tiras reagentes para medição de glicose G TECH" in gtech and "lote Z25J215F1" in gtech
+    assert "determina a suspensão de comercialização, distribuição e propaganda" in gtech
+    assert "inciso IV do art. 10 da Lei nº 6.437/1977" in gtech
+    assert "A medida é restrita à empresa e ao lote indicados" in gtech and "não alcança as tiras G TECH em geral" in gtech
+    gtech_rest = gtech.replace("O ato não determina recolhimento nem apreensão", "")
+    for wrong in ("recolhimento", "apreensão", "proíbe", "proibição", "falsific", "desvio", "importação", "fabricação"):
+        assert wrong not in gtech_rest, wrong
+
+    # Hidrafemme: identificador “lot 2 2511006” preservado; origem desconhecida; Helianto não é a fabricante.
+    assert "“lot 2 2511006”" in hidrafemme
+    assert html.count("2511006") == html.count("lot 2 2511006") == 2
+    assert "A empresa responsável por essas unidades e o respectivo CNPJ constam como desconhecidos" in hidrafemme
+    assert "determina o recolhimento e proíbe a comercialização, a distribuição, a fabricação, a importação, a propaganda e o uso" in hidrafemme
+    assert "Helianto Farmacêutica Ltda." in hidrafemme and "detentora do registro do produto, identificou unidades" in hidrafemme
+    assert "A falsificação não é atribuída à Helianto" in hidrafemme and "não alcança os demais lotes do Hidrafemme" in hidrafemme
+    for wrong in ("apreensão", "fabricadas pela Helianto", "fabricado pela Helianto", "Shopee"):
+        assert wrong not in hidrafemme, wrong
+
+    # RE nº 3.854/2026: ordem editorial 1, 2, 4, 3 com os números corretos; apreensão nos cosméticos, recolhimento no Mult Jet.
+    assert "Os itens 1, 2 e 4 tratam de cosméticos e determinam apreensão; o item 3 trata de saneantes e determina recolhimento" in re3854
+    assert all(lote in perspirex for lote in ("614326", "614323"))
+    assert "Megalabs Farmacêutica S.A." in perspirex and "33.026.055/0001-20" in perspirex
+    assert "desconhece a fabricação dessas unidades" in perspirex
+    assert "A fabricação dessas unidades não é atribuída à Megalabs" in perspirex and "se limita aos dois lotes indicados" in perspirex
+    for part in (perspirex, mav, ghost):
+        assert "determina a apreensão e proíbe a comercialização, a distribuição, a fabricação, a importação, a propaganda e o uso" in part
+        assert "recolhimento" not in part
+    assert "todos os lotes" not in perspirex and "fabricadas pela Megalabs" not in perspirex
+    for part in (mav, ghost):
+        assert "sem regularização sanitária" in part and "todos os lotes" in part
+        for wrong in ("falsific", "Megalabs", "dados cadastrais"):
+            assert wrong not in part, wrong
+    assert "MAV C-22 Solvente Removedor Cola Mega Hair" in mav
+    assert "GhostBond XL — With Xtra Moisture Control Cola para Próteses Capilares" in ghost
+    assert "Desincrustante Ácido DX 1:40 Mult-Cap Mult Jet" in mult and "Água Sanitária Mult Jet" in mult
+    assert "Ramos Indústria e Comércio de Materiais de Limpeza Ltda." in mult and "46.069.515/0001-49" in mult
+    assert "o ato determina o recolhimento" in mult
+    assert "além da proibição de comercialização, distribuição, fabricação, importação, propaganda e uso" in mult
+    assert "não se estende aos demais saneantes da Ramos" in mult
+    assert "apreensão" not in mult.replace("não determina apreensão", "")
+
+    # LGR: item 1 (todos os saneantes, três operações suspensas) separado do item 2 (três produtos, recolhimento e uso).
+    assert "LGR Indústria e Comércio de Produtos de Limpeza Ltda." in lgr and "08.706.183/0001-77" in lgr
+    assert "todos os produtos saneantes da empresa, em todos os lotes, e determina a suspensão de comercialização, distribuição e fabricação" in lgr1
+    assert "RDC nº 47/2013" in lgr1 and "14 a 18/09/2026" in lgr1
+    assert "Essas datas são as da inspeção e não delimitam a produção nem os lotes alcançados" in lgr1
+    lgr1_rest = lgr1.replace("O item 1 não determina recolhimento nem suspensão do uso", "")
+    assert "recolhimento" not in lgr1_rest and not re.search(r"\buso\b", lgr1_rest)
+    assert all(product in lgr2 for product in ("Medicpro Zime", "Medicpro Zime Ultra", "Lapzyme"))
+    assert "determina o recolhimento e a suspensão de comercialização, distribuição, fabricação e uso" in lgr2
+    assert "valem apenas para os três produtos do item 2, e não para toda a produção da LGR" in lgr2
+
+    # BR Mega Limp: todos os saneantes, com BR MT LIMP; sem importação, transporte ou recolhimento.
+    assert "todos os produtos saneantes da BR Mega Limp Ltda." in brmega and "BR MT LIMP" in brmega and "16.731.434/0001-00" in brmega
+    assert "determina a apreensão e proíbe a comercialização, a distribuição, a fabricação, a propaganda e o uso" in brmega
+    assert "importação" not in brmega and "transporte" not in brmega
+    assert "recolhimento" not in brmega.replace("O anexo não determina recolhimento.", "")
+
+    # Biojet: só os dois produtos.
+    assert "Bio Lavanda Limpador de Uso Geral Biojet" in biojet and "Bio Água Sanitária Biojet" in biojet
+    assert "Biojet Indústria de Produtos Químicos Ltda." in biojet and "04.611.333/0001-08" in biojet
+    assert "determina o recolhimento e proíbe a comercialização, a distribuição, a fabricação, a importação, a propaganda e o uso desses produtos" in biojet
+    assert "A medida alcança apenas os dois produtos indicados, e não toda a produção da Biojet" in biojet
+    for wrong in ("todos os produtos saneantes", "todos os saneantes", "apreensão"):
+        assert wrong not in biojet, wrong
+
+    # Sem links, prazos inventados ou atos fora da fase.
+    block = html[positions[0]:positions[-1]]
+    assert "href=" not in block
+    for wrong in ("prazo de", "até que", "renova", "autoriza"):
+        assert wrong not in _text(block), wrong
+    assert "3.851" not in html and "3.853" not in html
+
+
+def test_october_update_reaches_lead_summary_metadata_and_listing_search():
+    html = NEWS_PATH.read_text(encoding="utf-8")
+    news_index = NEWS_INDEX_PATH.read_text(encoding="utf-8")
+    description = ("Medidas recentes alcançam medicamentos, dispositivos médicos, cosméticos, saneantes e produtos sem registro, "
+                   "inclusive itens divulgados com alegação emagrecedora.")
+
+    assert html.count(description) == 4  # description, og, twitter e JSON-LD
+    assert '"keywords": "medicamentos, dispositivos médicos, cosméticos,' in html
+    assert "Medidas de julho a outubro alcançaram medicamentos, dispositivos médicos, cosméticos, saneantes" in html
+    assert '"headline": "Anvisa suspende medicamento e proíbe produtos irregulares"' in html
+    assert f'<meta content="{UPDATED}" property="article:modified_time"/>' in html
+
+    cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', news_index, re.DOTALL)
+    card = cards[0]
+    assert "anvisa-suspende-medicamento-proibe-produtos-irregulares" in card
+    attrs = dict(re.findall(r'\b(data-[a-z-]+)="([^"]*)"', card.split(">", 1)[0]))
+    haystack = _normalize_search(" ".join([attrs["data-title"], attrs["data-summary"], attrs["data-keywords"],
+                                           attrs["data-tags"], _text(card)]).replace("&amp;", "&"))
+    for term in ("G TECH", "Hidrafemme", "Perspirex", "MAV C-22", "GhostBond XL", "Mult Jet", "LGR", "Medicpro",
+                 "Lapzyme", "BR Mega Limp", "BR MT LIMP", "Biojet", "dispositivos médicos", "RE 3.850/2026",
+                 "RE 3.852/2026", "RE 3.854/2026", "RE 3.855/2026", "RE 3.856/2026", "RE 3.857/2026"):
+        assert _normalize_search(term) in haystack, term
+    assert news_index.count(f'data-updated="{UPDATED}"') == 1
