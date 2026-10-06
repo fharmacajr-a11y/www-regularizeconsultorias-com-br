@@ -342,7 +342,11 @@ def test_comunicado_editorial_organization_and_active_notice_content():
     assert "URGENTE" not in mapa_text
     assert "Anvisa suspende medicamento e proíbe produtos irregulares" in produtos.text()
     assert "HISTÓRICO" in produtos.text()
-    assert "06/10/2026 • 12h26" in produtos.text()
+    assert "06/10/2026 • 14h27" in produtos.text()
+    # RE nº 3.738/2026 (DOU de 23/09) entra no recorte de 21 a 28/09; os atos de 01, 08 e 11/09 ficam fora.
+    assert "apreensão e proibições sobre três lotes falsificados de Enhertu e sobre o produto Mounjcaps" in produtos.text()
+    for term in ("United Labz", "TYG", "Hytamicina", "Pangastri", "Gripinew", "Anagalis", "Lipo Top"):
+        assert term not in produtos.text()
     # RE nº 3.751/2026: 31/08 a 02/09/2026 é a inspeção da ICT, não o período de produção.
     assert "todos os manipulados estéreis da ICT Farmacêutica, em todos os lotes" in produtos.text()
     assert "após inspeção realizada de 31/08 a 02/09/2026" in produtos.text()
@@ -470,7 +474,7 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
         any("comunicado-historico__meta" in node.attrs.get("class", "").split() for node in article.descendants())
         for article in historical
     )
-    assert "HISTÓRICO" in historical[0].text() and "06/10/2026 • 12h26" in historical[0].text()
+    assert "HISTÓRICO" in historical[0].text() and "06/10/2026 • 14h27" in historical[0].text()
     assert "Anvisa suspende medicamento e proíbe produtos irregulares" in historical[0].text()
     assert "ENCERRADO" in historical[1].text() and "03/09/2026 • 22h49" in historical[1].text()
     assert "ciclo de renovação foi encerrado em 31 de agosto" in historical[1].text()

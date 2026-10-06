@@ -9,7 +9,7 @@ NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 SITEMAP_PATH = ROOT / "sitemap.xml"
 URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
 PUBLISHED = "2026-07-05T18:00:00-03:00"
-UPDATED = "2026-10-06T12:26:00-03:00"
+UPDATED = "2026-10-06T14:27:00-03:00"
 DOBUTAMINA_LOTES = ("24092127", "24102310", "25102244", "25102243", "25112308")
 
 
@@ -35,8 +35,8 @@ def _september_callout(html):
 
 def _september_section(html):
     start = html.index("<h2>Setembro: RE nº 3.547/2026")
-    # A revogação da RE nº 3.436/2026 (01/09) fica entre a RE nº 3.547 e agosto.
-    return html[start:html.index("<h2>1º de setembro: RE nº 3.436/2026", start)]
+    # A RE nº 3.546/2026 (TYG), do mesmo dia, e os atos de 08 e 01/09 vêm depois e ficam fora da fatia.
+    return html[start:html.index("<h2>11 de setembro: RE nº 3.546/2026", start)]
 
 
 def _re3717_section(html):
@@ -121,7 +121,7 @@ def test_september_update_reflects_re_3547_and_keeps_history():
     assert "de 09/09/2026 e publicada no DOU em 11/09/2026" in text
     assert "Medidas de julho a setembro mostram" in html
     assert "Medidas de julho e agosto" not in html
-    assert f'<time datetime="{UPDATED}">06/10/2026</time> às 12h26' in html
+    assert f'<time datetime="{UPDATED}">06/10/2026</time> às 14h27' in html
     assert f'<time datetime="{PUBLISHED}">05/07/2026</time> às 18h00' in html
     # Histórico de agosto e julho preservado.
     for term in ("12/08 — saneantes sem registro", "14/08 — Chá Sarapião", "Fiscalização de julho amplia", "Chlorohex 2,0%"):
@@ -262,13 +262,18 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
 
     assert news_index.count('href="/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"') == 1
     assert f'data-updated="{UPDATED}"' in news_index
-    assert "06/10/2026 • 12h26" in news_index
+    assert "06/10/2026 • 14h27" in news_index
+    assert "medidas sobre United Labz, Mounjcaps, lotes falsificados de Enhertu e Dysport e um lote do TYG" in news_index
+    for term in ("Hytamicina", "Pangastri", "Gripinew", "Lipo Top Gold", "Anagalis", "RE 3.440/2026", "RE 3.479/2026",
+                 "RE 3.480/2026", "RE 3.546/2026", "RE 3.738/2026"):
+        assert term in news_index.split('data-keywords="', 2)[1].split('"', 1)[0]
     assert "Publicações da Anvisa de 01 a 28/09 trazem a suspensão das operações da Reach Latam" in news_index
     assert "revogações de medidas referentes à Higia, à Tha &amp; Thi e à Terapêutica (RE nº 3.743, 3.718 e 3.436/2026)" in news_index
     assert "Publicações da Anvisa de 21 a 28/09" not in news_index
     assert "Publicações da Anvisa de 21 e 25/09" not in news_index
     cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', news_index, re.DOTALL)
-    # RE nº 3.764 e 3.743/2026 (06/10, 11h31) e RE nº 3.718 e 3.436/2026 (06/10, 12h26): card no topo,
+    # RE nº 3.764 e 3.743/2026 (06/10, 11h31), RE nº 3.718 e 3.436/2026 (06/10, 12h26) e
+    # RE nº 3.440, 3.479, 3.480, 3.546 e 3.738/2026 (06/10, 13h49): card no topo,
     # antes da Portaria MAPA 1.617 (06/10, 08h00) e do CNES 09/2026 (05/10, 15h43).
     assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[0]
     assert "news-card-compact" not in cards[0].split(">", 1)[0]
@@ -377,8 +382,8 @@ def test_new_measures_of_21_and_25_september_keep_their_own_scope():
     body_start = html.index("<h2>25 de setembro: RE nº 3.751/2026")
     body = _text(html[body_start:html.index("<h2>21 de setembro: RE nº 3.717/2026", body_start)])
 
-    assert len(items) == 9
-    reach, ocrevus, ict, higia, eleve, dcasa, smart, thathi, terapeutica = items
+    assert len(items) == 11
+    reach, ocrevus, ict, enhertu, mounjcaps, higia, eleve, dcasa, smart, thathi, terapeutica = items
     assert "RE nº 3.751/2026" in ocrevus and "RE nº 3.751/2026" in ict
     # RE nº 3.751/2026, LAF MED: os lotes estão no campo de produto, mas a motivação
     # estende as ações a quaisquer medicamentos, sem proibir o Ocrevus em geral.
@@ -405,7 +410,7 @@ def test_new_measures_of_21_and_25_september_keep_their_own_scope():
     assert "falsific" not in ocrevus.casefold()
     assert "falsific" not in _text(html[body_start:html.index("<h3>ICT Farmacêutica", body_start)]).casefold()
     laf_body = _text(html[body_start:html.index("<h3>ICT Farmacêutica", body_start)])
-    ict_body = _text(html[html.index("<h3>ICT Farmacêutica", body_start):html.index("<h2>23 de setembro: RE nº 3.743/2026", body_start)])
+    ict_body = _text(html[html.index("<h3>ICT Farmacêutica", body_start):html.index("<h2>23 de setembro: RE nº 3.738/2026", body_start)])
     assert "Resolução-RE nº 3.751, de 24/09/2026, publicada no DOU em 25/09/2026" in body
     assert "proibição de armazenamento, comercialização, distribuição, exportação, importação, propaganda e transporte" in laf_body
     assert "o item não determina recolhimento" in laf_body
@@ -422,7 +427,10 @@ def test_new_measures_of_21_and_25_september_keep_their_own_scope():
     assert "produzidos entre" not in ict_body and "se refere ao recolhimento" not in ict_body
     assert "o alcance da suspensão deve ser conferido no ato publicado" not in body
     assert "Smart GR" not in dcasa and "saneantes" not in smart
-    assert "3.738" not in html
+    # RE nº 3.738/2026 (DOU de 23/09) tem seção própria desde a Fase 1F; não aparece nos itens nem nas seções
+    # das RE nº 3.751, 3.712 e 3.714/2026.
+    assert all("3.738" not in part for part in (ocrevus, ict, eleve, dcasa, smart, laf_body, ict_body))
+    assert "3.738" not in _text(html[html.index("<h2>21 de setembro: RE nº 3.712"):html.index("<h2>21 de setembro: RE nº 3.717/2026")])
     assert "CNPJ" not in dcasa and "CNPJ" not in _text(html[html.index("<h3>D Casa"):html.index("<h3>Smart GR")])
     assert "href=" not in html[body_start:html.index("<h2>21 de setembro: RE nº 3.717/2026", body_start)]
 
@@ -432,7 +440,7 @@ def test_re_3764_and_re_3743_keep_suspension_and_revocation_apart():
     start = html.index('data-news-update-callout aria-labelledby="novas-medidas-25-setembro-title"')
     callout = html[start:html.index("</aside>", start)]
     items = [_text(item) for item in _items(callout)]
-    reach_item, higia_item = items[0], items[3]
+    reach_item, higia_item = items[0], items[5]
     reach_start = html.index("<h2>28 de setembro: RE nº 3.764/2026")
     reach = _text(html[reach_start:html.index("<h2>25 de setembro: RE nº 3.751/2026", reach_start)])
     higia_start = html.index("<h2>23 de setembro: RE nº 3.743/2026")
@@ -488,7 +496,7 @@ def test_re_3718_and_re_3436_revoke_only_their_own_items():
     start = html.index('data-news-update-callout aria-labelledby="novas-medidas-25-setembro-title"')
     callout = html[start:html.index("</aside>", start)]
     items = [_text(item) for item in _items(callout)]
-    thathi_item, terapeutica_item = items[7], items[8]
+    thathi_item, terapeutica_item = items[9], items[10]
     thathi_start = html.index("<h2>21 de setembro: RE nº 3.718/2026")
     thathi = _text(html[thathi_start:html.index("<h2>16 de setembro: quatro resoluções", thathi_start)])
     terapeutica_start = html.index("<h2>1º de setembro: RE nº 3.436/2026")
@@ -536,3 +544,157 @@ def test_re_3718_and_re_3436_revoke_only_their_own_items():
         assert wrong not in terapeutica_item and wrong not in terapeutica, wrong
     assert "href=" not in html[thathi_start:html.index("<h2>16 de setembro", thathi_start)]
     assert "href=" not in html[terapeutica_start:html.index("<h2>Agosto amplia", terapeutica_start)]
+
+
+def test_september_measures_of_re_3440_3479_3480_3546_and_3738_keep_their_own_scope():
+    html = NEWS_PATH.read_text(encoding="utf-8")
+
+    def section(start, end):
+        begin = html.index(start)
+        return _text(html[begin:html.index(end, begin)])
+
+    re3738 = section("<h2>23 de setembro: RE nº 3.738/2026", "<h2>23 de setembro: RE nº 3.743/2026")
+    enhertu = section("<h3>Enhertu — lotes", "<h3>Mounjcaps — todos os lotes</h3>")
+    mounjcaps = section("<h3>Mounjcaps — todos os lotes</h3>", "<h2>23 de setembro: RE nº 3.743/2026")
+    tyg = section("<h2>11 de setembro: RE nº 3.546/2026", "<h2>8 de setembro: RE nº 3.479/2026")
+    re3479 = section("<h2>8 de setembro: RE nº 3.479/2026", "<h2>8 de setembro: RE nº 3.480/2026")
+    hytamicina = section("<h3>Hytamicina", "<h3>Pangastri")
+    pangastri = section("<h3>Pangastri", "<h2>8 de setembro: RE nº 3.480/2026")
+    re3480 = section("<h2>8 de setembro: RE nº 3.480/2026", "<h2>1º de setembro: RE nº 3.440/2026")
+    mundial = section("<h3>Mundial Comércio de Encapsulados", "<h3>Produtos à base de retatrutida")
+    gopharma = section("<h3>Produtos à base de retatrutida", "<h3>Anagalis")
+    anagalis = section("<h3>Anagalis", "<h3>Dysport — lotes P08193")
+    dysport = section("<h3>Dysport — lotes P08193", "<h3>Gripinew")
+    gripinew = section("<h3>Gripinew", "<h2>1º de setembro: RE nº 3.440/2026")
+    united = section("<h2>1º de setembro: RE nº 3.440/2026", "<h2>1º de setembro: RE nº 3.436/2026")
+
+    # Ordem por data do DOU; no mesmo dia, medidas preventivas antes da revogação; RE nº 3.547 preservada antes da 3.546.
+    positions = [html.index(h) for h in (
+        "<h2>25 de setembro: RE nº 3.751/2026", "<h2>23 de setembro: RE nº 3.738/2026",
+        "<h2>23 de setembro: RE nº 3.743/2026", "<h2>21 de setembro: RE nº 3.712",
+        "<h2>Setembro: RE nº 3.547/2026", "<h2>11 de setembro: RE nº 3.546/2026",
+        "<h2>8 de setembro: RE nº 3.479/2026", "<h2>8 de setembro: RE nº 3.480/2026",
+        "<h2>1º de setembro: RE nº 3.440/2026", "<h2>1º de setembro: RE nº 3.436/2026", "<h2>Agosto amplia")]
+    assert positions == sorted(positions)
+    assert html.count("data-news-update-callout aria-labelledby=") == 5
+
+    # Quadros: dois itens da RE nº 3.738 no quadro do topo; referência separada no quadro de setembro.
+    start = html.index('data-news-update-callout aria-labelledby="novas-medidas-25-setembro-title"')
+    top_items = [_text(item) for item in _items(html[start:html.index("</aside>", start)])]
+    assert "Enhertu 100 mg — lotes 432221, 432844 e 432862 (RE nº 3.738/2026, DOU de 23/09/2026)" in top_items[3]
+    assert "Mounjcaps — todos os lotes (RE nº 3.738/2026, DOU de 23/09/2026)" in top_items[4]
+    assert "Não se refere ao Mounjaro" in top_items[4]
+    september = _text(_september_callout(html))
+    assert len(_items(_september_callout(html))) == 4
+    assert "RE nº 3.440/2026 (DOU de 01/09, marca United Labz)" in september
+    assert "RE nº 3.479 e 3.480/2026 (DOU de 08/09)" in september
+    assert "RE nº 3.546/2026 (DOU de 11/09, interdição cautelar de um lote do TYG)" in september
+    assert "Eles não integram a RE nº 3.547/2026." in september
+
+    # RE nº 3.738/2026: Enhertu falsificado e Mounjcaps, sem atribuição à detentora nem confusão com Mounjaro.
+    assert "Resolução-RE nº 3.738, de 22/09/2026, publicada no DOU em 23/09/2026" in re3738
+    assert "distintas da revogação referente à Higia" in re3738
+    re3738_intro = re3738.split("Enhertu — lotes", 1)[0]
+    assert "duas medidas preventivas referentes a produtos distintos, cada uma com a motivação e o alcance indicados em seu item" in re3738_intro
+    assert "em comum" not in re3738_intro and "sem empresa, produto ou fundamento" not in re3738_intro
+    assert all(lote in enhertu for lote in ("432221", "432844", "432862"))
+    assert "empresa responsável não identificada" in enhertu
+    assert "Daiichi Sankyo Brasil Farmacêutica Ltda." in enhertu and "60.874.187/0001-84" in enhertu
+    assert "proíbe o armazenamento, a comercialização, a distribuição, o transporte e o uso" in enhertu
+    assert "A falsificação não é atribuída à detentora do registro" in enhertu
+    assert "não alcança os demais lotes do Enhertu" in enhertu
+    for wrong in ("fabricação", "propaganda", "importação", "recolhimento"):
+        assert wrong not in enhertu, wrong
+    assert "todos os lotes" in mounjcaps and "empresa desconhecida" in mounjcaps
+    assert "“Mounjcaps Natural”" in mounjcaps
+    assert "armazenamento, comercialização, distribuição, fabricação, propaganda, transporte e uso" in mounjcaps
+    assert "não se refere ao Mounjaro" in mounjcaps
+    for wrong in ("importação", "recolhimento"):
+        assert wrong not in mounjcaps, wrong
+
+    # RE nº 3.546/2026: interdição cautelar de um lote, por suspeita, com 90 dias.
+    assert "Resolução-RE nº 3.546, de 09/09/2026, publicada no DOU em 11/09/2026" in tyg
+    assert "2604940" in tyg and "TYG 50 mg" in tyg and "60.665.981/0001-18" in tyg
+    assert "interdição cautelar" in tyg and "suspeita" in tyg and "90 dias" in tyg
+    assert "a motivação registra suspeita, não desvio confirmado" in tyg
+    assert "O anexo determina interdição cautelar e não lista recolhimento como ação adicional" in tyg
+    assert "Enquanto a interdição estiver vigente, o lote não pode ser utilizado ou comercializado" in tyg
+    assert "distinta da RE nº 3.547/2026" in tyg
+    # A interdição não é apresentada como liberação: nenhuma negativa de "proibição" nem permissão de uso/venda.
+    assert "não determina recolhimento nem proibição" not in tyg
+    for wrong in ("pode ser utilizado e", "pode ser comercializado e", "pode ser utilizado ou comercializado durante",
+                  "liberad", "permitid"):
+        assert wrong not in tyg, wrong
+    assert tyg.count("pode ser utilizado ou comercializado") == 1
+    assert "não pode ser utilizado ou comercializado" in tyg
+    # Fora da negativa exata do recolhimento, nenhuma outra ação é atribuída ao lote.
+    tyg_rest = tyg.replace("não lista recolhimento como ação adicional", "")
+    for wrong in ("recolhimento", "proibição", "proíbe", "apreensão", "suspensão de", "confirmação de desvio"):
+        assert wrong not in tyg_rest, wrong
+    assert "3.456" not in html
+
+    # RE nº 3.479/2026: Hytamicina (desvio confirmado) e Pangastri (recolhimento voluntário).
+    assert "Resolução-RE nº 3.479, de 03/09/2026, publicada no DOU em 08/09/2026" in re3479
+    assert all(lote in hytamicina for lote in ("25091367", "25111733", "25081181"))
+    assert "suspensão de comercialização, distribuição, fabricação e uso" in hytamicina
+    assert "confirmação de desvio de qualidade" in hytamicina and "corpo estranho" in hytamicina
+    for wrong in ("voluntário", "apreensão", "2610715"):
+        assert wrong not in hytamicina, wrong
+    assert "2610715" in pangastri and "recolhimento voluntário" in pangastri
+    assert "suspensão de comercialização, distribuição e uso" in pangastri and "pedaço de vidro" in pangastri
+    for wrong in ("fabricação", "confirmação", "25091367", "TYG"):
+        assert wrong not in pangastri, wrong
+    assert "não se estendem à produção das empresas" in re3479
+
+    # RE nº 3.480/2026: cinco medidas sem operações trocadas entre itens.
+    assert "Resolução-RE nº 3.480, de 03/09/2026" in re3480 and "DOU em 08/09/2026" in re3480
+    re3480_intro = re3480.split("Mundial Comércio de Encapsulados", 1)[0]
+    assert "adota cinco medidas preventivas, cada uma com os produtos, as ações e a motivação indicados em seu item" in re3480_intro
+    assert "não compartilham" not in re3480_intro and "fundamento" not in re3480_intro
+    for product in ("Lipo Top Gold", "Red Nature", "Mundial Caps BR (Lipo Bari)", "Mundial Caps Black (Lipo Top Extra Forte)"):
+        assert product in mundial
+    assert "56.137.545/0001-07" in mundial
+    assert "proibição de comercialização, distribuição, fabricação, propaganda e uso" in mundial
+    for wrong in ("importação", "armazenamento", "recolhimento"):
+        assert wrong not in mundial, wrong
+    assert "todos os produtos à base de retatrutida" in gopharma and "todos os produtos à base de tirzepatida" in gopharma
+    assert "gopharma.shop" in gopharma
+    assert all(name in gopharma for name in ("T.G. 15 mg", "Tirzec 15 mg", "Lipoless MD 15 mg", "Retatrutide"))
+    assert "proibição de comercialização, distribuição, importação, propaganda e uso" in gopharma
+    assert "não decide sobre medicamentos registrados" in gopharma
+    for wrong in ("fabricação", "armazenamento", "Go Pharma"):
+        assert wrong not in gopharma, wrong
+    assert "suspensão da propaganda" in anagalis and "04.540.131/0001-12" in anagalis and "item 5.17.14" in anagalis
+    assert "não suspende a atividade da farmácia" in anagalis
+    anagalis_rest = anagalis.replace("nem determina recolhimento, apreensão ou proibição de manipulação", "")
+    for wrong in ("recolhimento", "apreensão", "proibição", "suspensão de comercialização"):
+        assert wrong not in anagalis_rest, wrong
+    assert "P08193" in dysport and "06/2029" in dysport and "U14534" in dysport and "02/2029" in dysport
+    assert "Beaufour Ipsen Farmacêutica Ltda." in dysport
+    assert "proíbe a comercialização, a distribuição e o uso" in dysport
+    assert "não se confundem com os três lotes de Dysport da RE nº 3.717/2026" in dysport
+    assert "a falsificação não é atribuída à detentora do registro" in dysport
+    for wrong in ("P08191", "P08192", "P22368", "armazenamento", "exportação", "importação", "propaganda"):
+        assert wrong not in dysport, wrong
+    re3717 = _text(_re3717_section(html))
+    assert "P08193" not in re3717 and "U14534" not in re3717
+    assert "OB2529" in gripinew and "0B2529" not in html
+    assert "recolhimento voluntário" in gripinew
+    assert "suspensão de comercialização, distribuição, exportação e uso" in gripinew
+    assert "monitoramento contínuo da qualidade" in gripinew
+    for wrong in ("fabricação", "apreensão"):
+        assert wrong not in gripinew, wrong
+
+    # RE nº 3.440/2026: toda a marca United Labz, sem extensão a outras marcas ou à revogação do mesmo dia.
+    assert "Resolução-RE nº 3.440, de 31/08/2026, publicada no DOU em 01/09/2026" in united
+    assert "todos os produtos da marca United Labz" in united
+    assert "proíbe armazenamento, comercialização, distribuição, fabricação, importação, propaganda, transporte e uso" in united
+    assert "não se estende a outras marcas" in united
+    assert "distinta da revogação referente à Terapêutica" in united
+    for wrong in ("recolhimento", "tirzepatida", "retatrutida"):
+        assert wrong not in united, wrong
+
+    # Sem links nas seções novas (nem para o endereço fiscalizado).
+    assert "href=" not in html[html.index("<h2>23 de setembro: RE nº 3.738/2026"):html.index("<h2>23 de setembro: RE nº 3.743/2026")]
+    assert "href=" not in html[html.index("<h2>11 de setembro: RE nº 3.546/2026"):html.index("<h2>1º de setembro: RE nº 3.436/2026")]
+    assert "gopharma.shop/" not in html and "http://gopharma" not in html and "https://gopharma" not in html
