@@ -55,9 +55,11 @@ ROUTES = (
     "/noticias/farmacia-popular-adequacao-materiais-periodo-eleitoral/",
     "/noticias/o-que-e-afe-e-por-que-e-importante/",
     "/noticias/prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular/",
-    # Informativo da família custom.min.css (o do MAPA é da família components.css);
-    # nos dois, o hero vem de pages/noticias-tipos.css.
+    # Informativo das duas famílias: custom.min.css e components.css. Desde 06/10/2026 o
+    # artigo do MAPA é Atualização (components.css); nos dois, o hero vem de
+    # pages/noticias-tipos.css.
     "/noticias/anvisa-proibe-plataforma-consultas-entrega-medicamentos/",
+    "/noticias/alteracao-cadastral-farmacia-popular-regularizacao/",
     # Artigo Urgente: hero com o degradê vermelho/azul e painel escuro.
     "/noticias/anvisa-prazo-adequacao-notificacao-alimentos-setembro-2026/",
 )

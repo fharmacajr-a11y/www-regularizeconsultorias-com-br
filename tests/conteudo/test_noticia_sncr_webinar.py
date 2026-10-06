@@ -168,15 +168,15 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
         assert term in card
 
 
-def test_comunicado_keeps_one_sncr_card_and_six_active_notices():
+def test_comunicado_keeps_one_sncr_card_and_eight_active_notices():
     html = COMUNICADO_PATH.read_text(encoding="utf-8")
     active = _active_notices(html)
     sncr_cards = [article for article in active if 'data-category="sncr"' in article]
 
     assert html.count('data-category="sncr"') == 1
     assert html.count(f'href="{ROUTE}"') == 1
-    assert len(active) == 6
-    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', html) == ["6", "6"]
+    assert len(active) == 8
+    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', html) == ["8", "8"]
     assert len(sncr_cards) == 1
     card_text = _text(sncr_cards[0])
     for term in (
@@ -193,8 +193,8 @@ def test_comunicado_keeps_one_sncr_card_and_six_active_notices():
     assert "29/09/2026" not in card_text
     assert "etapa preliminar" not in card_text
     assert "como preparar o estabelecimento" not in card_text
-    # CNES 09/2026 e Edital 6/2026, atualizados em 05/10/2026, vêm antes na ordem cronológica.
-    assert active[2] is sncr_cards[0]
+    # Avisos PF e MAPA (06/10/2026) e CNES 09/2026 e Edital 6/2026 (05/10/2026) vêm antes na ordem cronológica.
+    assert active[4] is sncr_cards[0]
 
 
 def test_sncr_news_has_current_sitemap_lastmod():

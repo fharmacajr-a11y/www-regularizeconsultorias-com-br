@@ -165,8 +165,8 @@ def test_news_index_has_one_card_and_one_itemlist_entry():
     assert f'<time datetime="{UPDATED}" class="leading-none">05/10/2026 • 15h43</time>' in own[0]
     assert f'data-title="{TITLE}"' in own[0] and f">{TITLE}</h2>" in own[0]
     assert "prorrogou até 9 de outubro" in own[0]
-    # Alteração material em 05/10/2026: card no topo, grande.
-    assert cards[0] is own[0] or cards.index(own[0]) == 0
+    # Alteração material em 05/10/2026: card grande, logo abaixo da Portaria MAPA 1.617 (06/10/2026).
+    assert cards.index(own[0]) == 1
     assert "news-card-compact" not in own[0].split(">", 1)[0]
     assert ">Atualização</span>" in own[0] and "Ler atualização" in own[0]
     assert len(cards) == 83

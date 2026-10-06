@@ -203,7 +203,7 @@ def test_sitemap_adds_only_the_new_url_and_the_listing_lastmod():
     assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-01</lastmod>" in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-10-05</lastmod>"
+        "    <lastmod>2026-10-06</lastmod>"
     ) in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/</loc>\n"
