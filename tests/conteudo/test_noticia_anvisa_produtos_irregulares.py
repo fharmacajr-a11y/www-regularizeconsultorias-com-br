@@ -9,7 +9,7 @@ NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 SITEMAP_PATH = ROOT / "sitemap.xml"
 URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
 PUBLISHED = "2026-07-05T18:00:00-03:00"
-UPDATED = "2026-10-05T14:24:00-03:00"
+UPDATED = "2026-10-06T11:31:00-03:00"
 DOBUTAMINA_LOTES = ("24092127", "24102310", "25102244", "25102243", "25112308")
 
 
@@ -119,7 +119,7 @@ def test_september_update_reflects_re_3547_and_keeps_history():
     assert "de 09/09/2026 e publicada no DOU em 11/09/2026" in text
     assert "Medidas de julho a setembro mostram" in html
     assert "Medidas de julho e agosto" not in html
-    assert f'<time datetime="{UPDATED}">05/10/2026</time> às 14h24' in html
+    assert f'<time datetime="{UPDATED}">06/10/2026</time> às 11h31' in html
     assert f'<time datetime="{PUBLISHED}">05/07/2026</time> às 18h00' in html
     # Histórico de agosto e julho preservado.
     for term in ("12/08 — saneantes sem registro", "14/08 — Chá Sarapião", "Fiscalização de julho amplia", "Chlorohex 2,0%"):
@@ -260,15 +260,17 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
 
     assert news_index.count('href="/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"') == 1
     assert f'data-updated="{UPDATED}"' in news_index
-    assert "05/10/2026 • 14h24" in news_index
-    assert "Publicações da Anvisa de 21 e 25/09 trazem a RE nº 3.751/2026" in news_index
+    assert "06/10/2026 • 11h31" in news_index
+    assert "Publicações da Anvisa de 21 a 28/09 trazem a suspensão das operações da Reach Latam" in news_index
+    assert "a revogação da medida referente à Higia (RE nº 3.743/2026)" in news_index
+    assert "Publicações da Anvisa de 21 e 25/09" not in news_index
     cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', news_index, re.DOTALL)
-    # Correção do alcance da RE nº 3.751/2026 em 05/10/2026 às 14h24; vêm antes a Portaria MAPA 1.617
-    # (06/10, 08h00) e o CNES 09/2026 (05/10, 15h43).
-    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[2]
-    assert "news-card-compact" not in cards[2].split(">", 1)[0]
+    # RE nº 3.764 e RE nº 3.743/2026 acrescentadas em 06/10/2026 às 11h31: card no topo,
+    # antes da Portaria MAPA 1.617 (06/10, 08h00) e do CNES 09/2026 (05/10, 15h43).
+    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[0]
+    assert "news-card-compact" not in cards[0].split(">", 1)[0]
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
-    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-05</lastmod>" in sitemap
+    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-06</lastmod>" in sitemap
 
 
 def test_re_3717_callout_keeps_each_measure_inside_its_own_item():
@@ -372,8 +374,8 @@ def test_new_measures_of_21_and_25_september_keep_their_own_scope():
     body_start = html.index("<h2>25 de setembro: RE nº 3.751/2026")
     body = _text(html[body_start:html.index("<h2>21 de setembro: RE nº 3.717/2026", body_start)])
 
-    assert len(items) == 5
-    ocrevus, ict, eleve, dcasa, smart = items
+    assert len(items) == 7
+    reach, ocrevus, ict, higia, eleve, dcasa, smart = items
     assert "RE nº 3.751/2026" in ocrevus and "RE nº 3.751/2026" in ict
     # RE nº 3.751/2026, LAF MED: os lotes estão no campo de produto, mas a motivação
     # estende as ações a quaisquer medicamentos, sem proibir o Ocrevus em geral.
@@ -400,7 +402,7 @@ def test_new_measures_of_21_and_25_september_keep_their_own_scope():
     assert "falsific" not in ocrevus.casefold()
     assert "falsific" not in _text(html[body_start:html.index("<h3>ICT Farmacêutica", body_start)]).casefold()
     laf_body = _text(html[body_start:html.index("<h3>ICT Farmacêutica", body_start)])
-    ict_body = _text(html[html.index("<h3>ICT Farmacêutica", body_start):html.index("<h2>21 de setembro: RE nº 3.712", body_start)])
+    ict_body = _text(html[html.index("<h3>ICT Farmacêutica", body_start):html.index("<h2>23 de setembro: RE nº 3.743/2026", body_start)])
     assert "Resolução-RE nº 3.751, de 24/09/2026, publicada no DOU em 25/09/2026" in body
     assert "proibição de armazenamento, comercialização, distribuição, exportação, importação, propaganda e transporte" in laf_body
     assert "o item não determina recolhimento" in laf_body
@@ -420,3 +422,59 @@ def test_new_measures_of_21_and_25_september_keep_their_own_scope():
     assert "3.738" not in html
     assert "CNPJ" not in dcasa and "CNPJ" not in _text(html[html.index("<h3>D Casa"):html.index("<h3>Smart GR")])
     assert "href=" not in html[body_start:html.index("<h2>21 de setembro: RE nº 3.717/2026", body_start)]
+
+
+def test_re_3764_and_re_3743_keep_suspension_and_revocation_apart():
+    html = NEWS_PATH.read_text(encoding="utf-8")
+    start = html.index('data-news-update-callout aria-labelledby="novas-medidas-25-setembro-title"')
+    callout = html[start:html.index("</aside>", start)]
+    items = [_text(item) for item in _items(callout)]
+    reach_item, higia_item = items[0], items[3]
+    reach_start = html.index("<h2>28 de setembro: RE nº 3.764/2026")
+    reach = _text(html[reach_start:html.index("<h2>25 de setembro: RE nº 3.751/2026", reach_start)])
+    higia_start = html.index("<h2>23 de setembro: RE nº 3.743/2026")
+    higia = _text(html[higia_start:html.index("<h2>21 de setembro: RE nº 3.712", higia_start)])
+
+    # Quadro de atualização reaproveitado, sem callout novo.
+    assert html.count("data-news-update-callout aria-labelledby=") == 5
+    assert "Atualização: medidas e revogação divulgadas pela Anvisa de 21 a 28/09/2026" in _text(callout)
+    assert "publicações de 21, 23, 25 e 28/09/2026" in _text(callout)
+    assert "A RE nº 3.743/2026 revoga uma medida anterior referente a uma empresa" in _text(callout)
+    # Ordem cronológica das seções: 28/09, 25/09, 23/09, 21/09.
+    assert reach_start < html.index("<h2>25 de setembro: RE nº 3.751/2026") < higia_start
+    assert higia_start < html.index("<h2>21 de setembro: RE nº 3.712")
+
+    # RE nº 3.764/2026 (24/09, DOU 28/09): suspensão dirigida à Reach Latam.
+    assert "RE nº 3.764/2026, suspensão" in reach_item and "Reach Latam" in reach_item
+    assert "suspensão de armazenamento, comercialização, distribuição, importação, propaganda e transporte" in reach_item
+    assert "não é uma proibição geral da tirzepatida" in reach_item
+    assert "Resolução-RE nº 3.764, de 24/09/2026, publicada no DOU em 28/09/2026" in reach
+    assert "Reach Latam Consultoria e Comércio Exterior Ltda." in reach and "24.662.773/0001-00" in reach
+    assert "todos os produtos sujeitos a controle especial, incluindo tirzepatida" in reach
+    assert "todos os lotes" in reach and "insumo farmacêutico" in reach
+    assert "suspensão de armazenamento, comercialização, distribuição, importação, propaganda e transporte" in reach
+    assert "Boas Práticas de Distribuição, Armazenamento, Importação e Controle de Insumos Farmacêuticos" in reach
+    assert "identidade, segurança, controle e rastreabilidade" in reach
+    assert "não representa proibição geral da tirzepatida nem medida contra a manipulação em geral" in reach
+    assert "o ato não determina recolhimento nem apreensão" in reach
+    for wrong in ("fabricação", "exportação", "uso,", " uso ", "proíbe", "proibição de", "determina o recolhimento", "determina a apreensão"):
+        assert wrong not in reach_item and wrong not in reach.replace("proibição geral", ""), wrong
+
+    # RE nº 3.743/2026 (22/09, DOU 23/09): revogação da medida nº 2 da RE nº 939/2026, com as restrições da motivação.
+    assert "RE nº 3.743/2026, revogação" in higia_item and "Higia Pharmaceutical" in higia_item
+    assert "medida preventiva nº 2 do anexo da RE nº 939/2026" in higia_item
+    assert "Satisfatória Com Restrições" in higia_item and "estudo complementar de validações" in higia_item
+    assert "Resolução-RE nº 3.743, de 22/09/2026, publicada no DOU em 23/09/2026" in higia
+    assert "medida preventiva nº 2 do anexo da Resolução-RE nº 939, de 12/03/2026, publicada no DOU em 13/03/2026" in higia
+    assert "Higia Pharmaceutical Limitada" in higia and "57.022.608/0001-34" in higia
+    assert "apreensão, o recolhimento e a suspensão de comercialização, manipulação, propaganda e uso" in higia
+    assert "de 08 a 09/09/2026" in higia and "Satisfatória Com Restrições" in higia
+    assert "resultados do estudo complementar de validações" in higia and "desinterdição" in higia
+    assert "não informa que essa renovação já tenha ocorrido" in higia
+    assert "A revogação alcança apenas a medida nº 2 da RE nº 939/2026" in higia
+    assert "Não equivale à manutenção da medida anterior nem a uma liberação sem condições" in higia
+    assert "não se estende à outra medida do mesmo ato nem a outras empresas" in higia
+    for wrong in ("El Elyon", "liberação total", "licença renovada", "teve a licença renovada", "mantém a suspensão"):
+        assert wrong not in higia and wrong not in higia_item
+    assert "href=" not in html[reach_start:html.index("<h2>25 de setembro", reach_start)]
+    assert "href=" not in html[higia_start:html.index("<h2>21 de setembro: RE nº 3.712", higia_start)]

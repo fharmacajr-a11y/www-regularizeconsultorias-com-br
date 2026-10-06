@@ -16,7 +16,7 @@ CBPF_IN451_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atua
 RPBR_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-periodicidade-rpbr-farmacovigilancia/"
 SIPROQUIM_IN338_URL = "https://www.regularizeconsultorias.com.br/noticias/produtos-quimicos-controlados-siproquim2-assinador-pf/"
 PRODUTOS_IRREGULARES_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
-PRODUTOS_IRREGULARES_UPDATED = "2026-10-05T14:24:00-03:00"
+PRODUTOS_IRREGULARES_UPDATED = "2026-10-06T11:31:00-03:00"
 FABRICANTES_INTERNACIONAIS_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-dispositivos-medicos/"
 SUPERVISAO_CONTEUDO_URL = "https://www.regularizeconsultorias.com.br/noticias/farmaceutico-supervisiona-conteudos-farmacia-redes-sociais-sites/"
 RETATRUTIDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-retatrutida-sem-registro-produtos-irregulares/"
@@ -157,17 +157,18 @@ def test_news_index_itemlist_ordering():
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
 
+    # O consolidado de fiscalização: RE nº 3.751/2026 corrigida em 05/10/2026 às 14h24 e
+    # RE nº 3.764 e 3.743/2026 acrescentadas em 06/10/2026 às 11h31.
+    assert urls[0] == PRODUTOS_IRREGULARES_URL
+    assert urls.count(PRODUTOS_IRREGULARES_URL) == 1
     # Portaria SDA/MAPA nº 1.617/2026: publicada em 03/10/2026 às 00h33 e atualizada em 06/10/2026 às 08h00
     # ("restringe" passou a "proíbe", com o objeto limitado aos aditivos do Anexo).
     mapa_portaria_1617 = "https://www.regularizeconsultorias.com.br/noticias/mapa-portaria-1617-2026-aditivos-antimicrobianos-alimentacao-animal/"
-    assert urls[0] == mapa_portaria_1617
+    assert urls[1] == mapa_portaria_1617
     assert urls.count(mapa_portaria_1617) == 1
     # Competência 09/2026 do CNES: prorrogação do transmissor (informe de 05/10/2026) registrada às 15h43.
-    assert urls[1] == CNES_COMPETENCIA_09_2026_URL
+    assert urls[2] == CNES_COMPETENCIA_09_2026_URL
     assert urls.count(CNES_COMPETENCIA_09_2026_URL) == 1
-    # O consolidado de fiscalização, com o alcance da RE nº 3.751/2026 corrigido em 05/10/2026 às 14h24.
-    assert urls[2] == PRODUTOS_IRREGULARES_URL
-    assert urls.count(PRODUTOS_IRREGULARES_URL) == 1
     # Correção factual da CP 1.399/2026 em 02/10/2026 às 21h50.
     assert urls[3] == COSMETICOS_URL
     assert urls.count(COSMETICOS_URL) == 1

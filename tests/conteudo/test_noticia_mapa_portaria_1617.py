@@ -178,7 +178,8 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     assert '>M.A.P.A</span><span class="text-xs text-slate-400">3<' in index
     assert len(re.findall(r'\bdata-category="mapa"', index)) == 3
 
-    card = cards[0]
+    # Desde 06/10/2026 às 11h31, o consolidado da Anvisa vem antes (RE nº 3.764 e 3.743/2026).
+    card = cards[1]
     opening = card.split(">", 1)[0]
     assert f'href="/noticias/{SLUG}/"' in card
     assert index.count(f'href="/noticias/{SLUG}/"') == 1
@@ -199,8 +200,8 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     collection = next(block for block in _jsonld(index) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
     assert len(items) == 83
-    assert items[0]["position"] == 1
-    assert items[0]["url"] == PUBLIC_URL
+    assert items[1]["position"] == 2
+    assert items[1]["url"] == PUBLIC_URL
     assert [item["position"] for item in items] == list(range(1, 84))
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
     assert f"<loc>{PUBLIC_URL}</loc>\n    <lastmod>2026-10-06</lastmod>" in sitemap
