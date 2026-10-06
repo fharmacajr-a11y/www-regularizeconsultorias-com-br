@@ -422,3 +422,19 @@ def test_base_28_07_tem_totais_e_ordem():
         registros,
         key=lambda registro: (registro["uf"], registro["municipio_exibicao"], registro["codigo_ibge"]),
     )
+
+
+def test_links_oficiais_da_base_apontam_para_a_documentacao_de_participacao():
+    caminho = Path(__file__).parents[2] / "data" / "farmacia-popular" / "metadados.json"
+    metadados = json.loads(caminho.read_text(encoding="utf-8"))
+    pagina = "https://www.gov.br/saude/pt-br/composicao/sectics/farmacia-popular/participacao/documentacao"
+    planilha = pagina + "/lista-de-municipios-com-vagas-03-09-2026.xlsx"
+
+    assert metadados["url_oficial_visualizacao"] == pagina == IMPORTADOR.URL_OFICIAL_VISUALIZACAO
+    assert metadados["url_oficial_download"] == planilha == IMPORTADOR.URL_OFICIAL_DOWNLOAD
+    assert "/credenciamento" not in metadados["url_oficial_visualizacao"] + metadados["url_oficial_download"]
+    # Corrigir o link não muda a posição nem os números da base validada.
+    assert metadados["data_oficial"] == "2026-09-03"
+    assert metadados["sha256_xlsx"] == "d4fcf633c853581f6ff3093d71022e8dbe2d9428e87ed7283d7863d7dfa92dff"
+    assert metadados["quantidade_registros"] == 1541
+    assert metadados["totais_vagas"] == {"vagas_totais": 3082, "vagas_preenchidas": 963, "vagas_disponiveis": 2119}

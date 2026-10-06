@@ -37,12 +37,12 @@ COLUNAS_OBRIGATORIAS = (
 URL_IBGE = "https://servicodados.ibge.gov.br/api/v1/localidades/municipios"
 URL_OFICIAL_VISUALIZACAO = (
     "https://www.gov.br/saude/pt-br/composicao/sectics/"
-    "farmacia-popular/credenciamento"
+    "farmacia-popular/participacao/documentacao"
 )
 URL_OFICIAL_DOWNLOAD = (
     "https://www.gov.br/saude/pt-br/composicao/sectics/"
-    "farmacia-popular/credenciamento/documentacao/"
-    "anexo-i-lista-de-municipios-atualizada-em-03-09-2026.xlsx"
+    "farmacia-popular/participacao/documentacao/"
+    "lista-de-municipios-com-vagas-03-09-2026.xlsx"
 )
 
 

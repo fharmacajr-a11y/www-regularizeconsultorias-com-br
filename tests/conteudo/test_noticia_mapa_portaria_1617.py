@@ -178,12 +178,13 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     assert '>M.A.P.A</span><span class="text-xs text-slate-400">3<' in index
     assert len(re.findall(r'\bdata-category="mapa"', index)) == 3
 
-    # Desde 06/10/2026 às 11h31, o consolidado da Anvisa vem antes (RE nº 3.764 e 3.743/2026).
-    card = cards[1]
+    # Desde 06/10/2026 às 11h31, o consolidado da Anvisa vem antes (RE nº 3.764 e 3.743/2026); desde 18h11,
+    # também as quatro matérias da Fase 1H, e o card passa a ser o primeiro compacto.
+    card = cards[5]
     opening = card.split(">", 1)[0]
     assert f'href="/noticias/{SLUG}/"' in card
     assert index.count(f'href="/noticias/{SLUG}/"') == 1
-    assert "news-card-compact" not in opening
+    assert "news-card-compact" in opening
     assert 'data-category="mapa"' in opening
     assert f'data-updated="{UPDATED}"' in opening
     assert "news-amber-card" in opening and "orange" not in card
@@ -195,13 +196,13 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     assert f'<time datetime="{UPDATED}" class="leading-none">06/10/2026 • 08h00</time>' in card
     assert all("news-card-compact" not in item.split(">", 1)[0] for item in cards[:5])
     assert "news-card-compact" in cards[5].split(">", 1)[0]
-    assert "cadastro-anvisa-govbr-transicao-sistemas" in cards[5]
+    assert "cadastro-anvisa-govbr-transicao-sistemas" in cards[9]
 
     collection = next(block for block in _jsonld(index) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
     assert len(items) == 83
-    assert items[1]["position"] == 2
-    assert items[1]["url"] == PUBLIC_URL
+    assert items[5]["position"] == 6
+    assert items[5]["url"] == PUBLIC_URL
     assert [item["position"] for item in items] == list(range(1, 84))
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
     assert f"<loc>{PUBLIC_URL}</loc>\n    <lastmod>2026-10-06</lastmod>" in sitemap

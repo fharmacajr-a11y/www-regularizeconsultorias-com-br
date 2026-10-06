@@ -61,6 +61,13 @@ def _items(callout):
     return re.findall(r"<li>(.*?)</li>", callout, re.DOTALL)
 
 
+def _consolidated_card(news_index):
+    cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', news_index, re.DOTALL)
+    own = [card for card in cards if 'href="/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"' in card]
+    assert len(own) == 1
+    return own[0]
+
+
 def _text(html):
     return " ".join(re.sub(r"<[^>]+>", " ", html).split())
 
@@ -269,7 +276,7 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
     assert "medidas sobre United Labz, Mounjcaps, lotes falsificados de Enhertu e Dysport e um lote do TYG" in news_index
     for term in ("Hytamicina", "Pangastri", "Gripinew", "Lipo Top Gold", "Anagalis", "RE 3.440/2026", "RE 3.479/2026",
                  "RE 3.480/2026", "RE 3.546/2026", "RE 3.738/2026"):
-        assert term in news_index.split('data-keywords="', 2)[1].split('"', 1)[0]
+        assert term in _consolidated_card(news_index).split('data-keywords="', 1)[1].split('"', 1)[0]
     assert ("Publicações da Anvisa de 01/09 a 02/10 trazem seis resoluções de 02/10 sobre dispositivos médicos "
             "(um lote de tiras G TECH e um lote falsificado do Hidrafemme), cosméticos e saneantes, a suspensão das "
             "operações da Reach Latam") in news_index
@@ -280,9 +287,10 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
     cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', news_index, re.DOTALL)
     # RE nº 3.764 e 3.743/2026 (06/10, 11h31), RE nº 3.718 e 3.436/2026 (06/10, 12h26) e
     # RE nº 3.440, 3.479, 3.480, 3.546 e 3.738/2026 (06/10, 13h49) e as seis REs de 02/10 (06/10, 16h32): card no topo,
-    # antes da Portaria MAPA 1.617 (06/10, 08h00) e do CNES 09/2026 (05/10, 15h43).
-    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[0]
-    assert "news-card-compact" not in cards[0].split(">", 1)[0]
+    # antes da Portaria MAPA 1.617 (06/10, 08h00) e do CNES 09/2026 (05/10, 15h43). Desde 06/10, 18h11, as quatro
+    # matérias da Fase 1H (Farmácia Popular e CNES/AFE) vêm antes; o consolidado segue entre os cinco destaques.
+    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[4]
+    assert "news-card-compact" not in cards[4].split(">", 1)[0]
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
     assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-06</lastmod>" in sitemap
 
@@ -900,8 +908,7 @@ def test_october_update_reaches_lead_summary_metadata_and_listing_search():
     assert '"headline": "Anvisa suspende medicamento e proíbe produtos irregulares"' in html
     assert f'<meta content="{UPDATED}" property="article:modified_time"/>' in html
 
-    cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', news_index, re.DOTALL)
-    card = cards[0]
+    card = _consolidated_card(news_index)
     assert "anvisa-suspende-medicamento-proibe-produtos-irregulares" in card
     attrs = dict(re.findall(r'\b(data-[a-z-]+)="([^"]*)"', card.split(">", 1)[0]))
     haystack = _normalize_search(" ".join([attrs["data-title"], attrs["data-summary"], attrs["data-keywords"],

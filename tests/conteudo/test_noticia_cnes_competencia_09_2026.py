@@ -165,10 +165,10 @@ def test_news_index_has_one_card_and_one_itemlist_entry():
     assert f'<time datetime="{UPDATED}" class="leading-none">05/10/2026 • 15h43</time>' in own[0]
     assert f'data-title="{TITLE}"' in own[0] and f">{TITLE}</h2>" in own[0]
     assert "prorrogou até 9 de outubro" in own[0]
-    # Alteração material em 05/10/2026: card grande, abaixo do consolidado da Anvisa (06/10, 11h31)
-    # e da Portaria MAPA 1.617 (06/10, 08h00).
-    assert cards.index(own[0]) == 2
-    assert "news-card-compact" not in own[0].split(">", 1)[0]
+    # Alteração material em 05/10/2026: abaixo das quatro matérias da Fase 1H (06/10, 18h11), do consolidado
+    # da Anvisa (06/10, 16h32) e da Portaria MAPA 1.617 (06/10, 08h00); fora dos cinco destaques.
+    assert cards.index(own[0]) == 6
+    assert "news-card-compact" in own[0].split(">", 1)[0]
     assert ">Atualização</span>" in own[0] and "Ler atualização" in own[0]
     assert len(cards) == 83
     assert '<span>CNES</span><span class="text-xs text-slate-400">5</span>' in html

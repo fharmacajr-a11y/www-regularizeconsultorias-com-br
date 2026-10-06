@@ -36,10 +36,11 @@ def test_cp_1399_is_recorded_as_closed_on_the_existing_article():
     assert f'<time datetime="{UPDATED}">02/10/2026</time> às 21h50' in html
 
 
-def test_listing_places_the_updated_cosmetics_card_fourth():
+def test_listing_places_the_updated_cosmetics_card_eighth():
     html = INDEX.read_text(encoding="utf-8")
     cards = _cards(html)
-    card = cards[3]
+    # Fase 1H (06/10, 18h11): quatro matérias de Farmácia Popular e CNES/AFE e o consolidado da Anvisa vêm antes.
+    card = cards[7]
 
     assert len(cards) == 83
     assert "/noticias/anvisa-atualiza-listas-substancias-cosmeticos/" in card
@@ -50,7 +51,7 @@ def test_listing_places_the_updated_cosmetics_card_fourth():
     assert '>Todos</span><span class="text-xs text-slate-400">83<' in html
     assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in html
     assert (
-        '"position":4,"url":"https://www.regularizeconsultorias.com.br'
+        '"position":8,"url":"https://www.regularizeconsultorias.com.br'
         '/noticias/anvisa-atualiza-listas-substancias-cosmeticos/"'
     ) in html
     sitemap = SITEMAP.read_text(encoding="utf-8")

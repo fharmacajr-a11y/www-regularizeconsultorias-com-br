@@ -251,7 +251,7 @@ def test_index_card_is_first_informativo_and_counts_are_updated():
     cards = _cards(html)
     assert html.count(f'href="/noticias/{SLUG}/"') == 1
     assert len(cards) == 83
-    card = cards[10]
+    card = cards[12]
     opening = card.split(">", 1)[0]
     assert f'href="/noticias/{SLUG}/"' in card
     assert "news-card-compact" in opening
@@ -268,7 +268,7 @@ def test_index_card_is_first_informativo_and_counts_are_updated():
 
 
 def test_index_card_is_searchable_by_product_substance_and_resolution():
-    card = _cards(_index_html())[10]
+    card = _cards(_index_html())[12]
     opening = card.split(">", 1)[0]
     tags = re.search(r'data-tags="([^"]*)"', opening).group(1).split()
     keywords = re.search(r'data-keywords="([^"]*)"', opening).group(1)
@@ -295,7 +295,7 @@ def test_itemlist_keeps_the_semavy_url_once():
     )
     items = collection["mainEntity"]["itemListElement"]
     urls = [item["url"] for item in items]
-    assert urls[10] == PUBLIC_URL
+    assert urls[12] == PUBLIC_URL
     assert urls.count(PUBLIC_URL) == 1
     assert [item["position"] for item in items] == list(range(1, len(items) + 1))
     assert len(items) == 83

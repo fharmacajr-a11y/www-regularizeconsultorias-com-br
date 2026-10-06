@@ -12,9 +12,13 @@ ARTICLE_URL = f"https://www.regularizeconsultorias.com.br/noticias/{SLUG}/"
 OG_IMAGE_URL = f"https://www.regularizeconsultorias.com.br/assets/img/og/noticias/{SLUG}.webp"
 OG_IMAGE_PATH = ROOT / "assets" / "img" / "og" / "noticias" / f"{SLUG}.webp"
 PUBLISHED_AT = "2026-08-12T09:59:00-03:00"
-MODIFIED_AT = "2026-08-20T18:22:59-03:00"
+MODIFIED_AT = "2026-10-06T18:11:00-03:00"
 NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 FARMACIA_POPULAR_PATH = ROOT / "farmacia-popular" / "index.html"
+# Referências oficiais autorizadas na revisão da Fase 1H (v2); qualquer outro destino governamental é rejeitado.
+BVS_REPUBLICACAO_URL = "https://bvsms.saude.gov.br/bvs/saudelegis/gm/2026/prt12091_24_09_2026_rep.html"
+RENOVACAO_URL = "https://www.gov.br/saude/pt-br/composicao/sectics/farmacia-popular/renovacao-de-estabelecimentos-participantes"
+CARD_TITLE = "Portaria nº 12.091/2026: Farmácia Popular"
 
 
 class MetadataParser(HTMLParser):
@@ -130,13 +134,15 @@ def test_portaria_renewal_update_is_a_single_editorial_callout():
     assert "bg-yellow-50" in callout_match.group(0)
     assert ">ATUALIZAÇÃO</span>" in callout
     assert 'aria-hidden="true"' in callout
-    assert "Ciclo atual de renovação termina em 31 de agosto" in callout
+    # Fase 1H (06/10/2026): o ciclo terminou; o quadro passou ao passado.
+    assert "Ciclo de renovação iniciado em 2025 foi encerrado em 31 de agosto" in callout
     assert "31 de agosto de 2026" in callout
     assert "especificamente para o processo de renovação" in callout
     assert "regularização cadastral" in callout
     assert "para renovação da participação neste ciclo" in callout
     assert "2027" in callout
-    assert "<a" not in callout
+    # Só a referência à página oficial de renovação (Fase 1H v2).
+    assert re.findall(r'<a\b[^>]*href="([^"]+)"', callout) == [RENOVACAO_URL]
 
     after_callout = html[callout_match.end() :]
     assert after_callout.lstrip().startswith("<h2>Alterações cadastrais passam a ter prazos expressos</h2>")
@@ -187,7 +193,8 @@ def test_portaria_article_preserves_editorial_safeguards_and_internal_flow():
         for href in parser.links
         if urlsplit(href).hostname and any(host in urlsplit(href).hostname for host in government_hosts)
     ]
-    assert not external_government_links
+    # Fase 1H v2: exatamente as duas referências autorizadas (BVS e renovação do MS), sem outro destino governamental.
+    assert sorted(external_government_links) == sorted([BVS_REPUBLICACAO_URL, RENOVACAO_URL])
 
 
 def test_portaria_article_and_listing_use_update_badge_without_changing_category():
@@ -238,7 +245,7 @@ def test_portaria_article_distinguishes_current_renewal_and_prescription_rules()
     assert "renovação anual" in lowered
     assert "a nova portaria passa a estabelecer a renovação da participação a cada 2 anos" in lowered
     assert "não significa renovação automática" in lowered
-    assert "convocação deverá estabelecer prazo, procedimento e condições" in lowered
+    assert "a convocação estabelece prazo, procedimento e condições" in lowered
     assert "validade das prescrições permanece em 180 e 365 dias" in lowered
     assert "mantém a regra geral já conhecida" in lowered
     assert "esses prazos não foram criados ou alterados" in lowered
@@ -248,10 +255,11 @@ def test_portaria_article_details_fines_without_alarmism():
     lowered = ARTICLE_PATH.read_text(encoding="utf-8").casefold()
 
     for classification, percentage in (
-        ("leve", "até 2%"),
-        ("média", "até 5%"),
-        ("grave", "até 10%"),
-        ("gravíssima", "até 20%"),
+        # Texto republicado em 24/09/2026: percentuais sem "até" (art. 54, § 1º).
+        ("leve", "2%"),
+        ("média", "5%"),
+        ("grave", "10%"),
+        ("gravíssima", "20%"),
     ):
         assert f"{classification}: <strong>{percentage}</strong>" in lowered
     assert "3 últimos meses completos das autorizações consolidadas" in lowered
@@ -434,3 +442,95 @@ def test_news_index_itemlist_contains_new_article_in_first_position():
     urls = [item["url"] for item in items]
     assert len(set(urls)) == card_count
     assert ARTICLE_URL in urls
+
+
+def _plain(html):
+    return " ".join(re.sub(r"<[^>]+>", " ", html).split())
+
+
+def test_portaria_article_follows_the_republished_text_of_24_09_2026():
+    html = ARTICLE_PATH.read_text(encoding="utf-8")
+    text = _plain(html)
+    fines = text[text.index("Como ficaram as multas?"):text.index("Cancelamento e possibilidade de nova participação")]
+
+    # Republicação identificada, sem virar portaria nova nem reabertura.
+    assert "republicada no DOU de 24/09/2026, em Edição Extra B" in text
+    assert "por incorreção no original publicado em 12/08/2026" in text
+    assert "não cria uma nova portaria" in text and "não reabre inscrições" in text
+    assert "Portaria GM/MS nº 12.091, de 11 de agosto de 2026" in text
+
+    # Art. 54: percentuais atuais sem "até"; o "até 10%" só no regime anterior.
+    assert "multas: novo modelo graduado, com percentuais de 2%, 5%, 10% e 20%" in text
+    for value in ("até 2%", "até 5%", "até 20%"):
+        assert value not in html, value
+    assert html.count("até 10%") == 1 and "No regime anterior, a regra previa multa de até 10%" in text
+    assert "até" not in fines.split("o art. 54 fixa o percentual", 1)[1].split("A publicação original", 1)[0]
+    assert "trazia esses percentuais precedidos de “até”" in fines
+    assert "Isso não significa aplicar 20% sobre toda a receita da empresa" in fines
+    assert "limite máximo" not in html and "20% é o limite" not in html
+
+    # Art. 48, III: categoria grave pela redação republicada.
+    assert "comprometam elemento essencial da validação da dispensação" in fines
+    assert "no original repetia a definição da média" in fines
+
+    # Art. 6º: suspensão imediata × cancelamento com notificação e defesa; 6 meses a partir do ato no DOU.
+    assert "conexão com o Sistema Autorizador de Vendas suspensa de imediato, até a regularização" in text
+    assert "notificada pelo e-mail cadastrado e a participação pode ser cancelada, respeitados o contraditório e a ampla defesa" in text
+    assert text.count("contados da publicação do ato administrativo no DOU") == 3
+    for wrong in ("canceladas automaticamente", "cancelada automaticamente em 01/09", "contados de 31/08",
+                  "a partir de 31/08", "após 31/08", "reingresso automático"):
+        assert wrong not in text, wrong
+
+    # Remissões retiradas pela republicação não são reproduzidas.
+    for wrong in ("art. 33", "artigo 29", "art. 29"):
+        assert wrong not in text, wrong
+
+
+def test_portaria_renewal_cycle_is_closed_and_2027_has_no_date():
+    html = ARTICLE_PATH.read_text(encoding="utf-8")
+    callout = re.search(r'<aside\b[^>]*aria-labelledby="portaria-renewal-update-title"[^>]*>(.*?)</aside>', html, re.DOTALL).group(1)
+    text = _plain(callout)
+    index = NEWS_INDEX_PATH.read_text(encoding="utf-8")
+    card = news_card_for_slug(index, SLUG)
+
+    assert "iniciado em 17 de abril de 2025 teve 31 de agosto de 2026 como data-limite" in text
+    assert "não cancela automaticamente a participação" in text
+    assert "suspensão imediata da conexão" in text and "contraditório e a ampla defesa" in text
+    assert "2027" in text and "ainda será definida e divulgada pelo Ministério da Saúde" in text
+    assert "o novo ciclo não foi aberto" in text
+    for wrong in ("termina em", "será encerrado", "atualmente em andamento", "verificar imediatamente", "acesse o SIFAP",
+                  "2028", "reabert"):
+        assert wrong not in text, wrong
+    # Card e descrições no passado.
+    assert "foi encerrado em 31/08/2026" in card and "republicada em 24/09/2026" in card
+    assert "termina em 31 de agosto" not in index
+    assert html.count("O ciclo iniciado em 2025 foi encerrado em 31/08/2026; novo ciclo previsto para 2027.") == 4
+
+
+def test_portaria_official_references_are_inline_and_not_operational_shortcuts():
+    html = ARTICLE_PATH.read_text(encoding="utf-8")
+    anchors = re.findall(r"<a\b([^>]*)>(.*?)</a>", html, flags=re.DOTALL)
+    official = {re.search(r'href="([^"]+)"', attrs).group(1): (attrs, _plain(text)) for attrs, text in anchors
+                if re.search(r'href="https?://[^"]*(gov\.br|bvsms)', attrs)}
+    assert set(official) == {BVS_REPUBLICACAO_URL, RENOVACAO_URL}
+    assert official[BVS_REPUBLICACAO_URL][1] == "republicada no DOU de 24/09/2026, em Edição Extra B"
+    assert official[RENOVACAO_URL][1] == "página oficial de renovação do Programa"
+    for attrs, _ in official.values():
+        assert 'target="_blank"' in attrs and 'rel="noopener noreferrer"' in attrs
+        assert "class=" not in attrs  # link inline do texto, não botão
+    external = [re.search(r'href="([^"]+)"', a).group(1) for a, _ in anchors if re.search(r'href="https?://', a)]
+    for href in external:
+        for shortcut in (".pdf", ".xlsx", "registrar-junto", "acesso.gov.br", "protocolo", "sifap", "manual"):
+            assert shortcut not in href.casefold(), href
+
+
+def test_portaria_listing_card_uses_short_title_without_changing_the_article_title():
+    index = NEWS_INDEX_PATH.read_text(encoding="utf-8")
+    card = news_card_for_slug(index, SLUG)
+    parser = parse_article()
+    assert f'data-title="{CARD_TITLE}"' in card and f">{CARD_TITLE}</h2>" in card
+    assert "Farmácia Popular tem novas regras com a Portaria GM/MS nº 12.091/2026" not in index
+    # A matéria mantém H1, headline e título de SEO.
+    assert parser.h1 == ["Farmácia Popular tem novas regras com a Portaria GM/MS nº 12.091/2026"]
+    assert "<title>Portaria 12.091/2026: novas regras do Farmácia Popular | Regularize</title>" in ARTICLE_PATH.read_text(encoding="utf-8")
+    assert "republicada em 24/09/2026" in card

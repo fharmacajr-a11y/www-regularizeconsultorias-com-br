@@ -167,15 +167,16 @@ def test_article_keeps_sources_cta_and_natural_internal_links():
     assert "Aviso institucional:" in html
 
 
-def test_listing_places_the_card_fifth_after_the_mapa_publication():
+def test_listing_places_the_card_ninth_after_the_mapa_publication():
     html = NEWS_INDEX.read_text(encoding="utf-8")
     cards = re.findall(r"(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)", html, re.DOTALL)
     assert len(cards) == 83
-    card = cards[4]
+    # Fase 1H (06/10, 18h11): quatro matérias atualizadas entram nos destaques; o card passa a compacto.
+    card = cards[8]
     opening = card.split(">", 1)[0]
     assert f'href="{ROUTE}"' in card
     assert html.count(f'href="{ROUTE}"') == 1
-    assert "news-card-compact" not in opening
+    assert "news-card-compact" in opening
     assert "news-orange-card" in opening
     assert 'data-category="anvisa"' in opening
     assert f'data-updated="{STAMP}"' in opening
@@ -192,8 +193,8 @@ def test_listing_places_the_card_fifth_after_the_mapa_publication():
     collection = next(block for block in _jsonld(html) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
     assert len(items) == 83
-    assert items[4]["position"] == 5
-    assert items[4]["url"] == URL
+    assert items[8]["position"] == 9
+    assert items[8]["url"] == URL
     assert [item["position"] for item in items] == list(range(1, 84))
 
 
