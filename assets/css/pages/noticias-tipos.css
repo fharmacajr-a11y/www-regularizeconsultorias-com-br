@@ -249,6 +249,24 @@
   background-image: linear-gradient(90deg, #16466f 0%, var(--color-brand-dark) 52%, var(--color-brand) 100%);
 }
 
+/* Folga externa do cabeçalho (Proposta A): redução para 1.5rem (<640px), 2rem (640-767px) e 2.75rem (>=768px). */
+header:is(.article-hero-atualizacao, .article-hero-informativo, .article-hero-urgente, .article-hero-orientacao) {
+  padding-block: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  header:is(.article-hero-atualizacao, .article-hero-informativo, .article-hero-urgente, .article-hero-orientacao) {
+    padding-block: 2rem;
+  }
+}
+
+@media (min-width: 768px) {
+  header:is(.article-hero-atualizacao, .article-hero-informativo, .article-hero-urgente, .article-hero-orientacao) {
+    padding-block: 2.75rem;
+  }
+}
+
+
 :is(.article-hero-atualizacao, .article-hero-informativo, .article-hero-urgente, .article-hero-orientacao) > div {
   width: calc(100% - 2rem);
   margin-inline: auto;
