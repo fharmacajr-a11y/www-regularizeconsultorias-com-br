@@ -118,8 +118,8 @@ def test_cnes_card_is_unique_current_and_compact_after_newer_reviews():
     assert len(matches) == 1
     card = matches[0]
     opening = card.split(">", 1)[0]
-    assert cards.index(card) == 4
-    assert "news-card-compact" not in opening
+    assert cards.index(card) == 7
+    assert "news-card-compact" in opening
     assert f'data-updated="{UPDATED}"' in opening
     assert f'data-title="{TITLE}"' in opening
     assert f'<time datetime="{UPDATED}" class="leading-none">06/10/2026 • 22h09</time>' in card

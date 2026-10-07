@@ -180,7 +180,7 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
 
     # Desde 06/10/2026 às 11h31, o consolidado da Anvisa vem antes (RE nº 3.764 e 3.743/2026); desde 18h11,
     # também as quatro matérias da Fase 1H, e o card passa a ser o primeiro compacto.
-    card = cards[9]
+    card = cards[12]
     opening = card.split(">", 1)[0]
     assert f'href="/noticias/{SLUG}/"' in card
     assert index.count(f'href="/noticias/{SLUG}/"') == 1
@@ -196,13 +196,13 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     assert f'<time datetime="{UPDATED}" class="leading-none">06/10/2026 • 08h00</time>' in card
     assert all("news-card-compact" not in item.split(">", 1)[0] for item in cards[:5])
     assert "news-card-compact" in cards[5].split(">", 1)[0]
-    assert "cadastro-anvisa-govbr-transicao-sistemas" in cards[2]
+    assert "cadastro-anvisa-govbr-transicao-sistemas" in cards[5]
 
     collection = next(block for block in _jsonld(index) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
     assert len(items) == 83
-    assert items[9]["position"] == 10
-    assert items[9]["url"] == PUBLIC_URL
+    assert items[12]["position"] == 13
+    assert items[12]["url"] == PUBLIC_URL
     assert [item["position"] for item in items] == list(range(1, 84))
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
     assert f"<loc>{PUBLIC_URL}</loc>\n    <lastmod>2026-10-06</lastmod>" in sitemap

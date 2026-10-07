@@ -182,7 +182,7 @@ def test_listing_places_the_card_ninth_after_the_mapa_publication():
     cards = re.findall(r"(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)", html, re.DOTALL)
     assert len(cards) == 83
     # Fase 1H (06/10, 18h11): quatro matérias atualizadas entram nos destaques; o card passa a compacto.
-    card = cards[12]
+    card = cards[15]
     opening = card.split(">", 1)[0]
     assert f'href="{ROUTE}"' in card
     assert html.count(f'href="{ROUTE}"') == 1
@@ -203,8 +203,8 @@ def test_listing_places_the_card_ninth_after_the_mapa_publication():
     collection = next(block for block in _jsonld(html) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
     assert len(items) == 83
-    assert items[12]["position"] == 13
-    assert items[12]["url"] == URL
+    assert items[15]["position"] == 16
+    assert items[15]["url"] == URL
     assert [item["position"] for item in items] == list(range(1, 84))
 
 

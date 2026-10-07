@@ -221,9 +221,9 @@ def test_comunicado_editorial_organization_and_active_notice_content():
         for article in historical
         if any(node.tag == "a" and node.attrs.get("href") == CADASTRO_ROUTE for node in article.descendants())
     ]
-    produtos = historical[0]
+    produtos = historical[1]
     produtos_links = [node.attrs.get("href") for node in produtos.descendants() if node.tag == "a"]
-    renewal = historical[1]
+    renewal = historical[2]
     renewal_links = [node.attrs.get("href") for node in renewal.descendants() if node.tag == "a"]
     cnes_active = [
         article
@@ -395,7 +395,8 @@ def test_comunicado_editorial_organization_and_active_notice_content():
     assert "instabilidade observada" not in active_text
     assert "junho de 2026" in active_text
     assert "ciclo de maio de 2026" in historical_text
-    assert "13/05/2026" in historical_text
+    assert "13/05/2026" not in historical_text
+    assert "ciclo de regularização cadastral de maio de 2026" in historical_text
     assert "voltou a funcionar" in historical_text
     assert "SNGPC" in historical_text
 
@@ -474,20 +475,20 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
         any("comunicado-historico__meta" in node.attrs.get("class", "").split() for node in article.descendants())
         for article in historical
     )
-    assert "HISTÓRICO" in historical[0].text() and "06/10/2026 • 14h27" in historical[0].text()
-    assert "Anvisa suspende medicamento e proíbe produtos irregulares" in historical[0].text()
-    assert "ENCERRADO" in historical[1].text() and "03/09/2026 • 22h49" in historical[1].text()
-    assert "ciclo de renovação foi encerrado em 31 de agosto" in historical[1].text()
-    assert "HISTÓRICO" in historical[2].text() and "20/05/2026 • 13h00" in historical[2].text()
-    assert "HISTÓRICO • maio de 2026" not in historical[2].text()
-    assert "HISTÓRICO" in historical[3].text() and "19/05/2026 • 09h00" in historical[3].text()
-    assert "Cadastro Anvisa/Gov.br" in historical[3].text()
-    assert "ENCERRADO" in historical[4].text() and "18/05/2026 • 08h00" in historical[4].text()
-    assert "13/05/2026" in historical[4].text()
-    sifap_attention = next(node for node in historical[4].descendants() if node.tag == "strong" and node.text() == "Atenção:")
-    assert "text-slate-800" in sifap_attention.attrs["class"].split()
-    assert not any(color in sifap_attention.attrs["class"].split() for color in {"text-yellow-600", "text-orange-600", "text-red-600", "text-emerald-600"})
-    assert [next(node.text() for node in article.descendants() if node.has_class("comunicado-historico__badge")) for article in historical] == ["HISTÓRICO", "ENCERRADO", "HISTÓRICO", "HISTÓRICO", "ENCERRADO", "ENCERRADO", "ENCERRADO"]
+    assert "ENCERRADO" in historical[0].text() and "07/10/2026 • 10h53" in historical[0].text()
+    assert "ciclo de regularização cadastral de maio de 2026" in historical[0].text()
+    assert "Ver registro do ciclo" in historical[0].text()
+    assert "O que fazer agora" not in historical[0].text()
+    assert not any(node.tag == "strong" and (node.text() or "") == "Atenção:" for node in historical[0].descendants())
+    assert "HISTÓRICO" in historical[1].text() and "06/10/2026 • 14h27" in historical[1].text()
+    assert "Anvisa suspende medicamento e proíbe produtos irregulares" in historical[1].text()
+    assert "ENCERRADO" in historical[2].text() and "03/09/2026 • 22h49" in historical[2].text()
+    assert "ciclo de renovação foi encerrado em 31 de agosto" in historical[2].text()
+    assert "HISTÓRICO" in historical[3].text() and "20/05/2026 • 13h00" in historical[3].text()
+    assert "HISTÓRICO • maio de 2026" not in historical[3].text()
+    assert "HISTÓRICO" in historical[4].text() and "19/05/2026 • 09h00" in historical[4].text()
+    assert "Cadastro Anvisa/Gov.br" in historical[4].text()
+    assert [next(node.text() for node in article.descendants() if node.has_class("comunicado-historico__badge")) for article in historical] == ["ENCERRADO", "HISTÓRICO", "ENCERRADO", "HISTÓRICO", "HISTÓRICO", "ENCERRADO", "ENCERRADO"]
     assert all("NORMALIZADO" not in article.text() for article in historical)
     assert all("28/04/2026" in article.text() and "12h57" in article.text() for article in historical[5:])
     historical_icons = [
