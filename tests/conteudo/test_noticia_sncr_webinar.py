@@ -14,8 +14,8 @@ SITEMAP_PATH = ROOT / "sitemap.xml"
 ROUTE = "/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/"
 URL = f"https://www.regularizeconsultorias.com.br{ROUTE}"
 PUBLISHED = "2026-05-28T20:36:00-03:00"
-UPDATED = "2026-09-30T06:40:00-03:00"
-TITLE = "SNCR: nova etapa começa em 30 de setembro; veja o que muda para farmácias e drogarias"
+UPDATED = "2026-10-07T09:08:00-03:00"
+TITLE = "SNCR: etapa anunciada, transição e sistemas"
 ADSENSE_SCRIPT_MARKER = "pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
 WHATSAPP_NEWS_TEXT = (
     "Olá! Vi a notícia da Regularize sobre o SNCR e gostaria de verificar "
@@ -84,7 +84,8 @@ def test_sncr_news_keeps_publication_and_updates_the_september_stage():
     assert f'<meta property="article:published_time" content="{PUBLISHED}" />' in html
     assert f'<meta property="article:modified_time" content="{UPDATED}" />' in html
     assert f'<time datetime="{PUBLISHED}">28/05/2026</time> às 20h36' in html
-    assert f'<time datetime="{UPDATED}">30/09/2026</time> às 06h40' in html
+    assert f'<time datetime="{UPDATED}">07/10/2026</time> às 09h08' in html
+    assert_profiles_separated(html)
     assert f'<link rel="canonical" href="{URL}" />' in html
     assert html.count(ADSENSE_SCRIPT_MARKER) == 1
     assert html.count("data-news-update-callout") - html.count("[data-news-update-callout]") == 1
@@ -100,14 +101,15 @@ def test_sncr_news_keeps_publication_and_updates_the_september_stage():
 
     assert "ATUALIZAÇÃO" in callout_text
     for term in (
-        "Nova etapa do SNCR em 30/09/2026",
+        "Cronograma, perfis e nota da API",
+        "notícia própria de 29/09/2026",
         "30/09/2026",
-        "amplia o suporte ao fluxo eletrônico",
+        "cronograma anunciado",
+        "SNCR-Farmácia",
+        "01/10/2026",
         "prescrição eletrônica continua facultativa",
         "não substitui a escrituração no SNGPC",
-        "29 de setembro de 2026",
-        "perfis de acesso ao SNCR",
-        "etapa preliminar",
+        "não é comprovação de operação integral",
     ):
         assert term in callout_text
     assert "href=" not in callout
@@ -118,30 +120,37 @@ def test_sncr_news_explains_the_stage_without_false_claims():
     body = _text(re.search(r'<section class="article-body">(.*?)</section>', html, re.DOTALL).group(1))
 
     for term in (
-        "SNCR já está em funcionamento",
+        "O SNCR já era utilizado",
         "30 de setembro de 2026",
         "Notificações de Receita",
         "Receitas de Controle Especial",
         "receitas sujeitas à retenção",
-        "30/09/2026 e 29/10/2026",
+        "29/10/2026",
         "30/10/2026",
+        "31/10/2026",
+        "pergunta 30",
+        "art. 18",
         "Gov.br",
         "Cadastro Anvisa",
         "análise cadastral do estabelecimento",
-        "cartilha oficial da Anvisa",
+        "cartilha do SNCR para farmácias",
+        "SNCR-Farmácia",
+        "Nenhum dos dois pares é tratado aqui como prazo único confirmado",
+        "não impõe a cada farmácia desenvolver API",
+        "não perde a validade",
     ):
-        assert term in body or term in html
+        assert term in body or term in html, term
 
-    assert "passam a poder ser emitidas eletronicamente" in html
-    assert "já podem ser emitidas eletronicamente" in html
-    assert "recebem numeração do sistema" in html or "recebem numeração do SNCR" in html
-    assert "prazo de validade da prescrição" in html
     assert "e-CNPJ" not in html
 
     for path in (NEWS_PATH, NEWS_INDEX_PATH, COMUNICADO_PATH, SERVICOS_PATH):
         text = _text(path.read_text(encoding="utf-8")).casefold()
         for claim in FORBIDDEN_CLAIMS:
             assert claim not in text, (path.relative_to(ROOT), claim)
+    assert_source_pairs(html)
+    assert_art18_relative(html)
+    assert_private_public_and_api(html)
+    assert_profiles_separated(html)
 
 
 def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
@@ -152,20 +161,19 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     assert html.count(f'href="{ROUTE}"') == 1
     assert len(sncr_cards) == 1
     card = sncr_cards[0]
-    assert cards.index(card) == 11
-    assert "news-card-compact" in card.split(">", 1)[0]
+    assert cards.index(card) == 0
+    assert "news-card-compact" not in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
-    assert f'<time datetime="{UPDATED}" class="leading-none">30/09/2026 • 06h40</time>' in card
+    assert f'<time datetime="{UPDATED}" class="leading-none">07/10/2026 • 09h08</time>' in card
     for term in (
-        "SNCR: nova etapa começa em 30 de setembro",
-        "farmácias e drogarias",
+        TITLE,
         "30/09/2026",
-        "29/09",
-        "Cadastro Anvisa",
-        "já existe",
+        "01/10",
+        "gradual",
         "SNGPC",
     ):
         assert term in card
+    assert "29/10" not in card and "31/10" not in card
 
 
 def test_comunicado_keeps_one_sncr_card_and_eight_active_notices():
@@ -180,28 +188,26 @@ def test_comunicado_keeps_one_sncr_card_and_eight_active_notices():
     assert len(sncr_cards) == 1
     card_text = _text(sncr_cards[0])
     for term in (
-        "SNCR: nova etapa está em operação desde 30/09",
-        "Farmácias e drogarias",
-        "receituários eletrônicos",
-        "já estava em funcionamento",
-        "implementação gradual",
-        "prescrição eletrônica segue facultativa",
+        "SNCR: cronograma anunciado e nota da API",
         "30/09/2026",
-        "Leia a orientação completa",
+        "01/10/2026",
+        "implementação gradual",
+        "não comprova operação uniforme",
+        "não impõe a cada farmácia desenvolver API",
+        "Leia a atualização sobre o SNCR",
     ):
         assert term in card_text
-    assert "29/09/2026" not in card_text
-    assert "etapa preliminar" not in card_text
+    assert "29/10" not in card_text and "31/10" not in card_text
+    assert "em operação desde" not in card_text
     assert "como preparar o estabelecimento" not in card_text
-    # Avisos PF e MAPA (06/10/2026) e CNES 09/2026 e Edital 6/2026 (05/10/2026) vêm antes na ordem cronológica.
-    assert active[4] is sncr_cards[0]
+    assert active[0] is sncr_cards[0]
 
 
 def test_sncr_news_has_current_sitemap_lastmod():
     sitemap = SITEMAP_PATH.read_text(encoding="utf-8")
 
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
-    assert f"<loc>{URL}</loc>\n    <lastmod>2026-09-30</lastmod>" in sitemap
+    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-07</lastmod>" in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/servicos/</loc>\n"
         "    <lastmod>2026-09-22</lastmod>"
@@ -259,33 +265,226 @@ def test_sncr_news_stays_informative_without_tutorial_or_universal_deadline():
 
     # Corpo editorial sem links nem encaminhamento para fontes, manuais, sistemas ou modelos.
     assert "href=" not in body_html
-    assert "Essa regra vale para a emissão" in body
-    assert "prazo de validade da prescrição" in body
     for term in (
-        "implementação será gradual",
-        "ampliou as orientações",
-        "disponibilização oficial",
-        "avaliados individualmente",
+        "Nenhum dos dois pares é tratado aqui como prazo único confirmado",
+        "não perde a validade",
+        "disponibilização do registro de utilização",
+        "não impõe a cada farmácia desenvolver API",
         "escopo e orçamento próprios",
-        "passariam a funcionar",
-        "29 de setembro de 2026",
+        "avaliada individualmente",
     ):
         assert term in body
     for term in (
-        "SNCR-Farmácia",
-        "Antes de 30 de setembro",
         "passo a passo",
-        "certificado digital",
+        "faça login",
+        "inclua colaboradores",
+        "atribua permissões",
         ".pdf",
-        "modelos oficiais",
-        "indisponibilidade",
-        "dispensários públicos",
-        "CNES",
+        "https://www.gov.br",
+        "o papel acabou",
+        "o sngpc foi substituído",
+        "o cnes foi dispensado para qualquer finalidade",
+        "em operação desde 30/09",
     ):
         assert term.casefold() not in body.casefold()
 
     news_index = _text(NEWS_INDEX_PATH.read_text(encoding="utf-8"))
     comunicado = _text(COMUNICADO_PATH.read_text(encoding="utf-8"))
-    assert "implementação gradual" in news_index
+    assert "gradual" in news_index
     assert "implementação gradual" in comunicado
     assert "como preparar o estabelecimento" not in comunicado
+    assert_concrete_errors_rejected(html)
+
+
+def _article_body(html):
+    match = re.search(r'<section class="article-body">(.*?)</section>', html, re.DOTALL)
+    if match is None:
+        raise AssertionError("corpo-editorial: secao ausente")
+    return match.group(1)
+
+
+def _plain(fragment):
+    return " ".join(re.sub(r"<[^>]+>", " ", fragment).split())
+
+
+def _paragraphs(body_html):
+    return re.findall(r"<p\b[^>]*>.*?</p>", body_html, re.DOTALL)
+
+
+def _one_paragraph(body_html, needle):
+    found = [paragraph for paragraph in _paragraphs(body_html) if needle in _plain(paragraph)]
+    if len(found) != 1:
+        raise AssertionError(f"paragrafo-unico: {needle} -> {len(found)}")
+    return _plain(found[0])
+
+
+def assert_profiles_separated(html):
+    body = _article_body(html)
+    intro = _one_paragraph(body, "permanecer separadas")
+    required = (
+        "Quatro comunicações",
+        "nota da nova etapa",
+        "preparação no Cadastro Anvisa",
+        "notícia própria de 29 de setembro de 2026",
+        "disponibilidade dos perfis de acesso",
+        "nota da API",
+    )
+    missing = [item for item in required if item not in intro]
+    if missing or "Três comunicações" in intro or "não foi localizada" in intro or "não é uma nota separada" in intro:
+        raise AssertionError("comunicacoes-distintas: " + ",".join(missing))
+    callout = _one_paragraph(body, "notícia própria de 29/09/2026")
+    if "SNCR-Farmácia" not in callout or "distinta da preparação e da nota da API" not in callout:
+        raise AssertionError("perfis-distintos-da-preparacao: " + callout)
+
+
+def assert_source_pairs(html):
+    body = _article_body(html)
+    cartilha = _one_paragraph(body, "cartilha do SNCR para farmácias")
+    faq = _one_paragraph(body, "pergunta 30")
+    caveat = _one_paragraph(body, "Nenhum dos dois pares")
+    if "até 29/10/2026" not in cartilha or "a partir de 30/10/2026" not in cartilha or "31/10/2026" in cartilha:
+        raise AssertionError("pares-cartilha: " + cartilha)
+    if "de 30/09/2026 a 30/10/2026" not in faq or "a partir de 31/10/2026" not in faq or "29/10/2026" in faq:
+        raise AssertionError("pares-faq: " + faq)
+    if "prazo único confirmado" not in caveat:
+        raise AssertionError("pares-ressalva: " + caveat)
+
+
+def assert_art18_relative(html):
+    text = _one_paragraph(_article_body(html), "art. 18")
+    if "após o início da disponibilização do registro de utilização" not in text or re.search(r"\d{2}/10/2026", text):
+        raise AssertionError("art18-marco-relativo: " + text)
+
+
+def assert_private_public_and_api(html):
+    body = _article_body(html)
+    ident = _one_paragraph(body, "pergunta 58")
+    if "farmácia privada pela AFE" not in ident or "identificados a partir do CNES" not in ident:
+        raise AssertionError("afe-cnes-publico: " + ident)
+    if "privada pelo CNES" in ident or "identificados a partir da AFE" in ident:
+        raise AssertionError("afe-cnes-publico: " + ident)
+    if "não impõe a cada farmácia desenvolver API" not in _plain(body):
+        raise AssertionError("api-natureza: ausencia da delimitacao")
+
+
+def assert_concrete_errors_rejected(html):
+    body = _article_body(html)
+    plain = _plain(body)
+    folded_body = plain.casefold()
+    if "href=" in body or any(marker in folded_body for marker in ("https://", "http://", "mailto:")):
+        raise AssertionError("url-no-corpo")
+    for term in (
+        "passo a passo",
+        "faça login",
+        "inclua colaboradores",
+        "atribua permissões",
+        ".pdf",
+    ):
+        if term.casefold() in folded_body:
+            raise AssertionError("procedimento: " + term)
+    for claim in FORBIDDEN_CLAIMS:
+        if claim in folded_body:
+            raise AssertionError("alegacao-proibida: " + claim)
+    for sentence in (part.strip() for part in re.split(r"(?<=[.!?])\s+", plain) if part.strip()):
+        folded = sentence.casefold()
+        if "api" in folded and re.search(r"obrigad|deve desenvolver api|devem desenvolver api", folded) and not re.search(r"\bn[aã]o\b", folded):
+            raise AssertionError("api-obrigacao-universal: " + sentence)
+        if re.search(r"papel", folded) and re.search(r"deix\w+ de ser admitid|papel acabou", folded):
+            raise AssertionError("papel-admitido: " + sentence)
+        if (
+            re.search(
+                r"funcionar[aã]o|passam a funcionar|entram em opera|est[aáã]o? em opera|em opera[cç][aã]o desde",
+                folded,
+            )
+            and re.search(r"30/09(?:/2026)?|30 de setembro", folded)
+        ):
+            raise AssertionError("funcionalidades-data-operacao: " + sentence)
+        if re.search(r"único prazo|prazo definitivo|prazo único confirmado é", folded):
+            raise AssertionError("prazo-unico: " + sentence)
+        if "o sngpc foi substituído" in folded or "o cnes foi dispensado para qualquer finalidade" in folded:
+            raise AssertionError("corpo-proibido: " + sentence)
+
+
+ARTICLE_GUARDS = (
+    assert_profiles_separated,
+    assert_source_pairs,
+    assert_art18_relative,
+    assert_private_public_and_api,
+    assert_concrete_errors_rejected,
+)
+
+
+def rejecting_guards(html):
+    found = []
+    for guard in ARTICLE_GUARDS:
+        try:
+            guard(html)
+        except AssertionError as exc:
+            found.append(str(exc).split(":", 1)[0])
+    return found
+
+
+def _insert_paragraph(html, sentence):
+    return html.replace("</section>", f"<p>{sentence}</p></section>", 1)
+
+
+def _swap_october_pairs(html):
+    body = _article_body(html)
+    cartilha = next(paragraph for paragraph in _paragraphs(body) if "cartilha do SNCR para farmácias" in _plain(paragraph))
+    faq = next(paragraph for paragraph in _paragraphs(body) if "pergunta 30" in _plain(paragraph))
+    new_cartilha = cartilha.replace("29/10/2026", "30/10/2026").replace("a partir de 30/10/2026", "a partir de 31/10/2026")
+    new_faq = faq.replace("a 30/10/2026", "a 29/10/2026").replace("a partir de 31/10/2026", "a partir de 30/10/2026")
+    return html.replace(cartilha, new_cartilha, 1).replace(faq, new_faq, 1)
+
+
+def _invert_afe_cnes(html):
+    return html.replace(
+        "identificam a farmácia privada pela AFE ativa",
+        "identificam a farmácia privada pelo CNES ativo",
+        1,
+    ).replace(
+        "são identificados a partir do CNES",
+        "são identificados a partir da AFE",
+        1,
+    )
+
+
+def _shift_art18(html):
+    return html.replace(
+        "após o início da disponibilização do registro de utilização",
+        "após 29/10/2026",
+        1,
+    )
+
+
+MUTATION_CASES = (
+    ("api-obrigacao-universal", lambda html: _insert_paragraph(html, "Todas as farmácias são obrigadas a implementar uma API própria para acessar o SNCR.")),
+    ("papel-admitido", lambda html: _insert_paragraph(html, "As receitas em papel deixaram de ser admitidas no SNCR a partir de 30 de setembro.")),
+    ("funcionalidades-data-operacao", lambda html: _insert_paragraph(html, "As novas funcionalidades funcionarão a partir de 30/09/2026.")),
+    ("prazo-unico", lambda html: _insert_paragraph(html, "O único prazo definitivo de emissão sem número é 29/10/2026.")),
+    ("pares-cartilha", _swap_october_pairs),
+    ("url-no-corpo", lambda html: _insert_paragraph(html, "Consulta governamental: https://www.gov.br/anvisa/pt-br/assuntos/noticias-anvisa/2026/.")),
+    ("url-no-corpo", lambda html: _insert_paragraph(html, "Consulta externa: https://exemplo.org/nota-sncr.")),
+    ("afe-cnes-publico", _invert_afe_cnes),
+    ("art18-marco-relativo", _shift_art18),
+    ("procedimento", lambda html: _insert_paragraph(html, "Faça login no Cadastro Anvisa, inclua colaboradores e atribua permissões antes de dispensar.")),
+    ("alegacao-proibida", lambda html: _insert_paragraph(html, "Em 30 de setembro de 2026, o SNCR começa em 30 dias como situação atual.")),
+    ("api-obrigacao-universal", lambda html: _insert_paragraph(html, "Toda farmácia deve desenvolver API para continuar vendendo.")),
+    ("prazo-unico", lambda html: _insert_paragraph(html, "O prazo único confirmado é 30/10/2026.")),
+    ("papel-admitido", lambda html: _insert_paragraph(html, "O papel acabou para todas as receitas.")),
+    ("corpo-proibido", lambda html: _insert_paragraph(html, "O SNGPC foi substituído pelo SNCR.")),
+    ("corpo-proibido", lambda html: _insert_paragraph(html, "O CNES foi dispensado para qualquer finalidade.")),
+    ("funcionalidades-data-operacao", lambda html: _insert_paragraph(html, "A nova etapa está em operação desde 30/09.")),
+)
+
+
+def test_sncr_article_rejects_material_regressions_on_a_temporary_copy(tmp_path):
+    source = NEWS_PATH.read_text(encoding="utf-8")
+    assert rejecting_guards(source) == []
+    for guard_id, mutate in MUTATION_CASES:
+        mutated = mutate(source)
+        found = rejecting_guards(mutated)
+        assert guard_id in found, (guard_id, found)
+        copy = tmp_path / f"{guard_id}-{len(found)}.html"
+        copy.write_text(mutated, encoding="utf-8")
+        assert rejecting_guards(copy.read_text(encoding="utf-8")) == found

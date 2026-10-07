@@ -6,7 +6,7 @@ PAGE = ROOT / "noticias" / "cadastro-anvisa-govbr-transicao-sistemas" / "index.h
 NEWS_INDEX = ROOT / "noticias" / "index.html"
 SITEMAP = ROOT / "sitemap.xml"
 URL = "https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/"
-UPDATED = "2026-09-30T17:49:00-03:00"
+UPDATED = "2026-10-07T09:08:00-03:00"
 TITLE = "Cadastro Anvisa integra quatro cadastros e autentica pelo Gov.br"
 SUMMARY = "O Cadastro Anvisa foi criado para integrar quatro cadastros e autentica o acesso pelo Gov.br. Dados e vínculos corretos interessam às empresas reguladas. A nota do Solicita, de 14/04/2026, trata do registro de novas empresas."
 
@@ -22,7 +22,7 @@ def test_cadastro_anvisa_revision_keeps_publication_and_records_the_update():
     assert f'article:published_time" content="2026-05-19T19:00:00-03:00"' in html
     assert f'article:modified_time" content="{UPDATED}"' in html
     assert f'<time datetime="2026-05-19">19/05/2026</time> às 19h00' in html
-    assert f'<time datetime="{UPDATED}">30/09/2026</time> às 17h49' in html
+    assert f'<time datetime="{UPDATED}">07/10/2026</time> às 09h08' in html
     assert f"<h1 class=\"text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight text-white mb-5\">{TITLE}</h1>" in html
     assert f'content="{SUMMARY}"' in html
     assert f'"headline":"{TITLE}"' in html
@@ -47,9 +47,10 @@ def test_cadastro_anvisa_body_states_the_confirmed_scope_without_an_access_scrip
         "dificuldades de acesso também podem envolver autenticação ou indisponibilidade técnica",
         "a análise de cada caso permite identificar a situação encontrada e as providências cabíveis",
         "25 de setembro de 2026",
-        "atualizada em 29 de setembro de 2026",
-        "etapa preliminar",
-        "30 de setembro de 2026",
+        "modificada em 29 de setembro de 2026",
+        "sncr-farmácia",
+        "nota da api",
+        "1º de outubro",
         "março de 2026",
         "prata ou ouro",
         "estrangeiros",
@@ -71,7 +72,6 @@ def test_cadastro_anvisa_body_states_the_confirmed_scope_without_an_access_scrip
         "cadastre",
         "acesse",
         "gestores de cadastro",
-        "sncr-farmácia",
         "bloqueio",
         "instabilidades",
         "até o momento",
@@ -91,24 +91,24 @@ def test_cadastro_anvisa_card_is_tenth_and_compact_in_the_listing_and_sitemap():
     index = NEWS_INDEX.read_text(encoding="utf-8")
     cards = re.findall(r"(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)", index, re.DOTALL)
     assert len(cards) == 83
-    card = cards[9]
+    card = cards[2]
     opening = card.split(">", 1)[0]
     assert f'href="/noticias/cadastro-anvisa-govbr-transicao-sistemas/"' in card
-    # Décimo card após a Fase 1H (06/10, 18h11): fora dos cinco destaques.
-    assert "news-card-compact" in opening
+    # Terceiro card, depois da etapa do SNCR e da AFE, no mesmo carimbo: destaque, sem compacto.
+    assert "news-card-compact" not in opening
     assert f'data-updated="{UPDATED}"' in opening
     assert f'data-title="{TITLE}"' in opening
     assert f'data-summary="{SUMMARY}"' in opening
     assert 'data-category="anvisa"' in opening
     assert ">Atualização</span>" in card
     assert "Ler atualização" in card
-    assert f'<time datetime="{UPDATED}" class="leading-none">30/09/2026 • 17h49</time>' in card
+    assert f'<time datetime="{UPDATED}" class="leading-none">07/10/2026 • 09h08</time>' in card
     assert index.count(f'href="/noticias/cadastro-anvisa-govbr-transicao-sistemas/"') == 1
     assert '>Todos</span><span class="text-xs text-slate-400">83<' in index
     assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in index
-    assert f'"position":10,"url":"https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/"' in index
+    assert f'"position":3,"url":"https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/"' in index
     sitemap = SITEMAP.read_text(encoding="utf-8")
-    assert f"<loc>https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/</loc>\n    <lastmod>2026-09-30</lastmod>" in sitemap
+    assert f"<loc>https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/</loc>\n    <lastmod>2026-10-07</lastmod>" in sitemap
 
 
 def test_cadastro_anvisa_service_block_keeps_the_executor_position():

@@ -182,7 +182,7 @@ def test_listing_places_the_card_ninth_after_the_mapa_publication():
     cards = re.findall(r"(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)", html, re.DOTALL)
     assert len(cards) == 83
     # Fase 1H (06/10, 18h11): quatro matérias atualizadas entram nos destaques; o card passa a compacto.
-    card = cards[8]
+    card = cards[12]
     opening = card.split(">", 1)[0]
     assert f'href="{ROUTE}"' in card
     assert html.count(f'href="{ROUTE}"') == 1
@@ -203,8 +203,8 @@ def test_listing_places_the_card_ninth_after_the_mapa_publication():
     collection = next(block for block in _jsonld(html) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
     assert len(items) == 83
-    assert items[8]["position"] == 9
-    assert items[8]["url"] == URL
+    assert items[12]["position"] == 13
+    assert items[12]["url"] == URL
     assert [item["position"] for item in items] == list(range(1, 84))
 
 
@@ -214,11 +214,11 @@ def test_sitemap_adds_only_the_new_url_and_the_listing_lastmod():
     assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-01</lastmod>" in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-10-06</lastmod>"
+        "    <lastmod>2026-10-07</lastmod>"
     ) in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/</loc>\n"
-        "    <lastmod>2026-09-30</lastmod>"
+        "    <lastmod>2026-10-07</lastmod>"
     ) in sitemap
     import xml.etree.ElementTree as ET
 

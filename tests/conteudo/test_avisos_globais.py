@@ -384,8 +384,9 @@ def test_comunicado_editorial_organization_and_active_notice_content():
     assert "31/08/2026" not in active_text
     assert "período eleitoral" in active_text
     assert "30/09/2026" in active_text
-    assert "receituários eletrônicos" in active_text
-    assert "já estava em funcionamento" in active_text
+    assert "nota da API" in active_text
+    assert "01/10/2026" in active_text
+    assert "não comprova operação uniforme" in active_text
     assert "03/09/2026" in active_text
     assert "1.541 municípios" in active_text
     assert "3.082 vagas totais" in active_text
@@ -414,24 +415,23 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     timestamps = [article.attrs.get("data-effective-at") for article in active]
 
     assert titles == [
+        "SNCR: cronograma anunciado e nota da API",
         "Polícia Federal: mapas de setembro dos produtos químicos controlados até 15/10",
         "MAPA: estoques de aditivos com antimicrobianos do Anexo têm marco em 23/10",
         "CNES: envio da competência 09/2026 prorrogado até 9 de outubro",
         "Edital 6/2026: AFE para manipulação de preparações estéreis",
-        "SNCR: nova etapa está em operação desde 30/09",
         "Farmácia Popular: confira municípios com vagas para credenciamento",
         "Farmácia Popular: atenção aos materiais no período eleitoral",
         "Farmácia Popular: confira as listas EAN vigentes e os controles de prescrição",
     ]
     assert all(timestamp for timestamp in timestamps)
     assert all(len([node for node in article.descendants() if node.tag == "time"]) == 1 for article in active)
-    # Sem aviso fixado no topo, todos os ativos seguem ordem cronológica decrescente.
     assert timestamps == sorted(timestamps, reverse=True)
     assert "URGENTE" in active[6].text()
 
     useful_badge = next(node for node in active[7].descendants() if node.tag == "span" and node.text() == "ÚTIL")
     useful_cta = next(node for node in active[7].descendants() if node.tag == "a" and "Conferir orientações" in node.text())
-    informative_cta = next(node for node in active[3].descendants() if node.tag == "a" and "Ver notícia sobre o Edital 6/2026" in node.text())
+    informative_cta = next(node for node in active[4].descendants() if node.tag == "a" and "Ver notícia sobre o Edital 6/2026" in node.text())
     assert {"border-emerald-200", "bg-emerald-50", "text-emerald-700"} <= set(useful_badge.attrs["class"].split())
     assert {"border-emerald-200", "bg-emerald-50"} <= set(active[7].attrs["class"].split())
     informative_to_useful = {

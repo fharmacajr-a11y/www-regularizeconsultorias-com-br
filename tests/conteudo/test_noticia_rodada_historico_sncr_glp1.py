@@ -10,9 +10,9 @@ CNES = ROOT / "noticias" / "nova-regra-anvisa-cnes-receitas-farmacias" / "index.
 GLP1 = ROOT / "noticias" / "canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao" / "index.html"
 
 AFE_PUBLISHED = "2026-05-09T09:00:00-03:00"
-AFE_UPDATED = "2026-10-06T18:11:00-03:00"
+AFE_UPDATED = "2026-10-07T09:08:00-03:00"
 CNES_PUBLISHED = "2026-04-29T09:00:00-03:00"
-CNES_UPDATED = "2026-10-06T18:11:00-03:00"
+CNES_UPDATED = "2026-10-06T22:09:00-03:00"
 GLP1_PUBLISHED = "2026-05-31T19:00:00-03:00"
 GLP1_UPDATED = "2026-09-30T09:30:00-03:00"
 
@@ -89,9 +89,9 @@ def test_listing_sitemap_and_cards_follow_the_review_timestamps():
 
     expected = (
         # Fase 1H (06/10/2026 às 18h11): AFE e CNES corrigidos quanto ao Farmácia Popular sobem para os destaques.
-        ("anvisa-atualiza-acesso-sncr-afe-farmacias-privadas", AFE_UPDATED, "06/10/2026 • 18h11", 2, False, "2026-10-06"),
-        ("nova-regra-anvisa-cnes-receitas-farmacias", CNES_UPDATED, "06/10/2026 • 18h11", 3, False, "2026-10-06"),
-        ("canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao", GLP1_UPDATED, "30/09/2026 • 09h30", 10, True, "2026-09-30"),
+        ("anvisa-atualiza-acesso-sncr-afe-farmacias-privadas", AFE_UPDATED, "07/10/2026 • 09h08", 1, False, "2026-10-07"),
+        ("nova-regra-anvisa-cnes-receitas-farmacias", CNES_UPDATED, "06/10/2026 • 22h09", 3, False, "2026-10-06"),
+        ("canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao", GLP1_UPDATED, "30/09/2026 • 09h30", 13, True, "2026-09-30"),
     )
     for slug, updated, label, position, compact, lastmod in expected:
         card = _card(index, slug)

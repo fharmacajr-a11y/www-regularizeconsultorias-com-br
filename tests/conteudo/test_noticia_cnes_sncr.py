@@ -12,19 +12,19 @@ SITEMAP_PATH = ROOT / "sitemap.xml"
 ROUTE = "/noticias/cnes-continua-obrigatorio-sncr-afe-farmacias/"
 URL = f"https://www.regularizeconsultorias.com.br{ROUTE}"
 PUBLISHED = "2026-05-21T20:00:00-03:00"
-UPDATED = "2026-09-28T07:00:07-03:00"
+UPDATED = "2026-10-06T22:09:00-03:00"
 TITLE = "CNES continua obrigatório? Entenda a relação com o SNCR"
-SNCR_TITLE = "SNCR: nova etapa começa em 30 de setembro; veja o que muda para farmácias e drogarias"
+SNCR_TITLE = "SNCR: etapa anunciada, transição e sistemas"
 FORBIDDEN_TERMS = (
     "novo prazo",
     "acesso futuro",
     "prazo até 30/09",
     "prazo de até 30/09",
     "farmácia popular",
-    "sncr-farmácia",
     "e-cnpj",
     "passo a passo",
     "garantimos",
+    "o cnes foi dispensado para qualquer finalidade",
 )
 
 
@@ -74,7 +74,7 @@ def test_cnes_news_title_dates_and_metadata_are_synchronized():
     assert f'<meta property="article:published_time" content="{PUBLISHED}" />' in html
     assert f'<meta property="article:modified_time" content="{UPDATED}" />' in html
     assert f'<time datetime="{PUBLISHED}">21/05/2026</time> às 20h00' in html
-    assert f'<time datetime="{UPDATED}">28/09/2026</time> às 07h00' in html
+    assert f'<time datetime="{UPDATED}">06/10/2026</time> às 22h09' in html
 
 
 def test_cnes_news_answers_the_question_without_links_or_tutorial():
@@ -93,6 +93,11 @@ def test_cnes_news_answers_the_question_without_links_or_tutorial():
         "SNGPC",
         "implementação gradual",
         "não é prazo para obter ou regularizar o CNES",
+        "Perguntas e Respostas",
+        "pergunta 58",
+        "pergunta 60",
+        "pergunta 63",
+        "Conselho Federal de Farmácia",
         "escopos próprios",
     ):
         assert term in body, term
@@ -113,11 +118,11 @@ def test_cnes_card_is_unique_current_and_compact_after_newer_reviews():
     assert len(matches) == 1
     card = matches[0]
     opening = card.split(">", 1)[0]
-    assert cards.index(card) == 13
-    assert "news-card-compact" in opening
+    assert cards.index(card) == 4
+    assert "news-card-compact" not in opening
     assert f'data-updated="{UPDATED}"' in opening
     assert f'data-title="{TITLE}"' in opening
-    assert f'<time datetime="{UPDATED}" class="leading-none">28/09/2026 • 07h00</time>' in card
+    assert f'<time datetime="{UPDATED}" class="leading-none">06/10/2026 • 22h09</time>' in card
     summary = re.search(r'data-summary="([^"]+)"', opening).group(1)
     assert f">{summary}</p>" in card
     assert "não dispensa o CNES" in summary
@@ -137,5 +142,5 @@ def test_cnes_news_has_current_sitemap_lastmod_and_no_new_notice():
     comunicado = COMUNICADO_PATH.read_text(encoding="utf-8")
 
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
-    assert f"<loc>{URL}</loc>\n    <lastmod>2026-09-28</lastmod>" in sitemap
+    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-06</lastmod>" in sitemap
     assert ROUTE not in comunicado
