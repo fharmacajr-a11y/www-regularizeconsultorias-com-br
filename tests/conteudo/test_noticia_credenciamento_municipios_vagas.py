@@ -65,9 +65,10 @@ def test_credenciamento_news_summarizes_the_convocation_without_promising_a_vaca
     for wrong in ("Convocação nº 1/2026", "inscrições começaram em 18/08", "abertas em todos os municípios",
                   "credenciamento garantido", "vaga garantida", "edital-de-convocacao", "Protocolo Digital"):
         assert wrong not in text and wrong not in html, wrong
-    # Fase 1H v2: uma única referência oficial, a página de documentação do MS, no parágrafo da convocação.
+    # Fase 1I: a convocação continua atribuída ao Ministério da Saúde, sem encaminhamento externo.
     main = html.split("<main", 1)[1].split("</main>", 1)[0]
     documentacao = "https://www.gov.br/saude/pt-br/composicao/sectics/farmacia-popular/participacao/documentacao"
-    assert re.findall(r'href="(https?://[^"]*gov\.br[^"]*)"', main) == [documentacao]
-    assert (f'na <a href="{documentacao}" target="_blank" rel="noopener noreferrer">página de documentação do '
-            'Programa</a> trata da participação') in html
+    assert documentacao not in html, "erro editorial: a notícia de vagas voltou a encaminhar para a página de documentação"
+    assert re.findall(r'href="(https?://[^"]*)"', main) == [], "erro editorial: encaminhamento externo na notícia de vagas"
+    assert "na página de documentação do Programa trata da participação" in html
+    assert "Ministério da Saúde" in html

@@ -14,13 +14,6 @@ CANONICAL_CALLOUT_CLASSES = {
     "shadow-sm",
     "md:p-6",
 }
-# Único link externo autorizado dentro de um quadro de atualização (revisão da Fase 1H, v2): caminho e URL exatos.
-ALLOWED_EXTERNAL_CALLOUT_LINKS = {
-    (
-        "noticias/farmacia-popular-portaria-12091-2026-novas-regras/index.html",
-        "https://www.gov.br/saude/pt-br/composicao/sectics/farmacia-popular/renovacao-de-estabelecimentos-participantes",
-    ),
-}
 
 
 def descendants(node, tag=None):
@@ -70,11 +63,14 @@ def test_editorial_update_callouts_follow_the_global_contract():
             assert "style" not in callout.attrs, relative_path
             assert not any("w-[" in class_name for class_name in classes), relative_path
             assert any("ATUALIZAÇÃO" in normalized_text(node) for node in descendants(callout, "span")), relative_path
-            assert all(
-                not urlsplit(link.attrs.get("href", "")).scheme
-                or (relative_path.as_posix(), link.attrs.get("href", "")) in ALLOWED_EXTERNAL_CALLOUT_LINKS
-                for link in links
-            ), relative_path
+            for link in links:
+                href = link.attrs.get("href", "")
+                assert not href.startswith("//"), (
+                    f"erro editorial: quadro com encaminhamento externo {relative_path.as_posix()} → {href}"
+                )
+                assert urlsplit(href).scheme == "", (
+                    f"erro editorial: quadro com encaminhamento externo {relative_path.as_posix()} → {href}"
+                )
             callout_texts.append(text.casefold())
 
     assert checked > 0

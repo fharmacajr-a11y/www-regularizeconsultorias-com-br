@@ -150,10 +150,20 @@ def test_article_states_approval_without_inventing_numbers_or_vigencia():
 def test_article_keeps_sources_cta_and_natural_internal_links():
     html = _html()
     main = _main(html)
-    assert "https://www.gov.br/anvisa/pt-br/assuntos/noticias-anvisa/2026/anvisa-aprova-regularizacao-de-cosmeticos-artesanais" in main
-    assert "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2025/lei/L15154.htm" in main
-    assert "https://www.gov.br/anvisa/pt-br/assuntos/regulamentacao/agenda-regulatoria/minutas-previas" in main
+    assert "Anvisa — Anvisa aprova regularização de cosméticos artesanais" in main
+    assert "publicada em 30/09/2026" in main
+    assert "Lei nº 15.154, de 30 de junho de 2025" in main
+    assert "publicada no DOU de 1º de julho de 2025" in main
+    assert "minutas prévias" in main
     assert "não são o ato publicado" in main
+    for source in (
+        "https://www.gov.br/anvisa/pt-br/assuntos/noticias-anvisa/2026/anvisa-aprova-regularizacao-de-cosmeticos-artesanais",
+        "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2025/lei/L15154.htm",
+        "https://www.gov.br/anvisa/pt-br/assuntos/regulamentacao/agenda-regulatoria/minutas-previas",
+    ):
+        assert source not in html, source
+    assert not re.search(r'href="https?://', main), "encaminhamento editorial externo na matéria de cosméticos artesanais"
+    assert not re.search(r'href="//', main), "encaminhamento editorial externo na matéria de cosméticos artesanais"
     assert main.count('href="/noticias/anvisa-capacitacao-bpf-cosmeticos-saneantes/"') == 1
     assert 'href="/noticias/anvisa-atualiza-listas-substancias-cosmeticos/"' in html
     assert "manual-cosmeticos-saneantes" not in html

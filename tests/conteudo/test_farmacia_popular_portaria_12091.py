@@ -15,7 +15,7 @@ PUBLISHED_AT = "2026-08-12T09:59:00-03:00"
 MODIFIED_AT = "2026-10-06T18:11:00-03:00"
 NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 FARMACIA_POPULAR_PATH = ROOT / "farmacia-popular" / "index.html"
-# Referências oficiais autorizadas na revisão da Fase 1H (v2); qualquer outro destino governamental é rejeitado.
+# Destinos retirados do conteúdo público na Fase 1I. A atribuição permanece em texto.
 BVS_REPUBLICACAO_URL = "https://bvsms.saude.gov.br/bvs/saudelegis/gm/2026/prt12091_24_09_2026_rep.html"
 RENOVACAO_URL = "https://www.gov.br/saude/pt-br/composicao/sectics/farmacia-popular/renovacao-de-estabelecimentos-participantes"
 CARD_TITLE = "Portaria nº 12.091/2026: Farmácia Popular"
@@ -141,8 +141,13 @@ def test_portaria_renewal_update_is_a_single_editorial_callout():
     assert "regularização cadastral" in callout
     assert "para renovação da participação neste ciclo" in callout
     assert "2027" in callout
-    # Só a referência à página oficial de renovação (Fase 1H v2).
-    assert re.findall(r'<a\b[^>]*href="([^"]+)"', callout) == [RENOVACAO_URL]
+    assert "página oficial de renovação do Programa" in callout
+    assert "Ministério da Saúde" in callout
+    assert re.findall(r'<a\b[^>]*href="([^"]+)"', callout) == [], (
+        "erro editorial: o quadro de renovação voltou a ter encaminhamento externo"
+    )
+    assert RENOVACAO_URL not in callout, "erro editorial: o quadro de renovação voltou a apontar para a página externa"
+    assert "https://" not in callout and "http://" not in callout
 
     after_callout = html[callout_match.end() :]
     assert after_callout.lstrip().startswith("<h2>Alterações cadastrais passam a ter prazos expressos</h2>")
@@ -193,8 +198,11 @@ def test_portaria_article_preserves_editorial_safeguards_and_internal_flow():
         for href in parser.links
         if urlsplit(href).hostname and any(host in urlsplit(href).hostname for host in government_hosts)
     ]
-    # Fase 1H v2: exatamente as duas referências autorizadas (BVS e renovação do MS), sem outro destino governamental.
-    assert sorted(external_government_links) == sorted([BVS_REPUBLICACAO_URL, RENOVACAO_URL])
+    assert external_government_links == [], external_government_links
+    assert BVS_REPUBLICACAO_URL not in html
+    assert RENOVACAO_URL not in html
+    assert "republicada no DOU de 24/09/2026, em Edição Extra B" in html
+    assert "página oficial de renovação do Programa" in html
 
 
 def test_portaria_article_and_listing_use_update_badge_without_changing_category():
@@ -507,18 +515,20 @@ def test_portaria_renewal_cycle_is_closed_and_2027_has_no_date():
     assert html.count("O ciclo iniciado em 2025 foi encerrado em 31/08/2026; novo ciclo previsto para 2027.") == 4
 
 
-def test_portaria_official_references_are_inline_and_not_operational_shortcuts():
+def test_portaria_official_references_stay_textual_without_external_forwarding():
     html = ARTICLE_PATH.read_text(encoding="utf-8")
+    text = _plain(html)
+    main = html.split("<main", 1)[1].split("</main>", 1)[0]
+
+    assert "republicada no DOU de 24/09/2026, em Edição Extra B" in text
+    assert "página oficial de renovação do Programa" in text
+    assert "Ministério da Saúde" in text
+    assert BVS_REPUBLICACAO_URL not in html, "erro editorial: a republicação voltou a encaminhar para fora do site"
+    assert RENOVACAO_URL not in html, "erro editorial: a renovação voltou a encaminhar para fora do site"
+    assert not re.search(r'href="https?://', main), "erro editorial: encaminhamento externo na matéria da Portaria"
+    assert not re.search(r'href="//', main), "encaminhamento editorial externo na matéria da Portaria"
     anchors = re.findall(r"<a\b([^>]*)>(.*?)</a>", html, flags=re.DOTALL)
-    official = {re.search(r'href="([^"]+)"', attrs).group(1): (attrs, _plain(text)) for attrs, text in anchors
-                if re.search(r'href="https?://[^"]*(gov\.br|bvsms)', attrs)}
-    assert set(official) == {BVS_REPUBLICACAO_URL, RENOVACAO_URL}
-    assert official[BVS_REPUBLICACAO_URL][1] == "republicada no DOU de 24/09/2026, em Edição Extra B"
-    assert official[RENOVACAO_URL][1] == "página oficial de renovação do Programa"
-    for attrs, _ in official.values():
-        assert 'target="_blank"' in attrs and 'rel="noopener noreferrer"' in attrs
-        assert "class=" not in attrs  # link inline do texto, não botão
-    external = [re.search(r'href="([^"]+)"', a).group(1) for a, _ in anchors if re.search(r'href="https?://', a)]
+    external = [re.search(r'href="([^"]+)"', attrs).group(1) for attrs, _ in anchors if re.search(r'href="https?://', attrs)]
     for href in external:
         for shortcut in (".pdf", ".xlsx", "registrar-junto", "acesso.gov.br", "protocolo", "sifap", "manual"):
             assert shortcut not in href.casefold(), href
