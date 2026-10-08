@@ -39,7 +39,7 @@ ARTICLES = (
     ("anvisa-atualiza-acesso-sncr-afe-farmacias-privadas", "custom", "atualizacao", "longo"),
     ("anvisa-camara-tecnica-cosmetovigilancia", "custom", "informativo", "curto"),
     ("alteracao-cadastral-farmacia-popular-regularizacao", "modular", "informativo", "longo"),
-    ("anvisa-prazo-adequacao-notificacao-alimentos-setembro-2026", "modular", "urgente", "medio"),
+    ("anvisa-prazo-adequacao-notificacao-alimentos-setembro-2026", "modular", "atualizacao", "medio"),
     ("sngpc-boas-praticas-evitar-pendencias", "custom", "orientacao", "curto"),
     ("crf-responsavel-tecnico-farmacias-drogarias", "modular", "orientacao", "longo"),
 )

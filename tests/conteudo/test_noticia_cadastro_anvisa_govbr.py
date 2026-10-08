@@ -91,10 +91,10 @@ def test_cadastro_anvisa_card_is_tenth_and_compact_in_the_listing_and_sitemap():
     index = NEWS_INDEX.read_text(encoding="utf-8")
     cards = re.findall(r"(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)", index, re.DOTALL)
     assert len(cards) == 83
-    card = cards[7]
+    card = cards[13]
     opening = card.split(">", 1)[0]
     assert f'href="/noticias/cadastro-anvisa-govbr-transicao-sistemas/"' in card
-    # Sexto card, depois da suspensão, das duas matérias do SIFAP, da etapa do SNCR e da AFE: compacto.
+    # Card compacto no grid.
     assert "news-card-compact" in opening
     assert f'data-updated="{UPDATED}"' in opening
     assert f'data-title="{TITLE}"' in opening
@@ -106,7 +106,7 @@ def test_cadastro_anvisa_card_is_tenth_and_compact_in_the_listing_and_sitemap():
     assert index.count(f'href="/noticias/cadastro-anvisa-govbr-transicao-sistemas/"') == 1
     assert '>Todos</span><span class="text-xs text-slate-400">83<' in index
     assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in index
-    assert f'"position":8,"url":"https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/"' in index
+    assert f'"position":14,"url":"https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/"' in index
     sitemap = SITEMAP.read_text(encoding="utf-8")
     assert f"<loc>https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/</loc>\n    <lastmod>2026-10-07</lastmod>" in sitemap
 

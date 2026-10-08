@@ -110,7 +110,17 @@ def test_card_cta_and_internal_hero_follow_the_status_contract():
         assert contract["page_badge_classes"] <= set(page_badge.attrs.get("class", "").split()), relative_path
         assert contract["hero_classes"] <= set(hero.attrs.get("class", "").split()), relative_path
 
-    assert checked_statuses == set(STATUS_CONTRACTS)
+    # Todos os status encontrados nos cards devem pertencer aos contratos suportados
+    assert checked_statuses.issubset(STATUS_LABELS)
+    # Validação localizada: a matéria de alimentos é classificada especificamente como 'atualização'
+    alimentos_page = ROOT / "noticias/anvisa-prazo-adequacao-notificacao-alimentos-setembro-2026/index.html"
+    alimentos_card = next(
+        c for c in cards
+        if "/noticias/anvisa-prazo-adequacao-notificacao-alimentos-setembro-2026/" in article_page_for(c)[1].attrs.get("href", "")
+    )
+    assert normalized_text(status_badge(alimentos_card)) == "atualização"
+    alimentos_hero = article_hero(parse_html(alimentos_page))
+    assert normalized_text(status_badge(alimentos_hero)) == "atualização"
 
 
 def test_data_updated_matches_internal_metadata_and_jsonld():

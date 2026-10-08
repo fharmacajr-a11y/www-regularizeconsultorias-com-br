@@ -88,10 +88,10 @@ def test_listing_sitemap_and_cards_follow_the_review_timestamps():
     cards = re.findall(r"(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)", index, re.DOTALL)
 
     expected = (
-        # Fase 1H (06/10/2026 às 18h11): AFE e CNES corrigidos quanto ao Farmácia Popular sobem para os destaques.
-        ("anvisa-atualiza-acesso-sncr-afe-farmacias-privadas", AFE_UPDATED, "07/10/2026 • 09h08", 6, True, "2026-10-07"),
-        ("nova-regra-anvisa-cnes-receitas-farmacias", CNES_UPDATED, "06/10/2026 • 22h09", 8, True, "2026-10-06"),
-        ("canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao", GLP1_UPDATED, "30/09/2026 • 09h30", 18, True, "2026-09-30"),
+        # Fase 1M v2: notícias revistas em 08/10 sobem para o topo.
+        ("anvisa-atualiza-acesso-sncr-afe-farmacias-privadas", AFE_UPDATED, "07/10/2026 • 09h08", 12, True, "2026-10-07"),
+        ("nova-regra-anvisa-cnes-receitas-farmacias", CNES_UPDATED, "06/10/2026 • 22h09", 14, True, "2026-10-06"),
+        ("canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao", GLP1_UPDATED, "30/09/2026 • 09h30", 24, True, "2026-09-30"),
     )
     for slug, updated, label, position, compact, lastmod in expected:
         card = _card(index, slug)

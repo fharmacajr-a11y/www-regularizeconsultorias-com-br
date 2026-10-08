@@ -144,8 +144,9 @@ def test_canonical_adsense_snippet_exactly_once_in_head():
 def test_previous_competence_remains_a_historical_record():
     previous = PREVIOUS_PATH.read_text(encoding="utf-8")
 
-    assert "CNES abre competência 08/2026 com transmissão prevista até 8 de setembro" in previous
-    assert '"datePublished":"2026-08-14T14:42:53-03:00","dateModified":"2026-08-14T14:42:53-03:00"' in previous
+    assert "CNES abriu competência 08/2026 com transmissão informada até 8 de setembro" in previous
+    assert '"datePublished":"2026-08-14T14:42:53-03:00"' in previous
+    assert '"dateModified":"2026-10-08T07:42:00-03:00"' in previous
     assert "13/08/2026 a 08/09/2026" in previous
     assert "competência 09/2026" not in previous
     assert "cnes-competencia-09-2026" not in previous
@@ -165,9 +166,8 @@ def test_news_index_has_one_card_and_one_itemlist_entry():
     assert f'<time datetime="{UPDATED}" class="leading-none">05/10/2026 • 15h43</time>' in own[0]
     assert f'data-title="{TITLE}"' in own[0] and f">{TITLE}</h2>" in own[0]
     assert "prorrogou até 9 de outubro" in own[0]
-    # Alteração material em 05/10/2026: abaixo das quatro matérias da Fase 1H (06/10, 18h11), do consolidado
-    # da Anvisa (06/10, 16h32) e da Portaria MAPA 1.617 (06/10, 08h00); fora dos cinco destaques.
-    assert cards.index(own[0]) == 15
+    # Alteração material em 05/10/2026: após as matérias atualizadas da 1M v2; fora dos cinco destaques.
+    assert cards.index(own[0]) == 21
     assert "news-card-compact" in own[0].split(">", 1)[0]
     assert ">Atualização</span>" in own[0] and "Ler atualização" in own[0]
     assert len(cards) == 83

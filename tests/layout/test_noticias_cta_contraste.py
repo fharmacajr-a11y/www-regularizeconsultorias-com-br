@@ -40,7 +40,7 @@ from support import SITE_DIR, subprocess_env
 
 VIEWPORTS = ((390, 844), (960, 900), (1023, 900), (1024, 900), (1440, 900))
 MINIMUM = 4.5
-TYPES = ("atualizacao", "informativo", "urgente", "orientacao")
+TYPES = ("atualizacao", "informativo", "orientacao")
 TEXT = "rgb(15, 23, 42)"
 TEXT_WHITE = "rgb(255, 255, 255)"
 # Cores esperadas (texto, fundo) do selo e do botão, por tipo e estado.
@@ -63,7 +63,7 @@ from playwright.sync_api import sync_playwright
 import support
 
 base, width, height = sys.argv[1], int(sys.argv[2]), int(sys.argv[3])
-TYPES = ("atualizacao", "informativo", "urgente", "orientacao")
+TYPES = ("atualizacao", "informativo", "orientacao")
 
 HELPERS = r"""
 window.__cta = (() => {
@@ -211,9 +211,6 @@ with sync_playwright() as playwright:
     for kind in TYPES:
         for card in cards:
             if card["type"] == kind and card["compact"]:
-                if kind == "urgente":
-                    targets[kind] = card
-                    break
                 same = [other["href"] for other in cards if other["category"] == card["category"]]
                 if same.index(card["href"]) < 5:
                     targets[kind] = card
@@ -359,10 +356,7 @@ def test_the_same_type_article_turns_from_compact_to_large(medidas, width, kind)
     result = medidas[width]
     formats = result["formatos_dos_alvos"][kind]
     target = result["alvos"][kind]["href"]
-    if kind == "urgente":
-        assert formats["ver_mais"] is True and formats["busca"] is False, (result["alvos"][kind], formats)
-    else:
-        assert formats == {"ver_mais": True, "busca": False, "categoria": False}, (result["alvos"][kind], formats)
+    assert formats == {"ver_mais": True, "busca": False, "categoria": False}, (result["alvos"][kind], formats)
     rows = [row for row in _rows(medidas, width) if row["href"] == target and row["parte"] == "cta"]
     compact = {row["estado"]: (row["cor"], row["fundo"]) for row in rows if row["formato"] == "compacto"}
     large = {row["estado"]: (row["cor"], row["fundo"]) for row in rows if row["formato"] == "grande"}
