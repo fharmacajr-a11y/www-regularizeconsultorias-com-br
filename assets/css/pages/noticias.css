@@ -319,3 +319,26 @@
 #news-article-list .news-featured-card:not(.news-card-compact) {
   border-width: 2px;
 }
+
+/* Abaixo de 1360px a coluna fixa cobre a faixa direita do card.
+   Título e resumo, dos destaques e dos compactos, reservam só essa
+   faixa e seguem na largura que sobra. A quebra é a do navegador.
+   Não há corte, altura fixa nem regra por matéria ou por posição.
+   De 1360px em diante a margem do container já livra o botão. */
+@media (max-width: 1359px) {
+  #news-article-list .news-card :is(h2, p) {
+    padding-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - 1.5rem - 2rem);
+  }
+}
+
+@media (max-width: 767px) {
+  #news-article-list .news-card :is(h2, p) {
+    padding-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - 1.5rem - 1.5rem);
+  }
+}
+
+@media (max-width: 640px) {
+  #news-article-list .news-card :is(h2, p) {
+    padding-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem - 1rem - 1.5rem);
+  }
+}

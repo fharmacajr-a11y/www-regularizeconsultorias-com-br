@@ -6,7 +6,23 @@
    ================================================================ */
 
 /* ---------- Hero e badge dos detalhes ---------- */
-/* Hero e selo dos quatro tipos de notícia: pages/noticias-tipos.css. */
+/* Hero e selo dos quatro tipos de notícia: pages/noticias-tipos.css.
+   Abaixo de 768px o texto do hero ocupa a largura da tela e a coluna
+   fixa cobre a faixa direita. Título e resumo reservam essa faixa e
+   quebram na largura que sobra. Vale para todo hero desta família,
+   sem seletor de matéria. De 768px em diante a medição não mostrou
+   cobertura. */
+@media (max-width: 767px) {
+  .article-hero-atualizacao :is(h1, p) {
+    padding-right: 3.5rem;
+  }
+}
+
+@media (max-width: 639px) {
+  .article-hero-atualizacao :is(h1, p) {
+    padding-right: 3.75rem;
+  }
+}
 
 main > article > header .category-chip {
   background-color: rgba(255, 255, 255, 0.15);

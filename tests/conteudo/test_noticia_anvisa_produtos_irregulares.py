@@ -289,8 +289,8 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
     # RE nº 3.440, 3.479, 3.480, 3.546 e 3.738/2026 (06/10, 13h49) e as seis REs de 02/10 (06/10, 16h32): card no topo,
     # antes da Portaria MAPA 1.617 (06/10, 08h00) e do CNES 09/2026 (05/10, 15h43). Desde 06/10, 18h11, as quatro
     # matérias da Fase 1H (Farmácia Popular e CNES/AFE) vêm antes; o consolidado segue entre os cinco destaques.
-    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[11]
-    assert "news-card-compact" in cards[11].split(">", 1)[0]
+    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[13]
+    assert "news-card-compact" in cards[13].split(">", 1)[0]
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
     assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-06</lastmod>" in sitemap
 

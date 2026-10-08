@@ -167,7 +167,7 @@ def test_news_index_has_one_card_and_one_itemlist_entry():
     assert "prorrogou até 9 de outubro" in own[0]
     # Alteração material em 05/10/2026: abaixo das quatro matérias da Fase 1H (06/10, 18h11), do consolidado
     # da Anvisa (06/10, 16h32) e da Portaria MAPA 1.617 (06/10, 08h00); fora dos cinco destaques.
-    assert cards.index(own[0]) == 13
+    assert cards.index(own[0]) == 15
     assert "news-card-compact" in own[0].split(">", 1)[0]
     assert ">Atualização</span>" in own[0] and "Ler atualização" in own[0]
     assert len(cards) == 83

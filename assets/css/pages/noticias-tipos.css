@@ -286,3 +286,51 @@ header:is(.article-hero-atualizacao, .article-hero-informativo, .article-hero-ur
 :is(.article-hero-atualizacao, .article-hero-informativo, .article-hero-urgente, .article-hero-orientacao) :is(a, button):focus-visible {
   outline-color: #fff;
 }
+
+/* ---------- Corpo da notícia e a coluna fixa ----------
+   As duas famílias carregam esta folha: custom.min.css e a modular
+   (components.css + noticia-detalhe.css). Há página que carrega as duas.
+   A reserva fica aqui para alcançar o corpo sem recompilar o CSS
+   institucional e sem repetir a reserva dos cards nem a do hero.
+   Uma vez em .article-body, para título, parágrafo e lista usarem a
+   mesma largura, sem recuos somados. A conta é o quanto a borda direita
+   do componente passa da faixa do botão: 1,5rem de deslocamento, a
+   largura do botão e 0,5rem de folga, menos o espaço que a coluna
+   centralizada já deixa livre. Negativo, a reserva vai a zero.
+   O aviso e o texto do CTA repetem a mesma conta no próprio componente.
+   A fileira de ações do CTA já tem reserva e não entra aqui. */
+.article-body {
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  padding-right: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 0.5rem));
+}
+
+.article-body .article-table-scroll {
+  overflow-wrap: normal;
+}
+
+.article-important-notice {
+  padding-right: max(1.5rem, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 0.5rem));
+}
+
+.article-final-cta__title,
+.article-final-cta__text,
+.article-related-news__title {
+  padding-right: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 0.5rem));
+}
+
+@media (max-width: 640px) {
+  .article-body {
+    padding-right: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 2.75rem + 0.5rem));
+  }
+
+  .article-important-notice {
+    padding-right: max(1.25rem, calc((100% - 100vw) / 2 + 1.5rem + 2.75rem + 0.5rem));
+  }
+
+  .article-final-cta__title,
+  .article-final-cta__text,
+  .article-related-news__title {
+    padding-right: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 2.75rem + 0.5rem));
+  }
+}
