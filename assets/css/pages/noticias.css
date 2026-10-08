@@ -324,21 +324,55 @@
    Título e resumo, dos destaques e dos compactos, reservam só essa
    faixa e seguem na largura que sobra. A quebra é a do navegador.
    Não há corte, altura fixa nem regra por matéria ou por posição.
+   A reserva é o quanto o conteúdo do card passa da faixa do botão:
+   deslocamento do botão, largura dele e 0,5rem de folga, menos o
+   recuo lateral do container e a borda e o padding do próprio card.
+   Os valores acompanham components.css (botão de 2,75rem até 640px)
+   e as classes do HTML (px-4, sm:px-6, lg:px-8). Cada família declara
+   o próprio recuo: o destaque usa border-2 com p-6 e md:p-8; o
+   compacto força 1px e 1.25rem em qualquer largura (regra acima). A
+   classe de compacto é trocada pelo main.js ao ordenar e filtrar,
+   então a reserva segue o card na família em que ele está.
    De 1360px em diante a margem do container já livra o botão. */
-@media (max-width: 1359px) {
-  #news-article-list .news-card :is(h2, p) {
-    padding-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - 1.5rem - 2rem);
+#news-article-list {
+  --news-recuo-container: 1rem;
+  --news-botao-flutuante: 3rem;
+}
+
+@media (min-width: 640px) {
+  #news-article-list {
+    --news-recuo-container: 1.5rem;
   }
 }
 
-@media (max-width: 767px) {
-  #news-article-list .news-card :is(h2, p) {
-    padding-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - 1.5rem - 1.5rem);
+@media (min-width: 1024px) {
+  #news-article-list {
+    --news-recuo-container: 2rem;
   }
 }
 
 @media (max-width: 640px) {
+  #news-article-list {
+    --news-botao-flutuante: 2.75rem;
+  }
+}
+
+#news-article-list .news-card {
+  --news-recuo-card: calc(2px + 1.5rem);
+}
+
+@media (min-width: 768px) {
+  #news-article-list .news-card {
+    --news-recuo-card: calc(2px + 2rem);
+  }
+}
+
+#news-article-list .news-card-compact {
+  --news-recuo-card: calc(1px + 1.25rem);
+}
+
+@media (max-width: 1359px) {
   #news-article-list .news-card :is(h2, p) {
-    padding-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem - 1rem - 1.5rem);
+    padding-right: max(0px, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + var(--news-botao-flutuante) + 0.5rem - var(--news-recuo-container) - var(--news-recuo-card)));
   }
 }

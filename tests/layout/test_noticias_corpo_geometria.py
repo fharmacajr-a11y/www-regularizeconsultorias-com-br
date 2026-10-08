@@ -419,7 +419,7 @@ def test_tabela_continua_na_rolagem_interna(geometria):
 
 
 def test_listagem_e_os_cliques_permanecem(geometria):
-    assert geometria["cards"]["390"]["paddingRight"] == pytest.approx(36, abs=1)
+    assert geometria["cards"]["390"]["paddingRight"] == pytest.approx(34, abs=1)
     assert geometria["cards"]["1440"]["paddingRight"] == pytest.approx(0, abs=0.5)
     assert geometria["cards"]["390"]["overflowX"] <= 0
     assert len(geometria["cliques"]) == 2
