@@ -719,3 +719,91 @@
     line-height: 1.25 !important;
   }
 }
+
+/* ---------- Serviços: texto fora da coluna dos controles flutuantes ---------- */
+/* Mesma conta de pages/home.css, só na página de Serviços (Equipe também
+   carrega esta folha). A reserva soma max(1.5rem, safe-area), o botão
+   (2.75rem até 640px, 3rem acima) e 0.5rem de folga, menos o recuo do
+   container e, nos cards, a borda de 1px e o padding. Até 639px a reserva
+   fica à direita do texto e o card mantém a largura; de 640px em diante os
+   blocos centralizados encolhem por igual dos dois lados, e o max-width de
+   cada um continua valendo. As faixas de largura vêm da medição de cada
+   bloco. O rodapé fica de fora. */
+body:has(.services-hero-section) {
+  --servicos-faixa-controles: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem);
+  --servicos-recuo-container: 1rem;
+  --servicos-recuo-card: 1.5rem;
+  --servicos-reserva: calc(var(--servicos-faixa-controles) - var(--servicos-recuo-container));
+}
+
+@media (max-width: 640px) {
+  body:has(.services-hero-section) {
+    --servicos-faixa-controles: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem);
+  }
+}
+
+@media (min-width: 640px) {
+  body:has(.services-hero-section) {
+    --servicos-recuo-container: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  body:has(.services-hero-section) {
+    --servicos-recuo-container: 2rem;
+    --servicos-recuo-card: 2rem;
+  }
+}
+
+@media (max-width: 639px) {
+  .services-hero-section .institutional-hero-lead,
+  .services-list-section > div > div:first-child,
+  body:has(.services-hero-section) .institutional-cta-section > div > :is(h2, p) {
+    padding-right: var(--servicos-reserva);
+  }
+
+  /* Cards: borda de 1px e padding de 1.25rem (p-5). */
+  .services-grid > article {
+    padding-right: calc(var(--servicos-reserva) - 1px);
+  }
+}
+
+/* O 100% é a largura útil do container, sem margem abaixo de 1280px: a
+   regra segue certa com barra de rolagem clássica e não muda nada onde o
+   max-width já deixa o texto longe da coluna. */
+@media (min-width: 640px) and (max-width: 1279px) {
+  .services-list-section > div > div:first-child > p {
+    width: calc(100% - 2 * var(--servicos-reserva));
+  }
+}
+
+@media (min-width: 640px) and (max-width: 767px) {
+  /* Sem largura para os dois botões lado a lado, o segundo desce. */
+  body:has(.services-hero-section) .institutional-cta-section .flex.flex-col.sm\:flex-row {
+    flex-wrap: wrap;
+    width: calc(100% - 2 * var(--servicos-reserva));
+    margin-inline: auto;
+  }
+}
+
+/* O container do CTA (48rem) ganha margem quando a largura útil passa de
+   768px e afasta o texto a partir de 880px úteis. A regra vai até 899px de
+   janela para cobrir a barra de rolagem clássica; sem ela, de 880 a 899px a
+   reserva sobra. */
+@media (min-width: 640px) and (max-width: 899px) {
+  body:has(.services-hero-section) .institutional-cta-section > div > :is(h2, p) {
+    width: calc(100% - 2 * var(--servicos-reserva));
+    margin-inline: auto;
+  }
+}
+
+/* Cards: borda de 1px e padding de 1.5rem (sm:p-6) ou 2rem (lg:p-8). De 1280
+   a 1359px a conta não desconta a margem do container, que depende da
+   largura sem a barra de rolagem; a sobra some em 1360px. */
+@media (min-width: 768px) and (max-width: 1359px) {
+  .services-grid {
+    width: calc(100% - 2 * max(0px, var(--servicos-reserva) - 1px - var(--servicos-recuo-card)));
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

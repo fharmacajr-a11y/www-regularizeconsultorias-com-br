@@ -420,6 +420,163 @@
   }
 }
 
+/* ---------- Home: texto fora da coluna dos controles flutuantes ---------- */
+/* Voltar ao topo e WhatsApp ficam fixos a max(1.5rem, safe-area) da direita,
+   com 2.75rem até 640px e 3rem acima (components.css). Abaixo de 1360px a
+   coluna cai dentro do container e cobre o texto que passa ao lado dela. A
+   reserva soma esse recuo, o botão e 0.5rem de folga, menos o que o bloco já
+   tem até a borda: o recuo do container (1rem; 1.5rem de 640px; 2rem de
+   1024px) e, nos cards, a borda de 1px e o padding.
+   Até 639px a reserva fica à direita do texto e o card mantém a largura. De
+   640px em diante os blocos centralizados encolhem por igual dos dois lados
+   (width em % do container), sem deslocar o eixo, e o max-width de cada um
+   continua valendo. As faixas de largura vêm da medição de cada bloco. Os
+   cards-link de serviços e a vitrine de Manuais saem inteiros da faixa
+   (caixas clicáveis, mais abaixo). O rodapé fica de fora. */
+:root {
+  --home-faixa-controles: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem);
+  --home-recuo-container: 1rem;
+  --home-reserva: calc(var(--home-faixa-controles) - var(--home-recuo-container));
+}
+
+@media (max-width: 640px) {
+  :root {
+    --home-faixa-controles: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem);
+  }
+}
+
+@media (min-width: 640px) {
+  :root {
+    --home-recuo-container: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --home-recuo-container: 2rem;
+  }
+}
+
+@media (max-width: 639px) {
+  .home-hero-copy > p,
+  .home-about-section > div > div:first-child,
+  .home-services-section > div > div:first-child,
+  .home-services-section > div > div:last-child,
+  .home-manuals-header,
+  main > section.pt-6.pb-10.sm\:py-16.bg-white .grid > div,
+  .institutional-cta-section > div > :is(h2, p) {
+    padding-right: var(--home-reserva);
+  }
+
+  /* Cards: borda de 1px e padding de 1.25rem (p-5). Os cards-link de
+     serviços ficam de fora: a grade inteira sai da faixa (abaixo). */
+  .home-about-cards-grid > div {
+    padding-right: calc(var(--home-reserva) - 1px);
+  }
+
+  /* "acompanhamento" em 1.875rem não cabe na coluna que sobra abaixo de
+     ~350px; o título diminui só o necessário, sem quebrar a palavra. A
+     conta usa a largura útil (cqw da seção, contêiner de consulta): vw
+     inclui a barra de rolagem clássica, e com ela a palavra passava da
+     coluna. Sem barra, 8.2cqw = 8.2vw. */
+  main > section.pt-6.pb-10.sm\:py-16.bg-white {
+    container-type: inline-size;
+  }
+
+  .home-process-title {
+    font-size: clamp(1.5rem, 8.2cqw, 1.875rem);
+  }
+}
+
+/* Blocos centralizados do container de 80rem, que não tem margem abaixo de
+   1280px. A largura vem da largura útil (o 100% do container), então a regra
+   segue certa com barra de rolagem clássica; onde o max-width já deixa o
+   bloco longe da coluna, ela não muda nada. */
+@media (min-width: 640px) and (max-width: 1279px) {
+  .home-about-section > div > div:first-child > p,
+  .home-services-section > div > div:first-child > p,
+  .home-manuals-title,
+  .home-manuals-subtitle {
+    width: calc(100% - 2 * var(--home-reserva));
+  }
+
+  /* Container de 64rem: o 100% é a largura da seção. */
+  main > section.pt-6.pb-10.sm\:py-16.bg-white > div {
+    width: calc(100% - 2 * var(--home-reserva));
+  }
+}
+
+/* O container do CTA (48rem) ganha margem quando a largura útil passa de
+   768px e afasta o texto a partir de 880px úteis. A regra vai até 899px de
+   janela para cobrir a barra de rolagem clássica; sem ela, de 880 a 899px a
+   reserva sobra. */
+@media (min-width: 640px) and (max-width: 899px) {
+  .institutional-cta-section > div > :is(h2, p) {
+    width: calc(100% - 2 * var(--home-reserva));
+    margin-inline: auto;
+  }
+}
+
+/* Cards com padding de 1.25rem nesta faixa (regras acima). */
+@media (min-width: 768px) and (max-width: 1279px) {
+  .home-about-cards-grid {
+    width: calc(100% - 2 * max(0px, var(--home-reserva) - 1px - 1.25rem));
+  }
+}
+
+/* Caixas clicáveis: nos cards de serviços o card inteiro é um link, e a
+   vitrine de Manuais rola na horizontal. Nos dois casos não basta afastar o
+   texto: a caixa do link e a janela do carrossel terminam 0.5rem antes da
+   coluna. As duas seções são contêineres de consulta, então 100cqw é a
+   largura útil (sem a barra de rolagem clássica) e (100cqw - 100%) / 2 é o
+   que já existe entre o conteúdo do container e a borda: o recuo dele e, a
+   partir de 1280px, a margem. A margem do bloco é a faixa menos esse trecho,
+   nunca menor que a original; onde a coluna já fica fora, nada muda. Até
+   639px a margem vale só à direita, como a reserva do texto; de 640px em
+   diante, dos dois lados. */
+.home-services-section,
+.home-manuals-section {
+  container-type: inline-size;
+}
+
+/* Grade de serviços: a reserva vai toda para a margem da grade; o padding
+   dos cards fica como está. */
+@media (max-width: 639px) {
+  .home-services-grid {
+    margin-right: max(0px, calc(var(--home-faixa-controles) - (100cqw - 100%) / 2));
+  }
+}
+
+@media (min-width: 640px) {
+  .home-services-grid {
+    margin-inline: max(0px, calc(var(--home-faixa-controles) - (100cqw - 100%) / 2));
+  }
+}
+
+/* Vitrine: quem sai da faixa é o painel (.home-manuals-carousel-shell), com a
+   janela do carrossel dentro dele. Assim nenhum card aparece sob a coluna em
+   nenhuma posição da rolagem horizontal, parado no encaixe ou no meio do
+   movimento. A margem original do painel é -0.25rem (-0.5rem de 768px). Os
+   cards se ajustam à janela (regras-base abaixo). O seletor composto vence as
+   regras-base, que vêm depois. */
+@media (max-width: 639px) {
+  .home-manuals-section .home-manuals-carousel-shell {
+    margin-right: max(-0.25rem, calc(var(--home-faixa-controles) - (100cqw - 100%) / 2));
+  }
+}
+
+@media (min-width: 640px) and (max-width: 767px) {
+  .home-manuals-section .home-manuals-carousel-shell {
+    margin-inline: max(-0.25rem, calc(var(--home-faixa-controles) - (100cqw - 100%) / 2));
+  }
+}
+
+@media (min-width: 768px) {
+  .home-manuals-section .home-manuals-carousel-shell {
+    margin-inline: max(-0.5rem, calc(var(--home-faixa-controles) - (100cqw - 100%) / 2));
+  }
+}
+
 /* ---------- Home: vitrine de Manuais e POPs ---------- */
 .home-manuals-section {
   background-color: #ffffff;
@@ -542,15 +699,17 @@
   left: 0;
 }
 
-/* Recua só a seta seguinte até livrar a coluna fixa. O cálculo usa a sobra
-   já existente entre a borda do carrossel e a janela; em tela larga fica em zero. */
+/* O painel já termina antes da coluna fixa (faixa dos controles, acima),
+   então a seta seguinte espelha a anterior. */
 .home-manuals-nav--next {
-  right: max(0px, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - (100vw - 100%) / 2));
+  right: 0;
 }
 
+/* Até 767px um card ocupa a janela do carrossel, até 22rem; quando a janela
+   passa disso, aparece um trecho do card seguinte, ainda dentro dela. */
 .home-manuals-card {
   display: flex;
-  flex: 0 0 min(82vw, 22rem);
+  flex: 0 0 min(100%, 22rem);
   flex-direction: column;
   height: auto;
   overflow: hidden;
@@ -685,6 +844,10 @@
 
   .home-manuals-nav--prev {
     left: 0.25rem;
+  }
+
+  .home-manuals-nav--next {
+    right: 0.25rem;
   }
 
   .home-manuals-nav span {
