@@ -807,3 +807,152 @@ body:has(.services-hero-section) {
     margin-right: auto;
   }
 }
+
+/* ---------- Equipe: conteúdo fora da coluna dos controles flutuantes ---------- */
+/* Só a página Equipe (classes team-* e body:has(.team-hero-section)); as
+   regras de Serviços acima ficam como estão. A faixa soma max(1.5rem,
+   safe-area), o botão (2.75rem até 640px, 3rem acima) e 0.5rem de folga,
+   contada da borda direita da largura útil. Cada seção é contêiner de
+   consulta: 100cqw é a largura útil (sem a barra de rolagem clássica) e
+   (100cqw - 100%) / 2 é o que já existe entre o bloco de referência (o 100%)
+   e a borda: recuo e margem do container. A reserva de um bloco de texto é a
+   faixa menos esse trecho, nunca negativa; nos cards, a borda de 1px e o
+   padding horizontal do card também contam.
+   Até 639px a reserva fica à direita (o texto ou o padding do card) e os
+   cards mantêm a largura. De 640px em diante, os blocos e as grades
+   centralizados encolhem por igual dos dois lados, e o max-width de cada
+   faixa continua valendo; o herói, alinhado à esquerda, recua só à direita.
+   Onde a coluna já fica fora, as contas dão zero. O rodapé fica de fora. */
+body:has(.team-hero-section) {
+  --equipe-faixa: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem);
+  --equipe-folga: calc((100cqw - 100%) / 2);
+  --equipe-reserva: max(0px, calc(var(--equipe-faixa) - var(--equipe-folga)));
+  /* Recuo dos containers (px-4 sm:px-6 lg:px-8) e padding horizontal de cada
+     tipo de card, como definido acima e nas classes do HTML: pessoas
+     (p-5 sm:p-6), trabalho (p-5 sm:p-6 lg:p-8), frentes (p-5 sm:p-6) e
+     direção (p-5 sm:p-7 md:p-10). */
+  --equipe-recuo: 1rem;
+  --equipe-pad-pessoa: 1rem;
+  --equipe-pad-trabalho: 1rem;
+  --equipe-pad-frentes: 1rem;
+  --equipe-pad-direcao: 1rem;
+}
+
+@media (max-width: 640px) {
+  body:has(.team-hero-section) {
+    --equipe-faixa: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem);
+  }
+}
+
+@media (min-width: 640px) {
+  body:has(.team-hero-section) {
+    --equipe-recuo: 1.5rem;
+    --equipe-pad-pessoa: 1.25rem;
+    --equipe-pad-trabalho: 1.5rem;
+    --equipe-pad-frentes: 1.5rem;
+    --equipe-pad-direcao: 1.25rem;
+  }
+}
+
+@media (min-width: 820px) and (max-width: 1023px) {
+  body:has(.team-hero-section) {
+    --equipe-pad-trabalho: 1.125rem;
+    --equipe-pad-frentes: 1.25rem;
+    --equipe-pad-direcao: 1.125rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  body:has(.team-hero-section) {
+    --equipe-recuo: 2rem;
+    --equipe-pad-pessoa: 1.5rem;
+    --equipe-pad-trabalho: 2rem;
+    --equipe-pad-frentes: 1.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  body:has(.team-hero-section) {
+    --equipe-pad-direcao: 2.5rem;
+  }
+}
+
+.team-hero-section,
+.team-overview-section,
+.team-work-section,
+.team-fronts-section,
+.team-direction-section,
+body:has(.team-hero-section) .institutional-cta-section {
+  container-type: inline-size;
+}
+
+/* Herói: o container (80rem) tem margem só a partir de 1280px; de 640 a
+   1279px a margem esquerda é fixa e a direita é zero. */
+.team-hero-content {
+  padding-right: max(var(--equipe-recuo), calc(var(--equipe-faixa) - max(0px, (100cqw - 80rem) / 2)));
+}
+
+/* Abaixo de 640px a fileira de botões do CTA já recua pela regra de
+   components.css (a mesma faixa, menos o recuo de 1rem do container). */
+@media (max-width: 639px) {
+  .team-overview-section > div > div:first-child,
+  .team-overview-section > div > p,
+  .team-work-section > div > div:first-child,
+  .team-fronts-section > div > div:first-child,
+  body:has(.team-hero-section) .institutional-cta-section > div > :is(h2, p) {
+    padding-right: var(--equipe-reserva);
+  }
+
+  /* Cards em uma coluna: o 100% é a coluna da grade, centralizada. Os de
+     frentes têm até 22rem, centralizados na coluna. */
+  .team-person-card,
+  .team-work-grid > article,
+  .team-direction-card {
+    padding-right: max(1rem, calc(var(--equipe-faixa) - var(--equipe-folga) - 1px));
+  }
+
+  .team-fronts-grid > article {
+    padding-right: max(1rem, calc(var(--equipe-faixa) - (100cqw - min(100%, 22rem)) / 2 - 1px));
+  }
+}
+
+@media (min-width: 640px) {
+  .team-overview-section > div > div:first-child,
+  .team-overview-section > div > p,
+  .team-work-section > div > div:first-child,
+  .team-fronts-section > div > div:first-child,
+  body:has(.team-hero-section) .institutional-cta-section > div > :is(h2, p) {
+    width: calc(100% - 2 * var(--equipe-reserva));
+    margin-inline: auto;
+  }
+
+  /* A grade encolhe pelos dois lados só o que falta depois da borda e do
+     padding do card da ponta. */
+  .team-people-layout {
+    width: calc(100% - 2 * max(0px, var(--equipe-faixa) - var(--equipe-folga) - 1px - var(--equipe-pad-pessoa)));
+    margin-inline: auto;
+  }
+
+  .team-work-grid {
+    width: calc(100% - 2 * max(0px, var(--equipe-faixa) - var(--equipe-folga) - 1px - var(--equipe-pad-trabalho)));
+    margin-inline: auto;
+  }
+
+  .team-fronts-grid {
+    width: calc(100% - 2 * max(0px, var(--equipe-faixa) - var(--equipe-folga) - 1px - var(--equipe-pad-frentes)));
+    margin-inline: auto;
+  }
+
+  .team-direction-grid {
+    width: calc(100% - 2 * max(0px, var(--equipe-faixa) - var(--equipe-folga) - 1px - var(--equipe-pad-direcao)));
+    margin-inline: auto;
+  }
+
+  /* Botões do CTA: a fileira encolhe e, sem largura para os dois lado a
+     lado, o segundo desce para a linha de baixo. */
+  body:has(.team-hero-section) .institutional-cta-section .flex.flex-col.sm\:flex-row {
+    width: calc(100% - 2 * var(--equipe-reserva));
+    margin-inline: auto;
+    flex-wrap: wrap;
+  }
+}

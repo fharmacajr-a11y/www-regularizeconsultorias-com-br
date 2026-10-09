@@ -369,3 +369,141 @@
     line-height: 1.25 !important;
   }
 }
+
+/* ---------- Sobre: conteúdo fora da coluna dos controles flutuantes ---------- */
+/* Voltar ao topo e WhatsApp ficam fixos a max(1.5rem, safe-area) da direita,
+   com 2.75rem até 640px e 3rem acima (components.css). A faixa reservada soma
+   esse recuo, o botão e 0.5rem de folga, contada da borda direita da largura
+   útil. Cada seção é contêiner de consulta: 100cqw é a largura útil (sem a
+   barra de rolagem clássica) e (100cqw - 100%) / 2 é o que já existe entre o
+   bloco de referência (o 100%) e a borda: recuo e margem do container. A
+   reserva de um bloco de texto é a faixa menos esse trecho, nunca negativa.
+   Nos cards, a borda e o padding do próprio card também contam.
+   Até 639px a reserva fica à direita (o texto ou o padding do card) e os
+   cards mantêm a largura. De 640px em diante, os blocos e as grades
+   centralizados encolhem por igual dos dois lados; o herói e Nossa história,
+   alinhados à esquerda, recuam só à direita. Onde a coluna já fica fora, as
+   contas dão zero e nada muda. O rodapé fica de fora. */
+body:has(.about-principles-section) {
+  --sobre-faixa: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem);
+  --sobre-folga: calc((100cqw - 100%) / 2);
+  --sobre-reserva: max(0px, calc(var(--sobre-faixa) - var(--sobre-folga)));
+  /* Recuo dos containers (px-4 sm:px-6 lg:px-8) e padding horizontal dos
+     cards de números (p-4 sm:p-6) e dos cards de princípios e público
+     (p-5 sm:p-6 lg:p-8; de 700 a 1279px, a camada final acima). */
+  --sobre-recuo: 1rem;
+  --sobre-pad-numeros: 1rem;
+  --sobre-pad-card: 1.25rem;
+}
+
+@media (max-width: 640px) {
+  body:has(.about-principles-section) {
+    --sobre-faixa: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem);
+  }
+}
+
+@media (min-width: 640px) {
+  body:has(.about-principles-section) {
+    --sobre-recuo: 1.5rem;
+    --sobre-pad-numeros: 1.5rem;
+    --sobre-pad-card: 1.5rem;
+  }
+}
+
+@media (min-width: 700px) and (max-width: 1279px) {
+  body:has(.about-principles-section) {
+    --sobre-pad-card: clamp(0.875rem, 1.2vw, 1.125rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  body:has(.about-principles-section) {
+    --sobre-recuo: 2rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  body:has(.about-principles-section) {
+    --sobre-pad-card: 2rem;
+  }
+}
+
+.about-hero-section,
+.about-principles-section,
+.about-history-section,
+.about-audience-section,
+.about-final-cta-section {
+  container-type: inline-size;
+}
+
+/* Herói: o container (80rem) tem margem só a partir de 1280px; de 640 a
+   1279px a margem esquerda é fixa e a direita é zero. */
+.about-hero-content {
+  padding-right: max(var(--sobre-recuo), calc(var(--sobre-faixa) - max(0px, (100cqw - 80rem) / 2)));
+}
+
+/* Nossa história: título e texto recuam à direita; os cards de números (com
+   borda de 1px) só o que falta depois do padding deles. */
+.about-history-section h2,
+.about-history-section .space-y-5 {
+  padding-right: var(--sobre-reserva);
+}
+
+.about-history-section .grid {
+  margin-right: max(0px, calc(var(--sobre-faixa) - var(--sobre-folga) - 1px - var(--sobre-pad-numeros)));
+}
+
+/* Abaixo de 360px úteis, duas colunas não comportam "regulatórias" e
+   "Atendimento" (uma palavra só, em maiúsculas) fora da faixa: uma coluna. */
+@container (max-width: 359.98px) {
+  .about-history-section .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Abaixo de 640px a fileira de botões do CTA já recua pela regra de
+   components.css (a mesma faixa, menos o recuo de 1rem do container). */
+@media (max-width: 639px) {
+  .about-audience-section > div > div:first-child,
+  .about-final-cta-section > div > :is(h2, p) {
+    padding-right: var(--sobre-reserva);
+  }
+
+  /* Cards em uma coluna, centralizada: o 100% é a coluna da grade. Os de
+     princípios têm borda de 1px; os de público, não. */
+  .about-principles-card {
+    padding-right: max(var(--sobre-pad-card), calc(var(--sobre-faixa) - var(--sobre-folga) - 1px));
+  }
+
+  .about-audience-card {
+    padding-right: max(var(--sobre-pad-card), calc(var(--sobre-faixa) - var(--sobre-folga)));
+  }
+}
+
+@media (min-width: 640px) {
+  .about-audience-section > div > div:first-child,
+  .about-final-cta-section > div > :is(h2, p) {
+    width: calc(100% - 2 * var(--sobre-reserva));
+    margin-inline: auto;
+  }
+
+  /* A grade encolhe pelos dois lados só o que falta depois da borda e do
+     padding do card da ponta; o max-width de cada faixa continua valendo. */
+  main .about-principles-section .about-principles-grid {
+    width: calc(100% - 2 * max(0px, var(--sobre-faixa) - var(--sobre-folga) - 1px - var(--sobre-pad-card))) !important;
+    margin-inline: auto !important;
+  }
+
+  main .about-audience-section .about-audience-grid {
+    width: calc(100% - 2 * max(0px, var(--sobre-faixa) - var(--sobre-folga) - var(--sobre-pad-card))) !important;
+    margin-inline: auto !important;
+  }
+
+  /* Botões do CTA: a fileira encolhe e, sem largura para os dois lado a
+     lado, o segundo desce para a linha de baixo. */
+  .about-final-cta-section .flex.flex-col.sm\:flex-row {
+    width: calc(100% - 2 * var(--sobre-reserva));
+    margin-inline: auto;
+    flex-wrap: wrap;
+  }
+}
