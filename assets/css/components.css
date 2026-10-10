@@ -268,6 +268,252 @@ footer .text-slate-500 {
   }
 }
 
+/* De 768 a 1279px a fileira do CTA final da Home e de Serviços é
+   centralizada com largura máxima fixa (38rem a 42rem). Com a barra de
+   rolagem clássica a fileira desloca só metade da barra e a coluna
+   desloca a barra inteira: em 768px "Conhecer os Serviços" ficava a 0,5px
+   do WhatsApp. A fileira passa a ter, além da largura máxima de sempre, a
+   largura do bloco menos a faixa (recuo max(1.5rem, safe-area), botão de
+   3rem e 0.5rem de folga) de cada lado, descontado o que já existe entre o
+   bloco e a borda da largura útil, (100cqw - 100%) / 2, com a seção como
+   contêiner de consulta. Sem barra e onde há folga, a conta dá a largura
+   original e nada muda. Folga de 0.5rem: os dois botões têm contorno de
+   foco de 4px e só o primeiro tem sombra (alcance visível de 4,5px). A
+   primeira declaração repete a conta com 100vw, sem var(). */
+body:is(:has(.home-hero-section), :has(.services-hero-section)) .institutional-cta-section {
+  container-type: inline-size;
+}
+
+@media (min-width: 768px) and (max-width: 1279px) {
+  body:is(:has(.home-hero-section), :has(.services-hero-section)) .institutional-cta-section .flex.flex-col.sm\:flex-row {
+    width: calc(100% - 2 * max(0px, 1.5rem + 3rem + 0.5rem - (100vw - 100%) / 2));
+    width: calc(100% - 2 * max(0px, max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - (100cqw - 100%) / 2));
+  }
+}
+
+/* ---------- 17. Rodapé fora da faixa dos controles flutuantes ----------
+   Layout comum (10/10/2026). Até 1375px as colunas do rodapé chegam à
+   faixa de Voltar ao topo e WhatsApp: o parágrafo de apresentação no
+   celular e os contatos da terceira coluna no tablet. A coluna só é
+   ancorada acima dos créditos (main.js), e as colunas acima deles passam
+   sob ela durante a rolagem e ao lado dela quando ancorada. A grade
+   reserva à direita a faixa (recuo max(1.5rem, safe-area), botão de 3rem,
+   2.75rem até 640px, e 0.5rem de folga) menos o que já existe entre a
+   grade e a borda da largura útil: (100cqw - 100%) / 2, com o rodapé como
+   contêiner de consulta (100cqw não inclui a barra clássica). Negativo, a
+   reserva vai a zero; os créditos continuam na largura toda. A primeira
+   declaração repete a conta com 100vw para navegador sem unidades de
+   contêiner. De 768 a 1023px as colunas mudam de proporção e de
+   espaçamento para o e-mail e o Instagram caberem numa linha. */
+footer {
+  container-type: inline-size;
+}
+
+footer > .max-w-7xl > .grid {
+  padding-right: max(0px, calc(1.5rem + 3rem + 0.5rem - (100vw - 100%) / 2));
+  padding-right: max(0px, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - (100cqw - 100%) / 2));
+}
+
+@media (max-width: 640px) {
+  footer > .max-w-7xl > .grid {
+    padding-right: max(0px, calc(1.5rem + 2.75rem + 0.5rem - (100vw - 100%) / 2));
+    padding-right: max(0px, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem - (100cqw - 100%) / 2));
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  footer > .max-w-7xl > .grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr) minmax(0, 1.2fr);
+    column-gap: 1.5rem;
+  }
+}
+
+/* ---------- 18. Herói institucional e seções fora da faixa ----------
+   Layout comum (10/10/2026). Mesma faixa do rodapé (seção 17).
+   Herói institucional de Contato, Manuais e POPs, Farmácia Popular,
+   Notícias e Política (Sobre e Equipe já têm reserva própria e ficam de
+   fora; Serviços, abaixo): cada filho do container (breadcrumb, título,
+   resumo, ações) recebe como margem direita a faixa menos o que já existe
+   entre o container e a borda da largura útil. Margem, e não padding: o
+   título e o resumo têm largura máxima, e a margem só estreita o bloco
+   quando falta espaço. O herói fica no topo e só entra no alcance da
+   coluna em tela baixa (paisagem), mas a regra vale em qualquer altura.
+   O que já existe é o padding do container (px-4 sm:px-6 lg:px-8) mais a
+   margem direita dele. Até 639px e de 1280px em diante o container é
+   centralizado e isso é (100cqw - 100%) / 2, com a seção como contêiner de
+   consulta; de 640 a 1279px ele tem margem esquerda própria (clamp(0.5rem,
+   2vw, 2rem), mais abaixo) e a direita é zero, então a margem do filho é a
+   faixa menos o padding. Os botões do herói dos manuais reservam 1rem de
+   folga (contorno de foco e sombra).
+   Serviços: até 639px o resumo já tinha a reserva da 1P
+   (pages/equipe-servicos.css); de 640 a 1279px os filhos do herói recebem
+   a mesma margem dos outros heróis. De 1280px em diante a largura máxima
+   do título e do resumo já os deixa longe da coluna.
+   Seções de conteúdo de Contato, Manuais e POPs e Política: o container
+   de cada seção (max-w-7xl, 5xl, 4xl, 3xl e 820px, com px-4 sm:px-6
+   lg:px-8) recebe a faixa como recuo. Até 639px a margem do container é
+   zero e o recuo é só à direita; de 640px em diante, dos dois lados, para
+   o conteúdo centralizado não sair do eixo, e nunca menor que o recuo
+   original. A conta usa a margem do container, max(0, (100cqw - largura
+   máxima) / 2). Cada regra com cqw é precedida da mesma conta com 100vw,
+   para navegador sem unidades de contêiner (que descarta a declaração
+   com cqw); as contas não usam var(), que tornaria a declaração inválida
+   só no cálculo e zeraria o recuo nesses navegadores. */
+.institutional-hero-section:not(.services-hero-section, .team-hero-section, .about-hero-section),
+body:is(:has(.contact-hero-section), :has(.manuals-hero-section), :has(#identificacao)) main > section:not(.institutional-hero-section) {
+  container-type: inline-size;
+}
+
+.institutional-hero-section:not(.services-hero-section, .team-hero-section, .about-hero-section) > .institutional-hero-content > * {
+  margin-right: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 0.5rem));
+  margin-right: max(0px, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem));
+}
+
+.institutional-hero-section:not(.services-hero-section, .team-hero-section, .about-hero-section) > .institutional-hero-content > .manuals-hero-actions {
+  margin-right: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 1rem));
+  margin-right: max(0px, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 1rem));
+}
+
+@media (max-width: 640px) {
+  .institutional-hero-section:not(.services-hero-section, .team-hero-section, .about-hero-section) > .institutional-hero-content > * {
+    margin-right: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 2.75rem + 0.5rem));
+    margin-right: max(0px, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem));
+  }
+
+  .institutional-hero-section:not(.services-hero-section, .team-hero-section, .about-hero-section) > .institutional-hero-content > .manuals-hero-actions {
+    margin-right: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 2.75rem + 1rem));
+    margin-right: max(0px, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 1rem));
+  }
+}
+
+/* 640 a 1279px: margem direita do container zero; a margem do filho é a
+   faixa menos o padding do container (1.5rem até 1023px, 2rem de 1024px em
+   diante). A 640px o botão ainda tem 2.75rem. Inclui Serviços. */
+@media (min-width: 640px) and (max-width: 1279px) {
+  .institutional-hero-section:not(.team-hero-section, .about-hero-section) > .institutional-hero-content > * {
+    margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - 1.5rem);
+  }
+
+  .institutional-hero-section:not(.team-hero-section, .about-hero-section) > .institutional-hero-content > .manuals-hero-actions {
+    margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 1rem - 1.5rem);
+  }
+}
+
+@media (width: 640px) {
+  .institutional-hero-section:not(.team-hero-section, .about-hero-section) > .institutional-hero-content > * {
+    margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem - 1.5rem);
+  }
+
+  .institutional-hero-section:not(.team-hero-section, .about-hero-section) > .institutional-hero-content > .manuals-hero-actions {
+    margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 1rem - 1.5rem);
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .institutional-hero-section:not(.team-hero-section, .about-hero-section) > .institutional-hero-content > * {
+    margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - 2rem);
+  }
+
+  .institutional-hero-section:not(.team-hero-section, .about-hero-section) > .institutional-hero-content > .manuals-hero-actions {
+    margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 1rem - 2rem);
+  }
+}
+
+/* Política: o e-mail e o domínio do site (em negrito no primeiro
+   parágrafo), uma palavra só cada, não cabiam na linha que sobra no
+   celular depois da reserva e passavam sob os botões; quebram onde for
+   preciso, como no rodapé. */
+body:has(#identificacao) main :is(a[href^="mailto:"], strong) {
+  overflow-wrap: anywhere;
+}
+
+/* Títulos dos heróis institucionais (mesma regra dos títulos das
+   matérias, pages/noticias-tipos.css): com a reserva, o título dos
+   manuais tem 228px a 320px (213px com a barra clássica);
+   "Transportadoras", "personalizados" e "Gerenciamento" têm no HTML um
+   hífen opcional (&shy;) num limite de sílaba em que as duas partes cabem.
+   Ele só vale com largura útil menor que 375px; acima, é ignorado e o
+   título quebra como antes. Fonte e texto não mudam. */
+.institutional-hero-title {
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+@media (max-width: 374px) {
+  .institutional-hero-title {
+    -webkit-hyphens: manual;
+    hyphens: manual;
+  }
+}
+
+@container (max-width: 374px) {
+  .institutional-hero-title {
+    -webkit-hyphens: manual;
+    hyphens: manual;
+  }
+}
+
+@media (max-width: 639px) {
+  body:is(:has(.contact-hero-section), :has(.manuals-hero-section), :has(#identificacao)) main > section:not(.institutional-hero-section) > :is(.max-w-7xl, .max-w-5xl, .max-w-4xl, .max-w-3xl, .max-w-\[820px\]) {
+    padding-right: calc(1.5rem + 2.75rem + 0.5rem);
+    padding-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem);
+  }
+}
+
+@media (min-width: 640px) {
+  body:is(:has(.contact-hero-section), :has(.manuals-hero-section), :has(#identificacao)) main > section:not(.institutional-hero-section) > .max-w-7xl {
+    padding-inline: max(1.5rem, calc(1.5rem + 3rem + 0.5rem - max(0px, (100vw - 80rem) / 2)));
+    padding-inline: max(1.5rem, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - max(0px, (100cqw - 80rem) / 2)));
+  }
+
+  body:is(:has(.contact-hero-section), :has(.manuals-hero-section), :has(#identificacao)) main > section:not(.institutional-hero-section) > .max-w-5xl {
+    padding-inline: max(1.5rem, calc(1.5rem + 3rem + 0.5rem - max(0px, (100vw - 64rem) / 2)));
+    padding-inline: max(1.5rem, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - max(0px, (100cqw - 64rem) / 2)));
+  }
+
+  body:is(:has(.contact-hero-section), :has(.manuals-hero-section), :has(#identificacao)) main > section:not(.institutional-hero-section) > .max-w-4xl {
+    padding-inline: max(1.5rem, calc(1.5rem + 3rem + 0.5rem - max(0px, (100vw - 56rem) / 2)));
+    padding-inline: max(1.5rem, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - max(0px, (100cqw - 56rem) / 2)));
+  }
+
+  body:is(:has(.contact-hero-section), :has(.manuals-hero-section), :has(#identificacao)) main > section:not(.institutional-hero-section) > .max-w-3xl {
+    padding-inline: max(1.5rem, calc(1.5rem + 3rem + 0.5rem - max(0px, (100vw - 48rem) / 2)));
+    padding-inline: max(1.5rem, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - max(0px, (100cqw - 48rem) / 2)));
+  }
+
+  body:is(:has(.contact-hero-section), :has(.manuals-hero-section), :has(#identificacao)) main > section:not(.institutional-hero-section) > .max-w-\[820px\] {
+    padding-inline: max(1.5rem, calc(1.5rem + 3rem + 0.5rem - max(0px, (100vw - 820px) / 2)));
+    padding-inline: max(1.5rem, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - max(0px, (100cqw - 820px) / 2)));
+  }
+}
+
+@media (min-width: 1024px) {
+  body:is(:has(.contact-hero-section), :has(.manuals-hero-section), :has(#identificacao)) main > section:not(.institutional-hero-section) > .max-w-7xl {
+    padding-inline: max(2rem, calc(1.5rem + 3rem + 0.5rem - max(0px, (100vw - 80rem) / 2)));
+    padding-inline: max(2rem, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - max(0px, (100cqw - 80rem) / 2)));
+  }
+
+  body:is(:has(.contact-hero-section), :has(.manuals-hero-section), :has(#identificacao)) main > section:not(.institutional-hero-section) > .max-w-5xl {
+    padding-inline: max(2rem, calc(1.5rem + 3rem + 0.5rem - max(0px, (100vw - 64rem) / 2)));
+    padding-inline: max(2rem, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - max(0px, (100cqw - 64rem) / 2)));
+  }
+
+  body:is(:has(.contact-hero-section), :has(.manuals-hero-section), :has(#identificacao)) main > section:not(.institutional-hero-section) > .max-w-4xl {
+    padding-inline: max(2rem, calc(1.5rem + 3rem + 0.5rem - max(0px, (100vw - 56rem) / 2)));
+    padding-inline: max(2rem, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - max(0px, (100cqw - 56rem) / 2)));
+  }
+
+  body:is(:has(.contact-hero-section), :has(.manuals-hero-section), :has(#identificacao)) main > section:not(.institutional-hero-section) > .max-w-3xl {
+    padding-inline: max(2rem, calc(1.5rem + 3rem + 0.5rem - max(0px, (100vw - 48rem) / 2)));
+    padding-inline: max(2rem, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - max(0px, (100cqw - 48rem) / 2)));
+  }
+
+  body:is(:has(.contact-hero-section), :has(.manuals-hero-section), :has(#identificacao)) main > section:not(.institutional-hero-section) > .max-w-\[820px\] {
+    padding-inline: max(2rem, calc(1.5rem + 3rem + 0.5rem - max(0px, (100vw - 820px) / 2)));
+    padding-inline: max(2rem, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - max(0px, (100cqw - 820px) / 2)));
+  }
+}
+
 /* ---------- Hero institucional compartilhado ----------
   Padroniza breadcrumb, título, subtítulo e espaçamento dos heroes azuis
   das páginas internas: Sobre, Serviços, Equipe, Contato e Notícias. */

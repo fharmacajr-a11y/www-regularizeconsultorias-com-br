@@ -3,7 +3,8 @@
 Cada página carrega tailwind.min.css, components.css ou custom.min.css, e
 main.min.js, com um parâmetro ?v=. Os CSS de página alterados depois do rodapé
 de 03/10/2026 (Farmácia Popular, notícias, artigo, contato, home,
-equipe-servicos e sobre) também têm ?v=. O valor é o
+equipe-servicos e sobre) também têm ?v=, assim como manuais-e-pops.css desde o
+layout comum de 10/10/2026. O valor é o
 mesmo em todas as páginas para cada arquivo: uma página esquecida na versão
 anterior receberia do cache o CSS ou o JS antigo. Ao mudar outro CSS ou JS de
 página, acrescente ?v= a todas as referências dele e inclua-o em VERSIONED_ASSETS.
@@ -28,6 +29,7 @@ VERSIONED_ASSETS = (
     "/assets/css/pages/home.css",
     "/assets/css/pages/equipe-servicos.css",
     "/assets/css/pages/sobre.css",
+    "/assets/css/pages/manuais-e-pops.css",
     "/assets/js/pages/noticias.js",
 )
 ASSET_REFERENCE = re.compile(r'(?:href|src)="(/assets/[^"?]+\.(?:css|js))(\?[^"]*)?"')

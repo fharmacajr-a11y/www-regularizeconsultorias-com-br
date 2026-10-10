@@ -22,12 +22,12 @@ HOOKS = {
     "comunicado-historico__body",
     "comunicado-historico__icon",
     "contact-hero-content",
-    "contact-hero-section",
     "manuals-catalog-button-label",
     "manuals-hero-content",
-    "manuals-hero-section",
     "news-sidebar",
 }
+# contact-hero-section e manuals-hero-section saíram da lista no layout comum (10/10/2026): components.css passou a
+# usá-las nos seletores da reserva da faixa dos controles flutuantes (seção 18).
 HOOK_PREFIXES = ("manuals-page-",)
 SELECTOR_CLASS = re.compile(r"\.((?:\\[0-9a-fA-F]{1,6}[ \t]?|\\[^0-9a-fA-F\n]|[\w-])+)")
 JS_CLASSES = re.compile(

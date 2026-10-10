@@ -137,16 +137,16 @@
   padding-top: 3rem !important;
 }
 
-/* No celular o botão único do catálogo entra na coluna fixa.
-   Título e parágrafo do bloco permanecem na largura do miolo. */
+/* No celular o botão único do catálogo ocupa a linha do bloco. A faixa da
+   coluna fixa passou a ser reservada no container da seção
+   (components.css, seção 18; layout comum, 10/10/2026), então o botão não
+   leva mais recuo próprio: somar os dois afastaria o botão duas vezes. */
 @media (max-width: 639px) {
   .manuals-cta-section > .max-w-3xl > a.inline-flex {
     box-sizing: border-box;
     display: flex;
     justify-content: center;
     margin-left: 0;
-    margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem - 1rem);
-    width: calc(100% - (max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem - 1rem));
   }
 }
 
@@ -294,6 +294,36 @@
   transform: translateX(-50%);
   width: min(54rem, calc(100vw - 2rem));
   z-index: 30;
+}
+
+/* Layout comum (10/10/2026): menu de acesso rápido fora da faixa de Voltar ao
+   topo e WhatsApp (recuo max(1.5rem, safe-area), botão de 2.75rem até 640px e
+   3rem acima). O resumo (summary), com sombra de alcance visível de até 11px
+   no foco, fica 1rem mais estreito que o bloco, o que dá folga de 1rem até a
+   coluna onde ele ocupa a largura toda. Aberto, o painel ia até perto das
+   duas bordas (100vw - 2rem) e os links da direita ficavam sob a coluna:
+   abaixo de 640px ele acompanha a largura do resumo; de 640px em diante,
+   centralizado como antes, não passa da largura útil (100cqw, com a seção
+   como contêiner de consulta) menos a faixa dos dois lados. A primeira
+   declaração de largura repete a conta com 100vw, sem var(). */
+.manuals-page-main .manuals-filter-dropdown {
+  max-width: min(30rem, calc(100% - 1rem));
+}
+
+@media (max-width: 639px) {
+  .manuals-page-main .manuals-filter-dropdown-panel {
+    left: 0;
+    right: 0;
+    transform: none;
+    width: auto;
+  }
+}
+
+@media (min-width: 640px) {
+  .manuals-page-main .manuals-filter-dropdown-panel {
+    width: min(54rem, calc(100vw - 2 * (1.5rem + 3rem + 0.5rem)));
+    width: min(54rem, calc(100cqw - 2 * (max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem)));
+  }
 }
 
 .manuals-page-main .manuals-filter-dropdown-panel a {
@@ -481,13 +511,16 @@
   line-height: 1.25;
 }
 
+/* Layout comum, revisão v2 (10/10/2026): o resumo do card do catálogo aparece
+   inteiro, com altura natural. O limite de três linhas (line-clamp com
+   overflow hidden) escondia o fim do texto, e a reserva da faixa dos
+   controles, ao estreitar os cards, aumentou o trecho escondido. O resumo
+   não tem mais limite de linhas nem altura fixa; os botões continuam no pé
+   do card (margin-top: auto em .manuals-card-actions) e a grade mantém os
+   cards de uma linha com a mesma altura. */
 .manuals-catalog-card p:not(.manuals-card-note) {
-  display: -webkit-box;
   line-height: 1.55;
   margin-bottom: 0.75rem;
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
 }
 
 .manuals-card-link {
@@ -838,6 +871,24 @@
 
 .manuals-hero-break-mobile-wrap {
   white-space: nowrap;
+}
+
+/* Layout comum (10/10/2026): no herói do manual de Farmácia Popular,
+   "— Farmácia Popular" fica numa linha só (nowrap) e, com a reserva da
+   faixa, passava da caixa do título com largura útil menor que 375px
+   (265px de texto em 228px a 320px). Nessa faixa ele pode quebrar entre
+   as palavras, como os demais manuais já fazem abaixo de 640px
+   (.manuals-hero-break-mobile-wrap); acima, nada muda. */
+@media (max-width: 374px) {
+  .manuals-farmacia-popular-hero-break {
+    white-space: normal;
+  }
+}
+
+@container (max-width: 374px) {
+  .manuals-farmacia-popular-hero-break {
+    white-space: normal;
+  }
 }
 
 .manuals-farmacia-popular-advisory-section {
@@ -1242,7 +1293,9 @@
 @media (max-width: 639px) {
   .manuals-page-main .manuals-filter-dropdown {
     margin: 0 auto 1rem;
-    max-width: 25rem;
+    /* Layout comum: 1rem mais estreito que o bloco, como acima (folga de
+       0,5rem de cada lado, além da reserva do container). */
+    max-width: min(25rem, calc(100% - 1rem));
   }
 
   .manuals-page-main .manuals-filter-dropdown summary {
@@ -1435,4 +1488,40 @@
 }
 .manuals-catalog-toggle[aria-expanded="true"] .manuals-catalog-toggle-icon {
   transform: rotate(180deg);
+}
+
+/* Layout comum (10/10/2026): "Como a Regularize personaliza" (manuals-flow-card).
+   De 768px em diante o card tem duas colunas, a dos passos com no mínimo
+   20rem. Com a reserva da faixa dos dois lados do container (components.css,
+   seção 18), a coluna do título ficava com 203px quando a largura útil é
+   753px (768px com a barra clássica), e "procedimentos" (211px em 1.875rem)
+   passava da caixa do título. Com largura útil menor que 784px o card
+   continua em uma coluna, como abaixo de 768px; a media query cobre a
+   janela sem barra e a container query (a seção é contêiner de consulta),
+   a largura útil com a barra. */
+@media (min-width: 768px) and (max-width: 783px) {
+  .manuals-flow-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@container (max-width: 783px) {
+  .manuals-flow-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Layout comum (10/10/2026): no catálogo, de 768px em diante
+   "— Distribuidora de Medicamentos" (247px) fica numa linha só (nowrap),
+   sempre na segunda linha do título. Com a reserva da faixa, o card fica
+   mais estreito que isso perto de 1000-1023px (e com a barra clássica de
+   1024 a 1038px), e o trecho passava da caixa do título (até 4,6px; na
+   base, 1px a 900px). O trecho passa a ser um bloco próprio: continua na
+   segunda linha, inteiro sempre que cabe, e só quebra entre as palavras
+   quando o card é mais estreito que ele. */
+@media (min-width: 768px) {
+  .manuals-card-title--compact .manuals-card-title-nowrap {
+    display: block;
+    white-space: normal;
+  }
 }

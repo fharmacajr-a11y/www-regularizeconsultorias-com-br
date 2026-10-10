@@ -7,22 +7,10 @@
 
 /* ---------- Hero e badge dos detalhes ---------- */
 /* Hero e selo dos quatro tipos de notícia: pages/noticias-tipos.css.
-   Abaixo de 768px o texto do hero ocupa a largura da tela e a coluna
-   fixa cobre a faixa direita. Título e resumo reservam essa faixa e
-   quebram na largura que sobra. Vale para todo hero desta família,
-   sem seletor de matéria. De 768px em diante a medição não mostrou
-   cobertura. */
-@media (max-width: 767px) {
-  .article-hero-atualizacao :is(h1, p) {
-    padding-right: 3.5rem;
-  }
-}
-
-@media (max-width: 639px) {
-  .article-hero-atualizacao :is(h1, p) {
-    padding-right: 3.75rem;
-  }
-}
+   A reserva da faixa da coluna fixa no hero (antes 3.5rem/3.75rem só no
+   título e no resumo do tipo Atualização, abaixo de 768px) passou para
+   pages/noticias-tipos.css, para os quatro tipos e as duas famílias, com
+   a conta relativa à largura útil (layout comum, 10/10/2026). */
 
 main > article > header .category-chip {
   background-color: rgba(255, 255, 255, 0.15);
@@ -317,25 +305,11 @@ main > article > header .category-chip {
   margin-top: 1.25rem;
 }
 
-/* A fileira de ações encosta na coluna fixa abaixo de 1024 px.
-   Título e texto do cartão permanecem na largura original. */
-@media (max-width: 1023px) {
-  .article-final-cta__actions {
-    margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - 1.5rem - 1.25rem);
-  }
-}
-
-@media (max-width: 639px) {
-  .article-final-cta__actions {
-    margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem - 1rem - 1.25rem);
-  }
-}
-
-@media (max-width: 479px) {
-  .article-final-cta__actions {
-    margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem - 1rem - 1rem);
-  }
-}
+/* A reserva da fileira de ações diante da coluna fixa (antes uma conta
+   fixa por faixa de largura) fica em pages/noticias-tipos.css, relativa à
+   largura útil e com 1rem de folga para o foco e a sombra do botão
+   principal (layout comum, 10/10/2026). Título e texto do cartão
+   permanecem na largura original. */
 
 .article-final-cta__link {
   align-items: center;

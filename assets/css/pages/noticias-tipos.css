@@ -298,11 +298,67 @@ header:is(.article-hero-atualizacao, .article-hero-informativo, .article-hero-ur
    largura do botão e 0,5rem de folga, menos o espaço que a coluna
    centralizada já deixa livre. Negativo, a reserva vai a zero.
    O aviso e o texto do CTA repetem a mesma conta no próprio componente.
-   A fileira de ações do CTA já tem reserva e não entra aqui. */
+
+   Layout comum (10/10/2026). A largura útil passa a vir do contêiner de
+   consulta main > article (100cqw), que não inclui a barra de rolagem
+   clássica: 100vw a inclui e, com a barra de 15px, deixava o texto a menos
+   de 1px do botão. Cada regra mantém antes a mesma conta com 100vw; um
+   navegador sem unidades de contêiner descarta a declaração com cqw e fica
+   com ela. O recuo do botão é o da coluna, max(1,5rem, safe-area). A mesma
+   conta, relativa ao bloco de referência, vale também para o herói, para
+   os demais filhos do miolo (cartão de metadados, perguntas frequentes) e
+   para as notícias relacionadas. Texto reserva 0,5rem de folga; as caixas
+   clicáveis (cards de notícias relacionadas e a fileira de ações do CTA),
+   1rem, para o contorno de foco (2px + 2px de afastamento) e a sombra
+   visível do foco e do botão principal (deslocamento + espalhamento +
+   metade do desfoque: até 15px) ficarem fora do botão. A fileira de ações
+   deixa a conta fixa de noticia-detalhe.css e custom.css por esta. */
+main > article {
+  container-type: inline-size;
+}
+
+/* Título da matéria em telas estreitas. Com a reserva da faixa, o título
+   tem 212px de largura útil a 320px (197px com a barra clássica) e 252px
+   a 375px com a barra. Palavras mais largas que isso em 30px
+   ("estabelecimentos", 254px; "Cosmetovigilância", 264px) passavam da
+   caixa. Essas palavras têm no HTML um hífen opcional (&shy;) num limite
+   de sílaba em que as duas partes cabem na menor caixa; o texto, o
+   tamanho da fonte e a hierarquia não mudam. A quebra no hífen opcional só
+   vale enquanto a largura útil é menor que 375px (media query para a
+   janela; container query para a largura útil, que desconta a barra
+   clássica); de 375px em diante os hífens opcionais são ignorados
+   (hyphens: none) e o título quebra como antes. Sem hifenização
+   automática: ela depende de dicionário do navegador e não se repete no
+   ambiente de medição. O título do CTA final segue a mesma regra
+   ("creden&shy;ciamento?", 200px em 24px, passava da caixa de 196px com
+   a barra clássica a 320px). */
+main > article > header h1,
+.article-final-cta__title {
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+@media (max-width: 374px) {
+  main > article > header h1,
+  .article-final-cta__title {
+    -webkit-hyphens: manual;
+    hyphens: manual;
+  }
+}
+
+@container (max-width: 374px) {
+  main > article > header h1,
+  .article-final-cta__title {
+    -webkit-hyphens: manual;
+    hyphens: manual;
+  }
+}
+
 .article-body {
   box-sizing: border-box;
   overflow-wrap: break-word;
   padding-right: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 0.5rem));
+  padding-right: max(0px, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem));
 }
 
 .article-body .article-table-scroll {
@@ -311,26 +367,63 @@ header:is(.article-hero-atualizacao, .article-hero-informativo, .article-hero-ur
 
 .article-important-notice {
   padding-right: max(1.5rem, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 0.5rem));
+  padding-right: max(1.5rem, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem));
 }
 
 .article-final-cta__title,
 .article-final-cta__text,
-.article-related-news__title {
+.article-related-news__title,
+main > article > header > .max-w-4xl > * {
   padding-right: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 0.5rem));
+  padding-right: max(0px, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem));
+}
+
+main > article > .max-w-4xl > :not(.article-body, .article-important-notice, .article-final-cta, .article-related-news) {
+  margin-right: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 0.5rem));
+  margin-right: max(0px, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem));
+}
+
+.article-related-news {
+  padding-right: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 1rem));
+  padding-right: max(0px, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 1rem));
+}
+
+.article-final-cta__actions {
+  margin-right: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 1rem));
+  margin-right: max(0px, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 1rem));
 }
 
 @media (max-width: 640px) {
   .article-body {
     padding-right: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 2.75rem + 0.5rem));
+    padding-right: max(0px, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem));
   }
 
   .article-important-notice {
     padding-right: max(1.25rem, calc((100% - 100vw) / 2 + 1.5rem + 2.75rem + 0.5rem));
+    padding-right: max(1.25rem, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem));
   }
 
   .article-final-cta__title,
   .article-final-cta__text,
-  .article-related-news__title {
+  .article-related-news__title,
+  main > article > header > .max-w-4xl > * {
     padding-right: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 2.75rem + 0.5rem));
+    padding-right: max(0px, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem));
+  }
+
+  main > article > .max-w-4xl > :not(.article-body, .article-important-notice, .article-final-cta, .article-related-news) {
+    margin-right: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 2.75rem + 0.5rem));
+    margin-right: max(0px, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem));
+  }
+
+  .article-related-news {
+    padding-right: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 2.75rem + 1rem));
+    padding-right: max(0px, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 1rem));
+  }
+
+  .article-final-cta__actions {
+    margin-right: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 2.75rem + 1rem));
+    margin-right: max(0px, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 1rem));
   }
 }

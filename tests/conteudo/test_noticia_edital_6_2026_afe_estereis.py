@@ -60,7 +60,9 @@ def test_page_identity_metadata_and_newsarticle():
     assert f'<link rel="canonical" href="{PUBLIC_URL}" />' in html
     assert f'<meta property="og:url" content="{PUBLIC_URL}" />' in html
     assert f"<title>{TITLE} | Regularize Consultoria</title>" in html
-    assert html.count("<h1") == 1 and f">{TITLE}</h1>" in html
+    # O H1 tem um hífen opcional em "estabele&shy;cimentos" (layout comum, 10/10/2026): sem ele, o texto é o mesmo.
+    assert html.count("<h1") == 1 and f">{TITLE}</h1>" in html.replace("&shy;", "")
+    assert ">Anvisa convoca estabele&shy;cimentos com AFE para preparações estéreis</h1>" in html
     assert len(news) == 1
     assert news[0]["headline"] == TITLE
     assert news[0]["url"] == PUBLIC_URL

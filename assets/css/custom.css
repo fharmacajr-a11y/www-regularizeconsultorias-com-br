@@ -2197,25 +2197,11 @@ main > article > header .category-chip {
   margin-top: 1.25rem;
 }
 
-/* A fileira de ações encosta na coluna fixa abaixo de 1024 px.
-   Título e texto do cartão permanecem na largura original. */
-@media (max-width: 1023px) {
-  .article-final-cta__actions {
-    margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - 1.5rem - 1.25rem);
-  }
-}
-
-@media (max-width: 639px) {
-  .article-final-cta__actions {
-    margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem - 1rem - 1.25rem);
-  }
-}
-
-@media (max-width: 479px) {
-  .article-final-cta__actions {
-    margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem - 1rem - 1rem);
-  }
-}
+/* A reserva da fileira de ações diante da coluna fixa (antes uma conta
+   fixa por faixa de largura) fica em pages/noticias-tipos.css, relativa à
+   largura útil e com 1rem de folga para o foco e a sombra do botão
+   principal (layout comum, 10/10/2026). Título e texto do cartão
+   permanecem na largura original. */
 
 .article-final-cta__link {
   align-items: center;
@@ -2401,6 +2387,103 @@ footer .text-slate-500 {
   body:has(.team-hero-section) .institutional-cta-section .flex.flex-col.sm\:flex-row,
   body:has(.about-principles-section) .institutional-cta-section .flex.flex-col.sm\:flex-row {
     margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem - 1rem);
+  }
+}
+
+/* ---------- 16b. Rodapé fora da faixa dos controles flutuantes ----------
+   Layout comum (10/10/2026); mesma regra de components.css, seção 17.
+   Até 1375px as colunas do rodapé chegam à faixa de Voltar ao topo e
+   WhatsApp. A grade reserva à direita a faixa (recuo max(1.5rem,
+   safe-area), botão de 3rem, 2.75rem até 640px, e 0.5rem de folga) menos o
+   que já existe entre a grade e a borda da largura útil, com o rodapé como
+   contêiner de consulta; negativo, a reserva vai a zero. A primeira
+   declaração repete a conta com 100vw para navegador sem unidades de
+   contêiner. De 768 a 1023px as colunas mudam de proporção. */
+footer {
+  container-type: inline-size;
+}
+
+footer > .max-w-7xl > .grid {
+  padding-right: max(0px, calc(1.5rem + 3rem + 0.5rem - (100vw - 100%) / 2));
+  padding-right: max(0px, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - (100cqw - 100%) / 2));
+}
+
+@media (max-width: 640px) {
+  footer > .max-w-7xl > .grid {
+    padding-right: max(0px, calc(1.5rem + 2.75rem + 0.5rem - (100vw - 100%) / 2));
+    padding-right: max(0px, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem - (100cqw - 100%) / 2));
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  footer > .max-w-7xl > .grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr) minmax(0, 1.2fr);
+    column-gap: 1.5rem;
+  }
+}
+
+/* ---------- 16c. Comunicado fora da faixa dos controles flutuantes ----------
+   Layout comum (10/10/2026); mesma conta das seções de components.css
+   (seção 18). Os avisos, a legenda e o herói do Comunicado passavam sob
+   Voltar ao topo e WhatsApp até 783px. Cada seção vira contêiner de
+   consulta. No herói e na legenda, o container (max-w-7xl e max-w-4xl)
+   recebe a faixa como recuo, menos a margem que já tem,
+   max(0, (100cqw - largura máxima) / 2): até 639px só à direita; de 640px
+   em diante, dos dois lados, e nunca menor que o recuo original (1.5rem;
+   2rem de 1024px). Na seção da lista, o fechamento (Voltar ao Início e a
+   linha de direitos) mantém a largura útil toda do container, como no
+   331a974 (a coluna é ancorada acima dele pelo main.js e não o cobre):
+   a faixa vai como margem no título e na lista, a mesma conta descontado o
+   recuo original do container. Sem controle do último aviso perto da
+   coluna, a ancoragem volta a parar acima do fechamento. Cada declaração
+   com cqw vem depois da mesma conta com 100vw, sem var(). */
+body:has(#avisos-lista) main > section {
+  container-type: inline-size;
+}
+
+@media (max-width: 639px) {
+  body:has(#avisos-lista) main > section:not(:has(#avisos-lista)) > :is(.max-w-7xl, .max-w-4xl) {
+    padding-right: calc(1.5rem + 2.75rem + 0.5rem);
+    padding-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem);
+  }
+
+  body:has(#avisos-lista) main > section > .max-w-4xl > :is(h2, #avisos-lista) {
+    margin-right: calc(1.5rem + 2.75rem + 0.5rem - 1rem);
+    margin-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem - 1rem);
+  }
+}
+
+@media (min-width: 640px) {
+  body:has(#avisos-lista) main > section > .max-w-7xl {
+    padding-inline: max(1.5rem, calc(1.5rem + 3rem + 0.5rem - max(0px, (100vw - 80rem) / 2)));
+    padding-inline: max(1.5rem, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - max(0px, (100cqw - 80rem) / 2)));
+  }
+
+  body:has(#avisos-lista) main > section:not(:has(#avisos-lista)) > .max-w-4xl {
+    padding-inline: max(1.5rem, calc(1.5rem + 3rem + 0.5rem - max(0px, (100vw - 56rem) / 2)));
+    padding-inline: max(1.5rem, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - max(0px, (100cqw - 56rem) / 2)));
+  }
+
+  body:has(#avisos-lista) main > section > .max-w-4xl > :is(h2, #avisos-lista) {
+    margin-inline: max(0px, calc(1.5rem + 3rem + 0.5rem - max(0px, (100vw - 56rem) / 2) - 1.5rem));
+    margin-inline: max(0px, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - max(0px, (100cqw - 56rem) / 2) - 1.5rem));
+  }
+}
+
+@media (min-width: 1024px) {
+  body:has(#avisos-lista) main > section > .max-w-7xl {
+    padding-inline: max(2rem, calc(1.5rem + 3rem + 0.5rem - max(0px, (100vw - 80rem) / 2)));
+    padding-inline: max(2rem, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - max(0px, (100cqw - 80rem) / 2)));
+  }
+
+  body:has(#avisos-lista) main > section:not(:has(#avisos-lista)) > .max-w-4xl {
+    padding-inline: max(2rem, calc(1.5rem + 3rem + 0.5rem - max(0px, (100vw - 56rem) / 2)));
+    padding-inline: max(2rem, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - max(0px, (100cqw - 56rem) / 2)));
+  }
+
+  body:has(#avisos-lista) main > section > .max-w-4xl > :is(h2, #avisos-lista) {
+    margin-inline: max(0px, calc(1.5rem + 3rem + 0.5rem - max(0px, (100vw - 56rem) / 2) - 2rem));
+    margin-inline: max(0px, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - max(0px, (100cqw - 56rem) / 2) - 2rem));
   }
 }
 

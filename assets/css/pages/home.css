@@ -468,11 +468,9 @@
     padding-right: var(--home-reserva);
   }
 
-  /* Cards: borda de 1px e padding de 1.25rem (p-5). Os cards-link de
-     serviços ficam de fora: a grade inteira sai da faixa (abaixo). */
-  .home-about-cards-grid > div {
-    padding-right: calc(var(--home-reserva) - 1px);
-  }
+  /* Cards de "Por que escolher": como a grade de serviços, a grade inteira
+     sai da faixa (abaixo, layout comum de 10/10/2026); o card mantém o
+     padding simétrico e o texto continua centralizado no card. */
 
   /* "acompanhamento" em 1.875rem não cabe na coluna que sobra abaixo de
      ~350px; o título diminui só o necessário, sem quebrar a palavra. A
@@ -517,10 +515,67 @@
   }
 }
 
-/* Cards com padding de 1.25rem nesta faixa (regras acima). */
-@media (min-width: 768px) and (max-width: 1279px) {
-  .home-about-cards-grid {
-    width: calc(100% - 2 * max(0px, var(--home-reserva) - 1px - 1.25rem));
+/* Grade de "Por que escolher" (layout comum, 10/10/2026). Antes a reserva
+   afastava só o texto: até 639px pelo padding direito do card (o texto
+   ficava fora do centro do card e o card, mais largo que os de serviços) e
+   de 768 a 1279px pela largura da grade descontando a borda e o padding do
+   card (a superfície do card continuava sob a coluna). Agora a grade
+   inteira sai da faixa, pela largura útil: a seção é contêiner de consulta
+   e (100cqw - 100%) / 2 é o que já existe entre o container e a borda.
+   Até 639px a margem direita é a maior entre a de centralização da grade
+   (largura máxima de 26rem) e a faixa: onde a grade centralizada já fica
+   fora da coluna ela continua centralizada; onde não fica, ela se alinha
+   pela esquerda, como a grade de serviços. De 640px em diante a grade
+   encolhe dos dois lados só o que falta, sem sair do eixo, e a largura
+   máxima de cada faixa continua valendo. A primeira declaração repete a
+   conta com 100vw, sem var(). */
+.home-about-section {
+  container-type: inline-size;
+}
+
+@media (max-width: 639px) {
+  .home-about-section .home-about-cards-grid {
+    margin-right: max(calc((100% - min(26rem, 100%)) / 2), calc(1.5rem + 2.75rem + 0.5rem - (100vw - 100%) / 2));
+    margin-right: max(calc((100% - min(26rem, 100%)) / 2), calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem - (100cqw - 100%) / 2));
+  }
+}
+
+@media (min-width: 640px) {
+  .home-about-section .home-about-cards-grid {
+    width: calc(100% - 2 * max(0px, 1.5rem + 3rem + 0.5rem - (100vw - 100%) / 2));
+    width: calc(100% - 2 * max(0px, max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - (100cqw - 100%) / 2));
+  }
+}
+
+/* Herói e cabeçalho de "Por que escolher" (layout comum, 10/10/2026). O
+   herói fica no topo e o cabeçalho logo abaixo; com a janela em altura
+   normal a coluna não chega a eles, mas em tela baixa (celular ou tablet em
+   paisagem, 568x320 a 844x390) chega, e o título e o resumo do herói e o
+   título de "Por que escolher" passavam sob os botões. A regra vale em
+   qualquer altura. Herói: o título recebe a mesma reserva que o resumo já
+   tinha até 639px; de 640 a 1279px (uma coluna, margem direita zero) título
+   e resumo reservam a faixa menos o recuo do container; de 1280px em diante
+   o texto ocupa dois terços da grade e fica longe da coluna. Título de "Por
+   que escolher" (centralizado): de 640px em diante encolhe dos dois lados só
+   o que falta, como a grade logo abaixo (o resumo dele já tinha a reserva
+   da 1P); até 639px o cabeçalho inteiro já tinha a reserva à direita. */
+@media (max-width: 639px) {
+  .home-hero-copy > h1 {
+    padding-right: var(--home-reserva);
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1279px) {
+  .home-hero-copy > :is(h1, p) {
+    padding-right: var(--home-reserva);
+  }
+}
+
+@media (min-width: 640px) {
+  .home-about-section > div > div:first-child > h2 {
+    width: calc(100% - 2 * max(0px, 1.5rem + 3rem + 0.5rem - (100vw - 100%) / 2));
+    width: calc(100% - 2 * max(0px, max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - (100cqw - 100%) / 2));
+    margin-inline: auto;
   }
 }
 
@@ -559,21 +614,25 @@
    movimento. A margem original do painel é -0.25rem (-0.5rem de 768px). Os
    cards se ajustam à janela (regras-base abaixo). O seletor composto vence as
    regras-base, que vêm depois. */
+/* Layout comum (10/10/2026): o painel recua mais 0.5rem (folga de 1rem até a
+   coluna). A seta seguinte fica na borda direita do painel e, em foco, tem
+   contorno de 3px com 4px de afastamento e sombra com alcance visível de
+   14px; com 0.5rem de folga o foco dela ficava sob a coluna. */
 @media (max-width: 639px) {
   .home-manuals-section .home-manuals-carousel-shell {
-    margin-right: max(-0.25rem, calc(var(--home-faixa-controles) - (100cqw - 100%) / 2));
+    margin-right: max(-0.25rem, calc(var(--home-faixa-controles) + 0.5rem - (100cqw - 100%) / 2));
   }
 }
 
 @media (min-width: 640px) and (max-width: 767px) {
   .home-manuals-section .home-manuals-carousel-shell {
-    margin-inline: max(-0.25rem, calc(var(--home-faixa-controles) - (100cqw - 100%) / 2));
+    margin-inline: max(-0.25rem, calc(var(--home-faixa-controles) + 0.5rem - (100cqw - 100%) / 2));
   }
 }
 
 @media (min-width: 768px) {
   .home-manuals-section .home-manuals-carousel-shell {
-    margin-inline: max(-0.5rem, calc(var(--home-faixa-controles) - (100cqw - 100%) / 2));
+    margin-inline: max(-0.5rem, calc(var(--home-faixa-controles) + 0.5rem - (100cqw - 100%) / 2));
   }
 }
 

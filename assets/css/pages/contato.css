@@ -260,3 +260,16 @@
     padding: 1.5rem 1.5rem 1.625rem;
   }
 }
+
+/* Layout comum (10/10/2026): no celular o e-mail e o perfil do Instagram, uma
+   palavra só cada, não cabiam na coluna que sobra ao lado do ícone depois da
+   reserva da faixa de Voltar ao topo e WhatsApp (components.css, seção 18) e
+   passavam sob os botões. O bloco de texto de cada contato pode encolher
+   (min-width: 0) e o endereço quebra onde for preciso, como no rodapé. */
+body:has(.contact-hero-section) main li.flex.items-start.gap-4 > div {
+  min-width: 0;
+}
+
+body:has(.contact-hero-section) main li.flex.items-start.gap-4 > div > a {
+  overflow-wrap: anywhere;
+}

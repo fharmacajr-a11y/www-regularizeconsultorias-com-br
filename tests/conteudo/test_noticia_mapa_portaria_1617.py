@@ -86,7 +86,10 @@ def test_portaria_1617_is_published_at_the_public_url():
     assert f'<time datetime="{STAMP}">03/10/2026</time> às 00h33' in html
     assert f'Atualizado em:</span> <time datetime="{UPDATED}">06/10/2026</time> às 08h00' in html
     assert "restring" not in html.casefold()
-    assert html.count(TITLE) == 5
+    # O H1 tem hífens opcionais em "melhora&shy;dores" e "antimicro&shy;bianos" (layout comum, 10/10/2026); sem eles,
+    # o título aparece nos mesmos cinco lugares.
+    assert html.replace("&shy;", "").count(TITLE) == 5
+    assert ">MAPA proíbe aditivos melhora&shy;dores de desempenho com antimicro&shy;bianos do Anexo</h1>" in html
     assert html.count(DESCRIPTION) == 4
     assert (
         "Ela proíbe a importação, a fabricação, a comercialização e o uso de aditivos melhoradores de "

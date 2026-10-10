@@ -9,6 +9,7 @@ NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 CREDENCIAMENTO_PATH = ROOT / "noticias" / "credenciamento-farmacia-popular-municipios-com-vagas" / "index.html"
 MONITORAMENTO_PATH = ROOT / "noticias" / "farmacia-popular-inconsistencias-prescricoes-monitoramento" / "index.html"
 GLP1_PATH = ROOT / "noticias" / "canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao" / "index.html"
+ALTERACAO_CADASTRAL_PATH = ROOT / "noticias" / "alteracao-cadastral-farmacia-popular-regularizacao" / "index.html"
 MONITORAMENTO_URL = "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-inconsistencias-prescricoes-monitoramento/"
 GLP1_URL = "https://www.regularizeconsultorias.com.br/noticias/canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao/"
 COSMETICOS_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-listas-substancias-cosmeticos/"
@@ -134,7 +135,14 @@ def test_news_index_sorting_rule_and_attributes():
     article_html = article_match.group(1)
 
     assert 'data-updated="2026-08-14T09:04:41-03:00"' in article_html, "data-updated attribute missing or incorrect"
-    assert '<time datetime="2026-05-22T23:30:00-03:00"' in article_html, "Original datePublished was falsified in the <time> tag"
+    # O card mostra "Atualizado em 14/08/2026 • 09h04": o <time> do card é essa atualização, a data que ordena a lista
+    # (layout comum, revisão v2, 10/10/2026; test_listagem_rotulo_atualizacao.py). A publicação original de 22/05/2026
+    # continua protegida na página da matéria, no datePublished e no "Publicado em".
+    assert 'Atualizado em <span class="whitespace-nowrap"><time datetime="2026-08-14T09:04:41-03:00" class="leading-none">14/08/2026 • 09h04</time>' in article_html, "The card <time> must carry the update it shows"
+    alteracao_page = ALTERACAO_CADASTRAL_PATH.read_text(encoding="utf-8")
+    assert '"datePublished": "2026-05-22T23:30:00-03:00"' in alteracao_page, "Original datePublished was falsified in the article page"
+    assert '"dateModified": "2026-08-14T09:04:41-03:00"' in alteracao_page, "dateModified missing or incorrect in the article page"
+    assert 'Publicado em:</span> <time datetime="2026-05-22T23:30:00-03:00">22/05/2026</time> às 23h30' in alteracao_page, "Original publication date was falsified in the article page"
 
     portaria_card = next(
         (card for card in _news_cards(html) if _card_url(card) == PORTARIA_URL),
@@ -415,10 +423,13 @@ def test_guardas_fase_1m_v2_rejeitam_mutacoes_em_memoria():
     with pytest.raises(AssertionError):
         _validar_conteudo_solicita(mutated_reaberta)
 
-    # Mutação 6: Hemoterapia com data única incondicional no H1
+    # Mutação 6: Hemoterapia com data única incondicional no H1 (o H1 tem hífens opcionais em "procedi&shy;mentos" e
+    # "hemo&shy;terápicos" desde o layout comum de 10/10/2026; a mutação troca o título inteiro e precisa de fato mudar
+    # o HTML)
     mutated_hemo = hemo_html.replace(
-        "Novos procedimentos hemoterápicos entram em vigor após período de transição",
+        "Novos procedi&shy;mentos hemo&shy;terápicos entram em vigor após período de transição",
         "Novos procedimentos hemoterápicos entraram em vigor em 30 de setembro"
     )
+    assert mutated_hemo != hemo_html
     with pytest.raises(AssertionError):
         _validar_conteudo_hemoterapia(mutated_hemo)

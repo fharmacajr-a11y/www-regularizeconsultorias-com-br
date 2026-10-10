@@ -49,3 +49,29 @@
 @media (min-width: 640px) { .fp-regulatory-update { align-items: center; flex-direction: row; gap: 1.5rem; }.fp-regulatory-update a { width: auto; }.fp-credited-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 639px) { .fp-page-section { padding: 2rem 0 3.5rem; }.fp-provenance, .fp-consultation { padding: 1.125rem; }.fp-provenance-list, .fp-indicators, .fp-filters { grid-template-columns: 1fr; }.fp-section-heading, .fp-cta { align-items: flex-start; flex-direction: column; }.fp-section-heading > p { text-align: left; }.fp-filters button { width: 100%; }.fp-pagination { justify-content: flex-start; }.fp-pagination span { margin-right: 0; width: 100%; }.fp-pagination label { margin-left: 0; }.fp-cta a { width: 100%; } }
 @media (prefers-reduced-motion: reduce) { .fp-filters button, .fp-pagination button { transition: none; } }
+/* Layout comum (10/10/2026): consulta fora da faixa de Voltar ao topo e WhatsApp. A coluna fixa fica a max(1.5rem,
+   safe-area) da direita, com 2.75rem até 640px e 3rem acima (components.css); a faixa soma 0.5rem de folga. O container
+   (80rem, recuo de 1rem) recebe a faixa como recuo, menos a margem que ele já tem, max(0, (100cqw - 80rem) / 2), com a
+   seção como contêiner de consulta (100cqw não inclui a barra clássica). Até 639px a margem é zero e o recuo é só à
+   direita; de 640px em diante, dos dois lados, e nunca menor que 1rem. Cada declaração com cqw vem depois da mesma conta
+   com 100vw, para navegador sem unidades de contêiner; sem var(), que zeraria o recuo nesses navegadores. A tabela
+   continua rolando dentro da consulta, agora na largura que sobra. */
+.fp-page-section { container-type: inline-size; }
+@media (max-width: 639px) { .fp-container { padding-right: calc(1.5rem + 2.75rem + 0.5rem); padding-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem); } }
+@media (min-width: 640px) { .fp-container { padding-left: max(1rem, calc(1.5rem + 3rem + 0.5rem - max(0px, (100vw - 80rem) / 2))); padding-right: max(1rem, calc(1.5rem + 3rem + 0.5rem - max(0px, (100vw - 80rem) / 2))); padding-left: max(1rem, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - max(0px, (100cqw - 80rem) / 2))); padding-right: max(1rem, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - max(0px, (100cqw - 80rem) / 2))); } }
+/* Layout comum (10/10/2026): CTA final no celular. Com a reserva do container, o padding de 2rem deixava 164px para o
+   texto a 320px; abaixo de 640px o CTA usa o padding dos outros blocos da página (1.125rem). "credenciamento?" (200px em
+   1.5rem) tem no HTML um hífen opcional (&shy;) que só vale com largura útil menor que 375px (media query para a janela;
+   container query, com .fp-page-section como contêiner, para a largura útil sem a barra clássica); acima, é ignorado. Na mesma
+   faixa o botão "Falar com a Regularize" (nowrap) pode quebrar a linha: com a barra clássica a 320px sobravam 145px
+   para 155px de texto. */
+.fp-cta h2 { -webkit-hyphens: none; hyphens: none; }
+@media (max-width: 639px) { .fp-cta { padding: 1.125rem; } }
+@media (max-width: 374px) { .fp-cta h2 { -webkit-hyphens: manual; hyphens: manual; } .fp-cta a { white-space: normal; } }
+@container (max-width: 374px) { .fp-cta h2 { -webkit-hyphens: manual; hyphens: manual; } .fp-cta a { white-space: normal; } }
+/* Layout comum (10/10/2026): indicadores da consulta. Com a reserva dos dois lados a partir de 640px, os cards ficavam
+   estreitos demais para "09/10/2026" (139px em 1.5rem, mais 2.375rem de padding e borda): passava do card de 640 a 767px
+   (3 colunas) e de 1024 a cerca de 1100px (5 colunas). Nessas faixas os cinco indicadores usam 2 e 3 colunas; os limites
+   (767 e 1135px) deixam folga também com a barra clássica, que tira 15px da largura útil sem mudar a media query. */
+@media (min-width: 640px) and (max-width: 767px) { .fp-indicators { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1024px) and (max-width: 1135px) { .fp-indicators { grid-template-columns: repeat(3, minmax(0, 1fr)); } }

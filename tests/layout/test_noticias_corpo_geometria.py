@@ -332,7 +332,10 @@ def test_reserva_e_regra_do_componente_compartilhado():
     assert "line-clamp" not in css and "novos-compendios" not in css and "mapa-portaria-1617" not in css
     detalhe = (ROOT / "assets" / "css" / "pages" / "noticia-detalhe.css").read_text(encoding="utf-8")
     listagem = (ROOT / "assets" / "css" / "pages" / "noticias.css").read_text(encoding="utf-8")
-    assert ".article-hero-atualizacao :is(h1, p)" in detalhe
+    # Layout comum (10/10/2026): a reserva do herói saiu de noticia-detalhe.css (só o tipo Atualização, valor fixo)
+    # e está em noticias-tipos.css para os quatro tipos e as duas famílias.
+    assert ".article-hero-atualizacao :is(h1, p)" not in detalhe
+    assert "main > article > header > .max-w-4xl > *" in css
     assert "#news-article-list .news-card :is(h2, p)" in listagem
     paginas = [
         ROOT / "noticias" / "novos-compendios-farmacopeia-brasileira-entram-em-vigor" / "index.html",
@@ -342,7 +345,7 @@ def test_reserva_e_regra_do_componente_compartilhado():
     ]
     for pagina in paginas:
         texto = pagina.read_text(encoding="utf-8")
-        assert "noticias-tipos.css?v=20261007-corpo-1" in texto
+        assert "noticias-tipos.css?v=20261010-layout-1" in texto
         assert "<br" not in texto[texto.index("<section class=\"article-body\"") : texto.index("</section>", texto.index("article-body"))]
 
 

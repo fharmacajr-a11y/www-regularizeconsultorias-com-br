@@ -371,8 +371,104 @@
   --news-recuo-card: calc(1px + 1.25rem);
 }
 
+/* Layout comum (10/10/2026): a linha de selos e data do card (primeiro
+   filho) entra na mesma reserva. O selo "POLÍCIA FEDERAL" do destaque
+   ficava sob a coluna a 320px; com a reserva, ele passa para a linha
+   seguinte e a data centralizada acompanha a largura que sobra. */
 @media (max-width: 1359px) {
-  #news-article-list .news-card :is(h2, p) {
+  #news-article-list .news-card :is(h2, p),
+  #news-article-list .news-card > div:first-child {
     padding-right: max(0px, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + var(--news-botao-flutuante) + 0.5rem - var(--news-recuo-container) - var(--news-recuo-card)));
+  }
+}
+
+/* ---------- Listagem: blocos sem reserva própria (layout comum) ----------
+   Layout comum (10/10/2026). Os cards da lista já reservam a faixa (acima)
+   e a coluna de filtros recolhe os botões ao passar por eles
+   (assets/js/pages/noticias.js); nada disso muda. Ficavam sob Voltar ao
+   topo e WhatsApp a caixa "Orientação técnica" depois da lista, o cartão
+   "Sobre o conteúdo" e o CTA final. A faixa é a de components.css:
+   max(1.5rem, safe-area), botão de 2.75rem até 640px e 3rem acima, e 0.5rem
+   de folga. As seções viram contêineres de consulta (100cqw sem a barra
+   clássica) e cada bloco reserva a faixa menos o que já existe entre ele e
+   a borda, (100cqw - 100%) / 2, descontando a borda de 1px do cartão; o
+   padding original é o mínimo. Até 1023px a caixa de orientação ocupa a
+   largura do container e usa a mesma conta; de 1024px em diante ela fica
+   na coluna direita da grade, encostada na borda direita do container
+   (não centralizada), e reserva a faixa menos o recuo de 2rem do container
+   e a margem dele, max(0, (100cqw - 80rem) / 2): a 1100px a última linha
+   do parágrafo passava 2,6px sob o WhatsApp. O CTA final recebe a faixa no container, à
+   direita até 639px e dos dois lados a partir de 640px. Cada declaração
+   com cqw vem depois da mesma conta com 100vw, sem var(). */
+body:has(#news-article-list) main > section:not(.news-hero-section) {
+  container-type: inline-size;
+}
+
+body:has(#news-article-list) main > section > .max-w-7xl > .p-5.sm\:p-7.md\:p-8.lg\:p-10 {
+  padding-right: max(1.25rem, calc((100% - 100vw) / 2 + 1.5rem + 2.75rem + 0.5rem - 1px));
+  padding-right: max(1.25rem, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem - 1px));
+}
+
+@media (max-width: 639px) {
+  #news-article-list ~ .border-l-4.border-brand {
+    padding-right: max(1.5rem, calc((100% - 100vw) / 2 + 1.5rem + 2.75rem + 0.5rem));
+    padding-right: max(1.5rem, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem));
+  }
+
+  body:has(#news-article-list) main > section.bg-brand-dark > .max-w-3xl {
+    padding-right: calc(1.5rem + 2.75rem + 0.5rem);
+    padding-right: calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 0.5rem);
+  }
+}
+
+@media (min-width: 640px) {
+  body:has(#news-article-list) main > section > .max-w-7xl > .p-5.sm\:p-7.md\:p-8.lg\:p-10 {
+    padding-right: max(1.75rem, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 0.5rem - 1px));
+    padding-right: max(1.75rem, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - 1px));
+  }
+
+  body:has(#news-article-list) main > section.bg-brand-dark > .max-w-3xl {
+    padding-inline: max(1.5rem, calc(1.5rem + 3rem + 0.5rem - max(0px, (100vw - 48rem) / 2)));
+    padding-inline: max(1.5rem, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - max(0px, (100cqw - 48rem) / 2)));
+  }
+}
+
+@media (min-width: 640px) and (max-width: 767px) {
+  #news-article-list ~ .border-l-4.border-brand {
+    padding-right: max(1.5rem, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 0.5rem));
+    padding-right: max(1.5rem, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem));
+  }
+}
+
+@media (min-width: 768px) {
+  body:has(#news-article-list) main > section > .max-w-7xl > .p-5.sm\:p-7.md\:p-8.lg\:p-10 {
+    padding-right: max(2rem, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 0.5rem - 1px));
+    padding-right: max(2rem, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - 1px));
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  #news-article-list ~ .border-l-4.border-brand {
+    padding-right: max(2rem, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 0.5rem));
+    padding-right: max(2rem, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem));
+  }
+}
+
+@media (min-width: 1024px) {
+  body:has(#news-article-list) main > section > .max-w-7xl > .p-5.sm\:p-7.md\:p-8.lg\:p-10 {
+    padding-right: max(2.5rem, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 0.5rem - 1px));
+    padding-right: max(2.5rem, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - 1px));
+  }
+
+  body:has(#news-article-list) main > section.bg-brand-dark > .max-w-3xl {
+    padding-inline: max(2rem, calc(1.5rem + 3rem + 0.5rem - max(0px, (100vw - 48rem) / 2)));
+    padding-inline: max(2rem, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - max(0px, (100cqw - 48rem) / 2)));
+  }
+}
+
+@media (min-width: 1024px) {
+  #news-article-list ~ .border-l-4.border-brand {
+    padding-right: max(2rem, calc(1.5rem + 3rem + 0.5rem - 2rem - max(0px, (100vw - 80rem) / 2)));
+    padding-right: max(2rem, calc(max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem - 2rem - max(0px, (100cqw - 80rem) / 2)));
   }
 }

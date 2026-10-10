@@ -41,16 +41,22 @@ def test_nenhum_titulo_ou_resumo_tem_quebra_incondicional():
 
 def test_hero_modular_reserva_a_faixa_do_botao():
     css = (ROOT / "assets" / "css" / "pages" / "noticia-detalhe.css").read_text(encoding="utf-8")
-    assert ".article-hero-atualizacao :is(h1, p)" in css
+    # Layout comum (10/10/2026): a reserva do herói saiu daqui (antes só no tipo Atualização, com valor fixo) e
+    # passou para pages/noticias-tipos.css, para os quatro tipos e as duas famílias, relativa à largura útil.
+    assert ".article-hero-atualizacao :is(h1, p)" not in css
     assert "line-clamp" not in css
+    tipos = (ROOT / "assets" / "css" / "pages" / "noticias-tipos.css").read_text(encoding="utf-8")
+    assert "main > article > header > .max-w-4xl > *" in tipos
+    assert "line-clamp" not in tipos
     linked = []
     for page in (ROOT / "noticias").rglob("index.html"):
         text = page.read_text(encoding="utf-8")
         if "noticia-detalhe.css" not in text:
             continue
         linked.append(text)
-        assert "noticia-detalhe.css?v=20261007-hero-1" in text
+        assert "noticia-detalhe.css?v=20261010-layout-1" in text
         assert "noticia-detalhe.css?v=20261005-tipos-1" not in text
+        assert "noticia-detalhe.css?v=20261007-hero-1" not in text
     assert len(linked) == 29
 
 
