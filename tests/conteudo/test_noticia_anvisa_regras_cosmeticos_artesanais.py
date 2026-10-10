@@ -10,6 +10,8 @@ SLUG = "anvisa-regras-cosmeticos-artesanais"
 URL = f"https://www.regularizeconsultorias.com.br/noticias/{SLUG}/"
 ROUTE = f"/noticias/{SLUG}/"
 STAMP = "2026-10-01T16:48:00-03:00"
+# Atualização de 09/10/2026: RDC nº 1.045 e IN nº 474, de 02/10/2026, publicadas no DOU de 05/10/2026.
+UPDATED = "2026-10-09T20:26:00-03:00"
 TITLE = "Anvisa aprova novas regras para cosméticos artesanais"
 
 FORBIDDEN = (
@@ -27,7 +29,6 @@ FORBIDDEN = (
     "registro de cosmético artesanal",
     "está em vigor",
     "estão em vigor",
-    "entram em vigor",
     "já vigente",
     "passam a valer",
     "passa a valer",
@@ -69,20 +70,21 @@ def test_article_exists_with_canonical_title_and_date():
     assert f'rel="canonical" href="{URL}"' in html
     assert f'<h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight text-white mb-5">{TITLE}</h1>' in html
     assert "noindex" not in html.casefold()
-    assert "Atualizado em" not in html
     assert f'<time datetime="{STAMP}">01/10/2026</time> às 16h48' in html
+    assert f'Atualizado em:</span> <time datetime="{UPDATED}">09/10/2026</time> às 20h26' in html
     assert "Júnior Costa" in html
     assert "Conteúdo informativo produzido pela Regularize Consultoria." in html
     assert ">Categoria:</span>" in html
     assert "Órgão regulador:" in html
     assert html.count("category-chip--anvisa") >= 2
-    assert "article-badge-informativo" in html
-    assert ">Informativo</span>" in html
+    assert "article-badge-atualizacao" in html and "article-hero-atualizacao" in html
+    assert ">Atualização</span>" in html
 
 
 def test_article_metadata_uses_publication_stamp_and_fallback_image():
     html = _html()
-    assert html.count(f'content="{STAMP}"') == 2
+    assert html.count(f'content="{STAMP}"') == 1
+    assert html.count(f'content="{UPDATED}"') == 1
     assert 'property="article:section" content="ANVISA"' in html
     assert "assets/img/og/noticias.jpg" in html
     assert 'property="og:image:type" content="image/jpeg"' in html
@@ -97,7 +99,7 @@ def test_article_metadata_uses_publication_stamp_and_fallback_image():
     news = next(block for block in _jsonld(html) if block.get("@type") == "NewsArticle")
     assert news["headline"] == TITLE
     assert news["datePublished"] == STAMP
-    assert news["dateModified"] == STAMP
+    assert news["dateModified"] == UPDATED
     assert news["url"] == URL
     assert news["articleSection"] == "ANVISA"
     assert news["author"]["name"] == "Júnior Costa"
@@ -109,7 +111,7 @@ def test_article_metadata_uses_publication_stamp_and_fallback_image():
     assert items[2]["item"] == URL
 
 
-def test_article_states_approval_without_inventing_numbers_or_vigencia():
+def test_article_states_approval_publication_and_deferred_vigencia():
     main = _main(_html())
     folded = main.casefold()
     for term in (
@@ -131,17 +133,28 @@ def test_article_states_approval_without_inventing_numbers_or_vigencia():
         "até 12 meses",
         "sem apelos terapêuticos",
         "Vigilância Sanitária local",
-        "ainda não foram confirmados",
         "não se confunde com a entrada em vigor",
-        "entra em vigor após decorridos 60 dias de sua publicação oficial",
+        # A lei já está em vigor: o tempo verbal é passado.
+        "entrou em vigor após decorridos 60 dias de sua publicação oficial",
+        # O recorte histórico de 1º de outubro é preservado.
+        "Até 1º de outubro de 2026, essa nota não informava o número de nenhum dos dois atos",
         "a publicação formal, a numeração e a vigência dos atos ainda não estavam confirmadas",
+        # Atos publicados depois, com vigência diferida.
+        "Resolução da Diretoria Colegiada RDC nº 1.045, de 2 de outubro de 2026",
+        "Instrução Normativa IN nº 474, de 2 de outubro de 2026",
+        "05/10/2026",
+        "60 dias após a data de sua publicação",
+        "art. 26 da RDC e art. 3º da IN",
+        "A vigência, portanto, não é imediata",
         "regime ordinário",
         "não detalha, por si, as regras simplificadas",
     ):
         assert term in main, term
-    assert folded.count("60 dias") == 1
+    assert "entra em vigor após decorridos 60 dias" not in folded
+    assert "ainda não foram confirmados" not in folded
     assert "ainda não é a norma aplicável" not in folded
-    assert not re.search(r"\b(?:rdc|in)\s*(?:n[ºo°.])?\s*\d", folded)
+    # Nenhuma data exata de vigência é inventada: a contagem dos 60 dias fica com a norma.
+    assert not re.search(r"(?:em vigor|vigência)[^.]{0,40}\d{2}/1[12]/2026", folded)
     assert not re.search(r"\bafe\b", folded)
     for banned in FORBIDDEN:
         assert banned not in folded, banned
@@ -177,24 +190,25 @@ def test_article_keeps_sources_cta_and_natural_internal_links():
     assert "Aviso institucional:" in html
 
 
-def test_listing_places_the_card_ninth_after_the_mapa_publication():
+def test_listing_places_the_updated_card_by_its_update_stamp():
     html = NEWS_INDEX.read_text(encoding="utf-8")
     cards = re.findall(r"(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)", html, re.DOTALL)
     assert len(cards) == 83
-    # Fase 1M v2: Seis matérias revistas em 08/10 sobem para o topo.
-    card = cards[23]
+    # Lote de 09/10/2026: o card sobe pelo carimbo da atualização (regra de ordenação por data-updated).
+    card = cards[11]
     opening = card.split(">", 1)[0]
     assert f'href="{ROUTE}"' in card
     assert html.count(f'href="{ROUTE}"') == 1
     assert "news-card-compact" in opening
-    assert "news-orange-card" in opening
+    assert "news-amber-card" in opening
     assert 'data-category="anvisa"' in opening
-    assert f'data-updated="{STAMP}"' in opening
+    assert f'data-updated="{UPDATED}"' in opening
     assert f'data-title="{TITLE}"' in opening
-    assert "Informativo" in card
-    assert "Ler notícia" in card
-    assert "Atualização" not in card
-    assert f'<time datetime="{STAMP}" class="leading-none">01/10/2026 • 16h48</time>' in card
+    assert ">Atualização</span>" in card
+    assert "Ler atualização" in card
+    assert "Informativo" not in card
+    assert "A RDC 1.045/2026 e a IN 474/2026 foram publicadas no DOU de 05/10/2026" in card
+    assert f'<time datetime="{UPDATED}" class="leading-none">09/10/2026 • 20h26</time>' in card
     assert "83 notícias encontradas" in html
     assert '>Todos</span><span class="text-xs text-slate-400">83<' in html
     assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in html
@@ -203,18 +217,18 @@ def test_listing_places_the_card_ninth_after_the_mapa_publication():
     collection = next(block for block in _jsonld(html) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
     assert len(items) == 83
-    assert items[23]["position"] == 24
-    assert items[23]["url"] == URL
+    assert items[11]["position"] == 12
+    assert items[11]["url"] == URL
     assert [item["position"] for item in items] == list(range(1, 84))
 
 
 def test_sitemap_adds_only_the_new_url_and_the_listing_lastmod():
     sitemap = SITEMAP.read_text(encoding="utf-8")
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
-    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-01</lastmod>" in sitemap
+    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-09</lastmod>" in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-10-08</lastmod>"
+        "    <lastmod>2026-10-09</lastmod>"
     ) in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/</loc>\n"

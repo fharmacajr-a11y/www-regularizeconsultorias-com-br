@@ -1,36 +1,32 @@
 {
   "orgao_origem": "Ministério da Saúde",
-  "titulo_oficial": "Anexo I - Lista de municípios - atualizada em 03/09/2026",
-  "data_oficial": "2026-09-03",
+  "titulo_oficial": "Anexo I - Lista de Municípios com Vagas (atualizada em 09/10/2026)",
+  "data_oficial": "2026-10-09",
   "url_oficial_visualizacao": "https://www.gov.br/saude/pt-br/composicao/sectics/farmacia-popular/participacao/documentacao",
-  "url_oficial_download": "https://www.gov.br/saude/pt-br/composicao/sectics/farmacia-popular/participacao/documentacao/lista-de-municipios-com-vagas-03-09-2026.xlsx",
-  "data_importacao": "2026-09-03",
-  "sha256_xlsx": "d4fcf633c853581f6ff3093d71022e8dbe2d9428e87ed7283d7863d7dfa92dff",
-  "origem_nomes_ibge": "API oficial do IBGE: https://servicodados.ibge.gov.br/api/v1/localidades/municipios",
-  "data_ou_versao_referencia_ibge": "2026-09-03",
-  "sha256_referencia_ibge": null,
-  "quantidade_registros": 1541,
+  "url_oficial_download": "https://www.gov.br/saude/pt-br/composicao/sectics/farmacia-popular/participacao/documentacao/lista-de-municipios-com-vagas-09-10-2026.xlsx",
+  "data_importacao": "2026-10-09",
+  "sha256_xlsx": "b462b7840432d38daf838f482d6c25fd8622404d28ffe8cd3288fefe3b766a87",
+  "origem_nomes_ibge": "JSON local previamente obtido da API oficial do IBGE: ibge-municipios-2026-10-09.json",
+  "data_ou_versao_referencia_ibge": "2026-10-09",
+  "sha256_referencia_ibge": "86ecdccdf97d72e7e5e46f0854cfcea8bacc28154cc1bc4ed0e6110e3a6c9c02",
+  "quantidade_registros": 1500,
   "quantidade_ufs": 26,
   "totais_vagas": {
-    "vagas_totais": 3082,
-    "vagas_preenchidas": 963,
-    "vagas_disponiveis": 2119
+    "vagas_totais": 3000,
+    "vagas_preenchidas": 926,
+    "vagas_disponiveis": 2074
   },
-  "versao_importador": "1.1.0",
+  "versao_importador": "1.2.0",
   "avisos": [
     "O PDF publicado nao foi usado como fonte do JSON.",
     "O XLSX da fonte usa codigos IBGE de seis digitos; o setimo digito foi obtido por correspondencia de codigo na referencia IBGE."
   ],
   "validacao_pdf": {
-    "arquivo": "PDF publicado na pagina oficial de credenciamento",
-    "nomes_a_revisar": [
-      "Passa-Vinte -> Passa Vinte",
-      "São Luiz -> São Luiz do Anauá",
-      "Fortaleza do Tabocão -> Tabocão"
-    ]
+    "arquivo": "nenhum PDF oficial acompanha a lista de 09/10/2026; o PDF do site e gerado a partir desta base JSON",
+    "nomes_a_revisar": []
   },
-  "quantidade_nomes_com_diferenca_literal": 1541,
-  "quantidade_nomes_equivalentes_apos_normalizacao": 1536,
+  "quantidade_nomes_com_diferenca_literal": 1500,
+  "quantidade_nomes_equivalentes_apos_normalizacao": 1495,
   "quantidade_divergencias_nominais_relevantes": 5,
   "divergencias_nominais_relevantes": [
     {
@@ -62,6 +58,14 @@
       "uf": "SP",
       "municipio_fonte_ms": "SAO LUIS DO PARAITINGA",
       "municipio_exibicao": "São Luiz do Paraitinga"
+    }
+  ],
+  "regioes_corrigidas_pela_uf": [
+    {
+      "codigo_ibge": "4100202",
+      "uf": "PR",
+      "regiao_fonte_ms": "SULSUDESTE",
+      "regiao_exibicao": "Sul"
     }
   ]
 }

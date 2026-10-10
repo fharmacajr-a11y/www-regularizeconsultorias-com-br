@@ -161,7 +161,7 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     assert html.count(f'href="{ROUTE}"') == 1
     assert len(sncr_cards) == 1
     card = sncr_cards[0]
-    assert cards.index(card) == 11
+    assert cards.index(card) == 24
     assert "news-card-compact" in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
     assert f'<time datetime="{UPDATED}" class="leading-none">07/10/2026 • 09h08</time>' in card
@@ -176,15 +176,15 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     assert "29/10" not in card and "31/10" not in card
 
 
-def test_comunicado_keeps_one_sncr_card_and_eight_active_notices():
+def test_comunicado_keeps_one_sncr_card_and_seven_active_notices():
     html = COMUNICADO_PATH.read_text(encoding="utf-8")
     active = _active_notices(html)
     sncr_cards = [article for article in active if 'data-category="sncr"' in article]
 
     assert html.count('data-category="sncr"') == 1
     assert html.count(f'href="{ROUTE}"') == 1
-    assert len(active) == 8
-    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', html) == ["8", "8"]
+    assert len(active) == 7
+    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', html) == ["7", "7"]
     assert len(sncr_cards) == 1
     card_text = _text(sncr_cards[0])
     for term in (
@@ -200,7 +200,7 @@ def test_comunicado_keeps_one_sncr_card_and_eight_active_notices():
     assert "29/10" not in card_text and "31/10" not in card_text
     assert "em operação desde" not in card_text
     assert "como preparar o estabelecimento" not in card_text
-    assert active[0] is sncr_cards[0]
+    assert active[1] is sncr_cards[0]
 
 
 def test_sncr_news_has_current_sitemap_lastmod():
@@ -210,7 +210,7 @@ def test_sncr_news_has_current_sitemap_lastmod():
     assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-07</lastmod>" in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/servicos/</loc>\n"
-        "    <lastmod>2026-09-22</lastmod>"
+        "    <lastmod>2026-10-09</lastmod>"
     ) in sitemap
 
 

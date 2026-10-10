@@ -42,6 +42,8 @@ PUBLISHED = (
     "whatsapp/index.html",
     "data/farmacia-popular/metadados.json",
     "data/farmacia-popular/vagas-2026-09-03.json",
+    "data/farmacia-popular/vagas-2026-10-09.json",
+    "noticias/credenciamento-farmacia-popular-municipios-com-vagas/farmacia-popular-municipios-vagas-09-10-2026.pdf",
     "assets/fonts/OFL.txt",
 )
 

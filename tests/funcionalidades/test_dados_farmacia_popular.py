@@ -5,19 +5,23 @@ from pathlib import Path
 
 ROOT = Path(__file__).parents[2]
 DATA_DIR = ROOT / "data" / "farmacia-popular"
-RECORDS_PATH = DATA_DIR / "vagas-2026-09-03.json"
-HISTORICAL_PATHS = (DATA_DIR / "vagas-2026-08-20.json", DATA_DIR / "vagas-2026-07-28.json")
+RECORDS_PATH = DATA_DIR / "vagas-2026-10-09.json"
+HISTORICAL_PATHS = (
+    DATA_DIR / "vagas-2026-09-03.json",
+    DATA_DIR / "vagas-2026-08-20.json",
+    DATA_DIR / "vagas-2026-07-28.json",
+)
 METADATA_PATH = DATA_DIR / "metadados.json"
 TOTAL_FIELDS = ("vagas_totais", "vagas_preenchidas", "vagas_disponiveis")
 
 
 def test_integridade_da_base_atual_e_consistencia_dos_metadados():
-    assert RECORDS_PATH.is_file(), "Arquivo da base 2026-09-03 deve existir."
+    assert RECORDS_PATH.is_file(), "Arquivo da base 2026-10-09 deve existir."
     records = json.loads(RECORDS_PATH.read_text(encoding="utf-8"))
     metadata = json.loads(METADATA_PATH.read_text(encoding="utf-8"))
 
     assert isinstance(records, list)
-    assert len(records) == 1541
+    assert len(records) == 1500
     assert len({record["uf"] for record in records}) == 26
 
     codes = [record["codigo_ibge"] for record in records]
@@ -44,19 +48,20 @@ def test_integridade_da_base_atual_e_consistencia_dos_metadados():
 
     calculated = {field: sum(record[field] for record in records) for field in TOTAL_FIELDS}
     assert calculated == {
-        "vagas_totais": 3082,
-        "vagas_preenchidas": 963,
-        "vagas_disponiveis": 2119,
+        "vagas_totais": 3000,
+        "vagas_preenchidas": 926,
+        "vagas_disponiveis": 2074,
     }
     assert metadata["quantidade_registros"] == len(records)
     assert metadata["quantidade_ufs"] == len({record["uf"] for record in records})
     assert metadata["totais_vagas"] == calculated
-    assert metadata["data_oficial"] == "2026-09-03"
+    assert metadata["data_oficial"] == "2026-10-09"
 
 
 def test_bases_historicas_continuam_integras():
     """As bases anteriores permanecem no repositório como registro histórico."""
     esperado = {
+        "vagas-2026-09-03.json": (1541, {"vagas_totais": 3082, "vagas_preenchidas": 963, "vagas_disponiveis": 2119}),
         "vagas-2026-08-20.json": (1206, {"vagas_totais": 1780, "vagas_preenchidas": 10, "vagas_disponiveis": 1770}),
         "vagas-2026-07-28.json": (1082, {"vagas_totais": 1644, "vagas_preenchidas": 0, "vagas_disponiveis": 1644}),
     }
@@ -76,8 +81,8 @@ def test_bases_historicas_continuam_integras():
 def test_contagens_reais_por_situacao_na_base_vigente():
     """Protege as contagens que alimentam os filtros da consulta.
 
-    A soma de vagas preenchidas (963) coincide com o número de municípios
-    preenchidos porque toda ocupação da base de 03/09 é de exatamente uma
+    A soma de vagas preenchidas (926) coincide com o número de municípios
+    preenchidos porque toda ocupação da base de 09/10 é de exatamente uma
     vaga por município. A igualdade é verificada, não presumida.
     """
     records = json.loads(RECORDS_PATH.read_text(encoding="utf-8"))
@@ -86,8 +91,8 @@ def test_contagens_reais_por_situacao_na_base_vigente():
     com_disponiveis = [r for r in records if r["vagas_disponiveis"] > 0]
     sem_disponiveis = [r for r in records if r["vagas_disponiveis"] == 0]
 
-    assert len(com_preenchidas) == 963
-    assert len(com_disponiveis) == 1541
+    assert len(com_preenchidas) == 926
+    assert len(com_disponiveis) == 1500
     assert len(sem_disponiveis) == 0
     assert all(r["vagas_preenchidas"] == 1 for r in com_preenchidas)
     assert sum(r["vagas_preenchidas"] for r in com_preenchidas) == len(com_preenchidas)
@@ -95,4 +100,4 @@ def test_contagens_reais_por_situacao_na_base_vigente():
     combinacoes = Counter(
         (r["vagas_totais"], r["vagas_preenchidas"], r["vagas_disponiveis"]) for r in records
     )
-    assert combinacoes == {(2, 1, 1): 963, (2, 0, 2): 578}
+    assert combinacoes == {(2, 1, 1): 926, (2, 0, 2): 574}

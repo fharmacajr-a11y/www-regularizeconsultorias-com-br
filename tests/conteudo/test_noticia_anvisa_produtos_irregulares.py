@@ -9,7 +9,8 @@ NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 SITEMAP_PATH = ROOT / "sitemap.xml"
 URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
 PUBLISHED = "2026-07-05T18:00:00-03:00"
-UPDATED = "2026-10-06T16:32:00-03:00"
+# 09/10/2026, 20h27: denominação do 1º produto da RE nº 3.628/2026 conforme a retificação do DOU de 02/10/2026.
+UPDATED = "2026-10-09T20:27:00-03:00"
 DOBUTAMINA_LOTES = ("24092127", "24102310", "25102244", "25102243", "25112308")
 
 
@@ -131,7 +132,7 @@ def test_september_update_reflects_re_3547_and_keeps_history():
     assert "Medidas de julho a outubro mostram" in html
     assert "Medidas de julho a setembro" not in html
     assert "Medidas de julho e agosto" not in html
-    assert f'<time datetime="{UPDATED}">06/10/2026</time> às 16h32' in html
+    assert f'<time datetime="{UPDATED}">09/10/2026</time> às 20h27' in html
     assert f'<time datetime="{PUBLISHED}">05/07/2026</time> às 18h00' in html
     # Histórico de agosto e julho preservado.
     for term in ("12/08 — saneantes sem registro", "14/08 — Chá Sarapião", "Fiscalização de julho amplia", "Chlorohex 2,0%"):
@@ -186,8 +187,12 @@ def test_four_new_body_subsections_preserve_exact_products_measures_and_negative
     assert "determina o recolhimento" not in t36 and "determina a apreensão" not in t36
     assert "Go Pharma" not in section and "3.480" not in section
 
+    # Retificação publicada no DOU de 02/10/2026: nova denominação do primeiro produto, sem nova medida.
+    assert "Cápsula Nespresso de Moringa Oleífera</strong>" not in moringa
+    assert "retificação publicada no Diário Oficial da União de 02/10/2026" in moringa
+    assert "não cria nova medida nem altera a empresa, os demais produtos, o alcance ou o tipo de medida" in moringa
     for product in (
-        "Cápsula Nespresso de Moringa Oleífera",
+        "Cápsulas de Moringa Oleífera, marca Moringa da Paz, compatíveis com máquinas Nespresso®",
         "Pó Orgânico de Moringa Oleífera",
         "Cápsulas com Pó Orgânico de Moringa Oleífera",
         "Chá Orgânico de Moringa Oleífera",
@@ -272,7 +277,7 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
 
     assert news_index.count('href="/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"') == 1
     assert f'data-updated="{UPDATED}"' in news_index
-    assert "06/10/2026 • 16h32" in news_index
+    assert "09/10/2026 • 20h27" in news_index
     assert "medidas sobre United Labz, Mounjcaps, lotes falsificados de Enhertu e Dysport e um lote do TYG" in news_index
     for term in ("Hytamicina", "Pangastri", "Gripinew", "Lipo Top Gold", "Anagalis", "RE 3.440/2026", "RE 3.479/2026",
                  "RE 3.480/2026", "RE 3.546/2026", "RE 3.738/2026"):
@@ -288,11 +293,12 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
     # RE nº 3.764 e 3.743/2026 (06/10, 11h31), RE nº 3.718 e 3.436/2026 (06/10, 12h26) e
     # RE nº 3.440, 3.479, 3.480, 3.546 e 3.738/2026 (06/10, 13h49) e as seis REs de 02/10 (06/10, 16h32): card no topo,
     # antes da Portaria MAPA 1.617 (06/10, 08h00) e do CNES 09/2026 (05/10, 15h43). Desde 06/10, 18h11, as quatro
-    # matérias da Fase 1H (Farmácia Popular e CNES/AFE) vêm antes; o consolidado segue entre os cinco destaques.
-    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[19]
-    assert "news-card-compact" in cards[19].split(">", 1)[0]
+    # matérias da Fase 1H (Farmácia Popular e CNES/AFE) vêm antes. Em 09/10/2026, 20h27, a retificação da
+    # RE nº 3.628/2026 leva o card à 11ª posição, depois das dez matérias atualizadas mais tarde no mesmo lote.
+    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[10]
+    assert "news-card-compact" in cards[10].split(">", 1)[0]
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
-    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-06</lastmod>" in sitemap
+    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-09</lastmod>" in sitemap
 
 
 def test_re_3717_callout_keeps_each_measure_inside_its_own_item():

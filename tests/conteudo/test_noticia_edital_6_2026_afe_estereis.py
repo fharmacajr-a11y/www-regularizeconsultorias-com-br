@@ -13,6 +13,8 @@ INDEX_PATH = ROOT / "noticias" / "index.html"
 SITEMAP_PATH = ROOT / "sitemap.xml"
 PUBLIC_URL = f"https://www.regularizeconsultorias.com.br{ROUTE}"
 PUBLISHED = "2026-09-14T12:20:35-03:00"
+# Atualização de 09/10/2026: a ficha do AnvisaLegis apresenta o chamamento como encerrado (período até 07/10).
+UPDATED = "2026-10-09T20:25:00-03:00"
 TITLE = "Anvisa convoca estabelecimentos com AFE para preparações estéreis"
 # OG temporária: fallback genérico de notícias por decisão editorial, até existir a OG específica.
 GENERIC_OG_PATH = ROOT / "assets" / "img" / "og" / "noticias.jpg"
@@ -63,11 +65,11 @@ def test_page_identity_metadata_and_newsarticle():
     assert news[0]["headline"] == TITLE
     assert news[0]["url"] == PUBLIC_URL
     assert news[0]["datePublished"] == PUBLISHED
-    assert news[0]["dateModified"] == PUBLISHED
+    assert news[0]["dateModified"] == UPDATED
     assert f'<meta property="article:published_time" content="{PUBLISHED}" />' in html
-    assert f'<meta property="article:modified_time" content="{PUBLISHED}" />' in html
-    assert "Atualizado em" not in html
+    assert f'<meta property="article:modified_time" content="{UPDATED}" />' in html
     assert f'<time datetime="{PUBLISHED}">14/09/2026</time> às 12h20' in html
+    assert f'Atualizado em:</span> <time datetime="{UPDATED}">09/10/2026</time> às 20h25' in html
 
 
 def test_official_facts_of_the_edital_are_preserved():
@@ -88,6 +90,20 @@ def test_official_facts_of_the_edital_are_preserved():
         "monitoramento de risco sanitário",
     ):
         assert term in body, term
+
+
+def test_closed_period_is_reported_as_a_historical_record():
+    html = _html()
+    body = _text(_body(html))
+
+    assert "consta como encerrado" in _text(html[: html.index("</head>")])
+    assert "Chamamento consta como encerrado no AnvisaLegis" in body
+    assert "Em consulta de 09/10/2026, a ficha do Edital de Chamamento nº 6/2026 no AnvisaLegis apresenta o status Encerrado" in body
+    assert "O que avaliar depois do encerramento" in body
+    # O período registrado é passado; 08/10 não é tratado como prazo oficial.
+    for present in ("consta como ativo no AnvisaLegis", "o período registrado vai de", "O que avaliar agora", "abre período"):
+        assert present not in body, present
+    assert "08/10" not in body
 
 
 def test_subject_7112_is_restricted_to_excluding_an_activity_not_exercised():
@@ -157,8 +173,9 @@ def test_news_index_has_one_card_and_one_itemlist_entry():
     assert html.count(f'href="{ROUTE}"') == 1
     assert html.count(f'"url":"{PUBLIC_URL}"') == 1
     assert len(own) == 1
-    assert f'data-updated="{PUBLISHED}"' in own[0]
-    assert f'<time datetime="{PUBLISHED}" class="leading-none">14/09/2026 • 12h20</time>' in own[0]
+    assert f'data-updated="{UPDATED}"' in own[0]
+    assert f'<time datetime="{UPDATED}" class="leading-none">09/10/2026 • 20h25</time>' in own[0]
+    assert "o período registrado terminou em 07/10/2026 e consta como encerrado" in own[0]
     assert ">Atualização</span>" in own[0] and "Ler atualização" in own[0]
     assert len(cards) == 83
 
@@ -167,4 +184,4 @@ def test_sitemap_lists_the_new_url_once():
     sitemap = SITEMAP_PATH.read_text(encoding="utf-8")
 
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
-    assert f"<loc>{PUBLIC_URL}</loc>\n    <lastmod>2026-09-14</lastmod>" in sitemap
+    assert f"<loc>{PUBLIC_URL}</loc>\n    <lastmod>2026-10-09</lastmod>" in sitemap

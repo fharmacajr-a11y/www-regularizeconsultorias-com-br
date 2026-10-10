@@ -347,11 +347,10 @@ def test_metadados_contem_exatamente_divergencias_relevantes_e_validacao_pdf():
             registro["codigo_ibge"],
         ),
     )
-    assert metadados["validacao_pdf"]["nomes_a_revisar"] == [
-        "Passa-Vinte -> Passa Vinte",
-        "São Luiz -> São Luiz do Anauá",
-        "Fortaleza do Tabocão -> Tabocão",
-    ]
+    # A lista de 09/10/2026 não veio acompanhada de PDF oficial; o PDF do site é gerado da própria base.
+    assert metadados["validacao_pdf"] == IMPORTADOR.VALIDACAO_PDF
+    assert metadados["validacao_pdf"]["nomes_a_revisar"] == []
+    assert "gerado a partir desta base JSON" in metadados["validacao_pdf"]["arquivo"]
 
 
 def test_vagas_preenchidas_positivas_e_equacao_sao_aceitas(tmp_path):
@@ -376,6 +375,25 @@ def test_vagas_preenchidas_positivas_e_equacao_sao_aceitas(tmp_path):
     assert divergentes["quantidade_divergencias_nominais_relevantes"] == 0
 
 
+def test_regiao_fora_do_dominio_usa_a_regiao_da_uf_e_fica_registrada(tmp_path):
+    """A lista de 09/10/2026 traz "SULSUDESTE" para Adrianópolis (PR); a exibição usa a região da UF."""
+    referencia = [{"id": 4100202, "nome": "Adrianópolis", "uf": {"sigla": "PR"}}]
+    registros, comparacao = importar(
+        tmp_path,
+        [["SULSUDESTE", "PR", 410020, "ADRIANOPOLIS", 2, 1, 1]],
+        referencia=referencia,
+        esperado=esperados(registros=1, ufs=1, totais=2, preenchidas=1, disponiveis=1),
+    )
+    assert registros[0]["regiao"] == "Sul"
+    assert comparacao["regioes_corrigidas_pela_uf"] == [
+        {"codigo_ibge": "4100202", "uf": "PR", "regiao_fonte_ms": "SULSUDESTE", "regiao_exibicao": "Sul"}
+    ]
+    metadados = json.loads(
+        (Path(__file__).parents[2] / "data" / "farmacia-popular" / "metadados.json").read_text(encoding="utf-8")
+    )
+    assert metadados["regioes_corrigidas_pela_uf"] == comparacao["regioes_corrigidas_pela_uf"]
+
+
 def test_base_03_09_tem_totais_e_ordem():
     base = Path(__file__).parents[2] / "data" / "farmacia-popular" / "vagas-2026-09-03.json"
     assert base.is_file(), "Arquivo da base 2026-09-03 deve existir."
@@ -396,6 +414,22 @@ def test_base_03_09_tem_totais_e_ordem():
         and registro["codigo_ibge"].isdigit()
         for registro in registros
     )
+    assert len({registro["codigo_ibge"] for registro in registros}) == len(registros)
+    assert registros == sorted(
+        registros,
+        key=lambda registro: (registro["uf"], registro["municipio_exibicao"], registro["codigo_ibge"]),
+    )
+
+
+def test_base_09_10_tem_totais_e_ordem():
+    base = Path(__file__).parents[2] / "data" / "farmacia-popular" / "vagas-2026-10-09.json"
+    registros = json.loads(base.read_text(encoding="utf-8"))
+    esperados = IMPORTADOR.TOTAIS_BASE_2026_10_09
+    assert len(registros) == esperados.registros == 1500
+    assert len({registro["uf"] for registro in registros}) == esperados.ufs == 26
+    assert sum(registro["vagas_totais"] for registro in registros) == esperados.vagas_totais == 3000
+    assert sum(registro["vagas_preenchidas"] for registro in registros) == esperados.vagas_preenchidas == 926
+    assert sum(registro["vagas_disponiveis"] for registro in registros) == esperados.vagas_disponiveis == 2074
     assert len({registro["codigo_ibge"] for registro in registros}) == len(registros)
     assert registros == sorted(
         registros,
@@ -428,13 +462,14 @@ def test_links_oficiais_da_base_apontam_para_a_documentacao_de_participacao():
     caminho = Path(__file__).parents[2] / "data" / "farmacia-popular" / "metadados.json"
     metadados = json.loads(caminho.read_text(encoding="utf-8"))
     pagina = "https://www.gov.br/saude/pt-br/composicao/sectics/farmacia-popular/participacao/documentacao"
-    planilha = pagina + "/lista-de-municipios-com-vagas-03-09-2026.xlsx"
+    planilha = pagina + "/lista-de-municipios-com-vagas-09-10-2026.xlsx"
 
     assert metadados["url_oficial_visualizacao"] == pagina == IMPORTADOR.URL_OFICIAL_VISUALIZACAO
     assert metadados["url_oficial_download"] == planilha == IMPORTADOR.URL_OFICIAL_DOWNLOAD
     assert "/credenciamento" not in metadados["url_oficial_visualizacao"] + metadados["url_oficial_download"]
-    # Corrigir o link não muda a posição nem os números da base validada.
-    assert metadados["data_oficial"] == "2026-09-03"
-    assert metadados["sha256_xlsx"] == "d4fcf633c853581f6ff3093d71022e8dbe2d9428e87ed7283d7863d7dfa92dff"
-    assert metadados["quantidade_registros"] == 1541
-    assert metadados["totais_vagas"] == {"vagas_totais": 3082, "vagas_preenchidas": 963, "vagas_disponiveis": 2119}
+    # Metadados da lista oficial de 09/10/2026 (planilha de 75.179 bytes) importada neste lote.
+    assert metadados["data_oficial"] == "2026-10-09" == IMPORTADOR.DATA_OFICIAL
+    assert metadados["titulo_oficial"] == IMPORTADOR.TITULO_OFICIAL
+    assert metadados["sha256_xlsx"] == "b462b7840432d38daf838f482d6c25fd8622404d28ffe8cd3288fefe3b766a87"
+    assert metadados["quantidade_registros"] == 1500
+    assert metadados["totais_vagas"] == {"vagas_totais": 3000, "vagas_preenchidas": 926, "vagas_disponiveis": 2074}

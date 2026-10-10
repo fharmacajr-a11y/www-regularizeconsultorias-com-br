@@ -103,7 +103,8 @@ def test_farmacia_popular_has_expected_sitemap_metadata():
     matches = [url for url in urls if url.findtext("s:loc", namespaces=NS) == PUBLIC_URL]
 
     assert len(matches) == 1
-    assert matches[0].findtext("s:lastmod", namespaces=NS) == "2026-09-03"
+    # Base de vagas de 09/10/2026 importada no lote de conteúdo e dados.
+    assert matches[0].findtext("s:lastmod", namespaces=NS) == "2026-10-09"
     assert matches[0].findtext("s:changefreq", namespaces=NS) == "monthly"
     assert matches[0].findtext("s:priority", namespaces=NS) == "0.9"
 
@@ -126,9 +127,9 @@ def test_portaria_news_news_index_and_comunicado_have_expected_sitemap_metadata(
     _, urls = _url_elements()
     by_location = {url.findtext("s:loc", namespaces=NS): url for url in urls}
 
-    assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-08"
-    assert by_location[COMUNICADO_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-07"
-    assert by_location[PORTARIA_NEWS_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-06"
+    assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-09"
+    assert by_location[COMUNICADO_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-09"
+    assert by_location[PORTARIA_NEWS_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-09"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:changefreq", namespaces=NS) == "monthly"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:priority", namespaces=NS) == "0.8"
 

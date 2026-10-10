@@ -167,7 +167,7 @@ def test_news_index_has_one_card_and_one_itemlist_entry():
     assert f'data-title="{TITLE}"' in own[0] and f">{TITLE}</h2>" in own[0]
     assert "prorrogou até 9 de outubro" in own[0]
     # Alteração material em 05/10/2026: após as matérias atualizadas da 1M v2; fora dos cinco destaques.
-    assert cards.index(own[0]) == 21
+    assert cards.index(own[0]) == 31
     assert "news-card-compact" in own[0].split(">", 1)[0]
     assert ">Atualização</span>" in own[0] and "Ler atualização" in own[0]
     assert len(cards) == 83

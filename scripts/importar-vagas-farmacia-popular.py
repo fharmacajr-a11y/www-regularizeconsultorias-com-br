@@ -23,7 +23,7 @@ except ImportError as exc:  # pragma: no cover - depende do ambiente de execucao
     raise SystemExit("Dependencia ausente: instale openpyxl para ler o XLSX.") from exc
 
 
-IMPORTADOR_VERSAO = "1.1.0"
+IMPORTADOR_VERSAO = "1.2.0"
 ABA_ESPERADA = "Planilha1"
 COLUNAS_OBRIGATORIAS = (
     "Região",
@@ -42,8 +42,10 @@ URL_OFICIAL_VISUALIZACAO = (
 URL_OFICIAL_DOWNLOAD = (
     "https://www.gov.br/saude/pt-br/composicao/sectics/"
     "farmacia-popular/participacao/documentacao/"
-    "lista-de-municipios-com-vagas-03-09-2026.xlsx"
+    "lista-de-municipios-com-vagas-09-10-2026.xlsx"
 )
+TITULO_OFICIAL = "Anexo I - Lista de Municípios com Vagas (atualizada em 09/10/2026)"
+DATA_OFICIAL = "2026-10-09"
 
 
 class ImportacaoError(ValueError):
@@ -83,6 +85,14 @@ TOTAIS_BASE_2026_09_03 = TotaisEsperados(
     vagas_disponiveis=2119,
 )
 
+TOTAIS_BASE_2026_10_09 = TotaisEsperados(
+    registros=1500,
+    ufs=26,
+    vagas_totais=3000,
+    vagas_preenchidas=926,
+    vagas_disponiveis=2074,
+)
+
 REGIOES_EXIBICAO = {
     "NORTE": "Norte",
     "NORDESTE": "Nordeste",
@@ -91,18 +101,22 @@ REGIOES_EXIBICAO = {
     "SUL": "Sul",
 }
 
+REGIAO_POR_UF = {
+    **dict.fromkeys(("AC", "AM", "AP", "PA", "RO", "RR", "TO"), "Norte"),
+    **dict.fromkeys(("AL", "BA", "CE", "MA", "PB", "PE", "PI", "RN", "SE"), "Nordeste"),
+    **dict.fromkeys(("DF", "GO", "MS", "MT"), "Centro-Oeste"),
+    **dict.fromkeys(("ES", "MG", "RJ", "SP"), "Sudeste"),
+    **dict.fromkeys(("PR", "RS", "SC"), "Sul"),
+}
+
 AVISOS_BASE = [
     "O PDF publicado nao foi usado como fonte do JSON.",
     "O XLSX da fonte usa codigos IBGE de seis digitos; o setimo digito foi obtido por correspondencia de codigo na referencia IBGE.",
 ]
 
 VALIDACAO_PDF = {
-    "arquivo": "PDF publicado na pagina oficial de credenciamento",
-    "nomes_a_revisar": [
-        "Passa-Vinte -> Passa Vinte",
-        "São Luiz -> São Luiz do Anauá",
-        "Fortaleza do Tabocão -> Tabocão",
-    ],
+    "arquivo": "nenhum PDF oficial acompanha a lista de 09/10/2026; o PDF do site e gerado a partir desta base JSON",
+    "nomes_a_revisar": [],
 }
 
 
@@ -324,13 +338,14 @@ def _linhas_planilha(caminho: Path) -> Iterable[tuple[int, tuple[Any, ...]]]:
 def importar_registros(
     caminho_xlsx: Path,
     referencia: dict[str, dict[str, str]],
-    esperados: TotaisEsperados = TOTAIS_BASE_2026_09_03,
+    esperados: TotaisEsperados = TOTAIS_BASE_2026_10_09,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     prefixos: dict[str, list[str]] = {}
     for codigo in referencia:
         prefixos.setdefault(codigo[:6], []).append(codigo)
 
     registros: list[dict[str, Any]] = []
+    regioes_corrigidas: list[dict[str, str]] = []
     codigos_vistos: set[str] = set()
     for numero_linha, linha in _linhas_planilha(caminho_xlsx):
         regiao_fonte, uf_fonte, codigo_fonte, nome_fonte, total, preenchidas, disponiveis = linha
@@ -355,6 +370,15 @@ def importar_registros(
             raise ImportacaoError(
                 f"UF incompatível na linha {numero_linha}: planilha={uf}, IBGE={municipio['uf']} para {codigo}"
             )
+        # A região exibida é a da UF. Quando a planilha traz outro valor (por exemplo, "SULSUDESTE"
+        # para um município do PR na lista de 09/10/2026), o caso é registrado nos metadados.
+        regiao_uf = REGIAO_POR_UF.get(uf)
+        if regiao_uf is None:
+            raise ImportacaoError(f"UF desconhecida na linha {numero_linha}: {uf}")
+        if REGIOES_EXIBICAO.get(regiao.upper()) != regiao_uf:
+            regioes_corrigidas.append(
+                {"codigo_ibge": codigo, "uf": uf, "regiao_fonte_ms": regiao, "regiao_exibicao": regiao_uf}
+            )
         vagas_totais = _inteiro_nao_negativo(total, "Vagas totais", numero_linha)
         vagas_preenchidas = _inteiro_nao_negativo(preenchidas, "Vagas preenchidas", numero_linha)
         vagas_disponiveis = _inteiro_nao_negativo(disponiveis, "Vagas disponíveis", numero_linha)
@@ -366,7 +390,7 @@ def importar_registros(
         registros.append(
             {
                 "codigo_ibge": codigo,
-                "regiao": REGIOES_EXIBICAO.get(regiao.upper(), regiao),
+                "regiao": regiao_uf,
                 "uf": uf,
                 "municipio_fonte_ms": nome,
                 "municipio_exibicao": municipio["nome"],
@@ -396,7 +420,10 @@ def importar_registros(
                 f"{campo} inesperado: recebido={totais[campo]}, esperado={esperado}"
             )
     registros.sort(key=lambda registro: (registro["uf"], registro["municipio_exibicao"], registro["codigo_ibge"]))
-    return registros, resumir_comparacao_nominal(registros)
+    comparacao = resumir_comparacao_nominal(registros)
+    if regioes_corrigidas:
+        comparacao["regioes_corrigidas_pela_uf"] = sorted(regioes_corrigidas, key=lambda item: item["codigo_ibge"])
+    return registros, comparacao
 
 
 def escrever_json(caminho: Path, dados: Any) -> None:
@@ -424,8 +451,8 @@ def criar_metadados(
 ) -> dict[str, Any]:
     return {
         "orgao_origem": "Ministério da Saúde",
-        "titulo_oficial": "Anexo I - Lista de municípios - atualizada em 03/09/2026",
-        "data_oficial": "2026-09-03",
+        "titulo_oficial": TITULO_OFICIAL,
+        "data_oficial": DATA_OFICIAL,
         "url_oficial_visualizacao": URL_OFICIAL_VISUALIZACAO,
         "url_oficial_download": URL_OFICIAL_DOWNLOAD,
         "data_importacao": data_importacao,

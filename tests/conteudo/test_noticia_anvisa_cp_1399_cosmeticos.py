@@ -39,8 +39,8 @@ def test_cp_1399_is_recorded_as_closed_on_the_existing_article():
 def test_listing_places_the_updated_cosmetics_card_eighth():
     html = INDEX.read_text(encoding="utf-8")
     cards = _cards(html)
-    # Fase 1M v2: Seis matérias revistas em 08/10 sobem para o topo.
-    card = cards[22]
+    # Lote de 09/10/2026: as 13 matérias atualizadas no lote sobem pelo carimbo; as demais descem.
+    card = cards[32]
 
     assert len(cards) == 83
     assert "/noticias/anvisa-atualiza-listas-substancias-cosmeticos/" in card
@@ -51,7 +51,7 @@ def test_listing_places_the_updated_cosmetics_card_eighth():
     assert '>Todos</span><span class="text-xs text-slate-400">83<' in html
     assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in html
     assert (
-        '"position":23,"url":"https://www.regularizeconsultorias.com.br'
+        '"position":33,"url":"https://www.regularizeconsultorias.com.br'
         '/noticias/anvisa-atualiza-listas-substancias-cosmeticos/"'
     ) in html
     sitemap = SITEMAP.read_text(encoding="utf-8")

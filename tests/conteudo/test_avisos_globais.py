@@ -20,7 +20,7 @@ CSS_PATHS = (
     ROOT / "assets/css/custom.css",
     ROOT / "assets/css/custom.min.css",
 )
-CURRENT_STORAGE_VERSION = "2026-10-06-avisos-8"
+CURRENT_STORAGE_VERSION = "2026-10-09-avisos-7"
 AFE_ROUTE = "/noticias/anvisa-edital-6-2026-afe-manipulacao-preparacoes-estereis/"
 CADASTRO_ROUTE = "/noticias/cadastro-anvisa-govbr-transicao-sistemas/"
 CNES_ROUTE = "/noticias/cnes-competencia-09-2026-prazo-transmissao/"
@@ -165,7 +165,7 @@ def _badge_texts(page):
     return page.locator(".aviso-badge").all_text_contents()
 
 
-def test_comunicado_has_eight_active_notices_seven_historical_and_two_static_badges():
+def test_comunicado_has_seven_active_notices_eight_historical_and_two_static_badges():
     root = _parse_html(COMUNICADO_PATH)
     notice_lists = [node for node in root.descendants() if node.attrs.get("id") == "avisos-lista"]
     assert len(notice_lists) == 1
@@ -180,11 +180,11 @@ def test_comunicado_has_eight_active_notices_seven_historical_and_two_static_bad
     badges = [node for node in root.descendants() if node.has_class("aviso-badge")]
 
     assert len(articles) == 15
-    assert len(active) == 8
-    assert Counter(article.attrs.get("data-status", "").casefold() for article in inactive) == {"resolved": 7}
+    assert len(active) == 7
+    assert Counter(article.attrs.get("data-status", "").casefold() for article in inactive) == {"resolved": 8}
     assert all("data-placeholder" not in article.attrs for article in articles)
     assert len(badges) == 2
-    assert [badge.text() for badge in badges] == ["8", "8"]
+    assert [badge.text() for badge in badges] == ["7", "7"]
 
 
 def test_comunicado_editorial_organization_and_active_notice_content():
@@ -221,9 +221,9 @@ def test_comunicado_editorial_organization_and_active_notice_content():
         for article in historical
         if any(node.tag == "a" and node.attrs.get("href") == CADASTRO_ROUTE for node in article.descendants())
     ]
-    produtos = historical[1]
+    produtos = historical[2]
     produtos_links = [node.attrs.get("href") for node in produtos.descendants() if node.tag == "a"]
-    renewal = historical[2]
+    renewal = historical[3]
     renewal_links = [node.attrs.get("href") for node in renewal.descendants() if node.tag == "a"]
     cnes_active = [
         article
@@ -231,33 +231,38 @@ def test_comunicado_editorial_organization_and_active_notice_content():
         if any(node.tag == "a" and node.attrs.get("href") == CNES_ROUTE for node in article.descendants())
     ]
 
-    assert len(active) == 8
-    assert len(historical) == 7
+    assert len(active) == 7
+    assert len(historical) == 8
     assert len(articles) == 15
-    assert len(afe_active) == 1
-    assert not afe_historical
+    # Edital 6/2026: a ficha do AnvisaLegis apresenta o chamamento como encerrado (consulta de 09/10/2026).
+    assert not afe_active
+    assert len(afe_historical) == 1
     assert not cadastro_active
     assert len(cadastro_historical) == 1
     assert "Histórico / encerrados" in headings
-    afe = afe_active[0]
+    afe = afe_historical[0]
     afe_text = afe.text()
     afe_links = [node for node in afe.descendants() if node.tag == "a"]
-    assert afe.attrs.get("data-status") == "informativo"
+    assert afe is historical[0]
+    assert afe.attrs.get("data-status") == "resolved"
     assert afe.attrs.get("data-category") == "anvisa"
-    assert afe.attrs.get("data-effective-at") == "2026-10-05T15:43:00-03:00"
+    assert "ENCERRADO" in afe_text and "09/10/2026 • 20h25" in afe_text
+    assert "comunicado-historico__control" in afe_links[0].attrs.get("class", "").split()
     assert len(afe_links) == 1
     assert afe_links[0].attrs.get("href") == AFE_ROUTE
     assert "Ver notícia sobre o Edital 6/2026" in afe_links[0].text()
     for term in (
         "estabelecimentos com AFE vigente para manipulação de preparações estéreis",
-        "atividades constantes da AFE correspondem às efetivamente exercidas",
+        "atividades constantes da AFE correspondiam às efetivamente exercidas",
+        "08/09/2026",
         "07/10/2026",
-        "conforme a ficha do AnvisaLegis",
+        "ficha do AnvisaLegis",
+        "apresenta o chamamento como encerrado em consulta de 09/10/2026",
         "30 dias corridos a partir de um dia útil após a publicação",
-        "situação regulatória deve ser analisada para definição da adequação aplicável",
-        "A Regularize Consultoria pode avaliar a situação da AFE e conduzir a adequação necessária",
+        "Comunicado mantido como registro do chamamento, sem caráter de aviso atual",
     ):
         assert term in afe_text
+    assert "Edital 6/2026" not in active_text
     assert "7112" not in source
     assert "o edital indica o assunto" not in source
     assert "como preparar o estabelecimento" not in source
@@ -387,11 +392,13 @@ def test_comunicado_editorial_organization_and_active_notice_content():
     assert "nota da API" in active_text
     assert "01/10/2026" in active_text
     assert "não comprova operação uniforme" in active_text
-    assert "03/09/2026" in active_text
-    assert "1.541 municípios" in active_text
-    assert "3.082 vagas totais" in active_text
-    assert "963 preenchidas" in active_text
-    assert "2.119 disponíveis" in active_text
+    # Lista oficial de municípios com vagas de 09/10/2026, que substitui a de 03/09/2026.
+    assert "09/10/2026" in active_text
+    assert "1.500 municípios" in active_text
+    assert "3.000 vagas totais" in active_text
+    assert "926 preenchidas" in active_text
+    assert "2.074 disponíveis" in active_text
+    assert "lista vigente" not in active_text.casefold()
     assert "instabilidade observada" not in active_text
     assert "junho de 2026" in active_text
     assert "ciclo de maio de 2026" in historical_text
@@ -416,25 +423,24 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     timestamps = [article.attrs.get("data-effective-at") for article in active]
 
     assert titles == [
+        "Farmácia Popular: confira municípios com vagas para credenciamento",
         "SNCR: cronograma anunciado e nota da API",
         "Polícia Federal: mapas de setembro dos produtos químicos controlados até 15/10",
         "MAPA: estoques de aditivos com antimicrobianos do Anexo têm marco em 23/10",
         "CNES: envio da competência 09/2026 prorrogado até 9 de outubro",
-        "Edital 6/2026: AFE para manipulação de preparações estéreis",
-        "Farmácia Popular: confira municípios com vagas para credenciamento",
         "Farmácia Popular: atenção aos materiais no período eleitoral",
         "Farmácia Popular: confira as listas EAN vigentes e os controles de prescrição",
     ]
     assert all(timestamp for timestamp in timestamps)
     assert all(len([node for node in article.descendants() if node.tag == "time"]) == 1 for article in active)
     assert timestamps == sorted(timestamps, reverse=True)
-    assert "URGENTE" in active[6].text()
+    assert "URGENTE" in active[5].text()
 
-    useful_badge = next(node for node in active[7].descendants() if node.tag == "span" and node.text() == "ÚTIL")
-    useful_cta = next(node for node in active[7].descendants() if node.tag == "a" and "Conferir orientações" in node.text())
-    informative_cta = next(node for node in active[4].descendants() if node.tag == "a" and "Ver notícia sobre o Edital 6/2026" in node.text())
+    useful_badge = next(node for node in active[6].descendants() if node.tag == "span" and node.text() == "ÚTIL")
+    useful_cta = next(node for node in active[6].descendants() if node.tag == "a" and "Conferir orientações" in node.text())
+    informative_cta = next(node for node in active[4].descendants() if node.tag == "a" and "Leia a notícia sobre a competência 09/2026" in node.text())
     assert {"border-emerald-200", "bg-emerald-50", "text-emerald-700"} <= set(useful_badge.attrs["class"].split())
-    assert {"border-emerald-200", "bg-emerald-50"} <= set(active[7].attrs["class"].split())
+    assert {"border-emerald-200", "bg-emerald-50"} <= set(active[6].attrs["class"].split())
     informative_to_useful = {
         "comunicado-cta--informativo": "comunicado-cta--util",
         "border-orange-200": "border-emerald-200",
@@ -475,36 +481,38 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
         any("comunicado-historico__meta" in node.attrs.get("class", "").split() for node in article.descendants())
         for article in historical
     )
-    assert "ENCERRADO" in historical[0].text() and "07/10/2026 • 10h53" in historical[0].text()
-    assert "ciclo de regularização cadastral de maio de 2026" in historical[0].text()
-    assert "Ver registro do ciclo" in historical[0].text()
-    assert "O que fazer agora" not in historical[0].text()
-    assert not any(node.tag == "strong" and (node.text() or "") == "Atenção:" for node in historical[0].descendants())
-    assert "HISTÓRICO" in historical[1].text() and "06/10/2026 • 14h27" in historical[1].text()
-    assert "Anvisa suspende medicamento e proíbe produtos irregulares" in historical[1].text()
-    assert "ENCERRADO" in historical[2].text() and "03/09/2026 • 22h49" in historical[2].text()
-    assert "ciclo de renovação foi encerrado em 31 de agosto" in historical[2].text()
-    assert "HISTÓRICO" in historical[3].text() and "20/05/2026 • 13h00" in historical[3].text()
-    assert "HISTÓRICO • maio de 2026" not in historical[3].text()
-    assert "HISTÓRICO" in historical[4].text() and "19/05/2026 • 09h00" in historical[4].text()
-    assert "Cadastro Anvisa/Gov.br" in historical[4].text()
-    assert [next(node.text() for node in article.descendants() if node.has_class("comunicado-historico__badge")) for article in historical] == ["ENCERRADO", "HISTÓRICO", "ENCERRADO", "HISTÓRICO", "HISTÓRICO", "ENCERRADO", "ENCERRADO"]
+    assert "ENCERRADO" in historical[0].text() and "09/10/2026 • 20h25" in historical[0].text()
+    assert "Edital 6/2026: AFE para manipulação de preparações estéreis" in historical[0].text()
+    assert "ENCERRADO" in historical[1].text() and "07/10/2026 • 10h53" in historical[1].text()
+    assert "ciclo de regularização cadastral de maio de 2026" in historical[1].text()
+    assert "Ver registro do ciclo" in historical[1].text()
+    assert "O que fazer agora" not in historical[1].text()
+    assert not any(node.tag == "strong" and (node.text() or "") == "Atenção:" for node in historical[1].descendants())
+    assert "HISTÓRICO" in historical[2].text() and "06/10/2026 • 14h27" in historical[2].text()
+    assert "Anvisa suspende medicamento e proíbe produtos irregulares" in historical[2].text()
+    assert "ENCERRADO" in historical[3].text() and "03/09/2026 • 22h49" in historical[3].text()
+    assert "ciclo de renovação foi encerrado em 31 de agosto" in historical[3].text()
+    assert "HISTÓRICO" in historical[4].text() and "20/05/2026 • 13h00" in historical[4].text()
+    assert "HISTÓRICO • maio de 2026" not in historical[4].text()
+    assert "HISTÓRICO" in historical[5].text() and "19/05/2026 • 09h00" in historical[5].text()
+    assert "Cadastro Anvisa/Gov.br" in historical[5].text()
+    assert [next(node.text() for node in article.descendants() if node.has_class("comunicado-historico__badge")) for article in historical] == ["ENCERRADO", "ENCERRADO", "HISTÓRICO", "ENCERRADO", "HISTÓRICO", "HISTÓRICO", "ENCERRADO", "ENCERRADO"]
     assert all("NORMALIZADO" not in article.text() for article in historical)
-    assert all("28/04/2026" in article.text() and "12h57" in article.text() for article in historical[5:])
+    assert all("28/04/2026" in article.text() and "12h57" in article.text() for article in historical[6:])
     historical_icons = [
         node
         for article in historical
         for node in article.descendants()
         if node.has_class("comunicado-historico__icon")
     ]
-    assert len(historical_icons) == 7
+    assert len(historical_icons) == 8
     assert all({"bg-slate-100", "w-9", "h-9"} <= set(node.attrs["class"].split()) for node in historical_icons)
     assert all(
         "text-slate-600" in next(node for node in icon.descendants() if node.tag == "svg").attrs["class"].split()
         for icon in historical_icons
     )
     historical_controls = [node for article in historical for node in article.descendants() if node.tag in {"a", "button"} and "comunicado-historico__control" in node.attrs.get("class", "").split()]
-    assert len(historical_controls) == 8
+    assert len(historical_controls) == 9
     assert all({"border-slate-300", "text-slate-700", "focus:ring-slate-300"} <= set(node.attrs["class"].split()) for node in historical_controls)
     assert all(not any("blue" in class_name for class_name in node.attrs["class"].split()) for node in historical_controls)
     assert "#avisos-lista .comunicado-historico__control:focus { outline: none; box-shadow: none; }" in source
@@ -528,7 +536,7 @@ def test_comunicado_useful_cta_computed_states(site_url, browser):
     try:
         page.goto(f"{site_url}/comunicado/", wait_until="networkidle")
         useful_cta = page.locator('a[href="/noticias/farmacia-popular-listas-ean-junho-2026/"]')
-        informative_cta = page.locator(f'a[href="{AFE_ROUTE}"]')
+        informative_cta = page.locator(f'a[href="{CNES_ROUTE}"]')
 
         def computed_state(locator):
             return locator.evaluate(
@@ -584,8 +592,8 @@ def test_comunicado_useful_cta_computed_states(site_url, browser):
 
 
 def test_javascript_constants_and_files_are_exactly_equivalent():
-    expected_fallback = re.compile(r"^\s*var AVISOS_FALLBACK_COUNT = 8;$", re.MULTILINE)
-    expected_version = re.compile(r"^\s*var AVISOS_STORAGE_VERSION = '2026-10-06-avisos-8';$", re.MULTILINE)
+    expected_fallback = re.compile(r"^\s*var AVISOS_FALLBACK_COUNT = 7;$", re.MULTILINE)
+    expected_version = re.compile(r"^\s*var AVISOS_STORAGE_VERSION = '2026-10-09-avisos-7';$", re.MULTILINE)
     for path in MAIN_PATHS:
         source = path.read_text(encoding="utf-8")
         assert len(expected_fallback.findall(source)) == 1, path
@@ -609,7 +617,7 @@ def test_every_public_navbar_has_two_complete_notice_links():
         for link in links:
             badges = [node for node in link.descendants() if node.has_class("aviso-badge")]
             assert len(badges) == 1, relative_path
-            assert badges[0].text() == "8", relative_path
+            assert badges[0].text() == "7", relative_path
             assert badges[0].text() != "3", relative_path
             svgs = [node for node in link.descendants() if node.tag == "svg"]
             assert len(svgs) == 1, relative_path
@@ -648,7 +656,7 @@ def test_tablet_hide_regression_is_absent_and_navbar_rules_remain():
             assert rule.search(compact), f"{path}: {rule.pattern}"
 
 
-def test_fallback_is_eight_before_delayed_sync(browser, site_url):
+def test_fallback_is_seven_before_delayed_sync(browser, site_url):
     context = new_context(browser)
     context.add_init_script(
         "const originalFetch = window.fetch.bind(window);"
@@ -657,8 +665,8 @@ def test_fallback_is_eight_before_delayed_sync(browser, site_url):
     page = context.new_page()
     try:
         page.goto(f"{site_url}/", wait_until="domcontentloaded")
-        page.wait_for_function("[...document.querySelectorAll('.aviso-badge')].every(b => b.textContent.trim() === '8')")
-        assert _badge_texts(page) == ["8", "8"]
+        page.wait_for_function("[...document.querySelectorAll('.aviso-badge')].every(b => b.textContent.trim() === '7')")
+        assert _badge_texts(page) == ["7", "7"]
         assert "3" not in _badge_texts(page)
     finally:
         context.close()
@@ -673,16 +681,16 @@ def test_old_storage_is_ignored_when_sync_fails(browser, site_url):
     try:
         page.route("**/comunicado/", lambda route: route.abort("failed"))
         page.goto(f"{site_url}/", wait_until="domcontentloaded")
-        page.wait_for_function("[...document.querySelectorAll('.aviso-badge')].every(b => b.textContent.trim() === '8')")
-        assert _badge_texts(page) == ["8", "8"]
+        page.wait_for_function("[...document.querySelectorAll('.aviso-badge')].every(b => b.textContent.trim() === '7')")
+        assert _badge_texts(page) == ["7", "7"]
         assert "3" not in _badge_texts(page)
         assert not page_errors
     finally:
         context.close()
 
 
-def test_successful_sync_persists_eight_and_hides_zero(browser, site_url):
-    for count in (8, 0):
+def test_successful_sync_persists_seven_and_hides_zero(browser, site_url):
+    for count in (7, 0):
         context = new_context(browser)
         page = context.new_page()
         try:
@@ -694,7 +702,7 @@ def test_successful_sync_persists_eight_and_hides_zero(browser, site_url):
             page.wait_for_function(f"localStorage.getItem('avisos_count') === '{count}'")
             assert page.evaluate("localStorage.getItem('avisos_count_version')") == CURRENT_STORAGE_VERSION
             if count:
-                assert _badge_texts(page) == ["8", "8"]
+                assert _badge_texts(page) == ["7", "7"]
                 assert all(
                     page.locator(".aviso-badge").nth(index).evaluate("element => getComputedStyle(element).display") == "flex"
                     for index in range(2)
@@ -718,7 +726,7 @@ def test_responsive_notice_visibility_matrix(browser, site_url):
                 if route != "/comunicado/":
                     page.route(
                         "**/comunicado/",
-                        _notice_response(8),
+                        _notice_response(7),
                     )
                 page.goto(f"{site_url}{route}", wait_until="domcontentloaded")
                 top = page.locator('#navbar > div:first-child > div > div > a[href="/comunicado/"]')
@@ -733,7 +741,7 @@ def test_responsive_notice_visibility_matrix(browser, site_url):
                     toggle.click()
                     assert mobile.is_visible(), (route, width)
                     assert mobile.locator(".aviso-badge").is_visible(), (route, width)
-                    assert mobile.locator(".aviso-badge").text_content().strip() == "8"
+                    assert mobile.locator(".aviso-badge").text_content().strip() == "7"
                 elif width < 900:
                     assert top.is_visible(), (route, width)
                     assert toggle.is_visible(), (route, width)
@@ -743,13 +751,13 @@ def test_responsive_notice_visibility_matrix(browser, site_url):
                     assert mobile.locator(".aviso-badge").is_visible(), (route, width)
                     assert top.evaluate("element => getComputedStyle(element).display") != "none"
                     assert mobile.evaluate("element => getComputedStyle(element).display") != "none"
-                    assert top.locator(".aviso-badge").text_content().strip() == "8"
-                    assert mobile.locator(".aviso-badge").text_content().strip() == "8"
+                    assert top.locator(".aviso-badge").text_content().strip() == "7"
+                    assert mobile.locator(".aviso-badge").text_content().strip() == "7"
                 else:
                     assert top.is_visible(), (route, width)
                     assert not toggle.is_visible(), (route, width)
                     assert not mobile_menu.is_visible(), (route, width)
                     assert top.locator(".aviso-badge").is_visible(), (route, width)
-                    assert top.locator(".aviso-badge").text_content().strip() == "8"
+                    assert top.locator(".aviso-badge").text_content().strip() == "7"
             finally:
                 context.close()

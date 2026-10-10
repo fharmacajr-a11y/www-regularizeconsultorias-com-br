@@ -12,7 +12,8 @@ ARTICLE_URL = f"https://www.regularizeconsultorias.com.br/noticias/{SLUG}/"
 OG_IMAGE_URL = f"https://www.regularizeconsultorias.com.br/assets/img/og/noticias/{SLUG}.webp"
 OG_IMAGE_PATH = ROOT / "assets" / "img" / "og" / "noticias" / f"{SLUG}.webp"
 PUBLISHED_AT = "2026-08-12T09:59:00-03:00"
-MODIFIED_AT = "2026-10-06T18:11:00-03:00"
+# 09/10/2026, 20h33: a FAQ registra que o Grupo de Trabalho foi instituído e está em atividade.
+MODIFIED_AT = "2026-10-09T20:33:00-03:00"
 NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 FARMACIA_POPULAR_PATH = ROOT / "farmacia-popular" / "index.html"
 # Destinos retirados do conteúdo público na Fase 1I. A atribuição permanece em texto.
@@ -177,7 +178,12 @@ def test_portaria_article_preserves_editorial_safeguards_and_internal_flow():
         r'<a\b[^>]*href="/farmacia-popular/"[^>]*>Consultar municípios com vagas</a>',
         html,
     )
-    assert "não a implantação imediata desses serviços" in lowered
+    # O GT existe e funciona (notícia do Ministério de 16/09/2026), mas os serviços estudados não estão implantados.
+    assert "o grupo foi instituído e está em atividade" in lowered
+    assert "notícia do ministério da saúde publicada em 16/09/2026" in lowered
+    assert "não à implantação desses serviços nem à autorização para que farmácias já os ofereçam em nome do pfpb" in lowered
+    assert "autoriza a criação de um grupo de trabalho" not in lowered
+    assert "portaria sctie/ms nº 62" not in lowered
     assert "podem ser aplicadas isolada ou cumulativamente" in lowered
     assert "não representa promessa de credenciamento, renovação, aprovação, desbloqueio ou permanência" in lowered
     assert "renovação anual" in lowered
