@@ -1,7 +1,7 @@
 """Título e resumo dos cards da listagem ficam fora da faixa dos botões flutuantes.
 
 A reserva é uma regra de #news-article-list em pages/noticias.css, com o recuo
-do modelo único dos cards (1px de borda e 1.25rem de padding; até 11/10/2026
+do modelo único dos cards (2px de borda e padding de 1.5rem, ou 2rem a partir de 768px; até 12/10/2026 eram 1px e 1.25rem; até 11/10/2026
 havia também o formato destaque nos cinco primeiros, com border-2, p-6 e md:p-8). O teste abre /noticias/, clica em "Ver mais notícias", leva
 cada linha real do texto (Range.getClientRects) à faixa vertical de cada botão
 visível, rolando a página pelo que os retângulos atuais pedem, e mede a folga
@@ -261,9 +261,8 @@ def test_titulos_e_resumos_fora_da_faixa_dos_botoes(faixa):
         assert [c for c in janela["cenarios"] if c["status"] == "incompleto"] == [], largura
         assert _falhas(janela["cenarios"]) == [], (largura, _falhas(janela["cenarios"]))
         executados = [c for c in janela["cenarios"] if c["status"] == "executado"]
-        # Modelo único (12/10/2026, R1): todo card medido tem news-card-compact, e os medidos incluem os cinco
-        # primeiros e cards revelados por "Ver mais notícias".
-        assert all(c["compacto"] for c in janela["cenarios"]), largura
+        # Os cinco primeiros do resultado são o modelo maior; do sexto em diante, o compacto.
+        assert all((c["card"] >= 5) == c["compacto"] for c in janela["cenarios"]), largura
         assert any(c["card"] < 5 for c in executados) and any(c["card"] >= 5 for c in executados), largura
         for c in janela["cenarios"]:
             if c["status"] == "nao_aplicavel":
@@ -290,8 +289,8 @@ def test_listagem_contagem_ordem_e_cliques(faixa):
     for (largura, altura), janela in faixa.items():
         assert janela["antes"]["cards"] == 83
         # "destaques" conta os cards visíveis sem news-card-compact: com o modelo único (12/10/2026) não há nenhum.
-        assert janela["antes"]["visiveis"] == 5 and janela["antes"]["destaques"] == 0
-        assert janela["depois"]["visiveis"] == 83 and janela["depois"]["destaques"] == 0
+        assert janela["antes"]["visiveis"] == 5 and janela["antes"]["destaques"] == 5
+        assert janela["depois"]["visiveis"] == 83 and janela["depois"]["destaques"] == 5
         assert janela["antes"]["ordem"] == janela["depois"]["ordem"]
         assert janela["depois"]["overflowX"] <= 0, largura
     ordens = {tuple(j["depois"]["ordem"]) for j in faixa.values()}

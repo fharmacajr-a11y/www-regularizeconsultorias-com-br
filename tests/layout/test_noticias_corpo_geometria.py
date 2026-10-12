@@ -238,13 +238,24 @@ with sync_playwright() as playwright:
             data.update({"slug": job["slug"], "familia": job["familia"], "width": width, "height": height})
             results.append(data)
     page.goto(base + "/noticias/", wait_until="load")
+    page.locator("#btn-carregar-mais").click()
     cards = {}
     for width in (390, 1440):
         page.set_viewport_size({"width": width, "height": 800})
         cards[str(width)] = page.evaluate(
-            "() => { const h2 = document.querySelector('#news-article-list .news-card h2');"
-            " return {paddingRight: parseFloat(getComputedStyle(h2).paddingRight),"
-            " overflowX: document.documentElement.scrollWidth - document.documentElement.clientWidth}; }"
+            '''() => {
+              const lista = [...document.querySelectorAll('#news-article-list .news-card')];
+              const ler = (card) => {
+                const h2 = card.querySelector('h2');
+                const cs = getComputedStyle(card);
+                return {compacto: card.classList.contains('news-card-compact'),
+                        paddingRight: parseFloat(getComputedStyle(h2).paddingRight),
+                        borda: parseFloat(cs.borderRightWidth),
+                        padding: parseFloat(cs.paddingRight)};
+              };
+              return {maior: ler(lista[0]), compacto: ler(lista[5]),
+                      overflowX: document.documentElement.scrollWidth - document.documentElement.clientWidth};
+            }'''
         )
     for route in (
         "/noticias/novos-compendios-farmacopeia-brasileira-entram-em-vigor/",
@@ -422,11 +433,21 @@ def test_tabela_continua_na_rolagem_interna(geometria):
 
 
 def test_listagem_e_os_cliques_permanecem(geometria):
-    # Modelo único (12/10/2026, R1): o primeiro card tem o recuo do card compacto (1px + 1.25rem), e a reserva a
-    # 390 px é 24 + 44 + 8 - 16 - 21 = 39 px (era 34 px no formato destaque, com 2px + 1.5rem).
-    assert geometria["cards"]["390"]["paddingRight"] == pytest.approx(39, abs=1)
-    assert geometria["cards"]["1440"]["paddingRight"] == pytest.approx(0, abs=0.5)
-    assert geometria["cards"]["390"]["overflowX"] <= 0
+    # A 390 px a faixa é max(1.5rem, safe-area)=24, o botão é 2.75rem=44, a folga pedida é 0.5rem=8
+    # e o recuo do container é 1rem=16. O padding-right do título é 24+44+8-16 menos a borda e o
+    # padding do próprio card. O maior tem 2px+1.5rem=26, logo 34 px. O compacto tem 1px+1.25rem=21,
+    # logo 39 px. Os 8 px da fórmula são a distância até o botão; a folga medida está em
+    # test_noticias_cards_faixa.py. A 1440 px a reserva não se aplica.
+    estreita = geometria["cards"]["390"]
+    assert estreita["maior"]["compacto"] is False
+    assert estreita["compacto"]["compacto"] is True
+    assert estreita["maior"]["borda"] + estreita["maior"]["padding"] == pytest.approx(26, abs=0.6)
+    assert estreita["compacto"]["borda"] + estreita["compacto"]["padding"] == pytest.approx(21, abs=0.6)
+    assert estreita["maior"]["paddingRight"] == pytest.approx(24 + 44 + 8 - 16 - 26, abs=1)
+    assert estreita["compacto"]["paddingRight"] == pytest.approx(24 + 44 + 8 - 16 - 21, abs=1)
+    assert geometria["cards"]["1440"]["maior"]["paddingRight"] == pytest.approx(0, abs=0.5)
+    assert geometria["cards"]["1440"]["compacto"]["paddingRight"] == pytest.approx(0, abs=0.5)
+    assert estreita["overflowX"] <= 0
     assert len(geometria["cliques"]) == 2
     for clique in geometria["cliques"]:
         assert clique["centroDoLink"] is True

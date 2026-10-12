@@ -50,9 +50,9 @@ EXPECTED = {
         "button": ("Baixar lista em PDF", "./farmacia-popular-municipios-vagas-09-10-2026.pdf"),
     },
     NEWS_PATHS[1]: {
-        "top_heading": "Anexo de confer\u00eancia",
-        "button": ("Abrir anexo em PDF", "./modelos-marca-defeso-sus-ms.pdf"),
+        "top_heading": "Modelos recebidos",
         "image": "/noticias/farmacia-popular-adequacao-materiais-periodo-eleitoral/farmacia-popular-modelos-marca-defeso-eleitoral.webp?v=20260707-1",
+        "absent_href": "./modelos-marca-defeso-sus-ms.pdf",
     },
     NEWS_PATHS[2]: {
         "top_heading": "Material de apoio Regularize",
@@ -99,16 +99,20 @@ def test_noticias_farmacia_popular_preservam_substituicoes_de_estilo():
             )
             assert "article-spacing-flush-bottom" in paragraph.attrs.get("class", "").split()
 
-        button_text, button_href = expected["button"]
-        button = next(
-            element
-            for element in elements
-            if element.tag == "a" and button_text in element.text
-        )
-        button_classes = button.attrs.get("class", "").split()
-        assert "text-white" in button_classes
-        assert "no-underline" in button_classes
-        assert button.attrs.get("href") == button_href
+        if "button" in expected:
+            button_text, button_href = expected["button"]
+            button = next(
+                element
+                for element in elements
+                if element.tag == "a" and button_text in element.text
+            )
+            button_classes = button.attrs.get("class", "").split()
+            assert "text-white" in button_classes
+            assert "no-underline" in button_classes
+            assert button.attrs.get("href") == button_href
+
+        if "absent_href" in expected:
+            assert all(element.attrs.get("href") != expected["absent_href"] for element in elements)
 
         if "image" in expected:
             image = next(

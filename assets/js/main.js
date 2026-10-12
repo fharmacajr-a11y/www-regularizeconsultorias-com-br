@@ -475,13 +475,15 @@
           matchingCards.push(card);
         } else {
           card.classList.add('hidden');
+          card.classList.add('news-card-compact');
         }
       });
 
-      // 2ª passagem: visibilidade sobre o resultado já ordenado. Todos os cards têm o mesmo modelo
-      // (news-card-compact no HTML); a posição não muda o formato, só quem aparece antes de "Ver mais".
+      // 2ª passagem: os cinco primeiros do resultado usam o modelo maior; os demais ficam compactos.
+      // "Ver mais" só tira hidden. Busca, filtro e ordenação recalculam o grupo.
       matchingCards.forEach(function (card, index) {
         card.classList.toggle('hidden', index >= currentLimit);
+        card.classList.toggle('news-card-compact', index >= 5);
       });
 
       var totalMatching = matchingCards.length;

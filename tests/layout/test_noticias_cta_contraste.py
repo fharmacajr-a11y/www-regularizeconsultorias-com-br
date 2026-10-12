@@ -308,8 +308,8 @@ def _rows(medidas, width):
 @pytest.mark.parametrize("width", [w for w, _ in VIEWPORTS])
 def test_type_badge_and_button_reach_the_minimum_in_every_state(medidas, width, kind):
     rows = [row for row in _rows(medidas, width) if row["tipo"] == kind]
-    # Modelo único (12/10/2026, R1): só o formato compacto, em todos os cenários.
-    assert {row["formato"] for row in rows} == {"compacto"}, f"{kind} apareceu em outro formato"
+    # Os cinco primeiros do resultado são grandes; os demais, compactos. Os dois formatos entram na medida.
+    assert {row["formato"] for row in rows} == {"compacto", "grande"}, f"{kind} não cobriu os dois modelos"
     assert {row["estado"] for row in rows if row["parte"] == "cta"} == {"normal", "hover", "foco"}
     for row in rows:
         if row["estado"] == "foco":
@@ -346,13 +346,12 @@ def test_type_button_keeps_the_pill_and_a_visible_ring_on_focus(medidas, width, 
 @pytest.mark.parametrize("kind", TYPES)
 @pytest.mark.parametrize("width", [w for w, _ in VIEWPORTS])
 def test_the_same_type_article_keeps_one_format_in_every_scenario(medidas, width, kind):
-    # Modelo único (12/10/2026, R1): o mesmo artigo fica no mesmo formato em "Ver mais", na busca e na categoria
-    # (até 11/10/2026 ele passava do compacto ao grande ao subir para os cinco primeiros) e o botão tem as mesmas
-    # cores nos três cenários.
+    # O alvo começa depois dos cinco primeiros (compacto em "Ver mais") e passa ao modelo maior
+    # quando a busca ou o filtro o colocam entre os cinco primeiros. As cores do botão não mudam.
     result = medidas[width]
     formats = result["formatos_dos_alvos"][kind]
     target = result["alvos"][kind]["href"]
-    assert formats == {"ver_mais": True, "busca": True, "categoria": True}, (result["alvos"][kind], formats)
+    assert formats == {"ver_mais": True, "busca": False, "categoria": False}, (result["alvos"][kind], formats)
     rows = [row for row in _rows(medidas, width) if row["href"] == target and row["parte"] == "cta"]
     por_cenario = {}
     for row in rows:

@@ -170,11 +170,9 @@
   text-transform: uppercase;
 }
 
-/* 15.3 Notícias: modelo único dos cards e CTAs internos
-   Desde 12/10/2026 os 83 cards da listagem usam este modelo, com news-card-compact
-   no HTML: a posição (os cinco primeiros, os revelados por "Ver mais notícias", o
-   resultado de filtro ou busca) e a categoria não trocam tipografia nem
-   espaçamento. O main.js não troca mais a classe ao ordenar e filtrar. */
+/* 15.3 Notícias: dois modelos. O compacto é o de 3b1694f.
+   Os cinco primeiros do resultado ordenado ou filtrado perdem news-card-compact
+   no main.js e usam o modelo maior. "Ver mais" só revela; não promove o card. */
 .news-card-compact {
   border-color: rgba(21, 101, 192, 0.2) !important;
   border-width: 1px !important;
@@ -220,6 +218,61 @@
   text-decoration: none !important;
   box-shadow: none !important;
   transition: background-color 0.2s ease, box-shadow 0.15s ease !important;
+}
+
+/* Modelo maior: só quem não tem news-card-compact (os cinco primeiros do resultado). */
+#news-article-list .news-card:not(.news-card-compact) {
+  border-width: 2px !important;
+  box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.1), 0 2px 4px -2px rgba(15, 23, 42, 0.1) !important;
+  padding: 1.5rem !important;
+}
+
+@media (min-width: 768px) {
+  #news-article-list .news-card:not(.news-card-compact) {
+    padding: 2rem !important;
+  }
+}
+
+#news-article-list .news-card:not(.news-card-compact) h2 {
+  max-width: none !important;
+  font-size: 1.25rem !important;
+  line-height: 1.25 !important;
+  margin-bottom: 1rem !important;
+}
+
+@media (min-width: 768px) {
+  #news-article-list .news-card:not(.news-card-compact) h2 {
+    font-size: 1.875rem !important;
+    line-height: 1.3 !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  #news-article-list .news-card:not(.news-card-compact) h2 {
+    font-size: 2.25rem !important;
+    line-height: 1.3 !important;
+  }
+}
+
+#news-article-list .news-card:not(.news-card-compact) > p {
+  max-width: none !important;
+  color: #475569 !important;
+  font-size: 1rem !important;
+  line-height: 1.625 !important;
+  margin-bottom: 1.5rem !important;
+}
+
+#news-article-list .news-card:not(.news-card-compact) > a {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  border-radius: 9999px !important;
+  padding: 0.625rem 1.375rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  line-height: 1.25rem !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
 }
 
 .news-card-compact > a svg[aria-hidden="true"] {
@@ -329,8 +382,8 @@
    recuo lateral do container e a borda e o padding do próprio card.
    Os valores acompanham components.css (botão de 2,75rem até 640px)
    e as classes do HTML (px-4, sm:px-6, lg:px-8). O recuo do card é o
-   do modelo único: 1px de borda e 1.25rem de padding em qualquer
-   largura (regra .news-card-compact acima).
+   do próprio card: compacto 1px + 1.25rem; maior 2px + 1.5rem, ou 2rem
+   a partir de 768px. A conta deixa 0,5rem (8px) entre o texto e o botão.
    De 1360px em diante a margem do container já livra o botão. */
 #news-article-list {
   --news-recuo-container: 1rem;
@@ -357,6 +410,16 @@
 
 #news-article-list .news-card {
   --news-recuo-card: calc(1px + 1.25rem);
+}
+
+#news-article-list .news-card:not(.news-card-compact) {
+  --news-recuo-card: calc(2px + 1.5rem);
+}
+
+@media (min-width: 768px) {
+  #news-article-list .news-card:not(.news-card-compact) {
+    --news-recuo-card: calc(2px + 2rem);
+  }
 }
 
 /* Layout comum (10/10/2026): a linha de selos e data do card (primeiro

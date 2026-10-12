@@ -32,7 +32,6 @@ LOTE_09_10 = {
     "o-que-e-afe-e-por-que-e-importante": "09/10/2026 • 20h38",
     "crf-responsavel-tecnico-farmacias-drogarias": "09/10/2026 • 20h36",
     "produtos-veterinarios-controle-especial-mapa-portaria-837": "09/10/2026 • 20h36",
-    "farmacia-popular-adequacao-materiais-periodo-eleitoral": "09/10/2026 • 20h35",
     "farmacia-popular-inconsistencias-prescricoes-monitoramento": "09/10/2026 • 20h33",
 }
 CNES_06 = "cnes-prorroga-transmissor-competencia-06-2026"

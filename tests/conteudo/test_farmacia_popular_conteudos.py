@@ -197,4 +197,4 @@ def test_script_da_consulta_tem_cache_busting_alinhado_ao_dataset():
     assert "?v=" in src, "script da consulta deve ter cache-busting"
 
     # O bump não pode ter afetado o versionamento global resolvido antes.
-    assert '/assets/js/main.min.js?v=20261012-noticias-1' in HTML
+    assert '/assets/js/main.min.js?v=20261012-noticias-3' in HTML

@@ -175,9 +175,11 @@ def test_news_index_itemlist_ordering():
 
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
-    # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
-    assert urls[0] == CNES_COMPETENCIA_09_2026_URL
-    # Lote de conteúdo e dados de 09/10/2026: as 13 matérias atualizadas no lote vêm logo depois, pelo carimbo.
+    # 12/10/2026, 18h08: a retirada do PDF público da matéria eleitoral é mudança material e leva o card à 1ª posição.
+    # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado) fica em seguida.
+    assert urls[0] == "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-adequacao-materiais-periodo-eleitoral/"
+    assert urls[1] == CNES_COMPETENCIA_09_2026_URL
+    # Lote de conteúdo e dados de 09/10/2026: as demais matérias daquele lote vêm logo depois, pelo carimbo.
     lote = [
         "policia-federal-classificacao-produtos-simples-compostos-siproquim",
         "anvisa-atualiza-listas-portaria-344-1998",
@@ -185,7 +187,6 @@ def test_news_index_itemlist_ordering():
         "o-que-e-afe-e-por-que-e-importante",
         "crf-responsavel-tecnico-farmacias-drogarias",
         "produtos-veterinarios-controle-especial-mapa-portaria-837",
-        "farmacia-popular-adequacao-materiais-periodo-eleitoral",
         "farmacia-popular-portaria-12091-2026-novas-regras",
         "farmacia-popular-inconsistencias-prescricoes-monitoramento",
         "credenciamento-farmacia-popular-municipios-com-vagas",
@@ -193,7 +194,7 @@ def test_news_index_itemlist_ordering():
         "anvisa-regras-cosmeticos-artesanais",
         "anvisa-edital-6-2026-afe-manipulacao-preparacoes-estereis",
     ]
-    assert urls[1:14] == [f"https://www.regularizeconsultorias.com.br/noticias/{slug}/" for slug in lote]
+    assert urls[2:14] == [f"https://www.regularizeconsultorias.com.br/noticias/{slug}/" for slug in lote]
     # Fase 1M v2: As 6 matérias atualizadas em 08/10/2026 vêm logo depois.
     certidoes_url = "https://www.regularizeconsultorias.com.br/noticias/anvisa-certidoes-certificados-medicamentos-solicita/"
     alimentos_url = "https://www.regularizeconsultorias.com.br/noticias/anvisa-prazo-adequacao-notificacao-alimentos-setembro-2026/"
@@ -229,7 +230,7 @@ def test_news_index_itemlist_ordering():
     mapa_portaria_1617 = "https://www.regularizeconsultorias.com.br/noticias/mapa-portaria-1617-2026-aditivos-antimicrobianos-alimentacao-animal/"
     assert urls[31] == mapa_portaria_1617
     assert urls.count(mapa_portaria_1617) == 1
-    assert urls[0] == CNES_COMPETENCIA_09_2026_URL
+    assert urls[1] == CNES_COMPETENCIA_09_2026_URL
     assert urls.count(CNES_COMPETENCIA_09_2026_URL) == 1
     assert urls[32] == COSMETICOS_URL
     assert urls.count(COSMETICOS_URL) == 1

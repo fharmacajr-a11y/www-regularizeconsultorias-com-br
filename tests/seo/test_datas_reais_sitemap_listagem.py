@@ -17,8 +17,8 @@ notícias relacionadas. Três frentes, cada uma com a prova no próprio teste:
 3. Páginas institucionais (pendência D1): o lastmod é o dia da última mudança real do texto do <main>
    (scripts da conferência: datas_conteudo_principal.py), com o trecho que a comprova:
    / 2026-10-08 (f47fc13: descrição de PF/CRC e CLF); /equipe/ 2026-10-08 (f47fc13: "Ministério da Agricultura e
-   Pecuária" no lugar de "Agricultura, Pecuária e Abastecimento"); /contato/ 2026-06-02 (ddd55d1: SNGPC na lista de
-   órgãos); /sobre/ 2026-06-06 (bb2f618: o primeiro card de princípios passou de "Missão" a "Visão"; a mudança de
+   Pecuária" no lugar de "Agricultura, Pecuária e Abastecimento");    /contato/ 2026-10-12 (retirada do item "Tempo de resposta — Até 30 minutos"; a lista de
+   órgãos com SNGPC, de ddd55d1, permanece); /sobre/ 2026-06-06 (bb2f618: o primeiro card de princípios passou de "Missão" a "Visão"; a mudança de
    03/10, 6f926d6, foi só um título sr-only de acessibilidade). /servicos/, a quinta página da pendência D1 (decisão D1
    da Fase 1O v2), já está em 2026-10-09 desde o lote de conteúdo (bef7417: termos do bloco Farmácia Popular e item do
    bloco CNES, frente G07).
@@ -107,7 +107,7 @@ def test_lastmod_das_paginas_institucionais_segue_a_ultima_mudanca_real_do_texto
         f"{BASE}/": ("2026-10-08", "index.html",
                      "Licenças e regularização (CRC e CLF) para empresas e estabelecimentos que operam com produtos químicos controlados"),
         f"{BASE}/equipe/": ("2026-10-08", "equipe/index.html", "junto ao Ministério da Agricultura e Pecuária"),
-        f"{BASE}/contato/": ("2026-06-02", "contato/index.html", "M.A.P.A, SNCR, SNGPC, Polícia Federal"),
+        f"{BASE}/contato/": ("2026-10-12", "contato/index.html", "M.A.P.A, SNCR, SNGPC, Polícia Federal"),
         f"{BASE}/servicos/": ("2026-10-09", "servicos/index.html",
                               "Conferência da coerência entre o CNES e outros cadastros do estabelecimento, como Farmácia Popular"),
     }
@@ -116,6 +116,9 @@ def test_lastmod_das_paginas_institucionais_segue_a_ultima_mudanca_real_do_texto
         html = (ROOT / arquivo).read_text(encoding="utf-8")
         main = re.search(r"<main\b[^>]*>(.*)</main>", html, re.S).group(1)
         assert trecho in " ".join(re.sub(r"<[^>]+>", " ", main).split()), (url, trecho)
+    contato = (ROOT / "contato" / "index.html").read_text(encoding="utf-8")
+    assert "Até 30 minutos" not in contato
+    assert "Tempo de resposta" not in contato
     assert lastmods[f"{BASE}/sobre/"] == "2026-06-06"
     sobre = (ROOT / "sobre" / "index.html").read_text(encoding="utf-8")
     titulos = re.findall(r'<h3 class="text-lg font-bold text-slate-900 mb-3 text-center sm:text-left">([^<]+)</h3>', sobre)

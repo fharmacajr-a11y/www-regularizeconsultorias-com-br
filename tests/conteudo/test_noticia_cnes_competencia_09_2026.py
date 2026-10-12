@@ -183,9 +183,10 @@ def test_news_index_has_one_card_and_one_itemlist_entry():
     assert PREVIOUS_TITLE not in html
     assert "prorrogou até 9 de outubro" in own[0]
     assert "O prazo está encerrado." in own[0]
-    # Atualização de 11/10/2026, 06h07 (prazo encerrado): o card sobe ao 1º lugar pela regra de ordenação
-    # (data-updated). Desde 12/10/2026 (R1) a posição não troca o formato: todos os cards têm o mesmo modelo.
-    assert cards.index(own[0]) == 0
+    # Atualização de 11/10/2026, 06h07 (prazo encerrado): o card ficou em 1º pela ordenação.
+    # Em 12/10/2026, 18h08, a retirada do PDF da matéria eleitoral é mais recente e ocupa o 1º lugar.
+    # A posição não troca o formato: todos os cards têm o mesmo modelo.
+    assert cards.index(own[0]) == 1
     assert all("news-card-compact" in card.split(">", 1)[0] for card in cards)
     assert ">Atualização</span>" in own[0] and "Ler atualização" in own[0]
     assert len(cards) == 83

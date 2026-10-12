@@ -188,17 +188,35 @@ def test_janelas_e_barra_classica(medidas):
                             "mais_velha": 5}, (janela["janela"], visiveis)
 
 
-def test_um_so_estilo_por_elemento_em_todos_os_cards_e_estados(medidas):
+def test_dois_modelos_uniformes_dentro_de_cada_grupo(medidas):
+    """Posição 1–5: um estilo. Posição 6 em diante: outro. Cada grupo é estável entre os estados."""
     divergencias = []
     for janela in medidas:
-        cards = [c for e in janela["estados"].values() for c in e["cards"]]
-        for elemento in ELEMENTOS:
-            estilos = {}
-            for card in cards:
-                estilos.setdefault(json.dumps(card["estilos"][elemento], sort_keys=True), []).append(card["titulo"])
-            if len(estilos) != 1:
-                divergencias.append((janela["janela"], janela["barra"], elemento,
-                                     [(json.loads(k), sorted(set(v))[:3], len(v)) for k, v in estilos.items()]))
+        acumulado = {elemento: {"maior": set(), "compacto": set()} for elemento in ELEMENTOS}
+        for nome, estado in janela["estados"].items():
+            for elemento in ELEMENTOS:
+                por_grupo = {"maior": set(), "compacto": set()}
+                for card in estado["cards"]:
+                    grupo = "maior" if card["pos"] <= 5 else "compacto"
+                    por_grupo[grupo].add(json.dumps(card["estilos"][elemento], sort_keys=True))
+                    acumulado[elemento][grupo].add(json.dumps(card["estilos"][elemento], sort_keys=True))
+                if any(len(valores) > 1 for valores in por_grupo.values()):
+                    divergencias.append((janela["janela"], nome, elemento, {k: len(v) for k, v in por_grupo.items()}))
+            visiveis = estado["cards"]
+            if nome in ("ver_mais", "filtro_ver_mais"):
+                if not any(c["pos"] == 5 for c in visiveis) or not any(c["pos"] == 6 for c in visiveis):
+                    divergencias.append((janela["janela"], nome, "sem quinto e sexto"))
+                else:
+                    quinto = next(c for c in visiveis if c["pos"] == 5)
+                    sexto = next(c for c in visiveis if c["pos"] == 6)
+                    if quinto["estilos"]["titulo"] == sexto["estilos"]["titulo"]:
+                        divergencias.append((janela["janela"], nome, "quinto e sexto com o mesmo titulo"))
+        for elemento in ("card", "titulo", "resumo", "botao"):
+            if len(acumulado[elemento]["maior"]) != 1 or len(acumulado[elemento]["compacto"]) != 1:
+                divergencias.append((janela["janela"], elemento, "grupo instavel",
+                                     {k: len(v) for k, v in acumulado[elemento].items()}))
+            elif acumulado[elemento]["maior"] == acumulado[elemento]["compacto"]:
+                divergencias.append((janela["janela"], elemento, "maior igual ao compacto"))
     assert not divergencias, json.dumps(divergencias, ensure_ascii=False)[:6000]
 
 

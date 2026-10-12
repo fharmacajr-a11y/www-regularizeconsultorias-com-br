@@ -1,8 +1,7 @@
 """Contrato do main.js para os cards de /noticias/: ordem, "Ver mais" e formato.
 
-Modelo único (parecer de 11/10/2026, R1): todos os cards levam news-card-compact no HTML e o main.js não troca mais
-o formato pela posição (até 11/10/2026 os cinco primeiros do resultado perdiam a classe e ganhavam título, resumo e
-botão maiores). A posição só decide quem aparece antes de "Ver mais notícias".
+Dois modelos (12/10/2026, revisão v2): os cinco primeiros do resultado ordenado ou filtrado perdem
+news-card-compact e usam o modelo maior; do sexto em diante o compacto de 3b1694f permanece. "Ver mais" só revela.
 
 Data (R2): o card leva a data válida da matéria com a precisão dela; uma data só com o dia (AAAA-MM-DD) conta, para
 ordenar, como o início desse dia em Brasília (-03:00). Sem essa regra, o navegador lê AAAA-MM-DD como meia-noite UTC,
@@ -90,17 +89,14 @@ def test_news_card_contract_is_identical_in_both_javascript_files():
     assert MAIN_PATHS[0].read_bytes() == MAIN_PATHS[1].read_bytes()
     source = MAIN_PATHS[0].read_text(encoding="utf-8")
     assert "var INITIAL_VISIBLE_LIMIT = 5;" in source
-    # O formato não depende mais da posição: nada troca news-card-compact.
-    assert "updateCardLayouts" not in source
-    assert "classList.toggle('news-card-compact'" not in source
-    assert "classList.remove('news-card-compact')" not in source
+    assert "classList.toggle('news-card-compact', index >= 5)" in source
     assert "function parseCardDate(value)" in source
     assert source.index("sortArticles();", source.index("updateCategoryFilters();")) < source.index(
         "updateResults();", source.index("updateCategoryFilters();")
     )
 
 
-def test_order_uses_the_card_date_precision_and_position_never_changes_the_format(site_url):
+def test_order_uses_the_card_date_precision_and_the_first_five_use_the_larger_model(site_url):
     fixture = base64.b64encode(_fixture_html(site_url).encode("utf-8")).decode("ascii")
     script = textwrap.dedent(
         '''
@@ -130,7 +126,7 @@ def test_order_uses_the_card_date_precision_and_position_never_changes_the_forma
             assert [card["title"] for card in newest] == [
                 "Card 6", "Card 5", "Card 4", "Card 3", "Card 2", "Card 1", "Card 0"], newest
             assert sum(not card["hidden"] for card in newest) == 5
-            assert all(card["compact"] for card in newest)
+            assert [card["compact"] for card in newest] == [False, False, False, False, False, True, True]
             assert newest[5]["hidden"] and newest[6]["hidden"]
 
             page.locator("[data-news-sort='asc']").click()
@@ -138,18 +134,18 @@ def test_order_uses_the_card_date_precision_and_position_never_changes_the_forma
             assert [card["title"] for card in oldest] == [
                 "Card 0", "Card 1", "Card 2", "Card 3", "Card 4", "Card 5", "Card 6"], oldest
             assert sum(not card["hidden"] for card in oldest) == 5
-            assert all(card["compact"] for card in oldest)
+            assert [card["compact"] for card in oldest] == [False, False, False, False, False, True, True]
 
             page.locator("[data-news-sort='desc']").click()
             page.locator("#btn-carregar-mais").click()
             expanded = card_state(page)
             assert all(not card["hidden"] for card in expanded)
-            assert all(card["compact"] for card in expanded)
+            assert [card["compact"] for card in expanded] == [False, False, False, False, False, True, True]
 
             page.fill("#news-search", "Card 4")
             searched = [card for card in card_state(page) if not card["hidden"]]
             assert [card["title"] for card in searched] == ["Card 4"]
-            assert all(card["compact"] for card in searched)
+            assert searched[0]["compact"] is False
             browser.close()
         '''
     )
