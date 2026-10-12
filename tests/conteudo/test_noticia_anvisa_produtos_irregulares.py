@@ -295,8 +295,9 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
     # antes da Portaria MAPA 1.617 (06/10, 08h00) e do CNES 09/2026 (05/10, 15h43). Desde 06/10, 18h11, as quatro
     # matérias da Fase 1H (Farmácia Popular e CNES/AFE) vêm antes. Em 09/10/2026, 20h27, a retificação da
     # RE nº 3.628/2026 leva o card à 11ª posição, depois das dez matérias atualizadas mais tarde no mesmo lote.
-    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[10]
-    assert "news-card-compact" in cards[10].split(">", 1)[0]
+    # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
+    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[11]
+    assert "news-card-compact" in cards[11].split(">", 1)[0]
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
     assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-09</lastmod>" in sitemap
 

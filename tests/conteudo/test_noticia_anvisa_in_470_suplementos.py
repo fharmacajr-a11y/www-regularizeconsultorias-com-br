@@ -206,21 +206,24 @@ def test_index_has_one_card_in_fifth_position_and_expected_counts():
     classes = [re.search(r'<article class="([^"]*)"', card).group(1) for card in card_blocks]
     assert len(card_blocks) == 83
     assert f'/noticias/{SLUG}/' in card_blocks[35]
-    assert "news-card-compact" not in classes[4]
-    assert all("news-card-compact" not in value for value in classes[:5])
-    assert "news-card-compact" in classes[5]
+    # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
+    assert all("news-card-compact" in value for value in classes)
     assert '>Todos</span><span class="text-xs text-slate-400">83<' in html
     assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in html
 
 
 def test_index_card_uses_informativo_contract_and_timestamp():
     html = _index_html()
+    # 12/10/2026 (R2): a matéria não declara atualização (dateModified = datePublished, sem "Atualizado em"),
+    # então o card não leva data-updated; o <time> do card traz a publicação.
     card = re.search(
-        rf'<article\b[^>]*data-updated="{re.escape(TIMESTAMP)}"[^>]*>.*?</article>',
+        rf'<article\b[^>]*>(?:(?!</article>).)*href="/noticias/{SLUG}/".*?</article>',
         html,
         re.DOTALL,
     )
     assert card is not None
+    assert "data-updated" not in card.group(0).split(">", 1)[0]
+    assert f'<time datetime="{TIMESTAMP}" class="leading-none">' in card.group(0)
     assert "Informativo" in card.group(0)
     assert "Ler notícia" in card.group(0)
     assert "news-orange-badge" in card.group(0)

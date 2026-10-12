@@ -1,6 +1,6 @@
 """Títulos da listagem fluem na largura do card.
 
-A quebra incondicional não pode voltar no destaque nem no compacto.
+A quebra incondicional não pode voltar em nenhum card (modelo único desde 12/10/2026).
 A reserva da coluna fixa é uma regra do componente, não de uma matéria,
 de uma posição ou de um título curto. O teste não exige uma ou duas linhas.
 """
@@ -24,10 +24,8 @@ def _cards():
 def test_nenhum_titulo_ou_resumo_tem_quebra_incondicional():
     cards = _cards()
     assert len(cards) == 83
-    featured = [card for card in cards if "news-card-compact" not in card.split(">", 1)[0]]
-    compact = [card for card in cards if "news-card-compact" in card.split(">", 1)[0]]
-    assert len(featured) == 5
-    assert len(compact) == 78
+    # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
+    assert all("news-card-compact" in card.split(">", 1)[0] for card in cards)
     for card in cards:
         title = re.search(r'data-title="([^"]*)"', card).group(1)
         h2 = H2.search(card).group(1)

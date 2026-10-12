@@ -701,9 +701,15 @@
   padding-top: 1.5rem !important;
 }
 
+/* HOME-CARDS-ALTURA (11/10/2026): os cards ocupam a altura da linha flex, que
+   é a do card de maior conteúdo entre os nove, inclusive os que estão fora da
+   janela. A altura fica igual em toda a vitrine e não muda ao avançar ou
+   voltar; ela acompanha a largura (cada faixa responsiva tem a sua). Antes
+   (flex-start) cada card tinha a altura do próprio texto, e as bases e os
+   links "Conhecer materiais" ficavam desalinhados. */
 .home-manuals-carousel {
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   gap: 1rem;
   margin-left: -0.25rem;
   margin-right: -0.25rem;
@@ -794,9 +800,13 @@
   background-color: #f8fafc;
 }
 
+/* O corpo cresce até a base do card (a imagem mantém 1:1) e o link, com
+   margin-top: auto, desce para a base do corpo: os links ficam alinhados com
+   o mesmo espaçamento até a borda. Nenhum texto é cortado, encurtado ou
+   reduzido: a altura comum é a do maior conteúdo. */
 .home-manuals-card-body {
   display: flex;
-  flex: 0 0 auto;
+  flex: 1 0 auto;
   flex-direction: column;
   min-height: 9.2rem;
   padding: 0.85rem 0.9rem 0.9rem;
@@ -816,20 +826,6 @@
   color: #64748b;
   font-size: 0.9rem;
   line-height: 1.42;
-}
-
-.home-manuals-card--compact-text .home-manuals-card-title {
-  font-size: 1rem;
-  line-height: 1.22;
-}
-
-.home-manuals-card--compact-text .home-manuals-card-text {
-  font-size: 0.859375rem;
-  line-height: 1.24;
-}
-
-.home-manuals-card--compact-text .home-manuals-card-link {
-  padding-top: 0.625rem;
 }
 
 .home-manuals-card-link {

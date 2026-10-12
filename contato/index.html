@@ -2,6 +2,9 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <!-- Guarda de transição: nenhuma transição antes da carga da página (tests/layout/test_guarda_transicao.py) -->
+  <script>document.documentElement.classList.add('transicoes-contidas');addEventListener('load',function(){requestAnimationFrame(function(){requestAnimationFrame(function(){document.documentElement.classList.remove('transicoes-contidas');});});});</script>
+  <style>html.transicoes-contidas *:not(#sem-transicao),html.transicoes-contidas *:not(#sem-transicao)::before,html.transicoes-contidas *:not(#sem-transicao)::after{transition:none!important}</style>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="shortcut icon" type="image/x-icon" href="/assets/icons/favicon-32x32.ico">
   <meta name="description" content="Solicite atendimento para dúvidas, análise documental e regularização junto à ANVISA, Farmácia Popular, CNES, CRF, M.A.P.A, SNCR, SNGPC, e órgãos sanitários." />
@@ -77,7 +80,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
             </svg>
             AVISOS!
-            <span class="aviso-badge absolute -top-2 -right-2 min-w-[1.25rem] h-5 px-1 rounded-full bg-white text-red-600 text-xs font-bold flex items-center justify-center shadow border border-red-200">7</span>
+            <span class="aviso-badge absolute -top-2 -right-2 min-w-[1.25rem] h-5 px-1 rounded-full bg-white text-red-600 text-xs font-bold flex items-center justify-center shadow border border-red-200">6</span>
           </a>
           <button id="menu-toggle"
                   class="md:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors duration-200"
@@ -105,7 +108,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
           </svg>
           AVISOS!
-          <span class="aviso-badge absolute -top-2 -right-2 min-w-[1.25rem] h-5 px-1 rounded-full bg-white text-red-600 text-xs font-bold flex items-center justify-center shadow border border-red-200">7</span>
+          <span class="aviso-badge absolute -top-2 -right-2 min-w-[1.25rem] h-5 px-1 rounded-full bg-white text-red-600 text-xs font-bold flex items-center justify-center shadow border border-red-200">6</span>
         </a>
       </nav>
     </div>
@@ -459,6 +462,6 @@
 
   </div>
 
-  <script src="/assets/js/main.min.js?v=20261009-avisos-1"></script>
+  <script src="/assets/js/main.min.js?v=20261012-noticias-1"></script>
 </body>
 </html>

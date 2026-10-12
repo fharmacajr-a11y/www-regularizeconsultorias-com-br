@@ -145,10 +145,10 @@
      ================================================================= */
   var avisoLista = document.getElementById('avisos-lista');
   var AVISOS_COUNT = 0;
-  var AVISOS_FALLBACK_COUNT = 7;
+  var AVISOS_FALLBACK_COUNT = 6;
   var AVISOS_STORAGE_KEY = 'avisos_count';
   var AVISOS_STORAGE_VERSION_KEY = 'avisos_count_version';
-  var AVISOS_STORAGE_VERSION = '2026-10-09-avisos-7';
+  var AVISOS_STORAGE_VERSION = '2026-10-11-avisos-6';
 
   function normalizeAvisoStatus(value) {
     return (value || '').toLowerCase().trim();
@@ -404,14 +404,19 @@
       });
     }
 
+    // Data do card: com hora, o instante declarado; só com o dia (AAAA-MM-DD), o início desse dia em Brasília
+    // (-03:00), só para ordenar. Sem isso o navegador lê AAAA-MM-DD como meia-noite UTC (21h do dia anterior).
+    // Empates mantêm a ordem do HTML (a ordenação do Array é estável).
+    function parseCardDate(value) {
+      if (!value) return NaN;
+      return Date.parse(/^\d{4}-\d{2}-\d{2}$/.test(value) ? value + 'T00:00:00-03:00' : value);
+    }
+
     function getCardTimestamp(card) {
-      var updated = card.getAttribute('data-updated');
-      if (updated) {
-        var updatedTimestamp = Date.parse(updated);
-        if (!Number.isNaN(updatedTimestamp)) return updatedTimestamp;
-      }
+      var updatedTimestamp = parseCardDate(card.getAttribute('data-updated'));
+      if (!Number.isNaN(updatedTimestamp)) return updatedTimestamp;
       var time = card.querySelector('time[datetime]');
-      var timestamp = time ? Date.parse(time.getAttribute('datetime')) : 0;
+      var timestamp = time ? parseCardDate(time.getAttribute('datetime')) : 0;
       return Number.isNaN(timestamp) ? 0 : timestamp;
     }
 
@@ -447,16 +452,6 @@
       currentLimit = getInitialLimit();
     }
 
-    function updateCardLayouts(matchingCards) {
-      articleCards.forEach(function (card) {
-        card.classList.remove('news-card-compact');
-      });
-
-      matchingCards.forEach(function (card, index) {
-        card.classList.toggle('news-card-compact', index >= INITIAL_VISIBLE_LIMIT);
-      });
-    }
-
     function updateResults() {
       var query = normalizeText(searchInput.value);
       var normalizedCategory = normalizeText(activeCategory);
@@ -483,9 +478,8 @@
         }
       });
 
-      // 2ª passagem: recalcula formato e visibilidade sobre o resultado já ordenado
-      updateCardLayouts(matchingCards);
-
+      // 2ª passagem: visibilidade sobre o resultado já ordenado. Todos os cards têm o mesmo modelo
+      // (news-card-compact no HTML); a posição não muda o formato, só quem aparece antes de "Ver mais".
       matchingCards.forEach(function (card, index) {
         card.classList.toggle('hidden', index >= currentLimit);
       });

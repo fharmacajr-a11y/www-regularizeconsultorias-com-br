@@ -256,7 +256,8 @@ def test_index_card_is_first_informativo_and_counts_are_updated():
     assert f'href="/noticias/{SLUG}/"' in card
     assert "news-card-compact" in opening
     assert 'data-category="anvisa"' in opening
-    assert f'data-updated="{TIMESTAMP}"' in opening
+    # 12/10/2026 (R2): a matéria não declara atualização; o card não leva data-updated e o <time> traz a publicação.
+    assert "data-updated" not in opening
     assert f'data-title="{TITLE}"' in opening
     assert f'<time datetime="{TIMESTAMP}" class="leading-none">28/09/2026 • 08h58</time>' in card
     assert "news-orange-badge" in card and ">Informativo</span>" in card
@@ -279,13 +280,14 @@ def test_index_card_is_searchable_by_product_substance_and_resolution():
     assert "Aeroporto de Congonhas" in card
 
 
-def test_index_keeps_five_highlighted_cards_after_new_entry():
+def test_index_uses_the_single_card_model_after_new_entry():
+    # Modelo único (12/10/2026, R1): os cinco primeiros deixaram de ter formato próprio.
     classes = [
         re.search(r'<article class="([^"]*)"', card).group(1)
         for card in _cards(_index_html())
     ]
-    assert all("news-card-compact" not in value for value in classes[:5])
-    assert all("news-card-compact" in value for value in classes[5:])
+    assert len(classes) == 83
+    assert all("news-card-compact" in value for value in classes)
 
 
 def test_itemlist_keeps_the_semavy_url_once():

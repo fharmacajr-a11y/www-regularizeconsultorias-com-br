@@ -170,7 +170,11 @@
   text-transform: uppercase;
 }
 
-/* 15.3 Notícias: card compacto e CTAs internos */
+/* 15.3 Notícias: modelo único dos cards e CTAs internos
+   Desde 12/10/2026 os 83 cards da listagem usam este modelo, com news-card-compact
+   no HTML: a posição (os cinco primeiros, os revelados por "Ver mais notícias", o
+   resultado de filtro ou busca) e a categoria não trocam tipografia nem
+   espaçamento. O main.js não troca mais a classe ao ordenar e filtrar. */
 .news-card-compact {
   border-color: rgba(21, 101, 192, 0.2) !important;
   border-width: 1px !important;
@@ -309,30 +313,24 @@
   color: #1e3a5f;
 }
 
-/* ---------- 17. Notícias: CTA dos cards em destaque ----------
-   Escopo restrito a .news-featured-card — não afeta .news-card-compact.
-   Mantém botões destacados separados dos cards compactos da listagem. */
-
-/* ===== Correção local de overflow decorativo (tablet / meia-tela) ===== */
-/* (Removidas regras experimentais de overflow decorativo — preservando ajustes aprovados) */
-
-#news-article-list .news-featured-card:not(.news-card-compact) {
-  border-width: 2px;
-}
+/* ---------- 17. Notícias: formato destaque (retirado em 12/10/2026) ----------
+   Os cinco primeiros cards tinham título, resumo, botão, borda de 2px e padding
+   maiores. Com o modelo único (15.3) a regra de borda deles saiu daqui. As regras
+   do formato destaque em pages/noticias-tipos.css (seletores com
+   :not(.news-card-compact)) não casam com nenhum card da listagem e ficaram sem
+   efeito; a folha é compartilhada com as matérias e não foi alterada. */
 
 /* Abaixo de 1360px a coluna fixa cobre a faixa direita do card.
-   Título e resumo, dos destaques e dos compactos, reservam só essa
-   faixa e seguem na largura que sobra. A quebra é a do navegador.
-   Não há corte, altura fixa nem regra por matéria ou por posição.
+   Título e resumo reservam só essa faixa e seguem na largura que
+   sobra. A quebra é a do navegador. Não há corte, altura fixa nem
+   regra por matéria ou por posição.
    A reserva é o quanto o conteúdo do card passa da faixa do botão:
    deslocamento do botão, largura dele e 0,5rem de folga, menos o
    recuo lateral do container e a borda e o padding do próprio card.
    Os valores acompanham components.css (botão de 2,75rem até 640px)
-   e as classes do HTML (px-4, sm:px-6, lg:px-8). Cada família declara
-   o próprio recuo: o destaque usa border-2 com p-6 e md:p-8; o
-   compacto força 1px e 1.25rem em qualquer largura (regra acima). A
-   classe de compacto é trocada pelo main.js ao ordenar e filtrar,
-   então a reserva segue o card na família em que ele está.
+   e as classes do HTML (px-4, sm:px-6, lg:px-8). O recuo do card é o
+   do modelo único: 1px de borda e 1.25rem de padding em qualquer
+   largura (regra .news-card-compact acima).
    De 1360px em diante a margem do container já livra o botão. */
 #news-article-list {
   --news-recuo-container: 1rem;
@@ -358,16 +356,6 @@
 }
 
 #news-article-list .news-card {
-  --news-recuo-card: calc(2px + 1.5rem);
-}
-
-@media (min-width: 768px) {
-  #news-article-list .news-card {
-    --news-recuo-card: calc(2px + 2rem);
-  }
-}
-
-#news-article-list .news-card-compact {
   --news-recuo-card: calc(1px + 1.25rem);
 }
 

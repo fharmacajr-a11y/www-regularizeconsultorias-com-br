@@ -195,7 +195,8 @@ def test_listing_places_the_updated_card_by_its_update_stamp():
     cards = re.findall(r"(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)", html, re.DOTALL)
     assert len(cards) == 83
     # Lote de 09/10/2026: o card sobe pelo carimbo da atualização (regra de ordenação por data-updated).
-    card = cards[11]
+    # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
+    card = cards[12]
     opening = card.split(">", 1)[0]
     assert f'href="{ROUTE}"' in card
     assert html.count(f'href="{ROUTE}"') == 1
@@ -212,13 +213,13 @@ def test_listing_places_the_updated_card_by_its_update_stamp():
     assert "83 notícias encontradas" in html
     assert '>Todos</span><span class="text-xs text-slate-400">83<' in html
     assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in html
-    assert all("news-card-compact" not in item.split(">", 1)[0] for item in cards[:5])
-    assert "news-card-compact" in cards[5].split(">", 1)[0]
+    # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
+    assert all("news-card-compact" in item.split(">", 1)[0] for item in cards)
     collection = next(block for block in _jsonld(html) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
     assert len(items) == 83
-    assert items[11]["position"] == 12
-    assert items[11]["url"] == URL
+    assert items[12]["position"] == 13
+    assert items[12]["url"] == URL
     assert [item["position"] for item in items] == list(range(1, 84))
 
 
@@ -226,9 +227,11 @@ def test_sitemap_adds_only_the_new_url_and_the_listing_lastmod():
     sitemap = SITEMAP.read_text(encoding="utf-8")
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
     assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-09</lastmod>" in sitemap
+    # A listagem mudou de novo em 11/10/2026 (CNES 09/2026 e Now Foods) e em 12/10/2026 (datas do CNES 06/2026
+    # e do Alivemed e a ordem que delas decorre; parecer de 11/10/2026, R2).
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-10-09</lastmod>"
+        "    <lastmod>2026-10-12</lastmod>"
     ) in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/</loc>\n"

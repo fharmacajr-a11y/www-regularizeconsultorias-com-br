@@ -216,6 +216,10 @@ with sync_playwright() as p:
             context = support.new_context(browser, fonts="local", viewport={"width": largura, "height": altura}, device_scale_factor=1)
             page = context.new_page()
             page.goto(base + pagina, wait_until="load")
+            # /farmacia-popular/ preenche a tabela de municípios depois do load (fetch não segura o load) e a página
+            # cresce; medir antes disso deixa MEDIR e FIM em alturas diferentes (corrida demonstrada em 12/10/2026,
+            # com os dados atrasados no servidor). Espera o fim da carga dos dados; nas outras páginas não há #fp-loading.
+            page.wait_for_function("() => { const l = document.getElementById('fp-loading'); return !l || l.classList.contains('hidden'); }")
             m = page.evaluate(MEDIR)
             # Repouso dos dois controles com o Voltar ao topo visível.
             page.evaluate("async () => { window.scrollTo({top: Math.min(400, document.documentElement.scrollHeight - innerHeight), behavior: 'instant'}); "

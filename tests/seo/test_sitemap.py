@@ -127,8 +127,11 @@ def test_portaria_news_news_index_and_comunicado_have_expected_sitemap_metadata(
     _, urls = _url_elements()
     by_location = {url.findtext("s:loc", namespaces=NS): url for url in urls}
 
-    assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-09"
-    assert by_location[COMUNICADO_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-09"
+    # 11/10/2026: listagem (CNES 09/2026 e Now Foods) e comunicado (aviso do CNES 09/2026 no histórico).
+    # 12/10/2026: listagem de novo (datas do CNES 06/2026 e do Alivemed e a ordem que delas decorre; parecer de
+    # 11/10/2026, R2). O comunicado não mudou.
+    assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-12"
+    assert by_location[COMUNICADO_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-11"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-09"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:changefreq", namespaces=NS) == "monthly"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:priority", namespaces=NS) == "0.8"

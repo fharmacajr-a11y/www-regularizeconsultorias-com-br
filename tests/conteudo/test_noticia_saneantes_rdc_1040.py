@@ -176,8 +176,16 @@ def test_index_contains_saneantes_card():
 
 
 def test_index_saneantes_card_has_correct_timestamp():
+    # 12/10/2026 (R2): a matéria não declara atualização; o card não leva data-updated e o <time> traz a
+    # publicação.
     html = _index_html()
-    assert f'data-updated="{DATE_PUBLISHED}"' in html
+    card = re.search(
+        r'<article\b[^>]*>(?:(?!</article>).)*href="/noticias/anvisa-rdc-1040-in-468-2026-saneantes-regularizacao/".*?</article>',
+        html,
+        re.DOTALL,
+    ).group(0)
+    assert "data-updated" not in card.split(">", 1)[0]
+    assert f'<time datetime="{DATE_PUBLISHED}" class="leading-none">' in card
 
 
 def test_index_saneantes_in_itemlist_position_16():
@@ -201,11 +209,11 @@ def test_index_itemlist_positions_are_sequential():
     assert positions == list(range(1, len(positions) + 1))
 
 
-def test_index_saneantes_card_is_compact_after_newer_entries():
-    """O card de saneantes permanece compacto, fora dos cinco destaques."""
+def test_index_saneantes_card_uses_the_single_card_model():
+    """O card de saneantes tem o modelo único da listagem (news-card-compact), desde 12/10/2026 em todos os cards."""
     html = _index_html()
     article_match = re.search(
-        r'(<article[^>]*data-updated="2026-09-15T16:17:00-03:00"[^>]*>.*?</article>)',
+        r'(<article\b[^>]*>(?:(?!</article>).)*href="/noticias/anvisa-rdc-1040-in-468-2026-saneantes-regularizacao/".*?</article>)',
         html,
         re.DOTALL,
     )
@@ -213,7 +221,7 @@ def test_index_saneantes_card_is_compact_after_newer_entries():
     card_html = article_match.group(1)
     opening_tag = card_html.split(">", 1)[0]
     assert "news-card-compact" in opening_tag, (
-        "Card do saneantes deve ter news-card-compact (6º da listagem)"
+        "Card do saneantes deve ter news-card-compact (modelo único da listagem)"
     )
 
 
@@ -225,27 +233,17 @@ def test_index_saneantes_card_is_unique():
     assert len(matches) == 1, f"Esperado exatamente 1 link/card no índice, encontrado {len(matches)}"
 
 
-def test_index_keeps_exactly_five_highlighted_cards():
-    """`news-featured-card` está presente em TODOS os cards (não é o marcador de
-    destaque). O marcador real é a AUSÊNCIA de `news-card-compact`. O padrão do
-    site mantém exatamente 5 cards destacados (sem `news-card-compact`) no topo
-    da listagem; ao entrar uma notícia nova em 1º, o antigo 5º destacado deve
-    passar a compacto."""
+def test_index_cards_share_the_single_model():
+    """Modelo único (parecer de 11/10/2026, R1). Até 11/10/2026 os cinco primeiros cards não tinham
+    news-card-compact e usavam título, resumo e botão maiores; desde 12/10/2026 os 83 cards têm o mesmo
+    modelo e a posição não troca o formato (assets/js/main.js não troca mais a classe)."""
     html = _index_html()
     articles = re.findall(r'<article class="([^"]*)"[^>]*data-news-card', html)
-    assert len(articles) >= 6
-    highlighted = [c for c in articles if "news-card-compact" not in c]
-    assert len(highlighted) == 5, (
-        f"Esperado exatamente 5 cards destacados (sem news-card-compact), "
-        f"encontrado {len(highlighted)}"
-    )
-    # Os 5 primeiros cards da listagem devem ser exatamente os 5 destacados.
-    assert all("news-card-compact" not in c for c in articles[:5])
-    # O 6º card (antigo 5º destacado) deve ser o primeiro compacto.
-    assert "news-card-compact" in articles[5]
+    assert len(articles) == 83
+    assert all("news-card-compact" in c for c in articles)
 
 
-def test_index_saneantes_stays_compact_after_the_five_highlighted():
+def test_index_saneantes_keeps_its_position_and_the_single_model():
     html = _index_html()
     article_blocks = re.findall(
         r'<article class="[^"]*"[^>]*data-news-card.*?</article>', html, re.DOTALL
@@ -258,8 +256,8 @@ def test_index_saneantes_stays_compact_after_the_five_highlighted():
     )
     assert saneantes_index == 36
     assert "news-card-compact" in article_blocks[saneantes_index].split(">", 1)[0]
-    assert all("news-card-compact" not in block.split(">", 1)[0] for block in article_blocks[:5])
-    assert "news-card-compact" in article_blocks[5].split(">", 1)[0]
+    # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
+    assert all("news-card-compact" in block.split(">", 1)[0] for block in article_blocks)
 
 
 # ---------------------------------------------------------------------------

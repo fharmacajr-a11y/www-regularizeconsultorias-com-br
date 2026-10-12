@@ -182,7 +182,8 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     assert len(re.findall(r'\bdata-category="mapa"', index)) == 3
 
     # Lote de 09/10/2026: as 13 matérias atualizadas no lote sobem pelo carimbo; as demais descem.
-    card = cards[30]
+    # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
+    card = cards[31]
     opening = card.split(">", 1)[0]
     assert f'href="/noticias/{SLUG}/"' in card
     assert index.count(f'href="/noticias/{SLUG}/"') == 1
@@ -196,19 +197,21 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     assert "Ler atualização" in card
     assert ">M.A.P.A<" in card
     assert f'<time datetime="{UPDATED}" class="leading-none">06/10/2026 • 08h00</time>' in card
-    assert all("news-card-compact" not in item.split(">", 1)[0] for item in cards[:5])
-    assert "news-card-compact" in cards[5].split(">", 1)[0]
-    assert "cadastro-anvisa-govbr-transicao-sistemas" in cards[26]
+    # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
+    assert all("news-card-compact" in item.split(">", 1)[0] for item in cards)
+    assert "cadastro-anvisa-govbr-transicao-sistemas" in cards[27]
 
     collection = next(block for block in _jsonld(index) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
     assert len(items) == 83
-    assert items[30]["position"] == 31
-    assert items[30]["url"] == PUBLIC_URL
+    assert items[31]["position"] == 32
+    assert items[31]["url"] == PUBLIC_URL
     assert [item["position"] for item in items] == list(range(1, 84))
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
     assert f"<loc>{PUBLIC_URL}</loc>\n    <lastmod>2026-10-06</lastmod>" in sitemap
+    # A listagem mudou de novo em 11/10/2026 (CNES 09/2026 e Now Foods) e em 12/10/2026 (datas do CNES 06/2026
+    # e do Alivemed e a ordem que delas decorre; parecer de 11/10/2026, R2).
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-10-09</lastmod>"
+        "    <lastmod>2026-10-12</lastmod>"
     ) in sitemap

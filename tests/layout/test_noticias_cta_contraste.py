@@ -1,26 +1,28 @@
 """Contraste, cores e foco do selo e do botão dos cards da listagem de Notícias.
 
 O teste de contraste geral mede o que aparece na carga: os cinco primeiros
-cards, sempre no formato grande. Os compactos (do sexto em diante, depois de
-"Ver mais notícias", de uma busca, de um filtro ou de uma ordenação) ficavam de
-fora, e foi ali que "Ler atualização" saiu com branco sobre #f59e0b (2,15:1) e
-"Ler notícia" com branco sobre #ea580c (3,56:1).
+cards. Os do sexto em diante (depois de "Ver mais notícias", de uma busca, de um
+filtro ou de uma ordenação) ficavam de fora, e foi ali que "Ler atualização"
+saiu com branco sobre #f59e0b (2,15:1) e "Ler notícia" com branco sobre #ea580c
+(3,56:1). Até 11/10/2026 os cinco primeiros tinham um formato grande próprio;
+desde 12/10/2026 (parecer de 11/10/2026, R1) todos os cards têm o mesmo modelo
+(news-card-compact) em qualquer posição e estado.
 
 Atualização, Informativo, Urgente e Orientação têm as cores num arquivo só
 (assets/css/pages/noticias-tipos.css): fundo vivo e texto com alto contraste,
-iguais no selo e no botão dos dois formatos, com hover e foco um passo mais
+iguais no selo e no botão de todos os cards, com hover e foco um passo mais
 escuros. Em cada janela (celular, meia tela, 1023/1024 e desktop) o teste
 percorre a carga inicial, "Ver mais notícias", a busca pelo título de um artigo
-de cada tipo que começa compacto, a categoria desse artigo e a ordenação das
-mais antigas. Os artigos são achados pelo href, nunca pela posição: cada um tem
-de aparecer compacto em "Ver mais" e grande na busca e/ou na categoria. Em até
-dois cards por combinação de tipo, formato e classes, mede o selo (normal) e o
+de cada tipo que começa oculto (depois dos cinco primeiros), a categoria desse
+artigo e a ordenação das mais antigas. Os artigos são achados pelo href, nunca
+pela posição: cada um tem de manter o mesmo formato em "Ver mais", na busca e na
+categoria. Em até dois cards por combinação de tipo, formato e classes, mede o selo (normal) e o
 botão (normal, hover e foco de teclado): a cor do texto e o fundo calculados,
 com os fundos dos ancestrais compostos, e o fundo capturado em pixels com o texto
 oculto, no miolo do botão. Vale o menor dos dois.
 
 Exige, nos quatro tipos, 4,5:1 em todos os estados, as cores de EXPECTED (as
-mesmas nos dois formatos) e, no foco, o anel visível e a pílula mantida.
+mesmas em todos os cenários) e, no foco, o anel visível e a pílula mantida.
 
 Roda num subprocesso por janela, como os outros testes de navegador.
 """
@@ -205,17 +207,17 @@ with sync_playwright() as playwright:
         return page.evaluate("window.__cta.all()")
 
     cards = load()
-    # Alvo de cada tipo: o primeiro compacto na ordem padrão que fica entre os
-    # cinco primeiros da própria categoria (aparece grande no filtro dela).
+    # Alvo de cada tipo: o primeiro que começa oculto (depois dos cinco primeiros)
+    # e fica entre os cinco primeiros da própria categoria (aparece no filtro dela).
     targets = {}
     for kind in TYPES:
         for card in cards:
-            if card["type"] == kind and card["compact"]:
+            if card["type"] == kind and card["hidden"]:
                 same = [other["href"] for other in cards if other["category"] == card["category"]]
                 if same.index(card["href"]) < 5:
                     targets[kind] = card
                     break
-        assert kind in targets, f"nenhum artigo compacto de {kind} encontrado"
+        assert kind in targets, f"nenhum artigo oculto de {kind} encontrado"
         output["alvos"][kind] = {"href": targets[kind]["href"], "categoria": targets[kind]["category"], "titulo": targets[kind]["title"]}
         output["formatos_dos_alvos"][kind] = {}
     hrefs = tuple(t["href"] for t in targets.values())
@@ -249,19 +251,9 @@ with sync_playwright() as playwright:
     cards = page.evaluate("window.__cta.all()")
     output["linhas"] += collect(page, "ordenacao_asc_ver_mais", cards)
 
-    # Toda variante (tipo + classes do botão e do selo) também no formato grande:
-    # a busca pelo título leva o card ao topo da lista.
-    seen = {(row["tipo"], *row["classes"]) for row in output["linhas"] if row["formato"] == "grande"}
-    for card in cards:
-        signature = (card["type"], card["ctaClass"], card["badgeClass"])
-        if signature in seen:
-            continue
-        seen.add(signature)
-        load()
-        page.locator("#news-search").fill(card["title"])
-        found = [c for c in page.evaluate("window.__cta.all()") if c["href"] == card["href"]]
-        assert found and not found[0]["compact"], f"busca não trouxe {card['href']} em formato grande"
-        output["linhas"] += collect(page, "busca_variante", found, extra=(card["href"],))
+    # Até 11/10/2026 aqui cada variante (tipo + classes) era buscada para aparecer
+    # também no formato grande. Com o modelo único não há outro formato: as
+    # variantes já foram medidas em "Ver mais" e na ordenação.
     browser.close()
 print(json.dumps(output, ensure_ascii=False))
 '''
@@ -316,7 +308,8 @@ def _rows(medidas, width):
 @pytest.mark.parametrize("width", [w for w, _ in VIEWPORTS])
 def test_type_badge_and_button_reach_the_minimum_in_every_state(medidas, width, kind):
     rows = [row for row in _rows(medidas, width) if row["tipo"] == kind]
-    assert {row["formato"] for row in rows} == {"grande", "compacto"}, f"{kind} não apareceu nos dois formatos"
+    # Modelo único (12/10/2026, R1): só o formato compacto, em todos os cenários.
+    assert {row["formato"] for row in rows} == {"compacto"}, f"{kind} apareceu em outro formato"
     assert {row["estado"] for row in rows if row["parte"] == "cta"} == {"normal", "hover", "foco"}
     for row in rows:
         if row["estado"] == "foco":
@@ -329,7 +322,7 @@ def test_type_badge_and_button_reach_the_minimum_in_every_state(medidas, width, 
 
 @pytest.mark.parametrize("kind", TYPES)
 @pytest.mark.parametrize("width", [w for w, _ in VIEWPORTS])
-def test_type_uses_the_central_colors_in_both_formats(medidas, width, kind):
+def test_type_uses_the_central_colors_in_every_scenario(medidas, width, kind):
     rows = [row for row in _rows(medidas, width) if row["tipo"] == kind]
     wrong = []
     for row in rows:
@@ -352,12 +345,17 @@ def test_type_button_keeps_the_pill_and_a_visible_ring_on_focus(medidas, width, 
 
 @pytest.mark.parametrize("kind", TYPES)
 @pytest.mark.parametrize("width", [w for w, _ in VIEWPORTS])
-def test_the_same_type_article_turns_from_compact_to_large(medidas, width, kind):
+def test_the_same_type_article_keeps_one_format_in_every_scenario(medidas, width, kind):
+    # Modelo único (12/10/2026, R1): o mesmo artigo fica no mesmo formato em "Ver mais", na busca e na categoria
+    # (até 11/10/2026 ele passava do compacto ao grande ao subir para os cinco primeiros) e o botão tem as mesmas
+    # cores nos três cenários.
     result = medidas[width]
     formats = result["formatos_dos_alvos"][kind]
     target = result["alvos"][kind]["href"]
-    assert formats == {"ver_mais": True, "busca": False, "categoria": False}, (result["alvos"][kind], formats)
+    assert formats == {"ver_mais": True, "busca": True, "categoria": True}, (result["alvos"][kind], formats)
     rows = [row for row in _rows(medidas, width) if row["href"] == target and row["parte"] == "cta"]
-    compact = {row["estado"]: (row["cor"], row["fundo"]) for row in rows if row["formato"] == "compacto"}
-    large = {row["estado"]: (row["cor"], row["fundo"]) for row in rows if row["formato"] == "grande"}
-    assert compact and compact == large, f"@{width} {target}: compacto {compact} x grande {large}"
+    por_cenario = {}
+    for row in rows:
+        por_cenario.setdefault(row["cenario"], {})[row["estado"]] = (row["cor"], row["fundo"])
+    assert {"ver_mais", "busca", "categoria"} <= set(por_cenario), (target, sorted(por_cenario))
+    assert len({json.dumps(v, sort_keys=True) for v in por_cenario.values()}) == 1, f"@{width} {target}: {por_cenario}"

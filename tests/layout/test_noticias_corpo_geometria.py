@@ -422,7 +422,9 @@ def test_tabela_continua_na_rolagem_interna(geometria):
 
 
 def test_listagem_e_os_cliques_permanecem(geometria):
-    assert geometria["cards"]["390"]["paddingRight"] == pytest.approx(34, abs=1)
+    # Modelo único (12/10/2026, R1): o primeiro card tem o recuo do card compacto (1px + 1.25rem), e a reserva a
+    # 390 px é 24 + 44 + 8 - 16 - 21 = 39 px (era 34 px no formato destaque, com 2px + 1.5rem).
+    assert geometria["cards"]["390"]["paddingRight"] == pytest.approx(39, abs=1)
     assert geometria["cards"]["1440"]["paddingRight"] == pytest.approx(0, abs=0.5)
     assert geometria["cards"]["390"]["overflowX"] <= 0
     assert len(geometria["cliques"]) == 2

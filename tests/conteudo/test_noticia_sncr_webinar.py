@@ -161,7 +161,8 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     assert html.count(f'href="{ROUTE}"') == 1
     assert len(sncr_cards) == 1
     card = sncr_cards[0]
-    assert cards.index(card) == 24
+    # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
+    assert cards.index(card) == 25
     assert "news-card-compact" in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
     assert f'<time datetime="{UPDATED}" class="leading-none">07/10/2026 • 09h08</time>' in card
@@ -176,15 +177,16 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     assert "29/10" not in card and "31/10" not in card
 
 
-def test_comunicado_keeps_one_sncr_card_and_seven_active_notices():
+def test_comunicado_keeps_one_sncr_card_and_six_active_notices():
     html = COMUNICADO_PATH.read_text(encoding="utf-8")
     active = _active_notices(html)
     sncr_cards = [article for article in active if 'data-category="sncr"' in article]
 
     assert html.count('data-category="sncr"') == 1
     assert html.count(f'href="{ROUTE}"') == 1
-    assert len(active) == 7
-    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', html) == ["7", "7"]
+    # 11/10/2026: o aviso do CNES 09/2026 passou ao histórico (6 ativos).
+    assert len(active) == 6
+    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', html) == ["6", "6"]
     assert len(sncr_cards) == 1
     card_text = _text(sncr_cards[0])
     for term in (

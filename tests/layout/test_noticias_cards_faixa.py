@@ -1,8 +1,8 @@
 """Título e resumo dos cards da listagem ficam fora da faixa dos botões flutuantes.
 
 A reserva é uma regra de #news-article-list em pages/noticias.css, com o recuo
-de cada família de card: o destaque (border-2, p-6 e md:p-8) e o compacto
-(1px e 1.25rem). O teste abre /noticias/, clica em "Ver mais notícias", leva
+do modelo único dos cards (1px de borda e 1.25rem de padding; até 11/10/2026
+havia também o formato destaque nos cinco primeiros, com border-2, p-6 e md:p-8). O teste abre /noticias/, clica em "Ver mais notícias", leva
 cada linha real do texto (Range.getClientRects) à faixa vertical de cada botão
 visível, rolando a página pelo que os retângulos atuais pedem, e mede a folga
 horizontal até o botão. Presença de seletor não basta.
@@ -32,8 +32,9 @@ JANELAS = (
     (960, 900), (1024, 800), (1359, 900), (1360, 900), (1440, 900),
 )
 GRUPOS = (JANELAS[:5], JANELAS[5:])
-DESTAQUES = range(0, 5)
-COMPACTOS = range(5, 8)
+# Cards medidos: os cinco primeiros da carga e três revelados por "Ver mais notícias".
+PRIMEIROS = range(0, 5)
+REVELADOS = range(5, 8)
 
 PROBE = r"""
 import json
@@ -206,7 +207,7 @@ def faixa():
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
     base = f"http://127.0.0.1:{server.server_port}"
-    alvos = json.dumps(list(DESTAQUES) + list(COMPACTOS))
+    alvos = json.dumps(list(PRIMEIROS) + list(REVELADOS))
     try:
         processos = [
             subprocess.Popen(
@@ -260,17 +261,19 @@ def test_titulos_e_resumos_fora_da_faixa_dos_botoes(faixa):
         assert [c for c in janela["cenarios"] if c["status"] == "incompleto"] == [], largura
         assert _falhas(janela["cenarios"]) == [], (largura, _falhas(janela["cenarios"]))
         executados = [c for c in janela["cenarios"] if c["status"] == "executado"]
-        assert any(c["compacto"] for c in executados), largura
-        assert any(not c["compacto"] for c in executados), largura
+        # Modelo único (12/10/2026, R1): todo card medido tem news-card-compact, e os medidos incluem os cinco
+        # primeiros e cards revelados por "Ver mais notícias".
+        assert all(c["compacto"] for c in janela["cenarios"]), largura
+        assert any(c["card"] < 5 for c in executados) and any(c["card"] >= 5 for c in executados), largura
         for c in janela["cenarios"]:
             if c["status"] == "nao_aplicavel":
                 assert c["motivo"] in ("rolagem negativa", "alem do fim", "topo exige scrollY > 300"), c
 
 
-def test_reserva_segue_a_familia_e_cessa_no_desktop(faixa):
+def test_reserva_do_modelo_unico_e_cessa_no_desktop(faixa):
     # folgaReserva: do fim do conteúdo do card, menos o padding-right do texto,
     # até o botão. Abaixo de 1280px o container não tem margem e a reserva é
-    # exata (8 px nas duas famílias); de 1360px em diante ela é zero.
+    # exata (8 px); de 1360px em diante ela é zero.
     for (largura, altura), janela in faixa.items():
         for caixa in janela["caixas"]:
             assert caixa["w"] > 0 and caixa["h"] > 0
@@ -286,8 +289,9 @@ def test_reserva_segue_a_familia_e_cessa_no_desktop(faixa):
 def test_listagem_contagem_ordem_e_cliques(faixa):
     for (largura, altura), janela in faixa.items():
         assert janela["antes"]["cards"] == 83
-        assert janela["antes"]["visiveis"] == 5 and janela["antes"]["destaques"] == 5
-        assert janela["depois"]["visiveis"] == 83 and janela["depois"]["destaques"] == 5
+        # "destaques" conta os cards visíveis sem news-card-compact: com o modelo único (12/10/2026) não há nenhum.
+        assert janela["antes"]["visiveis"] == 5 and janela["antes"]["destaques"] == 0
+        assert janela["depois"]["visiveis"] == 83 and janela["depois"]["destaques"] == 0
         assert janela["antes"]["ordem"] == janela["depois"]["ordem"]
         assert janela["depois"]["overflowX"] <= 0, largura
     ordens = {tuple(j["depois"]["ordem"]) for j in faixa.values()}

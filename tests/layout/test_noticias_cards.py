@@ -1,3 +1,14 @@
+"""Contrato do main.js para os cards de /noticias/: ordem, "Ver mais" e formato.
+
+Modelo único (parecer de 11/10/2026, R1): todos os cards levam news-card-compact no HTML e o main.js não troca mais
+o formato pela posição (até 11/10/2026 os cinco primeiros do resultado perdiam a classe e ganhavam título, resumo e
+botão maiores). A posição só decide quem aparece antes de "Ver mais notícias".
+
+Data (R2): o card leva a data válida da matéria com a precisão dela; uma data só com o dia (AAAA-MM-DD) conta, para
+ordenar, como o início desse dia em Brasília (-03:00). Sem essa regra, o navegador lê AAAA-MM-DD como meia-noite UTC,
+21h do dia anterior em Brasília, e a data subia ou descia em relação a cards do dia anterior. Empates mantêm a ordem do
+HTML (a ordenação do Array é estável).
+"""
 import base64
 import functools
 import subprocess
@@ -15,6 +26,16 @@ from support import SITE_DIR, subprocess_env
 ROOT = Path(__file__).parents[2]
 MAIN_PATHS = (ROOT / "assets/js/main.js", ROOT / "assets/js/main.min.js")
 INITIAL_VISIBLE_LIMIT = 5
+# (título, datetime, data-updated). O card 4 tem só o dia; o 3 é da noite anterior e o 5, da manhã do mesmo dia.
+CARDS = (
+    ("Card 0", "2026-01-01T00:00:00-03:00", None),
+    ("Card 1", "2026-01-02T00:00:00-03:00", None),
+    ("Card 2", "2026-01-03T00:00:00-03:00", None),
+    ("Card 3", "2026-01-06T22:00:00-03:00", None),
+    ("Card 4", "2026-01-07", None),
+    ("Card 5", "2026-01-07T08:00:00-03:00", None),
+    ("Card 6", "2026-01-01T00:00:00-03:00", "2030-01-01T00:00:00-03:00"),
+)
 
 
 class _QuietHandler(SimpleHTTPRequestHandler):
@@ -38,13 +59,12 @@ def site_url():
 
 def _fixture_html(site_url):
     cards = []
-    for index in range(7):
-        updated = ' data-updated="2030-01-01T00:00:00-03:00"' if index == 6 else ""
-        compact = " news-card-compact" if index >= INITIAL_VISIBLE_LIMIT else ""
+    for title, moment, updated in CARDS:
+        updated_attr = f' data-updated="{updated}"' if updated else ""
         cards.append(
-            f'<article class="news-card{compact}" data-news-card '
-            f'data-category="categoria" data-title="Card {index}"{updated}>'
-            f'<time datetime="2026-01-{index + 1:02d}T00:00:00-03:00"></time>'
+            f'<article class="news-card news-card-compact" data-news-card '
+            f'data-category="categoria" data-title="{title}"{updated_attr}>'
+            f'<time datetime="{moment}"></time>'
             "</article>"
         )
 
@@ -70,13 +90,17 @@ def test_news_card_contract_is_identical_in_both_javascript_files():
     assert MAIN_PATHS[0].read_bytes() == MAIN_PATHS[1].read_bytes()
     source = MAIN_PATHS[0].read_text(encoding="utf-8")
     assert "var INITIAL_VISIBLE_LIMIT = 5;" in source
-    assert "updateCardLayouts(matchingCards);" in source
+    # O formato não depende mais da posição: nada troca news-card-compact.
+    assert "updateCardLayouts" not in source
+    assert "classList.toggle('news-card-compact'" not in source
+    assert "classList.remove('news-card-compact')" not in source
+    assert "function parseCardDate(value)" in source
     assert source.index("sortArticles();", source.index("updateCategoryFilters();")) < source.index(
         "updateResults();", source.index("updateCategoryFilters();")
     )
 
 
-def test_layout_uses_sorted_result_position_instead_of_original_dom_position(site_url):
+def test_order_uses_the_card_date_precision_and_position_never_changes_the_format(site_url):
     fixture = base64.b64encode(_fixture_html(site_url).encode("utf-8")).decode("ascii")
     script = textwrap.dedent(
         '''
@@ -103,24 +127,29 @@ def test_layout_uses_sorted_result_position_instead_of_original_dom_position(sit
             page.set_content(html, wait_until="load")
 
             newest = card_state(page)
-            assert newest[0]["title"] == "Card 6"
+            assert [card["title"] for card in newest] == [
+                "Card 6", "Card 5", "Card 4", "Card 3", "Card 2", "Card 1", "Card 0"], newest
             assert sum(not card["hidden"] for card in newest) == 5
-            assert all(not card["compact"] for card in newest[:5])
-            assert newest[5]["hidden"] and newest[5]["compact"]
+            assert all(card["compact"] for card in newest)
+            assert newest[5]["hidden"] and newest[6]["hidden"]
 
             page.locator("[data-news-sort='asc']").click()
             oldest = card_state(page)
-            assert oldest[0]["title"] == "Card 0"
+            assert [card["title"] for card in oldest] == [
+                "Card 0", "Card 1", "Card 2", "Card 3", "Card 4", "Card 5", "Card 6"], oldest
             assert sum(not card["hidden"] for card in oldest) == 5
-            assert all(not card["compact"] for card in oldest[:5])
-            assert oldest[5]["hidden"] and oldest[5]["compact"]
+            assert all(card["compact"] for card in oldest)
 
             page.locator("[data-news-sort='desc']").click()
             page.locator("#btn-carregar-mais").click()
             expanded = card_state(page)
             assert all(not card["hidden"] for card in expanded)
-            assert all(not card["compact"] for card in expanded[:5])
-            assert all(card["compact"] for card in expanded[5:])
+            assert all(card["compact"] for card in expanded)
+
+            page.fill("#news-search", "Card 4")
+            searched = [card for card in card_state(page) if not card["hidden"]]
+            assert [card["title"] for card in searched] == ["Card 4"]
+            assert all(card["compact"] for card in searched)
             browser.close()
         '''
     )

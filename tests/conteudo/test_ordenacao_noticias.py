@@ -22,6 +22,7 @@ PRODUTOS_IRREGULARES_UPDATED = "2026-10-09T20:27:00-03:00"
 FABRICANTES_INTERNACIONAIS_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-dispositivos-medicos/"
 SUPERVISAO_CONTEUDO_URL = "https://www.regularizeconsultorias.com.br/noticias/farmaceutico-supervisiona-conteudos-farmacia-redes-sociais-sites/"
 RETATRUTIDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-retatrutida-sem-registro-produtos-irregulares/"
+CNES_06_URL = "https://www.regularizeconsultorias.com.br/noticias/cnes-prorroga-transmissor-competencia-06-2026/"
 HEMOTERAPIA_URL = "https://www.regularizeconsultorias.com.br/noticias/ministerio-saude-atualiza-procedimentos-hemoterapicos-transicao-2026/"
 EDITAL_5_2026_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-edital-5-2026-dispositivos-medicos-inovadores/"
 REVISAO_PROPAGANDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-revisao-propaganda-medicamentos-alimentos/"
@@ -69,14 +70,22 @@ def _card_url(card):
     return f"https://www.regularizeconsultorias.com.br{match.group(1)}"
 
 
+def _parse_card_date(value):
+    # Data só com o dia (AAAA-MM-DD): início desse dia em Brasília (-03:00), a mesma regra de assets/js/main.js
+    # (parseCardDate, 12/10/2026). O card mostra só o dia; a hora 00h00 serve apenas para ordenar.
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+        value += "T00:00:00-03:00"
+    return datetime.fromisoformat(value).timestamp()
+
+
 def _card_timestamp(card):
     updated_match = re.search(r'\bdata-updated="([^"]+)"', card)
     if updated_match:
-        return datetime.fromisoformat(updated_match.group(1)).timestamp()
+        return _parse_card_date(updated_match.group(1))
 
     published_match = re.search(r'<time\b[^>]*datetime="([^"]+)"', card)
     assert published_match is not None, "News card timestamp not found"
-    return datetime.fromisoformat(published_match.group(1)).timestamp()
+    return _parse_card_date(published_match.group(1))
 
 
 def _itemlist(html):
@@ -135,10 +144,11 @@ def test_news_index_sorting_rule_and_attributes():
     article_html = article_match.group(1)
 
     assert 'data-updated="2026-08-14T09:04:41-03:00"' in article_html, "data-updated attribute missing or incorrect"
-    # O card mostra "Atualizado em 14/08/2026 • 09h04": o <time> do card é essa atualização, a data que ordena a lista
-    # (layout comum, revisão v2, 10/10/2026; test_listagem_rotulo_atualizacao.py). A publicação original de 22/05/2026
-    # continua protegida na página da matéria, no datePublished e no "Publicado em".
-    assert 'Atualizado em <span class="whitespace-nowrap"><time datetime="2026-08-14T09:04:41-03:00" class="leading-none">14/08/2026 • 09h04</time>' in article_html, "The card <time> must carry the update it shows"
+    # O card mostra "14/08/2026 • 09h04", sem prefixo desde 12/10/2026 (parecer de 11/10/2026, R1): o <time> do
+    # card é essa atualização, a data que ordena a lista (test_listagem_rotulo_atualizacao.py). A publicação original
+    # de 22/05/2026 continua protegida na página da matéria, no datePublished e no "Publicado em".
+    assert '<time datetime="2026-08-14T09:04:41-03:00" class="leading-none">14/08/2026 • 09h04</time>' in article_html, "The card <time> must carry the update it shows"
+    assert "Atualizado em" not in article_html
     alteracao_page = ALTERACAO_CADASTRAL_PATH.read_text(encoding="utf-8")
     assert '"datePublished": "2026-05-22T23:30:00-03:00"' in alteracao_page, "Original datePublished was falsified in the article page"
     assert '"dateModified": "2026-08-14T09:04:41-03:00"' in alteracao_page, "dateModified missing or incorrect in the article page"
@@ -165,7 +175,9 @@ def test_news_index_itemlist_ordering():
 
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
-    # Lote de conteúdo e dados de 09/10/2026: as 13 matérias atualizadas no lote ocupam o topo, pelo carimbo.
+    # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
+    assert urls[0] == CNES_COMPETENCIA_09_2026_URL
+    # Lote de conteúdo e dados de 09/10/2026: as 13 matérias atualizadas no lote vêm logo depois, pelo carimbo.
     lote = [
         "policia-federal-classificacao-produtos-simples-compostos-siproquim",
         "anvisa-atualiza-listas-portaria-344-1998",
@@ -181,47 +193,47 @@ def test_news_index_itemlist_ordering():
         "anvisa-regras-cosmeticos-artesanais",
         "anvisa-edital-6-2026-afe-manipulacao-preparacoes-estereis",
     ]
-    assert urls[:13] == [f"https://www.regularizeconsultorias.com.br/noticias/{slug}/" for slug in lote]
+    assert urls[1:14] == [f"https://www.regularizeconsultorias.com.br/noticias/{slug}/" for slug in lote]
     # Fase 1M v2: As 6 matérias atualizadas em 08/10/2026 vêm logo depois.
     certidoes_url = "https://www.regularizeconsultorias.com.br/noticias/anvisa-certidoes-certificados-medicamentos-solicita/"
     alimentos_url = "https://www.regularizeconsultorias.com.br/noticias/anvisa-prazo-adequacao-notificacao-alimentos-setembro-2026/"
     cnes_08_url = "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
-    assert urls[13] == HEMOTERAPIA_URL
-    assert urls[14] == certidoes_url
-    assert urls[15] == EDITAL_5_2026_URL
-    assert urls[16] == alimentos_url
-    assert urls[17] == cnes_08_url
-    assert urls[18] == SICERT_URL
-    assert urls[19] == "https://www.regularizeconsultorias.com.br/noticias/novos-compendios-farmacopeia-brasileira-entram-em-vigor/"
-    assert urls[20] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-hmp-solicita-medicamentos-produtos-biologicos/"
+    assert urls[14] == HEMOTERAPIA_URL
+    assert urls[15] == certidoes_url
+    assert urls[16] == EDITAL_5_2026_URL
+    assert urls[17] == alimentos_url
+    assert urls[18] == cnes_08_url
+    assert urls[19] == SICERT_URL
+    assert urls[20] == "https://www.regularizeconsultorias.com.br/noticias/novos-compendios-farmacopeia-brasileira-entram-em-vigor/"
+    assert urls[21] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-hmp-solicita-medicamentos-produtos-biologicos/"
     # A suspensão do SIFAP permanece à frente das duas matérias empatadas às 11h13.
-    assert urls[21] == SIFAP_SUSPENSAO_URL
-    assert urls[22] == "https://www.regularizeconsultorias.com.br/noticias/prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular/"
-    assert urls[23] == "https://www.regularizeconsultorias.com.br/noticias/sifap-regularizacao-cadastral-farmacias-notificadas-13-maio/"
+    assert urls[22] == SIFAP_SUSPENSAO_URL
+    assert urls[23] == "https://www.regularizeconsultorias.com.br/noticias/prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular/"
+    assert urls[24] == "https://www.regularizeconsultorias.com.br/noticias/sifap-regularizacao-cadastral-farmacias-notificadas-13-maio/"
 
     # SNCR, AFE e Cadastro compartilham 07/10/2026 às 09h08. O empate conserva a ordem relativa.
-    assert urls[24] == SNCR_WEBINAR_URL
+    assert urls[25] == SNCR_WEBINAR_URL
     assert urls.count(SNCR_WEBINAR_URL) == 1
-    assert urls[25] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-acesso-sncr-afe-farmacias-privadas/"
-    assert urls[26] == "https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/"
-    assert urls[27] == "https://www.regularizeconsultorias.com.br/noticias/nova-regra-anvisa-cnes-receitas-farmacias/"
+    assert urls[26] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-acesso-sncr-afe-farmacias-privadas/"
+    assert urls[27] == "https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/"
+    assert urls[28] == "https://www.regularizeconsultorias.com.br/noticias/nova-regra-anvisa-cnes-receitas-farmacias/"
     assert urls.count("https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/") == 1
-    assert urls[28] == CNES_SNCR_URL
+    assert urls[29] == CNES_SNCR_URL
     assert urls.count(CNES_SNCR_URL) == 1
-    assert urls[29] == "https://www.regularizeconsultorias.com.br/noticias/receituarios-controlados-modelos-oficiais-anvisa/"
-    assert urls[7] == PORTARIA_URL
-    assert urls[9] == CREDENCIAMENTO_URL
+    assert urls[30] == "https://www.regularizeconsultorias.com.br/noticias/receituarios-controlados-modelos-oficiais-anvisa/"
+    assert urls[8] == PORTARIA_URL
+    assert urls[10] == CREDENCIAMENTO_URL
     # O consolidado de fiscalização permanece em 06/10/2026 às 16h32.
-    assert urls[10] == PRODUTOS_IRREGULARES_URL
+    assert urls[11] == PRODUTOS_IRREGULARES_URL
     assert urls.count(PRODUTOS_IRREGULARES_URL) == 1
     mapa_portaria_1617 = "https://www.regularizeconsultorias.com.br/noticias/mapa-portaria-1617-2026-aditivos-antimicrobianos-alimentacao-animal/"
-    assert urls[30] == mapa_portaria_1617
+    assert urls[31] == mapa_portaria_1617
     assert urls.count(mapa_portaria_1617) == 1
-    assert urls[31] == CNES_COMPETENCIA_09_2026_URL
+    assert urls[0] == CNES_COMPETENCIA_09_2026_URL
     assert urls.count(CNES_COMPETENCIA_09_2026_URL) == 1
     assert urls[32] == COSMETICOS_URL
     assert urls.count(COSMETICOS_URL) == 1
-    assert urls[11] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-regras-cosmeticos-artesanais/"
+    assert urls[12] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-regras-cosmeticos-artesanais/"
     assert urls.count("https://www.regularizeconsultorias.com.br/noticias/anvisa-regras-cosmeticos-artesanais/") == 1
     assert urls[33] == GLP1_URL
     assert urls[34] == SEMAVY_PROPAGANDA_URL
@@ -230,7 +242,7 @@ def test_news_index_itemlist_ordering():
     assert urls.count(IN_470_SUPLEMENTOS_URL) == 1
     assert urls[36] == SANEANTES_URL
     assert urls.count(SANEANTES_URL) == 1
-    assert urls[12] == EDITAL_6_2026_AFE_URL
+    assert urls[13] == EDITAL_6_2026_AFE_URL
     assert urls.count(EDITAL_6_2026_AFE_URL) == 1
     assert urls[37] == PASSIVO_DISPOSITIVOS_URL
     assert urls[38] == IFAS_GLP1_PETICOES_URL
@@ -244,9 +256,9 @@ def test_news_index_itemlist_ordering():
     assert urls[46] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-cosmeticos-saneantes/"
     assert urls[47] == FABRICANTES_INTERNACIONAIS_URL
     assert urls[48] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-formulario-cbpf-terapias-avancadas/"
-    assert urls[8] == MONITORAMENTO_URL
+    assert urls[9] == MONITORAMENTO_URL
     edital_position = urls.index(EDITAL_5_2026_URL)
-    assert edital_position == 15
+    assert edital_position == 16
     revisao_position = urls.index(REVISAO_PROPAGANDA_URL)
     assert revisao_position == 51
     assert urls[revisao_position - 1] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-amplia-painel-medicamentos-pendentes-registro/"
@@ -264,10 +276,13 @@ def test_news_index_itemlist_ordering():
     assert urls[paramol_position - 1] == DCB_IN462_URL
     assert urls[paramol_position + 1] == SEMAGLUTIDA_URL
     supervisao_position = urls.index(SUPERVISAO_CONTEUDO_URL)
-    assert urls[supervisao_position - 1] == RETATRUTIDA_URL
+    # 12/10/2026 (R2): o card do CNES 06/2026 passou a mostrar a atualização declarada na matéria (18/07/2026, só o
+    # dia) e entrou entre a Retatrutida (24/07/2026) e a Supervisão de conteúdo (17/07/2026).
+    assert urls[supervisao_position - 1] == CNES_06_URL
+    assert urls[supervisao_position - 2] == RETATRUTIDA_URL
     assert urls[supervisao_position + 1] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-dispositivos-medicos-heuer-international/"
     assert CREDENCIAMENTO_URL in urls, "Credenciamento is missing from JSON-LD"
-    assert urls.index(CREDENCIAMENTO_URL) == 9
+    assert urls.index(CREDENCIAMENTO_URL) == 10
 
 
 def test_all_news_orders_match_effective_timestamp_sorting():
@@ -289,8 +304,8 @@ def test_all_news_orders_match_effective_timestamp_sorting():
     assert [item["position"] for item in items] == list(range(1, len(items) + 1))
     assert physical_urls == calculated_urls
     assert itemlist_urls == physical_urls
-    assert all("news-card-compact" not in card.split(">", 1)[0] for card in cards[:5])
-    assert all("news-card-compact" in card.split(">", 1)[0] for card in cards[5:])
+    # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
+    assert all("news-card-compact" in card.split(">", 1)[0] for card in cards)
 
 
 def _validar_conteudo_alimentos(html: str):
