@@ -55,9 +55,9 @@ NARROW_WIDTHS = [320, 360]
 REFERENCE_WIDTH = 1440
 
 # Quebras de linha do 331a974, medidas por este script no fim da rolagem.
-# Home: (aviso legal, direitos, crédito do desenvolvedor). Comunicado: linha
-# de direitos do fechamento. As outras páginas variam o texto do aviso e
-# entram só nas checagens de largura útil e alinhamento.
+# Home: (aviso legal, direitos, crédito do desenvolvedor). O comunicado usa
+# o mesmo bloco legal desde a inclusão do rodapé comum. As outras páginas
+# variam o texto do aviso e entram só nas checagens de largura útil e alinhamento.
 REFERENCE_COMMIT = "331a974"
 REFERENCE_LINES = {
     "index.html": (("aviso legal", "direitos", "crédito do desenvolvedor"), {
@@ -70,10 +70,9 @@ REFERENCE_LINES = {
         1359: (2, 1, 1), 1360: (2, 1, 1), 1375: (2, 1, 1), 1376: (2, 1, 1),
         1440: (2, 1, 1),
     }),
-    "comunicado/index.html": (("direitos do comunicado",), {
-        width: (2,) if width < 414 else (1,) for width in DETAIL_WIDTHS
-    }),
 }
+# O comunicado deixou a linha curta de direitos e passou a usar o rodapé da home.
+REFERENCE_LINES["comunicado/index.html"] = REFERENCE_LINES["index.html"]
 
 
 def _reference_lines(relative_path, width):
@@ -289,26 +288,28 @@ MEASURE_JS = r"""
 
 # Fechamento do comunicado com o último histórico aberto e fechado pelo
 # teclado. Cada quadro pintado é amostrado: ancorada, a coluna fica 16 px acima
-# do fechamento ou da linha de direitos; solta, fica a 24 px da base da janela
-# e não alcança a linha de direitos. Um quadro na posição antiga falha aqui.
+# do bloco legal do rodapé; solta, fica a 24 px da base da janela e não alcança
+# a linha de direitos. Um quadro na posição antiga falha aqui.
 HISTORY_WIDTHS = [320, 360, 390, 414]
 HISTORY_TOGGLE = '[aria-controls="aviso-historico-sngpc"]'
 HISTORY_SAMPLER_JS = r"""
 () => {
   const group = document.querySelector('.floating-buttons');
-  const closer = document.querySelector('main .mt-12.text-center');
-  const stops = [closer, closer.querySelector(':scope > p')];
+  const credits = document.querySelector('footer > .max-w-7xl > .border-t');
+  const rights = [...credits.querySelectorAll('p')].find((el) => el.textContent.includes('direitos reservados'));
+  const stops = [credits];
   window.__historyFrames = [];
   window.__historySampling = true;
   const sample = () => {
     const g = group.getBoundingClientRect();
     const tops = stops.map((el) => el.getBoundingClientRect().top);
+    const rightsTop = rights.getBoundingClientRect().top;
     const docked = group.classList.contains('is-docked');
     let problem = null;
     if (g.top < 0 || g.bottom > innerHeight + 0.5) problem = 'coluna fora da janela';
     else if (docked && !tops.some((top) => Math.abs(g.bottom - (top - 16)) <= 1)) problem = `ancorada a ${g.bottom.toFixed(1)} px, fora das paradas ${tops.map((t) => (t - 16).toFixed(1)).join('/')}`;
     else if (!docked && Math.abs(g.bottom - (innerHeight - 24)) > 1) problem = `solta a ${g.bottom.toFixed(1)} px da base`;
-    else if (!docked && g.bottom > tops[1] - 16 + 1 && tops[1] < innerHeight) problem = 'solta sobre a linha de direitos';
+    else if (!docked && g.bottom > rightsTop - 16 + 1 && rightsTop < innerHeight) problem = 'solta sobre a linha de direitos';
     if (problem) window.__historyFrames.push(problem);
   };
   const tick = () => requestAnimationFrame(() => setTimeout(() => {
@@ -486,6 +487,8 @@ def _collect(mode):
                         failures.append(f"{relative_path} @{width}: rolagem horizontal de {overflow} px")
         elif mode == "historico":
             relative_path = "comunicado/index.html"
+            _open(page, port, relative_path)
+            reference_padding = _measure(page, REFERENCE_WIDTH, "end")["paddingBottom"]
             for width in HISTORY_WIDTHS:
                 label = f"{relative_path} @{width}"
                 page.set_viewport_size({"width": width, "height": 844})
@@ -502,7 +505,9 @@ def _collect(mode):
 
                 def end_state(step):
                     data = _measure(page, width, "end")
-                    failures.extend(_problems(f"{label} {step}", data, None, _reference_lines(relative_path, width)))
+                    failures.extend(_problems(
+                        f"{label} {step}", data, reference_padding, _reference_lines(relative_path, width)
+                    ))
 
                 end_state("histórico fechado")
                 page.locator("main .mt-12.text-center > a[href='/']").focus()

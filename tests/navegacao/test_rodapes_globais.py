@@ -38,10 +38,6 @@ def test_footer_navigation_links_are_distinct_list_items():
         relative_path = path.relative_to(ROOT)
         root = parse_html(path)
         footers = [node for node in root.descendants() if node.tag == "footer"]
-        if relative_path == COMUNICADO_PATH:
-            assert not footers, relative_path
-            continue
-
         assert len(footers) == 1, relative_path
         footer = footers[0]
         links = [node for node in footer.descendants() if node.tag == "a"]
@@ -58,13 +54,20 @@ def test_footer_navigation_links_are_distinct_list_items():
         assert manuals_item is not popular_item, relative_path
 
 
+def test_comunicado_footer_does_not_repeat_the_page_closer():
+    source = (ROOT / COMUNICADO_PATH).read_text(encoding="utf-8")
+    assert source.count("Todos os direitos reservados") == 1
+    assert source.count("Site desenvolvido por Gestor de Sites") == 1
+    assert source.count("Não integra, representa, substitui ou possui vínculo institucional") == 1
+    assert "Voltar ao Início" in source
+    footer = footer_for(COMUNICADO_PATH)
+    assert "Todos os direitos reservados" in footer.text_content()
+    assert "Voltar ao Início" not in footer.text_content()
+
+
 def test_footer_contract_is_canonical():
     for path in public_html_paths():
         relative_path = path.relative_to(ROOT)
-        if relative_path == COMUNICADO_PATH:
-            assert not [node for node in parse_html(path).descendants() if node.tag == "footer"]
-            continue
-
         footer = footer_for(path)
         links = [node for node in footer.descendants() if node.tag == "a"]
         images = [node for node in footer.descendants() if node.tag == "img"]

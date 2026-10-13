@@ -284,29 +284,39 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
     assert news_index.count('href="/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"') == 1
     assert f'data-updated="{UPDATED}"' in news_index
     assert "13/10/2026 • 09h06" in news_index
-    assert "medidas sobre United Labz, Mounjcaps, lotes falsificados de Enhertu e Dysport e um lote do TYG" in news_index
+    article = NEWS_PATH.read_text(encoding="utf-8")
+    # O card ficou em duas frases. O histórico dessas medidas continua na matéria.
+    assert "todos os produtos da marca United Labz" in article
+    assert "Mounjcaps" in article and "Enhertu" in article
+    assert "Higia Pharmaceutical" in article and "Tha &amp; Thi" in article
+    assert "RE nº 3.436" in article and "3.743/2026" in article
+    assert "As RE nº 3.946 e 3.947 foram assinadas em 02/10/2026" in article
+    assert "União Vegetal Agroindustrial Ltda." in article
     for term in ("Hytamicina", "Pangastri", "Gripinew", "Lipo Top Gold", "Anagalis", "RE 3.440/2026", "RE 3.479/2026",
                  "RE 3.480/2026", "RE 3.546/2026", "RE 3.738/2026"):
         assert term in _consolidated_card(news_index).split('data-keywords="', 1)[1].split('"', 1)[0]
-    assert ("Publicações da Anvisa de 01/09 a 02/10 trazem seis resoluções de 02/10 sobre dispositivos médicos "
-            "(um lote de tiras G TECH e um lote falsificado do Hidrafemme), cosméticos e saneantes, a suspensão das "
-            "operações da Reach Latam") in news_index
     assert "Publicações da Anvisa de 01 a 28/09" not in news_index
-    assert "revogações de medidas referentes à Higia, à Tha &amp; Thi e à Terapêutica (RE nº 3.743, 3.718 e 3.436/2026)" in news_index
     assert "Publicações da Anvisa de 21 a 28/09" not in news_index
     assert "Publicações da Anvisa de 21 e 25/09" not in news_index
     cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', news_index, re.DOTALL)
     # 13/10/2026, 11h51: as seis resoluções do DOU de 13/10 mantêm o card na 1ª posição.
+    summary = ("O DOU de 13/10/2026 publica as RE nº 3.989, 4.000, 4.001, 4.002, 4.009 e 4.028/2026, "
+               "sobre medicamentos, insumos farmacêuticos, alimentos e cosméticos, inclusive o lote "
+               "HXTZ251015 de tirzepatida, o lote NDC 46785-162-03 de Xeomin e o lote P07725A de cloreto de sódio. "
+               "A matéria reúne as medidas anteriores, de 01/09 a 09/10/2026, e o histórico completo permanece na página.")
     assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[0]
     assert "news-card-compact" in cards[0].split(">", 1)[0]
     assert "13/10/2026 • 11h51" in cards[0]
     assert "09h06" not in cards[0]
+    assert f'data-summary="{summary}"' in cards[0]
+    assert f"<p class=\"text-slate-500 text-sm leading-relaxed mb-4\">{summary}</p>" in cards[0]
     assert "RE nº 3.989, 4.000, 4.001, 4.002, 4.009 e 4.028/2026" in cards[0]
     assert "lote HXTZ251015 de tirzepatida" in cards[0]
     assert "lote NDC 46785-162-03 de Xeomin" in cards[0]
     assert "lote P07725A de cloreto de sódio" in cards[0]
-    assert "As RE nº 3.946 e 3.947/2026 foram publicadas no DOU de 06/10/2026" in cards[0]
-    assert "União Vegetal Agroindustrial Ltda. como fabricante do Aloe Care" in cards[0]
+    assert "A matéria reúne as medidas anteriores" in cards[0]
+    assert "As RE nº 3.946 e 3.947/2026 foram publicadas no DOU de 06/10/2026" not in cards[0]
+    assert "União Vegetal Agroindustrial Ltda. como fabricante do Aloe Care" not in cards[0]
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
     assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-13</lastmod>" in sitemap
 
@@ -1103,3 +1113,81 @@ def test_october_update_reaches_lead_summary_metadata_and_listing_search():
     # Só esta matéria recebeu o carimbo de 11h51. SNCR e DCB permanecem às 09h06.
     assert news_index.count(f'data-updated="{UPDATED}"') == 1
     assert news_index.count('data-updated="2026-10-13T09:06:00-03:00"') == 2
+
+
+# Resumo do commit 1624995. A busca lia este texto; o patch revisado trocou-o pelo resumo curto
+# e não alterou data-keywords. O "&" aqui é o valor decodificado do atributo.
+_SUMMARY_BEFORE_SHORTENING = (
+    "O DOU de 13/10/2026 publica as RE nº 3.989, 4.000, 4.001, 4.002, 4.009 e 4.028/2026, "
+    "sobre medicamentos, insumos farmacêuticos, alimentos e cosméticos, inclusive o lote "
+    "HXTZ251015 de tirzepatida, o lote NDC 46785-162-03 de Xeomin e o lote P07725A de cloreto de sódio. "
+    "Publicações da Anvisa de 01/09 a 02/10 trazem seis resoluções de 02/10 sobre dispositivos médicos "
+    "(um lote de tiras G TECH e um lote falsificado do Hidrafemme), cosméticos e saneantes, a suspensão "
+    "das operações da Reach Latam com insumos controlados, incluindo tirzepatida (RE nº 3.764/2026), "
+    "a RE nº 3.751/2026, sobre a distribuidora LAF MED e os manipulados estéreis da ICT Farmacêutica, "
+    "medidas sobre United Labz, Mounjcaps, lotes falsificados de Enhertu e Dysport e um lote do TYG, "
+    "e revogações de medidas referentes à Higia, à Tha & Thi e à Terapêutica "
+    "(RE nº 3.743, 3.718 e 3.436/2026). As RE nº 3.946 e 3.947/2026 foram publicadas no DOU de 06/10/2026. "
+    "Retificação de 09/10/2026 indica a União Vegetal Agroindustrial Ltda. como fabricante do Aloe Care."
+)
+_KEYWORDS_BEFORE_RESTORATION = (
+    "ANVISA, Ocrevus, Eleve, D Casa, Smart GR, RE 3.751/2026, RE 3.712/2026, RE 3.714/2026, RE 3.717/2026, "
+    "Phesgo, Dysport, Enhertu, Mounjcaps, United Labz, TYG, Hytamicina, Pangastri, Gripinew, Lipo Top Gold, "
+    "Anagalis, RE 3.440/2026, RE 3.479/2026, RE 3.480/2026, RE 3.546/2026, RE 3.738/2026, dispositivos médicos, "
+    "G TECH, Hidrafemme, Perspirex, MAV C-22, GhostBond XL, Mult Jet, LGR, Medicpro, Lapzyme, BR Mega Limp, "
+    "BR MT LIMP, Biojet, RE 3.850/2026, RE 3.852/2026, RE 3.854/2026, RE 3.855/2026, RE 3.856/2026, "
+    "RE 3.857/2026, RE 3.989/2026, RE 4.000/2026, RE 4.001/2026, RE 4.002/2026, RE 4.009/2026, RE 4.028/2026, "
+    "Xeomin, tirzepatida, cloreto de sódio, produtos irregulares, fiscalização sanitária"
+)
+# Termos que o resumo antigo continha e o resumo curto não contém. "RE 3.946/2026" não era uma
+# sequência contínua: o texto trazia "RE nº 3.946 e 3.947/2026" e "RE nº 3.743, 3.718 e 3.436/2026".
+_TERMS_LOST_WITH_THE_SHORT_SUMMARY = (
+    "Aloe Care", "União Vegetal Agroindustrial Ltda.", "Reach Latam", "Higia", "Tha & Thi", "Terapêutica",
+    "ICT Farmacêutica", "LAF MED", "3.946", "3.947", "3.743", "3.718", "3.436", "3.764", "06/10/2026",
+    "02/10", "insumos controlados", "manipulados estéreis", "Retificação",
+)
+_RESTORED_KEYWORDS = (
+    "Aloe Care, União Vegetal Agroindustrial Ltda., Reach Latam, Higia, Tha & Thi, Terapêutica, "
+    "ICT Farmacêutica, LAF MED, RE 3.946/2026, RE 3.947/2026, RE 3.743/2026, RE 3.718/2026, "
+    "RE 3.436/2026, RE 3.764/2026, 06/10/2026, 02/10/2026, insumos controlados, manipulados estéreis, Retificação"
+)
+
+
+def _listing_haystack(attrs, keywords, visible):
+    return _normalize_search(" ".join([
+        attrs["data-title"], attrs["data-summary"], attrs["data-category"], keywords,
+        attrs["data-tags"], visible,
+    ]).replace("&amp;", "&"))
+
+
+def test_shortened_summary_keeps_removed_names_searchable_through_keywords():
+    news_index = NEWS_INDEX_PATH.read_text(encoding="utf-8")
+    card = _consolidated_card(news_index)
+    attrs = dict(re.findall(r'\b(data-[a-z-]+)="([^"]*)"', card.split(">", 1)[0]))
+    visible = _text(card)
+    summary = attrs["data-summary"]
+    keywords = attrs["data-keywords"].replace("&amp;", "&")
+
+    # O resumo curto permanece nas duas ocorrências. Os termos não voltam para o corpo do card.
+    assert len(summary) == 373
+    assert news_index.count(summary) == 2
+    assert f"<p class=\"text-slate-500 text-sm leading-relaxed mb-4\">{summary}</p>" in card
+    assert keywords == f"{_KEYWORDS_BEFORE_RESTORATION}, {_RESTORED_KEYWORDS}"
+    assert "Tha &amp; Thi" in card.split(">", 1)[0]
+    assert "Tha & Thi" not in card.split(">", 1)[0]
+    received = _listing_haystack(attrs, _KEYWORDS_BEFORE_RESTORATION, visible)
+    corrected = _listing_haystack(attrs, keywords, visible)
+    old_summary = _normalize_search(_SUMMARY_BEFORE_SHORTENING)
+    for term in _TERMS_LOST_WITH_THE_SHORT_SUMMARY:
+        normalized = _normalize_search(term)
+        assert normalized in old_summary, term
+        assert normalized not in _normalize_search(summary), term
+        assert normalized not in _normalize_search(visible), term
+        assert normalized not in received, term
+        assert normalized in corrected, term
+    # A forma contínua "RE 3.946/2026" não estava no resumo antigo; o número estava.
+    # A palavra-chave segue o padrão dos demais atos do card e recupera as duas buscas.
+    for term in ("RE 3.946/2026", "RE 3.947/2026", "RE 3.743/2026", "RE 3.718/2026", "RE 3.436/2026", "RE 3.764/2026"):
+        assert _normalize_search(term) not in old_summary, term
+        assert _normalize_search(term) not in received, term
+        assert _normalize_search(term) in corrected, term

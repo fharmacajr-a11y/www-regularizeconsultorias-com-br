@@ -17,7 +17,6 @@ NOINDEX_PATTERN = re.compile(
     r'<meta[^>]+name="robots"[^>]+content="[^"]*noindex', re.IGNORECASE
 )
 EXCLUDED_FOOTER_PATHS = {
-    Path("comunicado/index.html"),
     Path("noticias/template-noticia.html"),
     Path("whatsapp/index.html"),
 }
@@ -145,10 +144,6 @@ def test_every_public_page_with_a_footer_links_to_the_policy():
     for path in public_html_paths():
         relative_path = path.relative_to(ROOT)
         footers = [node for node in parse_html(path).descendants() if node.tag == "footer"]
-        if relative_path == Path("comunicado/index.html"):
-            assert not footers
-            continue
-
         assert len(footers) == 1, relative_path
         paths_with_footer.append(path)
         footer_links = [
@@ -158,10 +153,10 @@ def test_every_public_page_with_a_footer_links_to_the_policy():
         ]
         assert footer_links.count(POLICY_ROUTE) == 1, relative_path
 
-    assert len(paths_with_footer) == 103
+    assert len(paths_with_footer) == 104
 
 
 def test_noindex_technical_pages_do_not_gain_the_policy_footer_link():
-    for relative_path in EXCLUDED_FOOTER_PATHS - {Path("comunicado/index.html")}:
+    for relative_path in EXCLUDED_FOOTER_PATHS:
         content = (ROOT / relative_path).read_text(encoding="utf-8")
         assert f'href="{POLICY_ROUTE}"' not in content, relative_path
