@@ -162,7 +162,7 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     assert html.count(f'href="{ROUTE}"') == 1
     assert len(sncr_cards) == 1
     card = sncr_cards[0]
-    # 13/10/2026, 09h06: os informes do SNCR levam o card à 2ª posição, empatado com produtos irregulares e a DCB.
+    # 13/10/2026, 09h06: o SNCR permanece na 2ª posição do HTML, empatado com a DCB. Produtos irregulares ficou à frente às 11h51.
     assert cards.index(card) == 1
     assert "news-card-compact" in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card

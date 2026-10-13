@@ -18,7 +18,7 @@ CBPF_IN451_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atua
 RPBR_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-periodicidade-rpbr-farmacovigilancia/"
 SIPROQUIM_IN338_URL = "https://www.regularizeconsultorias.com.br/noticias/produtos-quimicos-controlados-siproquim2-assinador-pf/"
 PRODUTOS_IRREGULARES_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
-PRODUTOS_IRREGULARES_UPDATED = "2026-10-13T09:06:00-03:00"
+PRODUTOS_IRREGULARES_UPDATED = "2026-10-13T11:51:00-03:00"
 FABRICANTES_INTERNACIONAIS_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-dispositivos-medicos/"
 SUPERVISAO_CONTEUDO_URL = "https://www.regularizeconsultorias.com.br/noticias/farmaceutico-supervisiona-conteudos-farmacia-redes-sociais-sites/"
 RETATRUTIDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-retatrutida-sem-registro-produtos-irregulares/"
@@ -175,7 +175,7 @@ def test_news_index_itemlist_ordering():
 
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
-    # 13/10/2026, 09h06: produtos irregulares, SNCR e DCB compartilham o carimbo. O empate conserva a ordem relativa.
+    # 13/10/2026, 11h51: produtos irregulares fica à frente. SNCR e DCB seguem empatados às 09h06.
     # A matéria eleitoral (12/10/2026, 18h08) e o CNES 09/2026 (11/10/2026, 06h07) vêm em seguida.
     assert urls[0] == PRODUTOS_IRREGULARES_URL
     assert urls[1] == SNCR_WEBINAR_URL

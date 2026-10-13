@@ -9,8 +9,9 @@ NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 SITEMAP_PATH = ROOT / "sitemap.xml"
 URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
 PUBLISHED = "2026-07-05T18:00:00-03:00"
-# 13/10/2026, 09h06: RE nº 3.946 e 3.947/2026 e retificação do fabricante do Aloe Care.
-UPDATED = "2026-10-13T09:06:00-03:00"
+# 13/10/2026, 11h51: RE nº 3.989, 4.000, 4.001, 4.002, 4.009 e 4.028/2026.
+# O carimbo anterior, 09h06, permanece nas matérias de SNCR e da DCB.
+UPDATED = "2026-10-13T11:51:00-03:00"
 DOBUTAMINA_LOTES = ("24092127", "24102310", "25102244", "25102243", "25112308")
 
 
@@ -119,21 +120,22 @@ def test_september_update_reflects_re_3547_and_keeps_history():
     september = _september_callout(html)
     text = _text(september)
 
+    assert html.index("novas-medidas-13-outubro-title") < html.index("novas-medidas-06-outubro-title")
     assert html.index("novas-medidas-06-outubro-title") < html.index("novas-medidas-02-outubro-title")
     assert html.index("novas-medidas-02-outubro-title") < html.index("novas-medidas-25-setembro-title")
     assert html.index("novas-medidas-25-setembro-title") < html.index("novas-medidas-21-setembro-title")
     assert html.index("novas-medidas-21-setembro-title") < html.index("novas-medidas-16-setembro-title")
     assert html.index("novas-medidas-16-setembro-title") < html.index("novas-medidas-setembro-title")
     assert html.index("novas-medidas-setembro-title") < html.index("novas-medidas-agosto-title")
-    # Sete quadros: o de 06/10/2026 ficou antes do de 02/10/2026.
-    assert html.count("data-news-update-callout aria-labelledby=") == 7
+    # Oito quadros: o de 13/10/2026 ficou antes do de 06/10/2026.
+    assert html.count("data-news-update-callout aria-labelledby=") == 8
     assert "ATUALIZAÇÃO" in september
     assert "Resolução-RE nº 3.547/2026" in text
     assert "de 09/09/2026 e publicada no DOU em 11/09/2026" in text
     assert "Medidas de julho a outubro mostram" in html
     assert "Medidas de julho a setembro" not in html
     assert "Medidas de julho e agosto" not in html
-    assert f'<time datetime="{UPDATED}">13/10/2026</time> às 09h06' in html
+    assert f'<time datetime="{UPDATED}">13/10/2026</time> às 11h51' in html
     assert f'<time datetime="{PUBLISHED}">05/07/2026</time> às 18h00' in html
     # Histórico de agosto e julho preservado.
     for term in ("12/08 — saneantes sem registro", "14/08 — Chá Sarapião", "Fiscalização de julho amplia", "Chlorohex 2,0%"):
@@ -294,9 +296,15 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
     assert "Publicações da Anvisa de 21 a 28/09" not in news_index
     assert "Publicações da Anvisa de 21 e 25/09" not in news_index
     cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', news_index, re.DOTALL)
-    # 13/10/2026, 09h06: a inclusão das RE nº 3.946 e 3.947 e da retificação do Aloe Care leva o card à 1ª posição.
+    # 13/10/2026, 11h51: as seis resoluções do DOU de 13/10 mantêm o card na 1ª posição.
     assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[0]
     assert "news-card-compact" in cards[0].split(">", 1)[0]
+    assert "13/10/2026 • 11h51" in cards[0]
+    assert "09h06" not in cards[0]
+    assert "RE nº 3.989, 4.000, 4.001, 4.002, 4.009 e 4.028/2026" in cards[0]
+    assert "lote HXTZ251015 de tirzepatida" in cards[0]
+    assert "lote NDC 46785-162-03 de Xeomin" in cards[0]
+    assert "lote P07725A de cloreto de sódio" in cards[0]
     assert "As RE nº 3.946 e 3.947/2026 foram publicadas no DOU de 06/10/2026" in cards[0]
     assert "União Vegetal Agroindustrial Ltda. como fabricante do Aloe Care" in cards[0]
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
@@ -469,7 +477,7 @@ def test_re_3764_and_re_3743_keep_suspension_and_revocation_apart():
     higia = _text(html[higia_start:html.index("<h2>21 de setembro: RE nº 3.712", higia_start)])
 
     # A Fase 1D reaproveitou o quadro de 21 a 28/09; o de outubro (Fase 1G) é o sexto.
-    assert html.count("data-news-update-callout aria-labelledby=") == 7
+    assert html.count("data-news-update-callout aria-labelledby=") == 8
     assert "Atualização: medidas de 21 a 28/09/2026 e revogações de 01, 21 e 23/09/2026" in _text(callout)
     assert "publicações de 01, 21, 23, 25 e 28/09/2026" in _text(callout)
     assert "As RE nº 3.436, 3.718 e 3.743/2026 revogam, cada uma, uma medida anterior referente a uma empresa" in _text(callout)
@@ -525,7 +533,7 @@ def test_re_3718_and_re_3436_revoke_only_their_own_items():
     terapeutica = _text(html[terapeutica_start:html.index("<h2>Agosto amplia", terapeutica_start)])
 
     # Quadro de 21 a 28/09 reaproveitado: título e fecho cobrem 01/09; cada item novo traz sua publicação.
-    assert html.count("data-news-update-callout aria-labelledby=") == 7
+    assert html.count("data-news-update-callout aria-labelledby=") == 8
     assert "Atualização: medidas de 21 a 28/09/2026 e revogações de 01, 21 e 23/09/2026" in _text(callout)
     assert "publicações de 01, 21, 23, 25 e 28/09/2026" in _text(callout)
     assert "As RE nº 3.436, 3.718 e 3.743/2026 revogam, cada uma, uma medida anterior referente a uma empresa" in _text(callout)
@@ -598,7 +606,7 @@ def test_september_measures_of_re_3440_3479_3480_3546_and_3738_keep_their_own_sc
         "<h2>8 de setembro: RE nº 3.479/2026", "<h2>8 de setembro: RE nº 3.480/2026",
         "<h2>1º de setembro: RE nº 3.440/2026", "<h2>1º de setembro: RE nº 3.436/2026", "<h2>Agosto amplia")]
     assert positions == sorted(positions)
-    assert html.count("data-news-update-callout aria-labelledby=") == 7
+    assert html.count("data-news-update-callout aria-labelledby=") == 8
 
     # Quadros: dois itens da RE nº 3.738 no quadro do topo; referência separada no quadro de setembro.
     start = html.index('data-news-update-callout aria-labelledby="novas-medidas-25-setembro-title"')
@@ -722,6 +730,135 @@ def test_september_measures_of_re_3440_3479_3480_3546_and_3738_keep_their_own_sc
     assert "gopharma.shop/" not in html and "http://gopharma" not in html and "https://gopharma" not in html
 
 
+def _october_13_callout(html):
+    start = html.index('data-news-update-callout aria-labelledby="novas-medidas-13-outubro-title"')
+    return html[start:html.index("</aside>", start)]
+
+
+def test_october_13_callout_keeps_each_measure_bound_to_its_own_act_and_scope():
+    html = NEWS_PATH.read_text(encoding="utf-8")
+    callout = _october_13_callout(html)
+    items = [_text(item) for item in _items(callout)]
+
+    assert html.count("data-news-update-callout aria-labelledby=") == 8
+    assert html.index("novas-medidas-13-outubro-title") < html.index("novas-medidas-06-outubro-title")
+    assert "Atualização: medidas publicadas no DOU em 13/10/2026" in callout
+    assert len(items) == 19
+    (
+        sergio, dhermamix, mavi, splendid, natureza, toalhas_5s, ottopar, lamarka,
+        natumix, capilar, apitoxina, mamede, naturell, legacy, farmausa, xeomin,
+        global_supplies, farmarin, gugu,
+    ) = items
+
+    assert "Sergio Paris" in sergio and "88.029.244/0001-48" in sergio and "1025163/26-4" in sergio
+    assert "proibição de comercialização, distribuição, fabricação, propaganda e uso, e recolhimento" in sergio
+    assert "não determina apreensão" in sergio
+    assert "Dhermamix" not in sergio and "Mavi" not in sergio
+
+    assert "Dhermamix Cola Ultra Hold" in dhermamix and "1032988/26-9" in dhermamix
+    assert "empresa e o CNPJ são desconhecidos" in dhermamix
+    assert "apreensão e proibição de comercialização, distribuição, fabricação, propaganda e uso" in dhermamix
+    assert "não determina recolhimento nem importação" in dhermamix
+    assert "Sergio Paris" not in dhermamix
+
+    assert "Mavi" in mavi and "39.311.130/0001-80" in mavi and "0996529/26-7" in mavi
+    assert "apreensão e proibição de armazenamento, comercialização, fabricação, importação, propaganda e uso" in mavi
+    assert "não determina distribuição nem recolhimento" in mavi
+
+    assert "Splendid Body Splash Edison Feijó" in splendid and "1041959/26-4" in splendid
+    assert "www.voteconcursos.com" in splendid and "href=" not in splendid
+    assert "não determina recolhimento nem importação" in splendid
+    assert "Oleicos" not in splendid
+
+    assert "Natureza Raiz" in natureza and "33.290.848/0001-51" in natureza and "1022596/26-0" in natureza
+    assert "desconhece a fabricação" in natureza and "não é atribuída à Oleicos" in natureza
+    assert "importação" in natureza
+
+    assert "Sensitive For You Baby" in toalhas_5s and "Sensitive For You Adulto" in toalhas_5s
+    assert "01.781.409/0001-55" in toalhas_5s and "1036448/26-0" in toalhas_5s
+    assert "RDC nº 528/2021" in toalhas_5s and "não se enxaguam" in toalhas_5s
+    assert "não determina apreensão" in toalhas_5s
+    assert "Gugu Dadá" not in toalhas_5s
+
+    assert "Ottopar" in ottopar and "03.723.193/0001-05" in ottopar and "1000457/26-2" in ottopar
+    assert "suspensão de comercialização, distribuição, fabricação, propaganda e uso" in ottopar
+    assert "04/08/2026" in ottopar and "Colombo/PR" in ottopar
+    assert "não determina apreensão" in ottopar
+    assert "apreensão" not in ottopar.replace("não determina apreensão", "")
+
+    assert "Mara Arruda Liso Perfeito 4D" in lamarka and "27.799.585/0001-08" in lamarka
+    assert "1006421/26-4" in lamarka and "encerra em “de 19.”" in lamarka
+    assert "não determina apreensão" in lamarka
+    assert "1999" not in lamarka
+
+    assert "PSM Pennaforte" in natumix and "PSMP Produtos Naturais ME EPP (Natumix)" in natumix
+    assert "12.316.032/0001-80" in natumix and "1058669/26-5" in natumix
+    assert "Marataízes/ES" in natumix and "418/2026/NEVS/GEVS/SSVS/SESA" in natumix
+    assert "ora-pro-nóbis" in natumix and "Não é proibição geral do Mounjaro nem do ora-pro-nóbis" in natumix
+    assert "não determina recolhimento" in natumix
+    assert "tirzepatida" not in natumix
+
+    assert "Divora" in capilar and "Miss Romantic" in capilar and "1000772/26-5" in capilar
+    assert "importação" in capilar and "não determina recolhimento" in capilar
+    assert "apitoxina" not in capilar
+
+    assert "apitoxina" in apitoxina and "Néctar Cosméticos" in apitoxina and "1019448/26-7" in apitoxina
+    assert "sem registro" in apitoxina and "não determina importação nem recolhimento" in apitoxina
+    assert "Divora" not in apitoxina
+
+    assert "Pharmácia Mamede" in mamede and "04.745.752/0001-32" in mamede and "1037947/26-9" in mamede
+    assert "suspensão de comercialização e propaganda" in mamede
+    assert "não determina recolhimento nem apreensão" in mamede
+    assert "Naturell" not in mamede
+
+    assert "Naturell" in naturell and "62.069.760/0003-74" in naturell and "62.069.760.0001-02" in naturell
+    assert "1013476/26-0" in naturell and "29 a 31/07/2026" in naturell
+    assert "proibição de armazenamento, comercialização e distribuição" in naturell
+    assert "não determina fabricação, uso, recolhimento nem apreensão" in naturell
+    assert "Global Supplies" not in naturell
+
+    assert "MC Legacy Lab" in legacy and "23.334.258/0001-20" in legacy and "1033060/26-7" in legacy
+    assert "implantes hormonais estéreis" in legacy
+    assert "suspensão de comercialização, manipulação, propaganda e uso" in legacy
+    assert "não determina recolhimento nem apreensão" in legacy
+
+    assert "HXTZ251015" in farmausa and "37.124.240/0001-08" in farmausa and "1048833/26-2" in farmausa
+    assert "apreensão, proibição de comercialização, distribuição, manipulação e uso, e recolhimento" in farmausa
+    assert "Não é proibição geral da tirzepatida" in farmausa
+    assert "Xeomin" not in farmausa
+
+    assert "NDC 46785-162-03" in xeomin and "0999500/26-5" in xeomin and "11.681.446/0001-45" in xeomin
+    assert "não é atribuída à Merz" in xeomin
+    assert "quaisquer pessoas físicas ou jurídicas" in xeomin
+    assert "não determina recolhimento" in xeomin
+    assert "Farmausa" not in xeomin
+
+    assert "Global Supplies" in global_supplies and "22.579.717/0001-72" in global_supplies
+    assert "1021052/26-1" in global_supplies and "31/08/2026 a 04/09/2026" in global_supplies
+    assert "classifica o tipo como medicamento" in global_supplies
+    assert "insumos farmacêuticos importados e distribuídos" in global_supplies
+    assert "não determina apreensão" in global_supplies
+    assert "Farmarin" not in global_supplies
+
+    assert "P07725A" in farmarin and "58.635.830/0001-75" in farmarin and "1013292/26-9" in farmarin
+    assert "CLORETO DE SÓDIO - 200 MG / ML SOL INJ IV CX 200 AMP PLAS TRANS X 10 ML" in farmarin
+    assert "Cloreto de Sódio 20% MG/mL" in farmarin and "flaconete íntegro" in farmarin
+    assert "recolhimento voluntário" in farmarin and "restrita ao lote identificado" in farmarin
+    assert "apreensão" not in farmarin
+
+    assert "Gugu Dadá" in gugu and "Castelo Rá Tim Bum" in gugu and "Quintal da Cultura Premium" in gugu
+    assert "1037827/26-8" in gugu and "empresa e o CNPJ são desconhecidos" in gugu
+    assert "não determina recolhimento nem importação" in gugu
+    assert "Sensitive For You" not in gugu
+
+    closing = _text(callout.split("</ul>", 1)[1])
+    assert "assinadas em 08/10/2026" in closing and "assinadas em 09/10/2026" in closing
+    assert "publicação das seis resoluções no DOU de 13/10/2026, Seção 1" in closing
+    assert "href=" not in callout
+    for number in ("3.946", "3.947", "3.850", "3.852"):
+        assert number not in callout
+
+
 def _october_06_callout(html):
     start = html.index('data-news-update-callout aria-labelledby="novas-medidas-06-outubro-title"')
     return html[start:html.index("</aside>", start)]
@@ -775,7 +912,8 @@ def test_october_callout_keeps_each_measure_bound_to_its_own_act_and_scope():
     items = [_text(item) for item in _items(callout)]
 
     # Quadro de 02/10/2026 antes dos cinco anteriores, que permanecem.
-    assert html.count("data-news-update-callout aria-labelledby=") == 7
+    assert html.count("data-news-update-callout aria-labelledby=") == 8
+    assert html.index("novas-medidas-13-outubro-title") < html.index("novas-medidas-06-outubro-title")
     assert html.index("novas-medidas-06-outubro-title") < html.index("novas-medidas-02-outubro-title")
     assert html.index("novas-medidas-02-outubro-title") < html.index("novas-medidas-25-setembro-title")
     assert "Atualização: medidas publicadas no DOU em 02/10/2026" in callout and "ATUALIZAÇÃO" in callout
@@ -962,5 +1100,6 @@ def test_october_update_reaches_lead_summary_metadata_and_listing_search():
                  "RE 3.852/2026", "RE 3.854/2026", "RE 3.855/2026", "RE 3.856/2026", "RE 3.857/2026"):
         assert _normalize_search(term) in haystack, term
     assert _consolidated_card(news_index).count(f'data-updated="{UPDATED}"') == 1
-    # O mesmo minuto também carimba o SNCR e a DCB; o empate conserva a ordem relativa.
-    assert news_index.count(f'data-updated="{UPDATED}"') == 3
+    # Só esta matéria recebeu o carimbo de 11h51. SNCR e DCB permanecem às 09h06.
+    assert news_index.count(f'data-updated="{UPDATED}"') == 1
+    assert news_index.count('data-updated="2026-10-13T09:06:00-03:00"') == 2
