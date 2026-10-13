@@ -17,7 +17,7 @@ Em 12/10/2026 a regra mudou dois cards: o do CNES 06/2026 (a matéria declara "A
 e o card mostrava a publicação, 07/07/2026 09h00) e o do Alivemed (a matéria declara "Atualizado em 09/07/2026 às
 18h52" e o card mostrava a publicação das 12h28; a regra anterior olhava a hora do datePublished do JSON-LD, que ali
 só tem o dia). Seis cards tinham data-updated igual à publicação, sem atualização declarada na matéria: o atributo
-saiu e o <time> continua com a publicação. 47 cards mostram atualização.
+saiu e o <time> continua com a publicação. 48 cards mostram atualização.
 """
 import re
 from datetime import datetime, timedelta, timezone
@@ -113,7 +113,7 @@ def test_card_mostra_a_data_valida_da_materia_sem_prefixo():
         if "Atualizado em" in card or "Publicado em" in card:
             falhas.append((slug, "prefixo no card"))
     assert not falhas, falhas
-    assert atualizacoes == 47
+    assert atualizacoes == 48
 
 
 def test_materias_do_lote_de_09_10_mostram_a_atualizacao():

@@ -28,6 +28,8 @@ INDICATORS = (
     "#fp-indicator-date",
 )
 CONTROLS = ("#fp-search", "#fp-uf", "#fp-status", "#fp-clear", "#fp-prev", "#fp-next", "#fp-page-size")
+PROVENANCE_FIELDS = ("#fp-source-org", "#fp-official-date", "#fp-import-date", "#fp-ibge-version")
+OFFICIAL_URL = METADATA["url_oficial_visualizacao"]
 
 
 class QuietHandler(SimpleHTTPRequestHandler):
@@ -74,6 +76,36 @@ def open_consultation(page, site_url):
     )
 
 
+def assert_official_link(page):
+    link = page.locator("#fp-official-link")
+    assert link.is_visible()
+    assert link.get_attribute("href") == OFFICIAL_URL
+    assert link.inner_text() == "Consultar a fonte oficial"
+
+
+def assert_provenance_loaded(page):
+    assert page.locator("#fp-source-title").text_content() == METADATA["titulo_oficial"]
+    assert "Carregando" not in page.locator("#fp-source-title").text_content()
+    assert page.locator("#fp-source-org").text_content() == METADATA["orgao_origem"]
+    assert page.locator("#fp-official-date").text_content() == "09/10/2026"
+    assert page.locator("#fp-import-date").text_content() == "09/10/2026"
+    assert page.locator("#fp-ibge-version").text_content() == METADATA["data_ou_versao_referencia_ibge"]
+    assert page.locator("#fp-meta-fallback").is_hidden()
+    assert page.locator("#fp-loading").is_hidden()
+    assert_official_link(page)
+
+
+def assert_provenance_unavailable(page):
+    assert page.locator("#fp-source-title").text_content() == "Proveniência indisponível"
+    assert page.locator("#fp-meta-fallback").is_visible()
+    assert "Não foi possível carregar os metadados da base" in page.locator("#fp-meta-fallback").text_content()
+    assert all(page.locator(selector).text_content() == "—" for selector in PROVENANCE_FIELDS)
+    assert page.locator("#fp-loading").is_hidden()
+    assert page.locator("#fp-error").is_hidden()
+    assert page.locator("#fp-uf option").count() == 27
+    assert_official_link(page)
+
+
 def assert_fatal_state(page):
     assert page.locator("#fp-error").is_visible()
     assert page.locator("#fp-loading").is_hidden()
@@ -86,6 +118,10 @@ def assert_fatal_state(page):
     assert page.locator("#fp-page-info").text_content() == ""
     assert all(page.locator(selector).is_disabled() for selector in CONTROLS)
     assert all(page.locator(selector).text_content() == "—" for selector in INDICATORS)
+    assert page.locator("#fp-source-title").text_content() == "Proveniência indisponível"
+    assert page.locator("#fp-meta-fallback").is_hidden()
+    assert all(page.locator(selector).text_content() == "—" for selector in PROVENANCE_FIELDS)
+    assert_official_link(page)
 
 
 def test_css_paginacao_hidden_prevalece_sobre_display_flex():
@@ -115,6 +151,48 @@ def test_cenario_a_carga_normal(page, site_url):
     assert page.locator("#fp-pagination").is_visible()
     assert page.locator("#fp-loading").is_hidden()
     assert page.locator("#fp-error").is_hidden()
+    assert_provenance_loaded(page)
+
+
+def test_link_oficial_permanece_com_javascript_filtro_e_sem_javascript(browser, site_url):
+    official = METADATA["url_oficial_visualizacao"]
+    context = new_context(browser)
+    page = context.new_page()
+    try:
+        open_consultation(page, site_url)
+        link = page.locator("#fp-official-link")
+        assert link.get_attribute("href") == official
+        assert link.inner_text() == "Consultar a fonte oficial"
+        assert link.is_visible()
+        assert page.locator("#fp-total-municipios").text_content() == "1.500"
+        assert page.locator("#fp-vagas-totais").text_content() == "3.000"
+        assert page.locator("#fp-vagas-preenchidas").text_content() == "926"
+        assert page.locator("#fp-vagas-disponiveis").text_content() == "2.074"
+        page.locator("#fp-uf").select_option("SP")
+        assert page.locator("#fp-result-count").text_content() != "1.500 municípios encontrados"
+        assert "SP" in page.locator("#fp-table-body").inner_text()
+        assert page.locator("#fp-total-municipios").text_content() == "1.500"
+        assert page.locator("#fp-vagas-disponiveis").text_content() == "2.074"
+        page.locator("#fp-clear").click()
+        assert page.locator("#fp-result-count").text_content() == "1.500 municípios encontrados"
+        assert link.get_attribute("href") == official
+    finally:
+        context.close()
+
+    static = new_context(browser, java_script_enabled=False)
+    page = static.new_page()
+    try:
+        page.goto(f"{site_url}/farmacia-popular/", wait_until="domcontentloaded")
+        link = page.locator("#fp-official-link")
+        assert link.get_attribute("href") == official
+        assert link.inner_text() == "Consultar a fonte oficial"
+        assert link.is_visible()
+        assert "Consulta interativa indisponível." in page.locator("body").inner_text()
+        assert page.locator("#fp-result-count").text_content() == "Carregando municípios…"
+        assert page.locator("#fp-uf").count() == 1
+        assert page.locator('a[href$="farmacia-popular-municipios-vagas-09-10-2026.pdf"]').count() == 1
+    finally:
+        static.close()
 
 
 def test_cenario_b_busca_sem_resultado_oculta_paginacao(page, site_url):
@@ -228,11 +306,8 @@ def test_cenario_g_metadados_divergentes(page, site_url):
     assert_fatal_state(page)
 
 
-def test_cenario_h_metadados_indisponiveis_usam_fallback(page, site_url):
-    page.route(METADATA_URL, lambda route: route.fulfill(status=500, body="erro"))
-    open_consultation(page, site_url)
-
-    assert page.locator("#fp-meta-fallback").is_visible()
+def _assert_consultation_continues_without_metadata(page):
+    assert_provenance_unavailable(page)
     assert page.locator("#fp-table-body tr").count() == min(10, len(RECORDS))
     assert all(page.locator(selector).is_enabled() for selector in ("#fp-search", "#fp-uf", "#fp-status", "#fp-clear", "#fp-page-size"))
     assert page.locator("#fp-total-municipios").text_content() == "1.500"
@@ -240,10 +315,37 @@ def test_cenario_h_metadados_indisponiveis_usam_fallback(page, site_url):
     assert page.locator("#fp-vagas-preenchidas").text_content() == "926"
     assert page.locator("#fp-vagas-disponiveis").text_content() == "2.074"
     assert page.locator("#fp-indicator-date").text_content() == "—"
-    assert page.locator("#fp-error").is_hidden()
     assert page.locator("#fp-pagination").is_visible()
+    assert page.locator("#fp-result-count").text_content() == "1.500 municípios encontrados"
+
+
+def test_cenario_h_metadados_indisponiveis_usam_fallback(page, site_url):
+    page.route(METADATA_URL, lambda route: route.fulfill(status=500, body="erro"))
+    open_consultation(page, site_url)
+
+    _assert_consultation_continues_without_metadata(page)
     page.locator("#fp-next").click()
     assert page.locator("#fp-page-info").text_content() == f"Página 2 de {math.ceil(len(RECORDS) / 10)}"
+    assert page.locator("#fp-uf option").count() == 27
+
+
+def test_cenario_h_json_invalido_e_recuperacao_apos_nova_carga(page, site_url):
+    page.route(
+        METADATA_URL,
+        lambda route: route.fulfill(status=200, content_type="application/json", body="{"),
+    )
+    open_consultation(page, site_url)
+    _assert_consultation_continues_without_metadata(page)
+
+    page.unroute(METADATA_URL)
+    page.reload(wait_until="domcontentloaded")
+    page.wait_for_function(
+        "document.querySelector('#fp-result-count').textContent === '1.500 municípios encontrados'"
+    )
+    assert_provenance_loaded(page)
+    assert page.locator("#fp-table-body tr").count() == min(10, len(RECORDS))
+    assert page.locator("#fp-uf option").count() == 27
+    assert page.locator("#fp-error").is_hidden()
 
 
 def test_cenario_i_limites_de_paginacao(page, site_url):

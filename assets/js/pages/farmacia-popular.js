@@ -16,7 +16,30 @@
     return parts.length === 3 ? parts[2] + '/' + parts[1] + '/' + parts[0] : '—';
   }
   function setText(id, value) { var node = document.getElementById(id); if (node) node.textContent = value; }
+  function markProvenanceUnavailable() {
+    setText('fp-source-title', 'Proveniência indisponível');
+    ['fp-source-org', 'fp-official-date', 'fp-import-date', 'fp-ibge-version'].forEach(function (id) { setText(id, '—'); });
+  }
+  function showMetadataFallback(error) {
+    if (error) console.error(error);
+    markProvenanceUnavailable();
+    var fallback = document.getElementById('fp-meta-fallback');
+    if (fallback) fallback.classList.remove('hidden');
+  }
+  function hideMetadataFallback() {
+    var fallback = document.getElementById('fp-meta-fallback');
+    if (fallback) fallback.classList.add('hidden');
+  }
+  function plainMetadata(metadata) {
+    return !!metadata && typeof metadata === 'object' && !Array.isArray(metadata);
+  }
+  function applyOfficialLink(metadata) {
+    var link = document.getElementById('fp-official-link');
+    if (link && plainMetadata(metadata) && /^https:\/\//.test(metadata.url_oficial_visualizacao || '')) link.href = metadata.url_oficial_visualizacao;
+  }
   function setFatalError(message, error) {
+    var title = document.getElementById('fp-source-title');
+    if (title && title.textContent.indexOf('Carregando') === 0) markProvenanceUnavailable();
     state.records = [];
     state.filtered = [];
     state.page = 1;
@@ -103,10 +126,20 @@
     var ufCount = new Set(records.map(function (record) { return record.uf; })).size;
     return metadata.quantidade_registros === records.length && metadata.quantidade_ufs === ufCount && metadata.totais_vagas && metadata.totais_vagas.vagas_totais === totals.total && metadata.totais_vagas.vagas_preenchidas === totals.filled && metadata.totais_vagas.vagas_disponiveis === totals.available;
   }
+  var recordsApplied = false;
+  function applyRecords(records, metadata) {
+    if (recordsApplied) return;
+    recordsApplied = true;
+    state.records = records;
+    populateUfs();
+    applyFilters();
+    renderIndicators(records, metadata);
+    el['fp-loading'].classList.add('hidden');
+  }
   function renderMetadata(metadata) {
-    if (!metadata || typeof metadata !== 'object') throw new Error('Metadados inválidos.');
+    hideMetadataFallback();
     setText('fp-source-title', metadata.titulo_oficial || 'Base oficial de municípios'); setText('fp-source-org', metadata.orgao_origem || '—'); setText('fp-official-date', formatDate(metadata.data_oficial)); setText('fp-import-date', formatDate(metadata.data_importacao)); setText('fp-ibge-version', metadata.data_ou_versao_referencia_ibge || '—');
-    var link = document.getElementById('fp-official-link'); if (link && /^https:\/\//.test(metadata.url_oficial_visualizacao || '')) link.href = metadata.url_oficial_visualizacao;
+    applyOfficialLink(metadata);
   }
   function fetchJson(url) { return fetch(url, { cache: 'no-store' }).then(function (response) { if (!response.ok) throw new Error('Falha ao carregar ' + url); return response.json(); }); }
   function initializeEvents() {
@@ -125,16 +158,38 @@
     fetchJson('/data/farmacia-popular/vagas-2026-10-09.json').then(function (records) {
       if (!validRecords(records)) throw new Error('A lista de municípios está em formato inválido.');
       return fetchJson('/data/farmacia-popular/metadados.json').then(function (metadata) {
-        renderMetadata(metadata);
-        var totals = calculateTotals(records);
-        if (!isConsistent(records, metadata, totals)) {
-          setFatalError('Não foi possível validar a consistência da base carregada. Consulte a fonte oficial.', 'Inconsistência entre a lista de vagas e os metadados: ' + JSON.stringify({ quantidade_calculada: records.length, quantidade_ufs_calculada: new Set(records.map(function (record) { return record.uf; })).size, quantidade_declarada: metadata.quantidade_registros, quantidade_ufs_declarada: metadata.quantidade_ufs, totais_calculados: totals, totais_declarados: metadata.totais_vagas }));
-          return;
-        }
-        state.records = records; populateUfs(); applyFilters(); renderIndicators(records, metadata); el['fp-loading'].classList.add('hidden');
-      }).catch(function (error) {
-        console.error(error); document.getElementById('fp-meta-fallback').classList.remove('hidden'); state.records = records; populateUfs(); applyFilters(); renderIndicators(records, null); el['fp-loading'].classList.add('hidden');
+        return { records: records, metadata: metadata };
+      }, function (error) {
+        return { records: records, metadataError: error };
       });
+    }).then(function (loaded) {
+      if (loaded.metadataError || !plainMetadata(loaded.metadata)) {
+        showMetadataFallback(loaded.metadataError || new Error('Metadados inválidos.'));
+        applyRecords(loaded.records, null);
+        return;
+      }
+      var totals;
+      var inconsistent = false;
+      var detail = '';
+      try {
+        totals = calculateTotals(loaded.records);
+        applyOfficialLink(loaded.metadata);
+        inconsistent = !isConsistent(loaded.records, loaded.metadata, totals);
+        if (inconsistent) {
+          detail = 'Inconsistência entre a lista de vagas e os metadados: ' + JSON.stringify({ quantidade_calculada: loaded.records.length, quantidade_ufs_calculada: new Set(loaded.records.map(function (record) { return record.uf; })).size, quantidade_declarada: loaded.metadata.quantidade_registros, quantidade_ufs_declarada: loaded.metadata.quantidade_ufs, totais_calculados: totals, totais_declarados: loaded.metadata.totais_vagas });
+        }
+      } catch (error) {
+        showMetadataFallback(error);
+        applyRecords(loaded.records, null);
+        return;
+      }
+      if (inconsistent) {
+        markProvenanceUnavailable();
+        setFatalError('Não foi possível validar a consistência da base carregada. Consulte a fonte oficial.', detail);
+        return;
+      }
+      renderMetadata(loaded.metadata);
+      applyRecords(loaded.records, loaded.metadata);
     }).catch(function (error) { setFatalError('Não foi possível carregar a consulta de municípios neste momento. Tente novamente mais tarde ou consulte a fonte oficial.', error); });
   });
 })();

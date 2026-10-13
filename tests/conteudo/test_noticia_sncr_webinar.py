@@ -14,7 +14,7 @@ SITEMAP_PATH = ROOT / "sitemap.xml"
 ROUTE = "/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/"
 URL = f"https://www.regularizeconsultorias.com.br{ROUTE}"
 PUBLISHED = "2026-05-28T20:36:00-03:00"
-UPDATED = "2026-10-07T09:08:00-03:00"
+UPDATED = "2026-10-13T09:06:00-03:00"
 TITLE = "SNCR: etapa anunciada, transição e sistemas"
 ADSENSE_SCRIPT_MARKER = "pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
 WHATSAPP_NEWS_TEXT = (
@@ -84,7 +84,7 @@ def test_sncr_news_keeps_publication_and_updates_the_september_stage():
     assert f'<meta property="article:published_time" content="{PUBLISHED}" />' in html
     assert f'<meta property="article:modified_time" content="{UPDATED}" />' in html
     assert f'<time datetime="{PUBLISHED}">28/05/2026</time> às 20h36' in html
-    assert f'<time datetime="{UPDATED}">07/10/2026</time> às 09h08' in html
+    assert f'<time datetime="{UPDATED}">13/10/2026</time> às 09h06' in html
     assert_profiles_separated(html)
     assert f'<link rel="canonical" href="{URL}" />' in html
     assert html.count(ADSENSE_SCRIPT_MARKER) == 1
@@ -151,6 +151,7 @@ def test_sncr_news_explains_the_stage_without_false_claims():
     assert_art18_relative(html)
     assert_private_public_and_api(html)
     assert_profiles_separated(html)
+    assert_october_notices_scoped(html)
 
 
 def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
@@ -161,11 +162,11 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     assert html.count(f'href="{ROUTE}"') == 1
     assert len(sncr_cards) == 1
     card = sncr_cards[0]
-    # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
-    assert cards.index(card) == 25
+    # 13/10/2026, 09h06: os informes do SNCR levam o card à 2ª posição, empatado com produtos irregulares e a DCB.
+    assert cards.index(card) == 1
     assert "news-card-compact" in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
-    assert f'<time datetime="{UPDATED}" class="leading-none">07/10/2026 • 09h08</time>' in card
+    assert f'<time datetime="{UPDATED}" class="leading-none">13/10/2026 • 09h06</time>' in card
     for term in (
         TITLE,
         "30/09/2026",
@@ -189,6 +190,9 @@ def test_comunicado_keeps_one_sncr_card_and_six_active_notices():
     assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', html) == ["6", "6"]
     assert len(sncr_cards) == 1
     card_text = _text(sncr_cards[0])
+    paragraphs = [_text(item) for item in re.findall(r"<p>(.*?)</p>", sncr_cards[0], re.DOTALL)]
+    limit = next(item for item in paragraphs if "limite de numeração" in item)
+    incorrect = next(item for item in paragraphs if "numerações disponibilizadas incorretamente" in item)
     for term in (
         "SNCR: cronograma anunciado e nota da API",
         "30/09/2026",
@@ -199,17 +203,46 @@ def test_comunicado_keeps_one_sncr_card_and_six_active_notices():
         "Leia a atualização sobre o SNCR",
     ):
         assert term in card_text
-    assert "29/10" not in card_text and "31/10" not in card_text
+    for term in (
+        "algumas Unidades da Federação",
+        "Até 29/10/2026",
+        "Receitas de Controle Especial",
+        "receitas sujeitas à retenção",
+        "observados os demais requisitos aplicáveis",
+        "Esse informe não é retificação geral",
+    ):
+        assert term in limit
+    for term in (
+        "prescritor diferente do solicitante",
+        "CRM de outra Unidade da Federação",
+        "09/10/2026",
+        "serão canceladas",
+        "Vigilância Sanitária competente",
+        "numeração regular",
+    ):
+        assert term in incorrect
+    for term in (
+        "Receitas de Controle Especial",
+        "receitas sujeitas à retenção",
+        "29/10",
+        "outros receituários",
+        "retificação geral",
+        "Notificações de Receita",
+    ):
+        assert term not in incorrect
+    assert "não se estendem a outros receituários" not in card_text
+    assert "não se estendem a outros receituários" not in _text(NEWS_PATH.read_text(encoding="utf-8"))
+    assert "31/10" not in card_text
     assert "em operação desde" not in card_text
     assert "como preparar o estabelecimento" not in card_text
-    assert active[1] is sncr_cards[0]
+    assert active[0] is sncr_cards[0]
 
 
 def test_sncr_news_has_current_sitemap_lastmod():
     sitemap = SITEMAP_PATH.read_text(encoding="utf-8")
 
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
-    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-07</lastmod>" in sitemap
+    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-13</lastmod>" in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/servicos/</loc>\n"
         "    <lastmod>2026-10-09</lastmod>"
@@ -352,6 +385,54 @@ def assert_source_pairs(html):
         raise AssertionError("pares-ressalva: " + caveat)
 
 
+def assert_october_notices_scoped(html):
+    body = _article_body(html)
+    plain = _plain(body)
+    intro = _one_paragraph(body, "publicou dois informes")
+    limit = _one_paragraph(body, "O informe sobre o limite de numeração registra")
+    transition = _one_paragraph(body, "No mesmo informe")
+    incorrect = _one_paragraph(body, "numerações vinculadas a prescritores diferentes")
+    if "O informe sobre o limite de numeração trata de Receitas de Controle Especial e de receitas sujeitas à retenção" not in intro:
+        raise AssertionError("informe-limite-rce-ret: " + intro)
+    second = intro.split("O outro informe", 1)[-1]
+    if "O outro informe" not in intro or "Receitas de Controle Especial" in second or "retenção" in second:
+        raise AssertionError("informe-incorreto-sem-rce-ret: " + second)
+    if "Receitas de Controle Especial" not in limit or "receitas sujeitas à retenção" not in limit:
+        raise AssertionError("informe-limite-rce-ret: " + limit)
+    if "até 29 de outubro de 2026" not in transition or "dois receituários eletrônicos" not in transition:
+        raise AssertionError("informe-limite-transicao: " + transition)
+    for forbidden in (
+        "não se estendem a outros receituários",
+        "outros receituários",
+        "Receitas de Controle Especial",
+        "receitas sujeitas à retenção",
+        "29 de outubro",
+        "29/10",
+        "retificação geral",
+        "Notificações de Receita",
+    ):
+        if forbidden in incorrect:
+            raise AssertionError("informe-incorreto-alcance: " + forbidden)
+    for required in (
+        "serviços de prescrição integrados",
+        "prescritores diferentes",
+        "CRM de outra Unidade da Federação",
+        "09/10/2026",
+        "serão canceladas",
+        "Vigilância Sanitária competente",
+        "numeração regular",
+    ):
+        if required not in incorrect:
+            raise AssertionError("informe-incorreto-alcance: ausencia " + required)
+    for phrase in (
+        "não se estendem a outros receituários",
+        "nem se estendem a Notificações de Receita",
+        "não se estendem a Notificações de Receita",
+    ):
+        if phrase in plain:
+            raise AssertionError("exclusao-generica: " + phrase)
+
+
 def assert_art18_relative(html):
     text = _one_paragraph(_article_body(html), "art. 18")
     if "após o início da disponibilização do registro de utilização" not in text or re.search(r"\d{2}/10/2026", text):
@@ -410,6 +491,7 @@ def assert_concrete_errors_rejected(html):
 ARTICLE_GUARDS = (
     assert_profiles_separated,
     assert_source_pairs,
+    assert_october_notices_scoped,
     assert_art18_relative,
     assert_private_public_and_api,
     assert_concrete_errors_rejected,

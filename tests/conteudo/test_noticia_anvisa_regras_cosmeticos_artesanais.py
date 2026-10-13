@@ -196,7 +196,7 @@ def test_listing_places_the_updated_card_by_its_update_stamp():
     assert len(cards) == 83
     # Lote de 09/10/2026: o card sobe pelo carimbo da atualização (regra de ordenação por data-updated).
     # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
-    card = cards[12]
+    card = cards[14]
     opening = card.split(">", 1)[0]
     assert f'href="{ROUTE}"' in card
     assert html.count(f'href="{ROUTE}"') == 1
@@ -218,8 +218,8 @@ def test_listing_places_the_updated_card_by_its_update_stamp():
     collection = next(block for block in _jsonld(html) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
     assert len(items) == 83
-    assert items[12]["position"] == 13
-    assert items[12]["url"] == URL
+    assert items[14]["position"] == 15
+    assert items[14]["url"] == URL
     assert [item["position"] for item in items] == list(range(1, 84))
 
 
@@ -227,15 +227,14 @@ def test_sitemap_adds_only_the_new_url_and_the_listing_lastmod():
     sitemap = SITEMAP.read_text(encoding="utf-8")
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
     assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-09</lastmod>" in sitemap
-    # A listagem mudou de novo em 11/10/2026 (CNES 09/2026 e Now Foods) e em 12/10/2026 (datas do CNES 06/2026
-    # e do Alivemed e a ordem que delas decorre; parecer de 11/10/2026, R2).
+    # 13/10/2026: a listagem e a matéria do SNCR mudaram de novo.
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-10-12</lastmod>"
+        "    <lastmod>2026-10-13</lastmod>"
     ) in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/</loc>\n"
-        "    <lastmod>2026-10-07</lastmod>"
+        "    <lastmod>2026-10-13</lastmod>"
     ) in sitemap
     import xml.etree.ElementTree as ET
 

@@ -205,7 +205,7 @@ def test_index_has_one_card_in_fifth_position_and_expected_counts():
     )
     classes = [re.search(r'<article class="([^"]*)"', card).group(1) for card in card_blocks]
     assert len(card_blocks) == 83
-    assert f'/noticias/{SLUG}/' in card_blocks[35]
+    assert f'/noticias/{SLUG}/' in card_blocks[36]
     # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
     assert all("news-card-compact" in value for value in classes)
     assert '>Todos</span><span class="text-xs text-slate-400">83<' in html

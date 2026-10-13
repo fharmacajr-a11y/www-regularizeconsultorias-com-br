@@ -9,8 +9,8 @@ NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 SITEMAP_PATH = ROOT / "sitemap.xml"
 URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
 PUBLISHED = "2026-07-05T18:00:00-03:00"
-# 09/10/2026, 20h27: denominação do 1º produto da RE nº 3.628/2026 conforme a retificação do DOU de 02/10/2026.
-UPDATED = "2026-10-09T20:27:00-03:00"
+# 13/10/2026, 09h06: RE nº 3.946 e 3.947/2026 e retificação do fabricante do Aloe Care.
+UPDATED = "2026-10-13T09:06:00-03:00"
 DOBUTAMINA_LOTES = ("24092127", "24102310", "25102244", "25102243", "25112308")
 
 
@@ -119,20 +119,21 @@ def test_september_update_reflects_re_3547_and_keeps_history():
     september = _september_callout(html)
     text = _text(september)
 
+    assert html.index("novas-medidas-06-outubro-title") < html.index("novas-medidas-02-outubro-title")
     assert html.index("novas-medidas-02-outubro-title") < html.index("novas-medidas-25-setembro-title")
     assert html.index("novas-medidas-25-setembro-title") < html.index("novas-medidas-21-setembro-title")
     assert html.index("novas-medidas-21-setembro-title") < html.index("novas-medidas-16-setembro-title")
     assert html.index("novas-medidas-16-setembro-title") < html.index("novas-medidas-setembro-title")
     assert html.index("novas-medidas-setembro-title") < html.index("novas-medidas-agosto-title")
-    # Seis quadros desde a Fase 1G (02/10/2026 acrescentado antes dos cinco anteriores).
-    assert html.count("data-news-update-callout aria-labelledby=") == 6
+    # Sete quadros: o de 06/10/2026 ficou antes do de 02/10/2026.
+    assert html.count("data-news-update-callout aria-labelledby=") == 7
     assert "ATUALIZAÇÃO" in september
     assert "Resolução-RE nº 3.547/2026" in text
     assert "de 09/09/2026 e publicada no DOU em 11/09/2026" in text
     assert "Medidas de julho a outubro mostram" in html
     assert "Medidas de julho a setembro" not in html
     assert "Medidas de julho e agosto" not in html
-    assert f'<time datetime="{UPDATED}">09/10/2026</time> às 20h27' in html
+    assert f'<time datetime="{UPDATED}">13/10/2026</time> às 09h06' in html
     assert f'<time datetime="{PUBLISHED}">05/07/2026</time> às 18h00' in html
     # Histórico de agosto e julho preservado.
     for term in ("12/08 — saneantes sem registro", "14/08 — Chá Sarapião", "Fiscalização de julho amplia", "Chlorohex 2,0%"):
@@ -218,6 +219,9 @@ def test_four_new_body_subsections_preserve_exact_products_measures_and_negative
 
     assert "Aloe Care – Cranberry Flavored Aloe Vera Gel" in aloe
     assert "Biodis Industrial Ltda." in aloe
+    assert "União Vegetal Agroindustrial Ltda." in aloe
+    assert "retificação publicada no DOU em 09/10/2026" in aloe
+    assert "não cria outra medida nem altera o produto, os lotes ou as proibições" in aloe
     assert "determina o recolhimento e proíbe a fabricação, a distribuição, a comercialização, a propaganda, a divulgação e o uso" in aloe
     for reason in ("sem prévia avaliação de segurança e autorização de uso", "língua estrangeira", "alegações de saúde ou terapêuticas não autorizadas"):
         assert reason in aloe
@@ -277,7 +281,7 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
 
     assert news_index.count('href="/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"') == 1
     assert f'data-updated="{UPDATED}"' in news_index
-    assert "09/10/2026 • 20h27" in news_index
+    assert "13/10/2026 • 09h06" in news_index
     assert "medidas sobre United Labz, Mounjcaps, lotes falsificados de Enhertu e Dysport e um lote do TYG" in news_index
     for term in ("Hytamicina", "Pangastri", "Gripinew", "Lipo Top Gold", "Anagalis", "RE 3.440/2026", "RE 3.479/2026",
                  "RE 3.480/2026", "RE 3.546/2026", "RE 3.738/2026"):
@@ -290,16 +294,13 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
     assert "Publicações da Anvisa de 21 a 28/09" not in news_index
     assert "Publicações da Anvisa de 21 e 25/09" not in news_index
     cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', news_index, re.DOTALL)
-    # RE nº 3.764 e 3.743/2026 (06/10, 11h31), RE nº 3.718 e 3.436/2026 (06/10, 12h26) e
-    # RE nº 3.440, 3.479, 3.480, 3.546 e 3.738/2026 (06/10, 13h49) e as seis REs de 02/10 (06/10, 16h32): card no topo,
-    # antes da Portaria MAPA 1.617 (06/10, 08h00) e do CNES 09/2026 (05/10, 15h43). Desde 06/10, 18h11, as quatro
-    # matérias da Fase 1H (Farmácia Popular e CNES/AFE) vêm antes. Em 09/10/2026, 20h27, a retificação da
-    # RE nº 3.628/2026 leva o card à 11ª posição, depois das dez matérias atualizadas mais tarde no mesmo lote.
-    # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
-    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[11]
-    assert "news-card-compact" in cards[11].split(">", 1)[0]
+    # 13/10/2026, 09h06: a inclusão das RE nº 3.946 e 3.947 e da retificação do Aloe Care leva o card à 1ª posição.
+    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[0]
+    assert "news-card-compact" in cards[0].split(">", 1)[0]
+    assert "As RE nº 3.946 e 3.947/2026 foram publicadas no DOU de 06/10/2026" in cards[0]
+    assert "União Vegetal Agroindustrial Ltda. como fabricante do Aloe Care" in cards[0]
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
-    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-09</lastmod>" in sitemap
+    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-13</lastmod>" in sitemap
 
 
 def test_re_3717_callout_keeps_each_measure_inside_its_own_item():
@@ -468,7 +469,7 @@ def test_re_3764_and_re_3743_keep_suspension_and_revocation_apart():
     higia = _text(html[higia_start:html.index("<h2>21 de setembro: RE nº 3.712", higia_start)])
 
     # A Fase 1D reaproveitou o quadro de 21 a 28/09; o de outubro (Fase 1G) é o sexto.
-    assert html.count("data-news-update-callout aria-labelledby=") == 6
+    assert html.count("data-news-update-callout aria-labelledby=") == 7
     assert "Atualização: medidas de 21 a 28/09/2026 e revogações de 01, 21 e 23/09/2026" in _text(callout)
     assert "publicações de 01, 21, 23, 25 e 28/09/2026" in _text(callout)
     assert "As RE nº 3.436, 3.718 e 3.743/2026 revogam, cada uma, uma medida anterior referente a uma empresa" in _text(callout)
@@ -524,7 +525,7 @@ def test_re_3718_and_re_3436_revoke_only_their_own_items():
     terapeutica = _text(html[terapeutica_start:html.index("<h2>Agosto amplia", terapeutica_start)])
 
     # Quadro de 21 a 28/09 reaproveitado: título e fecho cobrem 01/09; cada item novo traz sua publicação.
-    assert html.count("data-news-update-callout aria-labelledby=") == 6
+    assert html.count("data-news-update-callout aria-labelledby=") == 7
     assert "Atualização: medidas de 21 a 28/09/2026 e revogações de 01, 21 e 23/09/2026" in _text(callout)
     assert "publicações de 01, 21, 23, 25 e 28/09/2026" in _text(callout)
     assert "As RE nº 3.436, 3.718 e 3.743/2026 revogam, cada uma, uma medida anterior referente a uma empresa" in _text(callout)
@@ -597,7 +598,7 @@ def test_september_measures_of_re_3440_3479_3480_3546_and_3738_keep_their_own_sc
         "<h2>8 de setembro: RE nº 3.479/2026", "<h2>8 de setembro: RE nº 3.480/2026",
         "<h2>1º de setembro: RE nº 3.440/2026", "<h2>1º de setembro: RE nº 3.436/2026", "<h2>Agosto amplia")]
     assert positions == sorted(positions)
-    assert html.count("data-news-update-callout aria-labelledby=") == 6
+    assert html.count("data-news-update-callout aria-labelledby=") == 7
 
     # Quadros: dois itens da RE nº 3.738 no quadro do topo; referência separada no quadro de setembro.
     start = html.index('data-news-update-callout aria-labelledby="novas-medidas-25-setembro-title"')
@@ -721,6 +722,41 @@ def test_september_measures_of_re_3440_3479_3480_3546_and_3738_keep_their_own_sc
     assert "gopharma.shop/" not in html and "http://gopharma" not in html and "https://gopharma" not in html
 
 
+def _october_06_callout(html):
+    start = html.index('data-news-update-callout aria-labelledby="novas-medidas-06-outubro-title"')
+    return html[start:html.index("</aside>", start)]
+
+
+def test_october_06_callout_keeps_each_act_and_the_aloe_rectification_apart():
+    html = NEWS_PATH.read_text(encoding="utf-8")
+    callout = _october_06_callout(html)
+    items = [_text(item) for item in _items(callout)]
+
+    assert len(items) == 8
+    labs, costa, sintonia, peptideos, marcas, imaavy, lizbi, aloe = items
+    assert "LABS" in labs and "25.178.555/0001-59" in labs and "28/09/2026 a 02/10/2026" in labs
+    assert "Costa Mar" not in labs and "Sintonia" not in labs
+    assert "Costa Mar" in costa and "51.939.490/0001-27" in costa and "insulina glargina" in costa
+    assert "não determina recolhimento nem apreensão" in costa and "não é proibição geral da insulina" in costa
+    assert "Sintonia Pharma" in sintonia and "37.560.104/0001-60" in sintonia and "Vermefree" in sintonia
+    assert "LABS" not in sintonia
+    assert "empresa não identificada" in peptideos and "CNPJ é desconhecido" in peptideos
+    assert "BPC157" not in peptideos and "Imaavy" not in peptideos
+    assert "BPC157" in marcas and "Alluvi Healthcare" in marcas and "Oxygen KW Pharma" in marcas
+    assert "Não é proibição geral da tirzepatida nem da retatrutida" in marcas
+    assert "Imaavy" in imaavy and "JNYJ1201" in imaavy and "51.780.468/0001-87" in imaavy
+    assert "não alcança outros lotes" in imaavy
+    assert "Lizbi" in lizbi and "0000207107" in lizbi and "01.571.702/0001-98" in lizbi
+    assert "restrita ao lote identificado" in lizbi
+    assert "Biodis Industrial Ltda." in aloe and "União Vegetal Agroindustrial Ltda." in aloe
+    assert "10.536.977/0001-81" in aloe
+    assert "não cria outra medida nem altera o produto, os lotes ou as proibições" in aloe
+    assert "RE nº 3.946 e 3.947 foram assinadas em 02/10/2026" in _text(callout)
+    assert "publicação de ambas no DOU de 06/10/2026" in _text(callout)
+    for number in ("3.850", "3.852", "3.854", "3.855", "3.856", "3.857"):
+        assert number not in callout
+
+
 def _october_callout(html):
     start = html.index('data-news-update-callout aria-labelledby="novas-medidas-02-outubro-title"')
     return html[start:html.index("</aside>", start)]
@@ -739,7 +775,8 @@ def test_october_callout_keeps_each_measure_bound_to_its_own_act_and_scope():
     items = [_text(item) for item in _items(callout)]
 
     # Quadro de 02/10/2026 antes dos cinco anteriores, que permanecem.
-    assert html.count("data-news-update-callout aria-labelledby=") == 6
+    assert html.count("data-news-update-callout aria-labelledby=") == 7
+    assert html.index("novas-medidas-06-outubro-title") < html.index("novas-medidas-02-outubro-title")
     assert html.index("novas-medidas-02-outubro-title") < html.index("novas-medidas-25-setembro-title")
     assert "Atualização: medidas publicadas no DOU em 02/10/2026" in callout and "ATUALIZAÇÃO" in callout
     assert len(items) == 7
@@ -924,4 +961,6 @@ def test_october_update_reaches_lead_summary_metadata_and_listing_search():
                  "Lapzyme", "BR Mega Limp", "BR MT LIMP", "Biojet", "dispositivos médicos", "RE 3.850/2026",
                  "RE 3.852/2026", "RE 3.854/2026", "RE 3.855/2026", "RE 3.856/2026", "RE 3.857/2026"):
         assert _normalize_search(term) in haystack, term
-    assert news_index.count(f'data-updated="{UPDATED}"') == 1
+    assert _consolidated_card(news_index).count(f'data-updated="{UPDATED}"') == 1
+    # O mesmo minuto também carimba o SNCR e a DCB; o empate conserva a ordem relativa.
+    assert news_index.count(f'data-updated="{UPDATED}"') == 3

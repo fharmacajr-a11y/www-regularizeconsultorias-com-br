@@ -92,7 +92,7 @@ def test_cadastro_anvisa_card_is_tenth_and_compact_in_the_listing_and_sitemap():
     cards = re.findall(r"(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)", index, re.DOTALL)
     assert len(cards) == 83
     # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
-    card = cards[27]
+    card = cards[28]
     opening = card.split(">", 1)[0]
     assert f'href="/noticias/cadastro-anvisa-govbr-transicao-sistemas/"' in card
     # Card compacto no grid.
@@ -107,7 +107,7 @@ def test_cadastro_anvisa_card_is_tenth_and_compact_in_the_listing_and_sitemap():
     assert index.count(f'href="/noticias/cadastro-anvisa-govbr-transicao-sistemas/"') == 1
     assert '>Todos</span><span class="text-xs text-slate-400">83<' in index
     assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in index
-    assert f'"position":28,"url":"https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/"' in index
+    assert f'"position":29,"url":"https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/"' in index
     sitemap = SITEMAP.read_text(encoding="utf-8")
     assert f"<loc>https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/</loc>\n    <lastmod>2026-10-07</lastmod>" in sitemap
 

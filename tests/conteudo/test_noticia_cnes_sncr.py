@@ -119,7 +119,7 @@ def test_cnes_card_is_unique_current_and_compact_after_newer_reviews():
     card = matches[0]
     opening = card.split(">", 1)[0]
     # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
-    assert cards.index(card) == 29
+    assert cards.index(card) == 30
     assert "news-card-compact" in opening
     assert f'data-updated="{UPDATED}"' in opening
     assert f'data-title="{TITLE}"' in opening

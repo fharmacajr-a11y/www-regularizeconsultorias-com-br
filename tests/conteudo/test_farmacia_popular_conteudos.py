@@ -83,8 +83,9 @@ def test_secao_secundaria_nao_contem_consulta_lista_ou_estilo_inline():
 
 def test_pagina_remove_destinos_governamentais_e_preserva_referencias():
     lowered = HTML.lower()
-    assert "gov.br" not in lowered
-    assert "saude.gov.br" not in lowered
+    official = "https://www.gov.br/saude/pt-br/composicao/sectics/farmacia-popular/participacao/documentacao"
+    assert HTML.count(f'id="fp-official-link" href="{official}"') == 1
+    assert "/credenciamento" not in official
     assert "infoms.saude.gov.br" not in lowered
     assert "ministério da saúde" in lowered
     assert "farmacia-popular-municipios-vagas-09-10-2026.pdf" in HTML
@@ -101,7 +102,8 @@ def test_pagina_remove_destinos_governamentais_e_preserva_referencias():
 
 def test_card_de_proveniencia_preserva_orgao_e_links_sem_fonte_redundante():
     assert "Fonte de referência: Ministério da Saúde." not in HTML
-    assert 'id="fp-official-link"' not in HTML
+    assert 'id="fp-official-link"' in HTML
+    assert ">Consultar a fonte oficial</a>" in HTML
     assert "Órgão de origem" in HTML
     assert 'id="fp-source-org"' in HTML
     assert 'href="/noticias/credenciamento-farmacia-popular-municipios-com-vagas/farmacia-popular-municipios-vagas-09-10-2026.pdf" target="_blank" rel="noopener noreferrer">Ver lista em PDF</a>' in HTML

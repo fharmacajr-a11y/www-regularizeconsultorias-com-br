@@ -194,10 +194,10 @@ def test_index_saneantes_in_itemlist_position_16():
     coll_blocks = [b for b in blocks if b.get("@type") == "CollectionPage"]
     assert coll_blocks, "CollectionPage ausente no índice"
     items = coll_blocks[0]["mainEntity"]["itemListElement"]
-    assert items[36]["url"] == ARTICLE_URL, (
-        f"Posição 37 esperada para {ARTICLE_URL!r}, encontrado {items[36]['url']!r}"
+    assert items[37]["url"] == ARTICLE_URL, (
+        f"Posição 38 esperada para {ARTICLE_URL!r}, encontrado {items[37]['url']!r}"
     )
-    assert items[36]["position"] == 37
+    assert items[37]["position"] == 38
 
 
 def test_index_itemlist_positions_are_sequential():
@@ -254,7 +254,7 @@ def test_index_saneantes_keeps_its_position_and_the_single_model():
         for index, block in enumerate(article_blocks)
         if "anvisa-rdc-1040-in-468-2026-saneantes-regularizacao" in block
     )
-    assert saneantes_index == 36
+    assert saneantes_index == 37
     assert "news-card-compact" in article_blocks[saneantes_index].split(">", 1)[0]
     # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
     assert all("news-card-compact" in block.split(">", 1)[0] for block in article_blocks)

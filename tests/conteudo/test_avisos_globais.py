@@ -439,8 +439,8 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     timestamps = [article.attrs.get("data-effective-at") for article in active]
 
     assert titles == [
-        "Farmácia Popular: confira municípios com vagas para credenciamento",
         "SNCR: cronograma anunciado e nota da API",
+        "Farmácia Popular: confira municípios com vagas para credenciamento",
         "Polícia Federal: mapas de setembro dos produtos químicos controlados até 15/10",
         "MAPA: estoques de aditivos com antimicrobianos do Anexo têm marco em 23/10",
         "Farmácia Popular: atenção aos materiais no período eleitoral",
