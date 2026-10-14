@@ -427,3 +427,48 @@ main > article > .max-w-4xl > :not(.article-body, .article-important-notice, .ar
     margin-right: max(0px, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 2.75rem + 1rem));
   }
 }
+
+/* Espelho à esquerda da mesma reserva (14/10/2026).
+   Entra só com main > article em 58rem ou mais: aí o painel azul e a
+   coluna de leitura já são a caixa de 56rem, e o recuo único à direita
+   é o que tira o texto do centro. Abaixo disso a borda esquerda já
+   encontra o painel e a reserva direita é grande; copiá-la esmagaria a
+   linha. No desktop a conta vai a zero dos dois lados e resta o recuo
+   de leitura do miolo. O 100% continua a ser a caixa do componente que
+   já tem a reserva à direita, então o quadro amarelo, dentro de
+   .article-body, não recebe outra conta. A faixa de 640px fica de fora:
+   58rem está acima dela e o botão segue com 3rem. */
+@container (min-width: 58rem) {
+  .article-body {
+    padding-left: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 0.5rem));
+    padding-left: max(0px, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem));
+  }
+
+  .article-important-notice {
+    padding-left: max(1.5rem, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 0.5rem));
+    padding-left: max(1.5rem, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem));
+  }
+
+  .article-final-cta__title,
+  .article-final-cta__text,
+  .article-related-news__title,
+  main > article > header > .max-w-4xl > * {
+    padding-left: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 0.5rem));
+    padding-left: max(0px, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem));
+  }
+
+  main > article > .max-w-4xl > :not(.article-body, .article-important-notice, .article-final-cta, .article-related-news) {
+    margin-left: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 0.5rem));
+    margin-left: max(0px, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 0.5rem));
+  }
+
+  .article-related-news {
+    padding-left: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 1rem));
+    padding-left: max(0px, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 1rem));
+  }
+
+  .article-final-cta__actions {
+    margin-left: max(0px, calc((100% - 100vw) / 2 + 1.5rem + 3rem + 1rem));
+    margin-left: max(0px, calc((100% - 100cqw) / 2 + max(1.5rem, env(safe-area-inset-right, 0px)) + 3rem + 1rem));
+  }
+}

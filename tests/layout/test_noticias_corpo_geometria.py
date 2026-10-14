@@ -356,7 +356,7 @@ def test_reserva_e_regra_do_componente_compartilhado():
     ]
     for pagina in paginas:
         texto = pagina.read_text(encoding="utf-8")
-        assert "noticias-tipos.css?v=20261010-layout-1" in texto
+        assert "noticias-tipos.css?v=20261014-layout-1" in texto
         assert "<br" not in texto[texto.index("<section class=\"article-body\"") : texto.index("</section>", texto.index("article-body"))]
 
 
@@ -455,3 +455,255 @@ def test_listagem_e_os_cliques_permanecem(geometria):
         assert clique["cta"].rstrip("/").endswith("/contato")
         assert clique["volta"].rstrip("/").endswith("/noticias")
         assert clique["topo"] < 5
+
+
+# A assimetria de meia tela era a reserva só à direita, com a coluna já em 56rem
+# (article >= 58rem). O espelho à esquerda corrige o centro sem mexer na folga.
+FAIXA = (
+    ("irregulares", "/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/", "custom.min.css"),
+    ("artesanais", "/noticias/anvisa-regras-cosmeticos-artesanais/", "modular"),
+    ("farmacopeia", "/noticias/novos-compendios-farmacopeia-brasileira-entram-em-vigor/", "custom.min.css"),
+)
+FAIXA_LARGURAS = (390, 927, 928, 929, 960, 1008, 1023, 1024, 1440)
+
+FAIXA_PROBE = r"""
+import json
+import sys
+from playwright.sync_api import sync_playwright
+import support
+
+base = sys.argv[1]
+jobs = json.loads(sys.argv[2])
+
+MEDIR = r'''
+() => {
+  const n = (v) => Math.round(v * 100) / 100;
+  const caixa = (el) => {
+    if (!el) return null;
+    const r = el.getBoundingClientRect();
+    const s = getComputedStyle(el);
+    const pl = parseFloat(s.paddingLeft) || 0;
+    const pr = parseFloat(s.paddingRight) || 0;
+    return {
+      l: n(r.left), r: n(r.right), w: n(r.width),
+      cx: n(r.left + r.width / 2),
+      ccx: n((r.left + pl + r.right - pr) / 2),
+      pl: n(pl), pr: n(pr),
+      ml: n(parseFloat(s.marginLeft) || 0),
+      mr: n(parseFloat(s.marginRight) || 0)
+    };
+  };
+  const artigo = document.querySelector('main > article');
+  const azul = document.querySelector('main > article > header > .max-w-4xl');
+  const h1 = document.querySelector('main > article > header h1');
+  const resumo = document.querySelector('main > article > header .max-w-4xl > p');
+  const meta = document.querySelector('.article-meta-card');
+  const corpo = document.querySelector('.article-body');
+  const paragrafo = document.querySelector('.article-body > p');
+  const amarelo = document.querySelector('[data-news-update-callout]');
+  const aviso = document.querySelector('.article-important-notice');
+  const relacionadas = document.querySelector('.article-related-news');
+  const cards = [...document.querySelectorAll('.article-related-news__card')];
+  const card = cards.reduce((a, b) => (!a || b.getBoundingClientRect().right > a.getBoundingClientRect().right ? b : a), null);
+  const acoes = document.querySelector('.article-final-cta__actions');
+  const whats = document.querySelector('.floating-btn--whatsapp');
+  const coluna = document.querySelector('.floating-buttons');
+  const wa = whats.getBoundingClientRect();
+  const folga = (box) => box ? n(wa.left - box.r) : null;
+  const folgaMiolo = (box) => box ? n(wa.left - (box.r - box.pr)) : null;
+  function foco(el) {
+    if (!el) return null;
+    el.focus({focusVisible: true});
+    const r = el.getBoundingClientRect();
+    const s = getComputedStyle(el);
+    const extra = (s.outlineStyle === 'none' ? 0 : (parseFloat(s.outlineWidth) || 0)) + (parseFloat(s.outlineOffset) || 0);
+    return {folga: n(wa.left - r.right), contorno: n(wa.left - r.right - extra)};
+  }
+  const link = document.querySelector('.article-final-cta__link--secondary') || document.querySelector('.article-final-cta__link');
+  return {
+    innerWidth: window.innerWidth,
+    clientWidth: document.documentElement.clientWidth,
+    sb: window.innerWidth - document.documentElement.clientWidth,
+    artigoW: n(artigo.getBoundingClientRect().width),
+    overflowX: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    folhas: [...document.querySelectorAll('link[rel="stylesheet"]')].map((el) => el.getAttribute('href') || ''),
+    azul: caixa(azul), h1: caixa(h1), resumo: caixa(resumo), meta: caixa(meta),
+    corpo: caixa(corpo), paragrafo: caixa(paragrafo), amarelo: caixa(amarelo),
+    aviso: caixa(aviso), relacionadas: caixa(relacionadas), card: caixa(card), acoes: caixa(acoes),
+    whatsW: n(wa.width),
+    controles: getComputedStyle(coluna).position,
+    folgaTexto: folga(caixa(paragrafo)),
+    folgaCard: folga(caixa(card)),
+    folgaAcoes: folga(caixa(acoes)),
+    folgaRelacionadas: folgaMiolo(caixa(relacionadas)),
+    focoCard: foco(card),
+    focoLink: foco(link)
+  };
+}
+'''
+
+saida = []
+with sync_playwright() as playwright:
+    browser = playwright.chromium.launch(headless=True)
+    context = support.new_context(browser, allow=(base,), viewport={"width": 390, "height": 800}, device_scale_factor=1)
+    page = context.new_page()
+    for job in jobs:
+        page.goto(base + job["route"], wait_until="load")
+        for width in job["widths"]:
+            page.set_viewport_size({"width": width, "height": 800})
+            page.evaluate("() => window.scrollTo(0, 0)")
+            item = page.evaluate(MEDIR)
+            item.update({"slug": job["slug"], "familia": job["familia"], "width": width})
+            saida.append(item)
+    page.goto(base + "/noticias/", wait_until="load")
+    if page.locator("#btn-carregar-mais").count():
+        page.locator("#btn-carregar-mais").click()
+    lista = page.evaluate(
+        '''() => {
+          const cards = [...document.querySelectorAll('#news-article-list [data-news-card]')];
+          const visiveis = cards.filter((card) => !card.classList.contains('hidden'));
+          return {
+            total: cards.length,
+            visiveis: visiveis.length,
+            grandes: visiveis.filter((card) => !card.classList.contains('news-card-compact')).length,
+            compactos: visiveis.filter((card) => card.classList.contains('news-card-compact')).length,
+            algumGrandeDepoisDoQuinto: cards.slice(5).some((card) => !card.classList.contains('news-card-compact'))
+          };
+        }'''
+    )
+    browser.close()
+print(json.dumps({"medicoes": saida, "listagem": lista}))
+"""
+
+
+def test_espelho_esquerdo_fica_na_folha_compartilhada():
+    css = (ROOT / "assets" / "css" / "pages" / "noticias-tipos.css").read_text(encoding="utf-8")
+    faixa_estreita, espelho = css.split("@container (min-width: 58rem)", 1)
+    assert faixa_estreita.count("@media (max-width: 640px)") == 1
+    estreita = faixa_estreita.split("@media (max-width: 640px)", 1)[1]
+    assert "padding-left" not in estreita
+    assert "2.75rem" in estreita
+    assert "data-news-update-callout" not in espelho
+    assert "width:" not in espelho
+    assert "position:" not in espelho
+    assert "2.75rem" not in espelho
+    assert espelho.count("padding-left:") >= 8
+    assert espelho.count("margin-left:") >= 4
+    assert "100vw" in espelho and "100cqw" in espelho
+    assert "main > article > header > .max-w-4xl > *" in espelho
+    assert ":not(.article-body, .article-important-notice, .article-final-cta, .article-related-news)" in espelho
+    detalhe = (ROOT / "assets" / "css" / "pages" / "noticia-detalhe.css").read_text(encoding="utf-8")
+    assert "@container (min-width: 58rem)" not in detalhe
+    assert "noticias-tipos.css?v=20261010-layout-1" not in css
+
+
+@pytest.fixture(scope="module")
+def alinhamento():
+    server = ThreadingHTTPServer(("127.0.0.1", 0), partial(_Quiet, directory=str(SITE_DIR)))
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    jobs = [
+        {"slug": slug, "route": route, "familia": familia, "widths": list(FAIXA_LARGURAS)}
+        for slug, route, familia in FAIXA
+    ]
+    try:
+        completed = subprocess.run(
+            [sys.executable, "-c", FAIXA_PROBE, f"http://127.0.0.1:{server.server_port}", json.dumps(jobs)],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            timeout=180,
+            env=subprocess_env(),
+            check=False,
+        )
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=5)
+    assert completed.returncode == 0, completed.stderr[-4000:]
+    return json.loads(completed.stdout)
+
+
+def _faixa(alinhamento, slug, width):
+    return next(item for item in alinhamento["medicoes"] if item["slug"] == slug and item["width"] == width)
+
+
+def test_meia_tela_centraliza_e_preserva_folga_e_o_celular(alinhamento):
+    for slug, _route, familia in FAIXA:
+        for width in FAIXA_LARGURAS:
+            item = _faixa(alinhamento, slug, width)
+            assert item["overflowX"] <= 0, (slug, width, item["overflowX"])
+            assert item["sb"] == 0, (slug, width, item["sb"])
+            assert item["controles"] == "fixed"
+            assert item["whatsW"] == pytest.approx(44 if width <= 640 else 48, abs=0.6)
+            folhas = " ".join(item["folhas"])
+            assert "noticias-tipos.css?v=20261014-layout-1" in folhas
+            if familia == "custom.min.css":
+                assert "custom.min.css" in folhas
+            else:
+                assert "noticia-detalhe.css" in folhas
+            azul, corpo, meta = item["azul"], item["corpo"], item["meta"]
+            paragrafo, aviso = item["paragrafo"], item["aviso"]
+            assert aviso["l"] == pytest.approx(corpo["l"], abs=1.5)
+            assert aviso["r"] == pytest.approx(corpo["r"], abs=1.5)
+            if item["amarelo"]:
+                assert item["amarelo"]["ml"] == pytest.approx(0, abs=0.5)
+                assert item["amarelo"]["l"] == pytest.approx(paragrafo["l"], abs=1.5)
+                assert item["amarelo"]["r"] == pytest.approx(paragrafo["r"], abs=1.5)
+            else:
+                assert slug == "farmacopeia"
+            if item["artigoW"] < 928:
+                assert corpo["pl"] == pytest.approx(0, abs=0.5)
+                assert meta["ml"] == pytest.approx(0, abs=0.5)
+                assert paragrafo["cx"] < azul["cx"] - 8, (slug, width, paragrafo["cx"], azul["cx"])
+                assert item["h1"]["ccx"] < azul["cx"] - 8
+            else:
+                assert azul["w"] == pytest.approx(896, abs=1)
+                assert corpo["pl"] == pytest.approx(corpo["pr"], abs=0.6)
+                assert meta["ml"] == pytest.approx(corpo["pl"], abs=0.6)
+                assert item["h1"]["pl"] == pytest.approx(corpo["pl"], abs=0.6)
+                assert aviso["pl"] == pytest.approx(aviso["pr"], abs=0.6)
+                for nome, centro in (
+                    ("meta", meta["cx"]),
+                    ("paragrafo", paragrafo["cx"]),
+                    ("h1", item["h1"]["ccx"]),
+                    ("resumo", item["resumo"]["ccx"]),
+                    ("aviso", aviso["ccx"]),
+                    ("relacionadas", item["relacionadas"]["ccx"]),
+                    ("acoes", item["acoes"]["cx"]),
+                ):
+                    assert centro == pytest.approx(azul["cx"], abs=1.5), (slug, width, nome, centro, azul["cx"])
+                if item["amarelo"]:
+                    assert item["amarelo"]["cx"] == pytest.approx(azul["cx"], abs=1.5)
+            if corpo["pr"] > 0.5:
+                assert 6 <= item["folgaTexto"] <= 12, (slug, width, item["folgaTexto"], corpo["pr"])
+            else:
+                assert item["folgaTexto"] >= 8, (slug, width, item["folgaTexto"])
+            # A reserva de 1rem é da seção. Um único card fica na primeira coluna e não chega na borda direita.
+            if item["relacionadas"]["pr"] > 0.5:
+                assert 14 <= item["folgaRelacionadas"] <= 18, (slug, width, item["folgaRelacionadas"])
+            else:
+                assert item["folgaRelacionadas"] >= 14, (slug, width, item["folgaRelacionadas"])
+            if abs(item["card"]["r"] - (item["relacionadas"]["r"] - item["relacionadas"]["pr"])) <= 2:
+                assert item["folgaCard"] == pytest.approx(item["folgaRelacionadas"], abs=1.5)
+            if item["acoes"]["mr"] > 0.5:
+                assert 14 <= item["folgaAcoes"] <= 18, (slug, width, item["folgaAcoes"])
+            else:
+                assert item["folgaAcoes"] >= 14, (slug, width, item["folgaAcoes"])
+            for alvo in (item["focoCard"], item["focoLink"]):
+                assert alvo["contorno"] >= 8, (slug, width, alvo)
+        estreito = _faixa(alinhamento, slug, 390)
+        assert estreito["azul"]["w"] == pytest.approx(358, abs=1)
+        assert estreito["meta"]["l"] == pytest.approx(estreito["azul"]["l"], abs=1.5)
+        assert estreito["aviso"]["pl"] == pytest.approx(20, abs=1)
+        assert estreito["aviso"]["pr"] == pytest.approx(60, abs=1)
+        assert estreito["corpo"]["pr"] == pytest.approx(60, abs=1)
+        porta = _faixa(alinhamento, slug, 927)
+        assert porta["artigoW"] < 928
+        assert _faixa(alinhamento, slug, 928)["artigoW"] >= 928
+    lista = alinhamento["listagem"]
+    assert lista["visiveis"] >= 6
+    assert lista["grandes"] == 5
+    assert lista["compactos"] == lista["visiveis"] - 5
+    assert lista["algumGrandeDepoisDoQuinto"] is False
+    assert lista["total"] == lista["visiveis"]
