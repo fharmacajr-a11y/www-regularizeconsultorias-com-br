@@ -9,9 +9,10 @@ NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 SITEMAP_PATH = ROOT / "sitemap.xml"
 URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
 PUBLISHED = "2026-07-05T18:00:00-03:00"
-# 13/10/2026, 11h51: RE nº 3.989, 4.000, 4.001, 4.002, 4.009 e 4.028/2026.
-# O carimbo anterior, 09h06, permanece nas matérias de SNCR e da DCB.
-UPDATED = "2026-10-13T11:51:00-03:00"
+# 13/10/2026, 19h54: a divulgação sai da enumeração de proibições da RE nº 3.634/2026.
+# O carimbo anterior, 11h51, era o das seis resoluções do mesmo dia. SNCR e DCB permanecem às 09h06.
+UPDATED = "2026-10-13T19:54:00-03:00"
+UPDATED_CLOCK = f"{datetime.fromisoformat(UPDATED):%Hh%M}"
 DOBUTAMINA_LOTES = ("24092127", "24102310", "25102244", "25102243", "25112308")
 
 
@@ -135,7 +136,7 @@ def test_september_update_reflects_re_3547_and_keeps_history():
     assert "Medidas de julho a outubro mostram" in html
     assert "Medidas de julho a setembro" not in html
     assert "Medidas de julho e agosto" not in html
-    assert f'<time datetime="{UPDATED}">13/10/2026</time> às 11h51' in html
+    assert f'<time datetime="{UPDATED}">13/10/2026</time> às {UPDATED_CLOCK}' in html
     assert f'<time datetime="{PUBLISHED}">05/07/2026</time> às 18h00' in html
     # Histórico de agosto e julho preservado.
     for term in ("12/08 — saneantes sem registro", "14/08 — Chá Sarapião", "Fiscalização de julho amplia", "Chlorohex 2,0%"):
@@ -167,6 +168,7 @@ def test_latest_callout_keeps_each_resolution_bound_to_its_own_products_and_meas
 
     assert "Aloe Care — RE nº 3.634/2026" in aloe
     assert "recolhimento e proibição de fabricação, distribuição, comercialização, propaganda e uso" in aloe
+    assert "divulgação" not in aloe
     assert "RE nº 3.629/2026" not in aloe
 
     for item, own_re in zip(items, ("3.626", "3.628", "3.629", "3.634")):
@@ -224,7 +226,9 @@ def test_four_new_body_subsections_preserve_exact_products_measures_and_negative
     assert "União Vegetal Agroindustrial Ltda." in aloe
     assert "retificação publicada no DOU em 09/10/2026" in aloe
     assert "não cria outra medida nem altera o produto, os lotes ou as proibições" in aloe
-    assert "determina o recolhimento e proíbe a fabricação, a distribuição, a comercialização, a propaganda, a divulgação e o uso" in aloe
+    assert "10.536.977/0001-81" in aloe
+    assert "determina o recolhimento e proíbe a fabricação, a distribuição, a comercialização, a propaganda e o uso" in aloe
+    assert "a propaganda, a divulgação e o uso" not in aloe
     for reason in ("sem prévia avaliação de segurança e autorização de uso", "língua estrangeira", "alegações de saúde ou terapêuticas não autorizadas"):
         assert reason in aloe
     assert "não representa proibição genérica de todo uso de Aloe vera" in aloe
@@ -299,14 +303,14 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
     assert "Publicações da Anvisa de 21 a 28/09" not in news_index
     assert "Publicações da Anvisa de 21 e 25/09" not in news_index
     cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', news_index, re.DOTALL)
-    # 13/10/2026, 11h51: as seis resoluções do DOU de 13/10 mantêm o card na 1ª posição.
+    # 13/10/2026, 19h54: a correção do alcance mantém o card na 1ª posição.
     summary = ("O DOU de 13/10/2026 publica as RE nº 3.989, 4.000, 4.001, 4.002, 4.009 e 4.028/2026, "
                "sobre medicamentos, insumos farmacêuticos, alimentos e cosméticos, inclusive o lote "
                "HXTZ251015 de tirzepatida, o lote NDC 46785-162-03 de Xeomin e o lote P07725A de cloreto de sódio. "
                "A matéria reúne as medidas anteriores, de 01/09 a 09/10/2026, e o histórico completo permanece na página.")
     assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[0]
     assert "news-card-compact" in cards[0].split(">", 1)[0]
-    assert "13/10/2026 • 11h51" in cards[0]
+    assert f"13/10/2026 • {UPDATED_CLOCK}" in cards[0]
     assert "09h06" not in cards[0]
     assert f'data-summary="{summary}"' in cards[0]
     assert f"<p class=\"text-slate-500 text-sm leading-relaxed mb-4\">{summary}</p>" in cards[0]
@@ -798,6 +802,9 @@ def test_october_13_callout_keeps_each_measure_bound_to_its_own_act_and_scope():
 
     assert "Mara Arruda Liso Perfeito 4D" in lamarka and "27.799.585/0001-08" in lamarka
     assert "1006421/26-4" in lamarka and "encerra em “de 19.”" in lamarka
+    assert "edição certificada do DOU de 13/10/2026, edição 193, Seção 1, página 159" in lamarka
+    assert "O ano não foi completado" in lamarka
+    assert "não foi conferido" not in lamarka
     assert "não determina apreensão" in lamarka
     assert "1999" not in lamarka
 
@@ -830,6 +837,8 @@ def test_october_13_callout_keeps_each_measure_bound_to_its_own_act_and_scope():
     assert "MC Legacy Lab" in legacy and "23.334.258/0001-20" in legacy and "1033060/26-7" in legacy
     assert "implantes hormonais estéreis" in legacy
     assert "suspensão de comercialização, manipulação, propaganda e uso" in legacy
+    assert "ausência de prescrições médicas individualizadas" in legacy
+    assert "ausência de prescrições individualizadas" not in legacy
     assert "não determina recolhimento nem apreensão" in legacy
 
     assert "HXTZ251015" in farmausa and "37.124.240/0001-08" in farmausa and "1048833/26-2" in farmausa
@@ -890,6 +899,10 @@ def test_october_06_callout_keeps_each_act_and_the_aloe_rectification_apart():
     assert "empresa não identificada" in peptideos and "CNPJ é desconhecido" in peptideos
     assert "BPC157" not in peptideos and "Imaavy" not in peptideos
     assert "BPC157" in marcas and "Alluvi Healthcare" in marcas and "Oxygen KW Pharma" in marcas
+    assert "Retagen 40 mg retatrutide — Oxygen Pharm" in marcas
+    assert "Retatrutide 40 mg — Alluvi Healthcare" in marcas
+    assert "Retagen 40 mg retatrutida" not in marcas
+    assert "Retatrutida 40 mg" not in marcas
     assert "Não é proibição geral da tirzepatida nem da retatrutida" in marcas
     assert "Imaavy" in imaavy and "JNYJ1201" in imaavy and "51.780.468/0001-87" in imaavy
     assert "não alcança outros lotes" in imaavy
@@ -1110,7 +1123,7 @@ def test_october_update_reaches_lead_summary_metadata_and_listing_search():
                  "RE 3.852/2026", "RE 3.854/2026", "RE 3.855/2026", "RE 3.856/2026", "RE 3.857/2026"):
         assert _normalize_search(term) in haystack, term
     assert _consolidated_card(news_index).count(f'data-updated="{UPDATED}"') == 1
-    # Só esta matéria recebeu o carimbo de 11h51. SNCR e DCB permanecem às 09h06.
+    # Só esta matéria recebeu o carimbo de 19h54. SNCR e DCB permanecem às 09h06.
     assert news_index.count(f'data-updated="{UPDATED}"') == 1
     assert news_index.count('data-updated="2026-10-13T09:06:00-03:00"') == 2
 
