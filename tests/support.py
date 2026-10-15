@@ -15,6 +15,14 @@ EXCLUDED_PUBLIC_PATHS = {
     Path("noticias/template-noticia.html"),
     Path("whatsapp/index.html"),
 }
+# Única exceção à regra de não encaminhar o leitor para fora nas notícias: link oficial
+# conferido, por página e destino exato. Desde 15/10/2026, só a íntegra da RE nº 4.035/2026
+# no DOU, no quadro de 14/10/2026 da matéria consolidada de produtos irregulares.
+NEWS_OFFICIAL_SOURCE_LINKS = {
+    "noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/index.html": (
+        "https://www.in.gov.br/web/dou/-/resolucao-re-n-4.035-de-9-de-outubro-de-2026-738059775",
+    ),
+}
 
 # ---------------------------------------------------------------------------
 # Rede dos testes de navegador

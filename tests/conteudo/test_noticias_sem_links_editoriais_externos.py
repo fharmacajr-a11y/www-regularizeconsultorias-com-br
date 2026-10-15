@@ -4,12 +4,14 @@ A varredura cobre o <main> de cada matéria: corpo, quadros, FAQ, cartões de
 fontes e blocos equivalentes. Ficam de fora o cabeçalho técnico, os scripts,
 os metadados, o rodapé, a navegação global, os botões flutuantes e o contato
 institucional da Regularize. Link interno e arquivo servido pelo próprio site
-não são referência de terceiro.
+não são referência de terceiro. A única exceção é o link oficial conferido de
+support.NEWS_OFFICIAL_SOURCE_LINKS, aceito só como href de <a> na página e no
+destino exatos listados.
 """
 import re
 from urllib.parse import urlsplit
 
-from support import ROOT, TreeParser
+from support import NEWS_OFFICIAL_SOURCE_LINKS, ROOT, TreeParser
 
 
 NEWS_DIRECTORY = ROOT / "noticias"
@@ -92,6 +94,7 @@ def editorial_external_problems(html, page):
     root = parse_text(html)
     main = _main(root)
     problems = []
+    authorized = NEWS_OFFICIAL_SOURCE_LINKS.get(page, ())
 
     for node in [main, *main.descendants()]:
         if node.tag in {"script", "style"}:
@@ -101,6 +104,8 @@ def editorial_external_problems(html, page):
             for part in value.split(","):
                 destination = external_forward(part.strip().split(" ")[0])
                 if not destination:
+                    continue
+                if node.tag == "a" and attribute == "href" and destination in authorized:
                     continue
                 anchor = " ".join(node.text_content().split())[:160]
                 problems.append(
@@ -135,3 +140,8 @@ def test_news_editorial_content_does_not_forward_to_external_references():
         page = path.relative_to(ROOT).as_posix()
         problems.extend(editorial_external_problems(path.read_text(encoding="utf-8"), page))
     assert not problems, "erro editorial: referência externa no conteúdo público das notícias\n" + "\n".join(problems)
+    # A exceção não fica órfã: cada link autorizado aparece uma vez, como href, na página listada.
+    for page, destinations in NEWS_OFFICIAL_SOURCE_LINKS.items():
+        html = (ROOT / page).read_text(encoding="utf-8")
+        for destination in destinations:
+            assert html.count(destination) == 1 and f'href="{destination}"' in html, (page, destination)
