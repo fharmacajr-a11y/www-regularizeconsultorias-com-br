@@ -195,9 +195,10 @@ def test_titulos_carimbo_ordem_e_contagens():
     statuses = re.findall(r'<article\b[^>]*\bdata-status="([^"]+)"', comunicado)
     # 09/10/2026: o aviso do Edital 6/2026 passou ao histórico (7 ativos, 8 no histórico).
     # 11/10/2026: o aviso do CNES 09/2026 passou ao histórico (6 ativos, 9 no histórico).
-    assert len([status for status in statuses if status != "resolved"]) == 6
-    assert statuses.count("resolved") == 9
-    assert ">6</span>" in prazo
+    # 16/10/2026: o aviso dos mapas de setembro da PF passou ao histórico (5 ativos, 10 no histórico).
+    assert len([status for status in statuses if status != "resolved"]) == 5
+    assert statuses.count("resolved") == 10
+    assert ">5</span>" in prazo
     assert len(list((ROOT / "noticias").glob("*/index.html"))) == 83
 
 

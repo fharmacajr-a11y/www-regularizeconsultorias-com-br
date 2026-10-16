@@ -104,7 +104,8 @@ def test_farmacia_popular_has_expected_sitemap_metadata():
 
     assert len(matches) == 1
     # 13/10/2026: a página ganhou o link visível da fonte oficial. A base de vagas continua a de 09/10/2026.
-    assert matches[0].findtext("s:lastmod", namespaces=NS) == "2026-10-13"
+    # 16/10/2026: correção do conteúdo apresentado sem JavaScript (explicações no lugar do carregamento).
+    assert matches[0].findtext("s:lastmod", namespaces=NS) == "2026-10-16"
     assert matches[0].findtext("s:changefreq", namespaces=NS) == "monthly"
     assert matches[0].findtext("s:priority", namespaces=NS) == "0.9"
 
@@ -127,9 +128,9 @@ def test_portaria_news_news_index_and_comunicado_have_expected_sitemap_metadata(
     _, urls = _url_elements()
     by_location = {url.findtext("s:loc", namespaces=NS): url for url in urls}
 
-    # 13/10/2026: a listagem reordenou três matérias e o comunicado atualizou o aviso do SNCR.
+    # 13/10/2026: a listagem reordenou três matérias. 16/10/2026: o aviso PF de 15/10 passou ao histórico do comunicado.
     assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-13"
-    assert by_location[COMUNICADO_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-13"
+    assert by_location[COMUNICADO_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-16"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-09"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:changefreq", namespaces=NS) == "monthly"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:priority", namespaces=NS) == "0.8"

@@ -20,7 +20,7 @@ CSS_PATHS = (
     ROOT / "assets/css/custom.css",
     ROOT / "assets/css/custom.min.css",
 )
-CURRENT_STORAGE_VERSION = "2026-10-11-avisos-6"
+CURRENT_STORAGE_VERSION = "2026-10-16-avisos-5"
 AFE_ROUTE = "/noticias/anvisa-edital-6-2026-afe-manipulacao-preparacoes-estereis/"
 CADASTRO_ROUTE = "/noticias/cadastro-anvisa-govbr-transicao-sistemas/"
 CNES_ROUTE = "/noticias/cnes-competencia-09-2026-prazo-transmissao/"
@@ -165,7 +165,7 @@ def _badge_texts(page):
     return page.locator(".aviso-badge").all_text_contents()
 
 
-def test_comunicado_has_six_active_notices_nine_historical_and_two_static_badges():
+def test_comunicado_has_five_active_notices_ten_historical_and_two_static_badges():
     root = _parse_html(COMUNICADO_PATH)
     notice_lists = [node for node in root.descendants() if node.attrs.get("id") == "avisos-lista"]
     assert len(notice_lists) == 1
@@ -179,13 +179,14 @@ def test_comunicado_has_six_active_notices_nine_historical_and_two_static_badges
     active = [article for article in articles if article not in inactive]
     badges = [node for node in root.descendants() if node.has_class("aviso-badge")]
 
-    # 11/10/2026: o aviso do CNES 09/2026 passou ao histórico (6 ativos, 9 no histórico).
+    # 16/10/2026: o aviso dos mapas de setembro da PF passou ao histórico (5 ativos, 10 no histórico).
+    # Antes, em 11/10/2026, o aviso do CNES 09/2026 já tinha passado (6 ativos, 9 no histórico).
     assert len(articles) == 15
-    assert len(active) == 6
-    assert Counter(article.attrs.get("data-status", "").casefold() for article in inactive) == {"resolved": 9}
+    assert len(active) == 5
+    assert Counter(article.attrs.get("data-status", "").casefold() for article in inactive) == {"resolved": 10}
     assert all("data-placeholder" not in article.attrs for article in articles)
     assert len(badges) == 2
-    assert [badge.text() for badge in badges] == ["6", "6"]
+    assert [badge.text() for badge in badges] == ["5", "5"]
 
 
 def test_comunicado_editorial_organization_and_active_notice_content():
@@ -222,9 +223,9 @@ def test_comunicado_editorial_organization_and_active_notice_content():
         for article in historical
         if any(node.tag == "a" and node.attrs.get("href") == CADASTRO_ROUTE for node in article.descendants())
     ]
-    produtos = historical[3]
+    produtos = historical[4]
     produtos_links = [node.attrs.get("href") for node in produtos.descendants() if node.tag == "a"]
-    renewal = historical[4]
+    renewal = historical[5]
     renewal_links = [node.attrs.get("href") for node in renewal.descendants() if node.tag == "a"]
     cnes_active = [
         article
@@ -237,8 +238,8 @@ def test_comunicado_editorial_organization_and_active_notice_content():
         if any(node.tag == "a" and node.attrs.get("href") == CNES_ROUTE for node in article.descendants())
     ]
 
-    assert len(active) == 6
-    assert len(historical) == 9
+    assert len(active) == 5
+    assert len(historical) == 10
     assert len(articles) == 15
     # Edital 6/2026: a ficha do AnvisaLegis apresenta o chamamento como encerrado (consulta de 09/10/2026).
     assert not afe_active
@@ -249,7 +250,7 @@ def test_comunicado_editorial_organization_and_active_notice_content():
     afe = afe_historical[0]
     afe_text = afe.text()
     afe_links = [node for node in afe.descendants() if node.tag == "a"]
-    assert afe is historical[1]
+    assert afe is historical[2]
     assert afe.attrs.get("data-status") == "resolved"
     assert afe.attrs.get("data-category") == "anvisa"
     assert "ENCERRADO" in afe_text and "09/10/2026 • 20h25" in afe_text
@@ -279,13 +280,14 @@ def test_comunicado_editorial_organization_and_active_notice_content():
     assert "08/10" not in afe_text
     # Informe do CNES de 05/10/2026: prazo do transmissor da competência 09/2026 prorrogado até 09/10/2026. Em 11/10/2026
     # o prazo tinha passado e a página de informes do CNES (consulta de 11/10/2026) não trazia nova prorrogação: o aviso
-    # saiu dos ativos e é o primeiro do histórico, como ENCERRADO, com a hora da mudança (11/10/2026 • 06h07).
+    # saiu dos ativos e entrou no histórico, como ENCERRADO, com a hora da mudança (11/10/2026 • 06h07). Desde 16/10/2026
+    # é o segundo do histórico, logo depois do aviso PF.
     assert not cnes_active
     assert len(cnes_historical) == 1
     cnes = cnes_historical[0]
     cnes_text = cnes.text()
     cnes_links = [node for node in cnes.descendants() if node.tag == "a"]
-    assert cnes is historical[0]
+    assert cnes is historical[1]
     assert cnes.attrs.get("data-status") == "resolved"
     assert cnes.attrs.get("data-category") == "cnes"
     assert "ENCERRADO" in cnes_text and "11/10/2026 • 06h07" in cnes_text
@@ -303,33 +305,50 @@ def test_comunicado_editorial_organization_and_active_notice_content():
     assert cnes_links[0].attrs.get("href") == CNES_ROUTE
     assert "comunicado-historico__control" in cnes_links[0].attrs.get("class", "").split()
     assert "Ver notícia sobre a competência 09/2026" in cnes_links[0].text()
-    # IN DG/PF nº 338/2026, art. 8º, § 1º: mapa mensal até o 15º dia do mês seguinte;
-    # setembro/2026 vence em 15/10/2026. Público restrito às atividades com químicos controlados.
+    # IN DG/PF nº 338/2026, art. 8º, § 1º: mapa mensal até o 15º dia do mês seguinte; setembro/2026 venceu em
+    # 15/10/2026. Em consulta de 16/10/2026, as páginas da PF sobre produtos químicos e a busca no DOU não traziam
+    # prorrogação: o aviso saiu dos ativos e é o primeiro do histórico, como ENCERRADO, com a hora da mudança
+    # (16/10/2026 • 15h55). Público restrito às atividades com químicos controlados.
     pf_active = [
         article
         for article in active
         if any(node.tag == "a" and node.attrs.get("href") == PF_ROUTE for node in article.descendants())
     ]
-    assert len(pf_active) == 1
-    pf = pf_active[0]
+    pf_historical = [
+        article
+        for article in historical
+        if any(node.tag == "a" and node.attrs.get("href") == PF_ROUTE for node in article.descendants())
+    ]
+    assert not pf_active
+    assert len(pf_historical) == 1
+    pf = pf_historical[0]
     pf_text = pf.text()
-    assert pf.attrs.get("data-status") == "informativo"
+    pf_links = [node for node in pf.descendants() if node.tag == "a"]
+    assert pf is historical[0]
+    assert pf.attrs.get("data-status") == "resolved"
     assert pf.attrs.get("data-category") == "pf"
-    assert pf.attrs.get("data-effective-at") == "2026-10-06T08:00:00-03:00"
-    assert [node.attrs.get("href") for node in pf.descendants() if node.tag == "a"] == [PF_ROUTE]
+    assert "ENCERRADO" in pf_text and "16/10/2026 • 15h55" in pf_text
+    assert [node.attrs.get("href") for node in pf_links] == [PF_ROUTE]
+    assert "comunicado-historico__control" in pf_links[0].attrs.get("class", "").split()
+    assert "Ver notícia sobre a IN 338/2026" in pf_links[0].text()
     for term in (
-        "Polícia Federal: mapas de setembro dos produtos químicos controlados até 15/10",
+        "Polícia Federal: prazo dos mapas de setembro dos produtos químicos controlados terminou em 15/10",
         "Instrução Normativa DG/PF nº 338/2026",
         "atividades sujeitas ao controle e à fiscalização da Polícia Federal",
         "Mapas Mensais de Controle",
         "até o 15º dia do mês seguinte, mesmo sem movimentação no período",
+        "o prazo terminou em",
         "15/10/2026",
+        "Em consulta de 16/10/2026, as páginas da Polícia Federal sobre produtos químicos e a busca no Diário Oficial da União não traziam prorrogação desse prazo",
         "Portaria MJSP nº 204/2022",
         "não se estende a todas as farmácias nem aos medicamentos controlados em geral",
-        "A Regularize Consultoria pode analisar o enquadramento da atividade",
+        "Comunicado mantido como registro do prazo, sem caráter de aviso atual",
+        "A obrigação mensal prevista na IN DG/PF nº 338/2026 continua nos meses seguintes",
     ):
         assert term in pf_text
-    assert "URGENTE" not in pf_text
+    assert "o prazo vai até" not in pf_text
+    assert "INFORMATIVO" not in pf_text and "URGENTE" not in pf_text
+    assert "Mapas Mensais de Controle" not in active_text and "15/10/2026" not in active_text
     assert "passo a passo" not in pf_text.casefold()
     assert "deferimento" not in pf_text.casefold()
     # Portaria SDA/MAPA nº 1.617/2026 e Ofício-Circular nº 29/2026: 23/10/2026 para os estoques e
@@ -441,7 +460,6 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     assert titles == [
         "SNCR: cronograma anunciado e nota da API",
         "Farmácia Popular: confira municípios com vagas para credenciamento",
-        "Polícia Federal: mapas de setembro dos produtos químicos controlados até 15/10",
         "MAPA: estoques de aditivos com antimicrobianos do Anexo têm marco em 23/10",
         "Farmácia Popular: atenção aos materiais no período eleitoral",
         "Farmácia Popular: confira as listas EAN vigentes e os controles de prescrição",
@@ -449,14 +467,14 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     assert all(timestamp for timestamp in timestamps)
     assert all(len([node for node in article.descendants() if node.tag == "time"]) == 1 for article in active)
     assert timestamps == sorted(timestamps, reverse=True)
-    assert "URGENTE" in active[4].text()
+    assert "URGENTE" in active[3].text()
 
-    # O CTA informativo de referência passa a ser o da Polícia Federal (o do CNES saiu com o aviso, em 11/10/2026).
-    useful_badge = next(node for node in active[5].descendants() if node.tag == "span" and node.text() == "ÚTIL")
-    useful_cta = next(node for node in active[5].descendants() if node.tag == "a" and "Conferir orientações" in node.text())
-    informative_cta = next(node for node in active[2].descendants() if node.tag == "a" and "Leia a notícia sobre a IN 338/2026" in node.text())
+    # O CTA informativo de referência passa a ser o do MAPA (o da Polícia Federal saiu com o aviso, em 16/10/2026).
+    useful_badge = next(node for node in active[4].descendants() if node.tag == "span" and node.text() == "ÚTIL")
+    useful_cta = next(node for node in active[4].descendants() if node.tag == "a" and "Conferir orientações" in node.text())
+    informative_cta = next(node for node in active[2].descendants() if node.tag == "a" and "Leia a notícia sobre a Portaria 1.617/2026" in node.text())
     assert {"border-emerald-200", "bg-emerald-50", "text-emerald-700"} <= set(useful_badge.attrs["class"].split())
-    assert {"border-emerald-200", "bg-emerald-50"} <= set(active[5].attrs["class"].split())
+    assert {"border-emerald-200", "bg-emerald-50"} <= set(active[4].attrs["class"].split())
     informative_to_useful = {
         "comunicado-cta--informativo": "comunicado-cta--util",
         "border-orange-200": "border-emerald-200",
@@ -497,41 +515,44 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
         any("comunicado-historico__meta" in node.attrs.get("class", "").split() for node in article.descendants())
         for article in historical
     )
-    # 11/10/2026: o registro do CNES 09/2026 (ENCERRADO) entra no topo do histórico; os demais descem uma posição.
-    assert "ENCERRADO" in historical[0].text() and "11/10/2026 • 06h07" in historical[0].text()
-    assert "CNES: envio da competência 09/2026 foi prorrogado até 9 de outubro" in historical[0].text()
-    assert "ENCERRADO" in historical[1].text() and "09/10/2026 • 20h25" in historical[1].text()
-    assert "Edital 6/2026: AFE para manipulação de preparações estéreis" in historical[1].text()
-    assert "ENCERRADO" in historical[2].text() and "07/10/2026 • 10h53" in historical[2].text()
-    assert "ciclo de regularização cadastral de maio de 2026" in historical[2].text()
-    assert "Ver registro do ciclo" in historical[2].text()
-    assert "O que fazer agora" not in historical[2].text()
-    assert not any(node.tag == "strong" and (node.text() or "") == "Atenção:" for node in historical[2].descendants())
-    assert "HISTÓRICO" in historical[3].text() and "06/10/2026 • 14h27" in historical[3].text()
-    assert "Anvisa suspende medicamento e proíbe produtos irregulares" in historical[3].text()
-    assert "ENCERRADO" in historical[4].text() and "03/09/2026 • 22h49" in historical[4].text()
-    assert "ciclo de renovação foi encerrado em 31 de agosto" in historical[4].text()
-    assert "HISTÓRICO" in historical[5].text() and "20/05/2026 • 13h00" in historical[5].text()
-    assert "HISTÓRICO • maio de 2026" not in historical[5].text()
-    assert "HISTÓRICO" in historical[6].text() and "19/05/2026 • 09h00" in historical[6].text()
-    assert "Cadastro Anvisa/Gov.br" in historical[6].text()
-    assert [next(node.text() for node in article.descendants() if node.has_class("comunicado-historico__badge")) for article in historical] == ["ENCERRADO", "ENCERRADO", "ENCERRADO", "HISTÓRICO", "ENCERRADO", "HISTÓRICO", "HISTÓRICO", "ENCERRADO", "ENCERRADO"]
+    # 16/10/2026: o registro dos mapas de setembro da PF (ENCERRADO) entra no topo do histórico; os demais descem uma
+    # posição. Em 11/10/2026 o do CNES 09/2026 tinha entrado do mesmo modo.
+    assert "ENCERRADO" in historical[0].text() and "16/10/2026 • 15h55" in historical[0].text()
+    assert "Polícia Federal: prazo dos mapas de setembro dos produtos químicos controlados terminou em 15/10" in historical[0].text()
+    assert "ENCERRADO" in historical[1].text() and "11/10/2026 • 06h07" in historical[1].text()
+    assert "CNES: envio da competência 09/2026 foi prorrogado até 9 de outubro" in historical[1].text()
+    assert "ENCERRADO" in historical[2].text() and "09/10/2026 • 20h25" in historical[2].text()
+    assert "Edital 6/2026: AFE para manipulação de preparações estéreis" in historical[2].text()
+    assert "ENCERRADO" in historical[3].text() and "07/10/2026 • 10h53" in historical[3].text()
+    assert "ciclo de regularização cadastral de maio de 2026" in historical[3].text()
+    assert "Ver registro do ciclo" in historical[3].text()
+    assert "O que fazer agora" not in historical[3].text()
+    assert not any(node.tag == "strong" and (node.text() or "") == "Atenção:" for node in historical[3].descendants())
+    assert "HISTÓRICO" in historical[4].text() and "06/10/2026 • 14h27" in historical[4].text()
+    assert "Anvisa suspende medicamento e proíbe produtos irregulares" in historical[4].text()
+    assert "ENCERRADO" in historical[5].text() and "03/09/2026 • 22h49" in historical[5].text()
+    assert "ciclo de renovação foi encerrado em 31 de agosto" in historical[5].text()
+    assert "HISTÓRICO" in historical[6].text() and "20/05/2026 • 13h00" in historical[6].text()
+    assert "HISTÓRICO • maio de 2026" not in historical[6].text()
+    assert "HISTÓRICO" in historical[7].text() and "19/05/2026 • 09h00" in historical[7].text()
+    assert "Cadastro Anvisa/Gov.br" in historical[7].text()
+    assert [next(node.text() for node in article.descendants() if node.has_class("comunicado-historico__badge")) for article in historical] == ["ENCERRADO", "ENCERRADO", "ENCERRADO", "ENCERRADO", "HISTÓRICO", "ENCERRADO", "HISTÓRICO", "HISTÓRICO", "ENCERRADO", "ENCERRADO"]
     assert all("NORMALIZADO" not in article.text() for article in historical)
-    assert all("28/04/2026" in article.text() and "12h57" in article.text() for article in historical[7:])
+    assert all("28/04/2026" in article.text() and "12h57" in article.text() for article in historical[8:])
     historical_icons = [
         node
         for article in historical
         for node in article.descendants()
         if node.has_class("comunicado-historico__icon")
     ]
-    assert len(historical_icons) == 9
+    assert len(historical_icons) == 10
     assert all({"bg-slate-100", "w-9", "h-9"} <= set(node.attrs["class"].split()) for node in historical_icons)
     assert all(
         "text-slate-600" in next(node for node in icon.descendants() if node.tag == "svg").attrs["class"].split()
         for icon in historical_icons
     )
     historical_controls = [node for article in historical for node in article.descendants() if node.tag in {"a", "button"} and "comunicado-historico__control" in node.attrs.get("class", "").split()]
-    assert len(historical_controls) == 10
+    assert len(historical_controls) == 11
     assert all({"border-slate-300", "text-slate-700", "focus:ring-slate-300"} <= set(node.attrs["class"].split()) for node in historical_controls)
     assert all(not any("blue" in class_name for class_name in node.attrs["class"].split()) for node in historical_controls)
     assert "#avisos-lista .comunicado-historico__control:focus { outline: none; box-shadow: none; }" in source
@@ -555,8 +576,8 @@ def test_comunicado_useful_cta_computed_states(site_url, browser):
     try:
         page.goto(f"{site_url}/comunicado/", wait_until="networkidle")
         useful_cta = page.locator('a[href="/noticias/farmacia-popular-listas-ean-junho-2026/"]')
-        # O CTA informativo de referência é o da Polícia Federal (o do CNES saiu com o aviso, em 11/10/2026).
-        informative_cta = page.locator(f'#avisos-lista a.comunicado-cta--informativo[href="{PF_ROUTE}"]')
+        # O CTA informativo de referência é o do MAPA (o da Polícia Federal saiu com o aviso, em 16/10/2026).
+        informative_cta = page.locator(f'#avisos-lista a.comunicado-cta--informativo[href="{MAPA_ROUTE}"]')
 
         def computed_state(locator):
             return locator.evaluate(
@@ -612,8 +633,8 @@ def test_comunicado_useful_cta_computed_states(site_url, browser):
 
 
 def test_javascript_constants_and_files_are_exactly_equivalent():
-    expected_fallback = re.compile(r"^\s*var AVISOS_FALLBACK_COUNT = 6;$", re.MULTILINE)
-    expected_version = re.compile(r"^\s*var AVISOS_STORAGE_VERSION = '2026-10-11-avisos-6';$", re.MULTILINE)
+    expected_fallback = re.compile(r"^\s*var AVISOS_FALLBACK_COUNT = 5;$", re.MULTILINE)
+    expected_version = re.compile(r"^\s*var AVISOS_STORAGE_VERSION = '2026-10-16-avisos-5';$", re.MULTILINE)
     for path in MAIN_PATHS:
         source = path.read_text(encoding="utf-8")
         assert len(expected_fallback.findall(source)) == 1, path
@@ -637,7 +658,7 @@ def test_every_public_navbar_has_two_complete_notice_links():
         for link in links:
             badges = [node for node in link.descendants() if node.has_class("aviso-badge")]
             assert len(badges) == 1, relative_path
-            assert badges[0].text() == "6", relative_path
+            assert badges[0].text() == "5", relative_path
             assert badges[0].text() != "3", relative_path
             svgs = [node for node in link.descendants() if node.tag == "svg"]
             assert len(svgs) == 1, relative_path
@@ -676,7 +697,7 @@ def test_tablet_hide_regression_is_absent_and_navbar_rules_remain():
             assert rule.search(compact), f"{path}: {rule.pattern}"
 
 
-def test_fallback_is_six_before_delayed_sync(browser, site_url):
+def test_fallback_is_five_before_delayed_sync(browser, site_url):
     context = new_context(browser)
     context.add_init_script(
         "const originalFetch = window.fetch.bind(window);"
@@ -685,8 +706,8 @@ def test_fallback_is_six_before_delayed_sync(browser, site_url):
     page = context.new_page()
     try:
         page.goto(f"{site_url}/", wait_until="domcontentloaded")
-        page.wait_for_function("[...document.querySelectorAll('.aviso-badge')].every(b => b.textContent.trim() === '6')")
-        assert _badge_texts(page) == ["6", "6"]
+        page.wait_for_function("[...document.querySelectorAll('.aviso-badge')].every(b => b.textContent.trim() === '5')")
+        assert _badge_texts(page) == ["5", "5"]
         assert "3" not in _badge_texts(page)
     finally:
         context.close()
@@ -701,16 +722,16 @@ def test_old_storage_is_ignored_when_sync_fails(browser, site_url):
     try:
         page.route("**/comunicado/", lambda route: route.abort("failed"))
         page.goto(f"{site_url}/", wait_until="domcontentloaded")
-        page.wait_for_function("[...document.querySelectorAll('.aviso-badge')].every(b => b.textContent.trim() === '6')")
-        assert _badge_texts(page) == ["6", "6"]
+        page.wait_for_function("[...document.querySelectorAll('.aviso-badge')].every(b => b.textContent.trim() === '5')")
+        assert _badge_texts(page) == ["5", "5"]
         assert "3" not in _badge_texts(page)
         assert not page_errors
     finally:
         context.close()
 
 
-def test_successful_sync_persists_six_and_hides_zero(browser, site_url):
-    for count in (6, 0):
+def test_successful_sync_persists_five_and_hides_zero(browser, site_url):
+    for count in (5, 0):
         context = new_context(browser)
         page = context.new_page()
         try:
@@ -722,7 +743,7 @@ def test_successful_sync_persists_six_and_hides_zero(browser, site_url):
             page.wait_for_function(f"localStorage.getItem('avisos_count') === '{count}'")
             assert page.evaluate("localStorage.getItem('avisos_count_version')") == CURRENT_STORAGE_VERSION
             if count:
-                assert _badge_texts(page) == ["6", "6"]
+                assert _badge_texts(page) == ["5", "5"]
                 assert all(
                     page.locator(".aviso-badge").nth(index).evaluate("element => getComputedStyle(element).display") == "flex"
                     for index in range(2)
@@ -746,7 +767,7 @@ def test_responsive_notice_visibility_matrix(browser, site_url):
                 if route != "/comunicado/":
                     page.route(
                         "**/comunicado/",
-                        _notice_response(6),
+                        _notice_response(5),
                     )
                 page.goto(f"{site_url}{route}", wait_until="domcontentloaded")
                 top = page.locator('#navbar > div:first-child > div > div > a[href="/comunicado/"]')
@@ -761,7 +782,7 @@ def test_responsive_notice_visibility_matrix(browser, site_url):
                     toggle.click()
                     assert mobile.is_visible(), (route, width)
                     assert mobile.locator(".aviso-badge").is_visible(), (route, width)
-                    assert mobile.locator(".aviso-badge").text_content().strip() == "6"
+                    assert mobile.locator(".aviso-badge").text_content().strip() == "5"
                 elif width < 900:
                     assert top.is_visible(), (route, width)
                     assert toggle.is_visible(), (route, width)
@@ -771,13 +792,13 @@ def test_responsive_notice_visibility_matrix(browser, site_url):
                     assert mobile.locator(".aviso-badge").is_visible(), (route, width)
                     assert top.evaluate("element => getComputedStyle(element).display") != "none"
                     assert mobile.evaluate("element => getComputedStyle(element).display") != "none"
-                    assert top.locator(".aviso-badge").text_content().strip() == "6"
-                    assert mobile.locator(".aviso-badge").text_content().strip() == "6"
+                    assert top.locator(".aviso-badge").text_content().strip() == "5"
+                    assert mobile.locator(".aviso-badge").text_content().strip() == "5"
                 else:
                     assert top.is_visible(), (route, width)
                     assert not toggle.is_visible(), (route, width)
                     assert not mobile_menu.is_visible(), (route, width)
                     assert top.locator(".aviso-badge").is_visible(), (route, width)
-                    assert top.locator(".aviso-badge").text_content().strip() == "6"
+                    assert top.locator(".aviso-badge").text_content().strip() == "5"
             finally:
                 context.close()

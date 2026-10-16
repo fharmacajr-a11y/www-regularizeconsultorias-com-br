@@ -145,10 +145,10 @@
      ================================================================= */
   var avisoLista = document.getElementById('avisos-lista');
   var AVISOS_COUNT = 0;
-  var AVISOS_FALLBACK_COUNT = 6;
+  var AVISOS_FALLBACK_COUNT = 5;
   var AVISOS_STORAGE_KEY = 'avisos_count';
   var AVISOS_STORAGE_VERSION_KEY = 'avisos_count_version';
-  var AVISOS_STORAGE_VERSION = '2026-10-11-avisos-6';
+  var AVISOS_STORAGE_VERSION = '2026-10-16-avisos-5';
 
   function normalizeAvisoStatus(value) {
     return (value || '').toLowerCase().trim();

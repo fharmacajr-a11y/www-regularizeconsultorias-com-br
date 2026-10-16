@@ -30,6 +30,15 @@ INDICATORS = (
 CONTROLS = ("#fp-search", "#fp-uf", "#fp-status", "#fp-clear", "#fp-prev", "#fp-next", "#fp-page-size")
 PROVENANCE_FIELDS = ("#fp-source-org", "#fp-official-date", "#fp-import-date", "#fp-ibge-version")
 OFFICIAL_URL = METADATA["url_oficial_visualizacao"]
+# Textos que só aparecem com o JavaScript desativado (<noscript>); nunca numa falha de rede com JavaScript.
+NO_JS_PROVENANCE = "Sem JavaScript, a proveniência e os totais da base não são carregados."
+NO_JS_CONSULTATION = "A busca, os filtros e a tabela de municípios dependem de JavaScript"
+
+
+def assert_not_no_js_state(page):
+    main_text = page.locator("main").inner_text()
+    assert NO_JS_PROVENANCE not in main_text
+    assert NO_JS_CONSULTATION not in main_text
 
 
 class QuietHandler(SimpleHTTPRequestHandler):
@@ -104,6 +113,7 @@ def assert_provenance_unavailable(page):
     assert page.locator("#fp-error").is_hidden()
     assert page.locator("#fp-uf option").count() == 27
     assert_official_link(page)
+    assert_not_no_js_state(page)
 
 
 def assert_fatal_state(page):
@@ -122,6 +132,7 @@ def assert_fatal_state(page):
     assert page.locator("#fp-meta-fallback").is_hidden()
     assert all(page.locator(selector).text_content() == "—" for selector in PROVENANCE_FIELDS)
     assert_official_link(page)
+    assert_not_no_js_state(page)
 
 
 def test_css_paginacao_hidden_prevalece_sobre_display_flex():
@@ -176,6 +187,7 @@ def test_link_oficial_permanece_com_javascript_filtro_e_sem_javascript(browser, 
         page.locator("#fp-clear").click()
         assert page.locator("#fp-result-count").text_content() == "1.500 municípios encontrados"
         assert link.get_attribute("href") == official
+        assert_not_no_js_state(page)
     finally:
         context.close()
 
@@ -188,7 +200,38 @@ def test_link_oficial_permanece_com_javascript_filtro_e_sem_javascript(browser, 
         assert link.inner_text() == "Consultar a fonte oficial"
         assert link.is_visible()
         assert "Consulta interativa indisponível." in page.locator("body").inner_text()
+        # O JavaScript não rodou (o texto inicial continua no DOM), mas nenhum carregamento fica à vista.
         assert page.locator("#fp-result-count").text_content() == "Carregando municípios…"
+        main_text = page.locator("main").inner_text()
+        assert "Carregando" not in main_text
+        for selector in ("#fp-source-title", ".fp-provenance-list", 'section[aria-labelledby="fp-indicators-title"]',
+                         "#fp-result-count", "#fp-filters", "#fp-loading", ".fp-table-scroll"):
+            assert page.locator(selector).is_hidden(), selector
+        # Nenhum campo “—” sem explicação; a explicação aparece no lugar da proveniência e da consulta.
+        assert page.locator("main dd:visible, main strong:visible").evaluate_all(
+            "nodes => nodes.filter(node => node.textContent.trim() === '—').length") == 0
+        assert NO_JS_PROVENANCE in main_text
+        assert NO_JS_CONSULTATION in main_text
+        # A explicação da consulta fica abaixo do cabeçalho da seção, fora do container flexível do título.
+        placement = page.evaluate(
+            """(text) => {
+                const note = [...document.querySelectorAll('.fp-consultation p')].find(p => p.textContent.includes(text));
+                const heading = document.querySelector('.fp-consultation .fp-section-heading');
+                const title = document.getElementById('fp-consultation-title');
+                const lineHeight = parseFloat(getComputedStyle(title).lineHeight);
+                return {
+                    insideHeading: !!note.closest('.fp-section-heading'),
+                    below: note.getBoundingClientRect().top >= heading.getBoundingClientRect().bottom,
+                    titleLines: Math.round(title.getBoundingClientRect().height / lineHeight),
+                };
+            }""",
+            NO_JS_CONSULTATION,
+        )
+        assert placement == {"insideHeading": False, "below": True, "titleLines": 1}, placement
+        assert "Proveniência dos dados" in main_text and "Encontre um município" in main_text
+        # Sem proveniência, data ou total inventado no lugar dos dados que o JavaScript carregaria.
+        for value in ("1.500", "3.000", "926", "2.074", "09/10/2026", METADATA["titulo_oficial"]):
+            assert value not in main_text, value
         assert page.locator("#fp-uf").count() == 1
         assert page.locator('a[href$="farmacia-popular-municipios-vagas-09-10-2026.pdf"]').count() == 1
     finally:
