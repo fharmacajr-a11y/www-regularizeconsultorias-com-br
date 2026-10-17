@@ -194,10 +194,11 @@ def test_index_saneantes_in_itemlist_position_16():
     coll_blocks = [b for b in blocks if b.get("@type") == "CollectionPage"]
     assert coll_blocks, "CollectionPage ausente no índice"
     items = coll_blocks[0]["mainEntity"]["itemListElement"]
-    assert items[37]["url"] == ARTICLE_URL, (
-        f"Posição 38 esperada para {ARTICLE_URL!r}, encontrado {items[37]['url']!r}"
+    # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
+    assert items[38]["url"] == ARTICLE_URL, (
+        f"Posição 39 esperada para {ARTICLE_URL!r}, encontrado {items[38]['url']!r}"
     )
-    assert items[37]["position"] == 38
+    assert items[38]["position"] == 39
 
 
 def test_index_itemlist_positions_are_sequential():
@@ -239,7 +240,7 @@ def test_index_cards_share_the_single_model():
     modelo e a posição não troca o formato (assets/js/main.js não troca mais a classe)."""
     html = _index_html()
     articles = re.findall(r'<article class="([^"]*)"[^>]*data-news-card', html)
-    assert len(articles) == 83
+    assert len(articles) == 84
     assert all("news-card-compact" in c for c in articles)
 
 
@@ -254,7 +255,7 @@ def test_index_saneantes_keeps_its_position_and_the_single_model():
         for index, block in enumerate(article_blocks)
         if "anvisa-rdc-1040-in-468-2026-saneantes-regularizacao" in block
     )
-    assert saneantes_index == 37
+    assert saneantes_index == 38
     assert "news-card-compact" in article_blocks[saneantes_index].split(">", 1)[0]
     # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
     assert all("news-card-compact" in block.split(">", 1)[0] for block in article_blocks)

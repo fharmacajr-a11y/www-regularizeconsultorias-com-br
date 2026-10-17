@@ -204,11 +204,12 @@ def test_index_has_one_card_in_fifth_position_and_expected_counts():
         r'(<article class="[^"]*"[^>]*data-news-card.*?</article>)', html, re.DOTALL
     )
     classes = [re.search(r'<article class="([^"]*)"', card).group(1) for card in card_blocks]
-    assert len(card_blocks) == 83
-    assert f'/noticias/{SLUG}/' in card_blocks[36]
+    assert len(card_blocks) == 84
+    # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
+    assert f'/noticias/{SLUG}/' in card_blocks[37]
     # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
     assert all("news-card-compact" in value for value in classes)
-    assert '>Todos</span><span class="text-xs text-slate-400">83<' in html
+    assert '>Todos</span><span class="text-xs text-slate-400">84<' in html
     assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in html
 
 
@@ -239,4 +240,4 @@ def test_sitemap_contains_new_url_with_editorial_lastmod():
     ]
     assert len(matches) == 1
     assert matches[0].findtext("s:lastmod", namespaces=namespace) == "2026-09-21"
-    assert len(root.findall("s:url", namespace)) == 104
+    assert len(root.findall("s:url", namespace)) == 105

@@ -89,7 +89,7 @@ def _data_valida(slug):
 def _cards():
     html = NEWS_INDEX_PATH.read_text(encoding="utf-8")
     cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', html, re.DOTALL)
-    assert len(cards) == 83
+    assert len(cards) == 84
     for card in cards:
         slug = re.search(r'href="/noticias/([^"/]+)/"', card).group(1)
         tempos = re.findall(r'<time datetime="([^"]+)"[^>]*>([^<]*)</time>', card)

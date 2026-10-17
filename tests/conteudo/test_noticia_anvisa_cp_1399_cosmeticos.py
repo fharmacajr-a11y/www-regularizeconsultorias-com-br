@@ -40,18 +40,19 @@ def test_listing_places_the_updated_cosmetics_card_eighth():
     html = INDEX.read_text(encoding="utf-8")
     cards = _cards(html)
     # Lote de 09/10/2026: as 13 matérias atualizadas no lote sobem pelo carimbo; as demais descem.
-    card = cards[33]
+    # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
+    card = cards[34]
 
-    assert len(cards) == 83
+    assert len(cards) == 84
     assert "/noticias/anvisa-atualiza-listas-substancias-cosmeticos/" in card
     assert f'data-updated="{UPDATED}"' in card
     assert "está encerrada" in card
     assert "recebe contribuições" not in card
     assert "permanece aberta" not in card
-    assert '>Todos</span><span class="text-xs text-slate-400">83<' in html
+    assert '>Todos</span><span class="text-xs text-slate-400">84<' in html
     assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in html
     assert (
-        '"position":34,"url":"https://www.regularizeconsultorias.com.br'
+        '"position":35,"url":"https://www.regularizeconsultorias.com.br'
         '/noticias/anvisa-atualiza-listas-substancias-cosmeticos/"'
     ) in html
     sitemap = SITEMAP.read_text(encoding="utf-8")

@@ -113,7 +113,7 @@ def selos():
 
 
 def test_todas_as_materias_medidas_com_e_sem_barra(selos):
-    assert len(MATERIAS) == 83
+    assert len(MATERIAS) == 84
     assert len(selos) == 2 * len(MATERIAS)
     for r in selos:
         assert r["medida"] and len(r["medida"]["selos"]) >= 2, r["pagina"]

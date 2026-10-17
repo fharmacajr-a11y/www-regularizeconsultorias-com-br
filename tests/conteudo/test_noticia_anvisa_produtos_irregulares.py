@@ -308,18 +308,19 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
     assert "Publicações da Anvisa de 21 e 25/09" not in news_index
     cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', news_index, re.DOTALL)
     # 15/10/2026, 17h44: o quadro da RE nº 4.035/2026 mantém o card na 1ª posição, com o resumo curto.
+    # 16/10/2026, 20h06: o card do CNES 10/2026 (publicação mais recente) passa à frente; o consolidado fica em 2º.
     summary = ("O DOU de 14/10/2026 publica a RE nº 4.035/2026, com seis medidas sobre produtos sem registro classificados como "
                "medicamento, inclusive itens com retatrutida e tirzepatida. Não é proibição geral da tirzepatida. A matéria mantém "
                "as seis RE publicadas em 13/10/2026 e as medidas anteriores, de 01/09 a 09/10/2026; o histórico completo "
                "permanece na página.")
-    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[0]
-    assert "news-card-compact" in cards[0].split(">", 1)[0]
-    assert f"{UPDATED_DAY} • {UPDATED_CLOCK}" in cards[0]
-    assert "09h06" not in cards[0]
-    assert f'data-summary="{summary}"' in cards[0]
-    assert f"<p class=\"text-slate-500 text-sm leading-relaxed mb-4\">{summary}</p>" in cards[0]
+    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[1]
+    assert "news-card-compact" in cards[1].split(">", 1)[0]
+    assert f"{UPDATED_DAY} • {UPDATED_CLOCK}" in cards[1]
+    assert "09h06" not in cards[1]
+    assert f'data-summary="{summary}"' in cards[1]
+    assert f"<p class=\"text-slate-500 text-sm leading-relaxed mb-4\">{summary}</p>" in cards[1]
     # Números e lotes do resumo de 13/10/2026 saíram do texto do card e seguem na busca pelas palavras-chave.
-    keywords = cards[0].split('data-keywords="', 1)[1].split('"', 1)[0]
+    keywords = cards[1].split('data-keywords="', 1)[1].split('"', 1)[0]
     for term in ("RE 3.989/2026", "RE 4.000/2026", "RE 4.001/2026", "RE 4.002/2026", "RE 4.009/2026", "RE 4.028/2026",
                  "HXTZ251015", "NDC 46785-162-03", "P07725A", "Xeomin", "cloreto de sódio", "insumos farmacêuticos"):
         assert term in keywords, term
@@ -329,9 +330,9 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
                  "Liberty Pharma", "ZPH Contabilidade", "zyntrashop.site", "peptideosdobrasil.com.br",
                  "oxygenkwpharmabrasil.com", "zphcstore.com.br"):
         assert term in keywords, term
-    assert "As RE nº 3.946 e 3.947/2026 foram publicadas no DOU de 06/10/2026" not in cards[0]
-    assert "União Vegetal Agroindustrial Ltda. como fabricante do Aloe Care" not in cards[0]
-    assert 'href="http' not in cards[0]
+    assert "As RE nº 3.946 e 3.947/2026 foram publicadas no DOU de 06/10/2026" not in cards[1]
+    assert "União Vegetal Agroindustrial Ltda. como fabricante do Aloe Care" not in cards[1]
+    assert 'href="http' not in cards[1]
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
     assert f"<loc>{URL}</loc>\n    <lastmod>{UPDATED[:10]}</lastmod>" in sitemap
 

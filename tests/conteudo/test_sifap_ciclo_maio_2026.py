@@ -172,22 +172,24 @@ def test_titulos_carimbo_ordem_e_contagens():
     assert f"<loc>{REG_URL}</loc>\n    <lastmod>{day}</lastmod>" in sitemap
 
     cards = re.findall(r"<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>", index, flags=re.S)
-    assert len(cards) == 83
+    assert len(cards) == 84
     # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
-    assert "prazo-sifap-terminou" in cards[25]
-    assert "sifap-regularizacao-cadastral" in cards[26]
+    # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
+    assert "prazo-sifap-terminou" in cards[26]
+    assert "sifap-regularizacao-cadastral" in cards[27]
     # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
     assert all("news-card-compact" in card.split(">", 1)[0] for card in cards)
-    assert f'data-updated="{stamp}"' in cards[25]
     assert f'data-updated="{stamp}"' in cards[26]
-    assert "Ler atualização" in cards[25] and "Ler atualização" in cards[26]
-    assert TITLE_PRAZO in cards[25] and TITLE_REG in cards[26]
+    assert f'data-updated="{stamp}"' in cards[27]
+    assert "Ler atualização" in cards[26] and "Ler atualização" in cards[27]
+    assert TITLE_PRAZO in cards[26] and TITLE_REG in cards[27]
 
     items = re.findall(r'\{"@type":"ListItem","position":(\d+),"url":"([^"]+)"\}', index)
-    assert len(items) == 83
-    assert [int(position) for position, _ in items] == list(range(1, 84))
-    assert items[25][1] == PRAZO_URL
-    assert items[26][1] == REG_URL
+    assert len(items) == 84
+    assert [int(position) for position, _ in items] == list(range(1, 85))
+    # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
+    assert items[26][1] == PRAZO_URL
+    assert items[27][1] == REG_URL
 
     historico = historico_html(comunicado)
     assert 'datetime="2026-10-07T10:53:00-03:00"' in historico
@@ -196,10 +198,11 @@ def test_titulos_carimbo_ordem_e_contagens():
     # 09/10/2026: o aviso do Edital 6/2026 passou ao histórico (7 ativos, 8 no histórico).
     # 11/10/2026: o aviso do CNES 09/2026 passou ao histórico (6 ativos, 9 no histórico).
     # 16/10/2026: o aviso dos mapas de setembro da PF passou ao histórico (5 ativos, 10 no histórico).
-    assert len([status for status in statuses if status != "resolved"]) == 5
+    # 16/10/2026, 20h06: aviso informativo do CNES 10/2026 (6 ativos, 10 no histórico).
+    assert len([status for status in statuses if status != "resolved"]) == 6
     assert statuses.count("resolved") == 10
-    assert ">5</span>" in prazo
-    assert len(list((ROOT / "noticias").glob("*/index.html"))) == 83
+    assert ">6</span>" in prazo
+    assert len(list((ROOT / "noticias").glob("*/index.html"))) == 84
 
 
 SUSP_URL = "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-suspensao-temporaria-recadastramento-sifap/"
@@ -337,23 +340,25 @@ def test_suspensao_registra_a_correcao_material_com_datas_e_ordem_coerentes():
     assert TITLE_PRAZO in suspensao
 
     cards = _cards(index)
-    assert len(cards) == 83
+    assert len(cards) == 84
     # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
-    assert SUSP_URL.endswith(re.search(r'href="(/noticias/[^"]+/)"', cards[24]).group(1))
-    assert f'data-updated="{stamp}"' in cards[24]
-    assert f'<time datetime="{stamp}" class="leading-none">{day} • {hour}</time>' in cards[24]
-    assert SUMMARY_SUSP in cards[24]
-    assert f'data-title="{CARD_TITLE_SUSP}"' in cards[24]
-    assert f">{CARD_TITLE_SUSP}</h2>" in cards[24]
-    assert "<br" not in re.search(r"<h2\b[^>]*>.*?</h2>", cards[24], re.S).group(0).casefold()
-    assert HEADLINE_SUSP not in cards[24]
-    assert "prazo aberto" not in cards[24].casefold()
-    assert "news-card-compact" in cards[24].split(">", 1)[0]
+    # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
+    assert SUSP_URL.endswith(re.search(r'href="(/noticias/[^"]+/)"', cards[25]).group(1))
+    assert f'data-updated="{stamp}"' in cards[25]
+    assert f'<time datetime="{stamp}" class="leading-none">{day} • {hour}</time>' in cards[25]
+    assert SUMMARY_SUSP in cards[25]
+    assert f'data-title="{CARD_TITLE_SUSP}"' in cards[25]
+    assert f">{CARD_TITLE_SUSP}</h2>" in cards[25]
+    assert "<br" not in re.search(r"<h2\b[^>]*>.*?</h2>", cards[25], re.S).group(0).casefold()
+    assert HEADLINE_SUSP not in cards[25]
+    assert "prazo aberto" not in cards[25].casefold()
+    assert "news-card-compact" in cards[25].split(">", 1)[0]
     assert cards == sorted(cards, key=_card_moment, reverse=True)
     items = re.findall(r'\{"@type":"ListItem","position":(\d+),"url":"([^"]+)"\}', index)
-    assert [int(position) for position, _ in items] == list(range(1, 84))
+    assert [int(position) for position, _ in items] == list(range(1, 85))
     assert [url for _, url in items] == _card_hrefs(cards)
-    assert items[24][1] == SUSP_URL
+    # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
+    assert items[25][1] == SUSP_URL
     assert f"<loc>{SUSP_URL}</loc>\n    <lastmod>{stamp[:10]}</lastmod>" in sitemap
 
     cuidados = CUIDADOS.read_text(encoding="utf-8")

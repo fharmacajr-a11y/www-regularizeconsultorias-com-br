@@ -90,9 +90,10 @@ def test_listing_sitemap_and_cards_follow_the_review_timestamps():
     expected = (
         # Fase 1M v2: notícias revistas em 08/10 sobem para o topo.
         # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
-        ("anvisa-atualiza-acesso-sncr-afe-farmacias-privadas", AFE_UPDATED, "07/10/2026 • 09h08", 27, True, "2026-10-07"),
-        ("nova-regra-anvisa-cnes-receitas-farmacias", CNES_UPDATED, "06/10/2026 • 22h09", 29, True, "2026-10-06"),
-        ("canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao", GLP1_UPDATED, "30/09/2026 • 09h30", 34, True, "2026-09-30"),
+        # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
+        ("anvisa-atualiza-acesso-sncr-afe-farmacias-privadas", AFE_UPDATED, "07/10/2026 • 09h08", 28, True, "2026-10-07"),
+        ("nova-regra-anvisa-cnes-receitas-farmacias", CNES_UPDATED, "06/10/2026 • 22h09", 30, True, "2026-10-06"),
+        ("canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao", GLP1_UPDATED, "30/09/2026 • 09h30", 35, True, "2026-09-30"),
     )
     for slug, updated, label, position, compact, lastmod in expected:
         card = _card(index, slug)
@@ -104,9 +105,9 @@ def test_listing_sitemap_and_cards_follow_the_review_timestamps():
         assert f"<loc>https://www.regularizeconsultorias.com.br/noticias/{slug}/</loc>\n    <lastmod>{lastmod}</lastmod>" in sitemap
 
     assert "ausência de acesso direto" not in index
-    assert '>Todos</span><span class="text-xs text-slate-400">83<' in index
+    assert '>Todos</span><span class="text-xs text-slate-400">84<' in index
     assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in index
-    assert '>CNES</span><span class="text-xs text-slate-400">5<' in index
+    assert '>CNES</span><span class="text-xs text-slate-400">6<' in index
     assert '>SNCR</span><span class="text-xs text-slate-400">2<' in index
 
 

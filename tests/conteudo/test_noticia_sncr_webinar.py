@@ -163,7 +163,8 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     assert len(sncr_cards) == 1
     card = sncr_cards[0]
     # 13/10/2026, 09h06: o SNCR permanece na 2ª posição do HTML, empatado com a DCB. Produtos irregulares ficou à frente às 11h51.
-    assert cards.index(card) == 1
+    # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
+    assert cards.index(card) == 2
     assert "news-card-compact" in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
     assert f'<time datetime="{UPDATED}" class="leading-none">13/10/2026 • 09h06</time>' in card
@@ -178,7 +179,7 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     assert "29/10" not in card and "31/10" not in card
 
 
-def test_comunicado_keeps_one_sncr_card_and_five_active_notices():
+def test_comunicado_keeps_one_sncr_card_and_six_active_notices():
     html = COMUNICADO_PATH.read_text(encoding="utf-8")
     active = _active_notices(html)
     sncr_cards = [article for article in active if 'data-category="sncr"' in article]
@@ -186,8 +187,9 @@ def test_comunicado_keeps_one_sncr_card_and_five_active_notices():
     assert html.count('data-category="sncr"') == 1
     assert html.count(f'href="{ROUTE}"') == 1
     # 11/10/2026: o aviso do CNES 09/2026 passou ao histórico (6 ativos).
-    assert len(active) == 5
-    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', html) == ["5", "5"]
+    # 16/10/2026, 20h06: aviso informativo do CNES 10/2026 (6 ativos, depois do encerramento do aviso PF).
+    assert len(active) == 6
+    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', html) == ["6", "6"]
     assert len(sncr_cards) == 1
     card_text = _text(sncr_cards[0])
     paragraphs = [_text(item) for item in re.findall(r"<p>(.*?)</p>", sncr_cards[0], re.DOTALL)]
@@ -235,7 +237,8 @@ def test_comunicado_keeps_one_sncr_card_and_five_active_notices():
     assert "31/10" not in card_text
     assert "em operação desde" not in card_text
     assert "como preparar o estabelecimento" not in card_text
-    assert active[0] is sncr_cards[0]
+    # 16/10/2026, 20h06: o aviso do CNES 10/2026 é o 1º ativo; o do SNCR passa ao 2º.
+    assert active[1] is sncr_cards[0]
 
 
 def test_sncr_news_has_current_sitemap_lastmod():
