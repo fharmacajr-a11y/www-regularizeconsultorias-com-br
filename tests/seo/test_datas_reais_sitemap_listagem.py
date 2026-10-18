@@ -61,7 +61,7 @@ def _cards():
 def test_lastmod_de_cada_materia_e_o_dia_da_ultima_atualizacao_declarada():
     lastmods = _lastmods()
     paginas = sorted(p for p in (ROOT / "noticias").glob("*/index.html") if "a-publicar" not in p.parts)
-    assert len(paginas) == 84
+    assert len(paginas) == 85
     falhas = []
     for pagina in paginas:
         html = pagina.read_text(encoding="utf-8")
@@ -78,7 +78,7 @@ def test_lastmod_de_cada_materia_e_o_dia_da_ultima_atualizacao_declarada():
 
 def test_card_da_now_foods_mostra_a_atualizacao_real_sem_mudar_de_posicao():
     cards = _cards()
-    assert len(cards) == 84
+    assert len(cards) == 85
     own = [card for card in cards if f'href="/noticias/{NOW_FOODS}/"' in card]
     assert len(own) == 1
     card = own[0]
@@ -98,7 +98,7 @@ def test_card_da_now_foods_mostra_a_atualizacao_real_sem_mudar_de_posicao():
     after = after.group(1) if after else re.search(r'<time datetime="([^"]+)"', cards[position + 1]).group(1)
     assert _dt(before).date().isoformat() == "2026-06-02"
     assert _dt(after).date().isoformat() == "2026-04-28"
-    assert position == 80
+    assert position == 81
 
 
 def test_lastmod_das_paginas_institucionais_segue_a_ultima_mudanca_real_do_texto():

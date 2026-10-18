@@ -69,8 +69,8 @@ def test_existing_card_stays_unique_as_the_listing_grows():
     html = INDEX_PATH.read_text(encoding="utf-8")
     assert html.count(f'href="/noticias/{SLUG}/"') == 1
     assert html.count(f'"url":"{PUBLIC_URL}"') == 1
-    assert html.count("data-news-card") == 84
-    assert "84 notícias encontradas" in html
+    assert html.count("data-news-card") == 85
+    assert "85 notícias encontradas" in html
     card = re.search(
         rf'<article\b[^>]*data-news-card[^>]*>.*?href="/noticias/{SLUG}/".*?</article>',
         html,

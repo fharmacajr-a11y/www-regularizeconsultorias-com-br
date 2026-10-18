@@ -134,7 +134,7 @@ def editorial_external_problems(html, page):
 
 def test_news_editorial_content_does_not_forward_to_external_references():
     paths = news_article_paths()
-    assert len(paths) == 84
+    assert len(paths) == 85
     problems = []
     for path in paths:
         page = path.relative_to(ROOT).as_posix()

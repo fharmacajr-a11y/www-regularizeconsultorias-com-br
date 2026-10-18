@@ -173,10 +173,10 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     assert "a-publicar" not in sitemap
     # O aviso do Comunicado de 06/10/2026 (marco de 23/10) é o único que leva à matéria.
     assert comunicado.count(f'href="/noticias/{SLUG}/"') == 1
-    assert len(cards) == 84
-    assert index.count("data-news-card") == 84
-    assert "84 notícias encontradas" in index
-    assert '>Todos</span><span class="text-xs text-slate-400">84<' in index
+    assert len(cards) == 85
+    assert index.count("data-news-card") == 85
+    assert "85 notícias encontradas" in index
+    assert '>Todos</span><span class="text-xs text-slate-400">85<' in index
     assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in index
     assert '>M.A.P.A</span><span class="text-xs text-slate-400">3<' in index
     assert len(re.findall(r'\bdata-category="mapa"', index)) == 3
@@ -184,7 +184,8 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     # Lote de 09/10/2026: as 13 matérias atualizadas no lote sobem pelo carimbo; as demais descem.
     # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
-    card = cards[33]
+    # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
+    card = cards[34]
     opening = card.split(">", 1)[0]
     assert f'href="/noticias/{SLUG}/"' in card
     assert index.count(f'href="/noticias/{SLUG}/"') == 1
@@ -200,18 +201,18 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     assert f'<time datetime="{UPDATED}" class="leading-none">06/10/2026 • 08h00</time>' in card
     # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
     assert all("news-card-compact" in item.split(">", 1)[0] for item in cards)
-    assert "cadastro-anvisa-govbr-transicao-sistemas" in cards[29]
+    assert "cadastro-anvisa-govbr-transicao-sistemas" in cards[30]
 
     collection = next(block for block in _jsonld(index) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
-    assert len(items) == 84
-    assert items[33]["position"] == 34
-    assert items[33]["url"] == PUBLIC_URL
-    assert [item["position"] for item in items] == list(range(1, 85))
+    assert len(items) == 85
+    assert items[34]["position"] == 35
+    assert items[34]["url"] == PUBLIC_URL
+    assert [item["position"] for item in items] == list(range(1, 86))
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
     assert f"<loc>{PUBLIC_URL}</loc>\n    <lastmod>2026-10-06</lastmod>" in sitemap
     # 13/10/2026: a listagem reordenou produtos irregulares, SNCR e DCB.
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-10-16</lastmod>"
+        "    <lastmod>2026-10-17</lastmod>"
     ) in sitemap

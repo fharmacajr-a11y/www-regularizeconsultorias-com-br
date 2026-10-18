@@ -90,10 +90,11 @@ def test_cadastro_anvisa_body_states_the_confirmed_scope_without_an_access_scrip
 def test_cadastro_anvisa_card_is_tenth_and_compact_in_the_listing_and_sitemap():
     index = NEWS_INDEX.read_text(encoding="utf-8")
     cards = re.findall(r"(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)", index, re.DOTALL)
-    assert len(cards) == 84
+    assert len(cards) == 85
     # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
-    card = cards[29]
+    # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
+    card = cards[30]
     opening = card.split(">", 1)[0]
     assert f'href="/noticias/cadastro-anvisa-govbr-transicao-sistemas/"' in card
     # Card compacto no grid.
@@ -106,9 +107,9 @@ def test_cadastro_anvisa_card_is_tenth_and_compact_in_the_listing_and_sitemap():
     assert "Ler atualização" in card
     assert f'<time datetime="{UPDATED}" class="leading-none">07/10/2026 • 09h08</time>' in card
     assert index.count(f'href="/noticias/cadastro-anvisa-govbr-transicao-sistemas/"') == 1
-    assert '>Todos</span><span class="text-xs text-slate-400">84<' in index
+    assert '>Todos</span><span class="text-xs text-slate-400">85<' in index
     assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in index
-    assert f'"position":30,"url":"https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/"' in index
+    assert f'"position":31,"url":"https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/"' in index
     sitemap = SITEMAP.read_text(encoding="utf-8")
     assert f"<loc>https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/</loc>\n    <lastmod>2026-10-07</lastmod>" in sitemap
 

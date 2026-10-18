@@ -152,7 +152,7 @@ def test_news_index_card_itemlist_and_counters():
     cards = re.findall(r"<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>", html, re.DOTALL)
     own = [card for card in cards if f'href="{ROUTE}"' in card]
 
-    assert len(cards) == 84
+    assert len(cards) == 85
     assert html.count(f'href="{ROUTE}"') == 1
     assert len(own) == 1
     card = own[0]
@@ -163,24 +163,25 @@ def test_news_index_card_itemlist_and_counters():
     assert f'<time datetime="{PUBLISHED}" class="leading-none">16/10/2026 • 20h06</time>' in card
     assert ">Atualização</span>" in card and "Ler atualização" in card
     assert "news-amber-card" in card and "news-card-compact" in card.split(">", 1)[0]
-    # A posição vem da data: é o card mais recente da listagem.
-    assert cards.index(card) == 0
+    # A posição vem da data. 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
+    assert cards.index(card) == 1
     items = re.findall(r'\{"@type":"ListItem","position":(\d+),"url":"([^"]+)"\}', html)
-    assert [int(p) for p, _ in items] == list(range(1, 85))
-    assert items[0][1] == PUBLIC_URL
+    assert [int(p) for p, _ in items] == list(range(1, 86))
+    assert items[1][1] == PUBLIC_URL
     assert html.count(f'"url":"{PUBLIC_URL}"') == 1
-    assert '<span>Todos</span><span class="text-xs text-slate-400">84</span>' in html
+    assert '<span>Todos</span><span class="text-xs text-slate-400">85</span>' in html
     assert '<span>CNES</span><span class="text-xs text-slate-400">6</span>' in html
-    assert "84 notícias encontradas" in html
+    assert "85 notícias encontradas" in html
 
 
-def test_comunicado_informative_notice_is_active_and_first():
+def test_comunicado_informative_notice_is_active_and_second():
     html = COMUNICADO_PATH.read_text(encoding="utf-8")
     lista = html[html.index('id="avisos-lista"'):html.index("Histórico / encerrados")]
     articles = re.findall(r"<article\b[^>]*>.*?</article>", lista, re.DOTALL)
     own = [a for a in articles if f'href="{ROUTE}"' in a]
 
-    assert len(own) == 1 and articles.index(own[0]) == 0
+    # 17/10/2026, 09h50: o aviso do Farmácia Popular sobre lembretes é o ativo mais recente; o do CNES passa ao 2º.
+    assert len(own) == 1 and articles.index(own[0]) == 1
     notice = own[0]
     opening = notice.split(">", 1)[0]
     text = _text(notice)
@@ -201,7 +202,8 @@ def test_comunicado_informative_notice_is_active_and_first():
 def test_sitemap_lists_the_new_url_once():
     sitemap = SITEMAP_PATH.read_text(encoding="utf-8")
 
-    assert sitemap.count("<loc>") == 105
+    assert sitemap.count("<loc>") == 106
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
     assert re.search(rf"<loc>{re.escape(PUBLIC_URL)}</loc>\s*<lastmod>2026-10-16</lastmod>", sitemap)
-    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-10-16</lastmod>", sitemap)
+    # 17/10/2026: a listagem ganhou o card do esclarecimento do Farmácia Popular.
+    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-10-17</lastmod>", sitemap)

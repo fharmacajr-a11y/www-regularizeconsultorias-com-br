@@ -187,10 +187,11 @@ def test_news_index_has_one_card_and_one_itemlist_entry():
     # Em 12/10/2026, 18h08, a retirada do PDF da matéria eleitoral é mais recente e ocupa o 1º lugar.
     # A posição não troca o formato: todos os cards têm o mesmo modelo.
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
-    assert cards.index(own[0]) == 5
+    # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
+    assert cards.index(own[0]) == 6
     assert all("news-card-compact" in card.split(">", 1)[0] for card in cards)
     assert ">Atualização</span>" in own[0] and "Ler atualização" in own[0]
-    assert len(cards) == 84
+    assert len(cards) == 85
     assert '<span>CNES</span><span class="text-xs text-slate-400">6</span>' in html
 
 

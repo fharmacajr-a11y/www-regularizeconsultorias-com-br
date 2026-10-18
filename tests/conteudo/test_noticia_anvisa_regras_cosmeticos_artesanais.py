@@ -193,11 +193,12 @@ def test_article_keeps_sources_cta_and_natural_internal_links():
 def test_listing_places_the_updated_card_by_its_update_stamp():
     html = NEWS_INDEX.read_text(encoding="utf-8")
     cards = re.findall(r"(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)", html, re.DOTALL)
-    assert len(cards) == 84
+    assert len(cards) == 85
     # Lote de 09/10/2026: o card sobe pelo carimbo da atualização (regra de ordenação por data-updated).
     # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
-    card = cards[15]
+    # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
+    card = cards[16]
     opening = card.split(">", 1)[0]
     assert f'href="{ROUTE}"' in card
     assert html.count(f'href="{ROUTE}"') == 1
@@ -211,17 +212,17 @@ def test_listing_places_the_updated_card_by_its_update_stamp():
     assert "Informativo" not in card
     assert "A RDC 1.045/2026 e a IN 474/2026 foram publicadas no DOU de 05/10/2026" in card
     assert f'<time datetime="{UPDATED}" class="leading-none">09/10/2026 • 20h26</time>' in card
-    assert "84 notícias encontradas" in html
-    assert '>Todos</span><span class="text-xs text-slate-400">84<' in html
+    assert "85 notícias encontradas" in html
+    assert '>Todos</span><span class="text-xs text-slate-400">85<' in html
     assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in html
     # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
     assert all("news-card-compact" in item.split(">", 1)[0] for item in cards)
     collection = next(block for block in _jsonld(html) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
-    assert len(items) == 84
-    assert items[15]["position"] == 16
-    assert items[15]["url"] == URL
-    assert [item["position"] for item in items] == list(range(1, 85))
+    assert len(items) == 85
+    assert items[16]["position"] == 17
+    assert items[16]["url"] == URL
+    assert [item["position"] for item in items] == list(range(1, 86))
 
 
 def test_sitemap_adds_only_the_new_url_and_the_listing_lastmod():
@@ -231,7 +232,7 @@ def test_sitemap_adds_only_the_new_url_and_the_listing_lastmod():
     # 13/10/2026: a listagem e a matéria do SNCR mudaram de novo.
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-10-16</lastmod>"
+        "    <lastmod>2026-10-17</lastmod>"
     ) in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/</loc>\n"

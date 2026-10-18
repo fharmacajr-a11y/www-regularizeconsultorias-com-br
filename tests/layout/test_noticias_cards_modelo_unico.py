@@ -184,7 +184,7 @@ def test_janelas_e_barra_classica(medidas):
         else:
             assert janela["util"] == janela["janela"][0]
         visiveis = {nome: len(e["cards"]) for nome, e in janela["estados"].items()}
-        assert visiveis == {"carga": 5, "ver_mais": 84, "filtro": 5, "filtro_ver_mais": 10, "busca": 5,
+        assert visiveis == {"carga": 5, "ver_mais": 85, "filtro": 5, "filtro_ver_mais": 11, "busca": 5,
                             "mais_velha": 5}, (janela["janela"], visiveis)
 
 

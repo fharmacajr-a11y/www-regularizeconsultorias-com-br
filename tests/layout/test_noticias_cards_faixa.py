@@ -287,10 +287,10 @@ def test_reserva_do_modelo_unico_e_cessa_no_desktop(faixa):
 
 def test_listagem_contagem_ordem_e_cliques(faixa):
     for (largura, altura), janela in faixa.items():
-        assert janela["antes"]["cards"] == 84
+        assert janela["antes"]["cards"] == 85
         # "destaques" conta os cards visíveis sem news-card-compact: com o modelo único (12/10/2026) não há nenhum.
         assert janela["antes"]["visiveis"] == 5 and janela["antes"]["destaques"] == 5
-        assert janela["depois"]["visiveis"] == 84 and janela["depois"]["destaques"] == 5
+        assert janela["depois"]["visiveis"] == 85 and janela["depois"]["destaques"] == 5
         assert janela["antes"]["ordem"] == janela["depois"]["ordem"]
         assert janela["depois"]["overflowX"] <= 0, largura
     ordens = {tuple(j["depois"]["ordem"]) for j in faixa.values()}

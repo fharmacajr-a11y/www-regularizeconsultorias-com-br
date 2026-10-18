@@ -179,7 +179,7 @@ def test_news_index_has_one_card_and_one_itemlist_entry():
     assert f'<time datetime="{UPDATED}" class="leading-none">09/10/2026 • 20h25</time>' in own[0]
     assert "o período registrado terminou em 07/10/2026 e consta como encerrado" in own[0]
     assert ">Atualização</span>" in own[0] and "Ler atualização" in own[0]
-    assert len(cards) == 84
+    assert len(cards) == 85
 
 
 def test_sitemap_lists_the_new_url_once():

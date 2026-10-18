@@ -51,7 +51,7 @@ def test_sitemap_is_valid_xml_with_unique_urls():
 
     assert root.tag == f"{{{NAMESPACE}}}urlset"
     assert all(location and location.strip() for location in locations)
-    assert len(locations) == 105
+    assert len(locations) == 106
     assert len(locations) == len(set(locations))
     assert set(locations) == public_canonicals
 
@@ -130,8 +130,10 @@ def test_portaria_news_news_index_and_comunicado_have_expected_sitemap_metadata(
 
     # 13/10/2026: a listagem reordenou três matérias. 16/10/2026: o aviso PF de 15/10 passou ao histórico do comunicado.
     # 16/10/2026, 20h06: a listagem ganhou o card do CNES 10/2026.
-    assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-16"
-    assert by_location[COMUNICADO_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-16"
+    # 17/10/2026, 09h50: a listagem ganhou o card do esclarecimento do Farmácia Popular.
+    assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-17"
+    # 17/10/2026, 09h50: Comunicados ganhou o aviso informativo do Farmácia Popular.
+    assert by_location[COMUNICADO_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-17"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-09"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:changefreq", namespaces=NS) == "monthly"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:priority", namespaces=NS) == "0.8"
