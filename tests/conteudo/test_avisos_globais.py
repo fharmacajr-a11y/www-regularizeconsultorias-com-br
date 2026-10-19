@@ -200,7 +200,8 @@ def test_comunicado_instabilidade_anvisa_is_first_active_with_direct_anchor():
     active = [article for article in articles if article.attrs.get("data-status", "").casefold() != "resolved"]
     anchored = [node for node in root.descendants() if node.attrs.get("id") == INSTABILIDADE_ID]
 
-    # 19/10/2026, 15h40: verificação da Regularize; às 17h, a situação continuava a mesma. Link direto para o status do WhatsApp:
+    # 19/10/2026: verificações da Regularize às 15h40 e às 17h; às 17h45 a consulta de empresas voltou, mas pode oscilar,
+    # e o aviso continua ativo. Link direto para o status do WhatsApp:
     # https://www.regularizeconsultorias.com.br/comunicado/#instabilidade-anvisa-2026-10-19
     assert len(anchored) == 1
     notice = anchored[0]
@@ -209,34 +210,43 @@ def test_comunicado_instabilidade_anvisa_is_first_active_with_direct_anchor():
     assert notice.attrs.get("data-status") == "informativo"
     assert notice.attrs.get("data-category") == "anvisa"
     assert notice.attrs.get("data-effective-at") == "2026-10-19T15:40:00-03:00"
-    assert notice.attrs.get("data-updated-at") == "19/10/2026 às 17h00"
+    assert notice.attrs.get("data-updated-at") == "19/10/2026 às 17h45"
     assert {"border-orange-200", "bg-orange-50"} <= set(notice.attrs["class"].split())
     text = " ".join(notice.text().split())
     assert "INFORMATIVO" in text and "URGENTE" not in text
     times = [node for node in notice.descendants() if node.tag == "time"]
-    assert [(node.attrs.get("datetime"), node.text()) for node in times] == [("2026-10-19T17:00:00-03:00", "19/10/2026 • 17h00")]
+    assert [(node.attrs.get("datetime"), node.text()) for node in times] == [("2026-10-19T17:45:00-03:00", "19/10/2026 • 17h45")]
     # Em telas pequenas o selo e a data quebram em linhas diferentes; o "•" entre eles só aparece a partir de 640 px.
     separators = [node for node in notice.descendants() if node.tag == "span" and node.text() == "•"]
     assert len(separators) == 1 and separators[0].attrs.get("class", "").split() == ["hidden", "sm:block"]
     for term in (
-        "Instabilidade nos sistemas da Anvisa (19/10/2026)",
-        "O portal da Anvisa está em manutenção e a consulta de empresas (AFE/AE) apresenta erro. Ainda não há comunicado oficial da Anvisa.",
-        "Nesta segunda-feira (19/10), identificamos instabilidade nos sistemas da Anvisa.",
-        "O que verificamos por volta das 15h40:",
-        "As páginas do portal da Anvisa no gov.br exibem mensagem de manutenção.",
-        "A Consulta de Funcionamento de Empresas (AFE/AE) retorna erro e não exibe resultados.",
+        "Instabilidade na consulta de empresas da Anvisa (19/10/2026)",
+        "A consulta de empresas (AFE/AE) da Anvisa apresentou erro nesta segunda-feira. Ela voltou a funcionar no fim da tarde, mas ainda pode oscilar.",
+        "Prezados clientes,",
+        "Nesta segunda-feira (19/10), a Consulta de Funcionamento de Empresas (AFE/AE) da Anvisa apresentou erro e não exibia resultados.",
+        "Verificamos o problema por volta das 15h40 e novamente às 17h.",
+        "Atualização às 17h45: a consulta voltou a funcionar, mas ainda pode oscilar.",
+        "indica os sistemas como disponíveis.",
         "Até o momento, a Anvisa não publicou comunicado oficial sobre a instabilidade.",
-        "Não é problema no seu computador ou na sua internet.",
-        "Tente novamente mais tarde.",
-        "Atualização às 17h: o portal da Anvisa continua em manutenção e a consulta de empresas segue apresentando erro.",
-        "Atualizaremos este comunicado assim que os sistemas voltarem a funcionar normalmente.",
+        "Se a consulta apresentar erro:",
+        "Tente novamente em alguns minutos.",
+        "Se você usa bloqueador de anúncios ou navegador com proteção reforçada (como o Brave), desative a proteção para o site da Anvisa, pois ela pode bloquear a verificação de segurança da consulta.",
+        "Atualizaremos este comunicado se a instabilidade continuar ou quando a situação se normalizar.",
+        "Atenciosamente,",
+        "Equipe Regularize Consultoria",
     ):
         assert term in text, term
-    assert text.index("Atualização às 17h:") < text.index("Atualizaremos este comunicado")
+    # Único link: o painel oficial, no formato de link externo dos avisos de 28/04/2026.
+    links = [node for node in notice.descendants() if node.tag == "a"]
+    assert [(link.attrs.get("href"), link.text()) for link in links] == [
+        ("https://disponibilidade.anvisa.gov.br/", "Painel de Disponibilidade de Sistemas da Anvisa")
+    ]
+    assert links[0].attrs.get("target") == "_blank" and links[0].attrs.get("rel") == "noopener noreferrer"
+    assert links[0].attrs.get("class", "").split() == ["font-medium", "text-brand", "hover:text-brand-dark", "transition-colors", "duration-200"]
     lowered = text.casefold()
-    for claim in ("todos os sistemas", "solicita", "sngpc", "sncr", "previs", "nota oficial", "fora do ar"):
+    # Sem o portal do gov.br em manutenção (removido às 17h45) e sem afirmações não verificadas.
+    for claim in ("gov.br", "manutenção", "todos os sistemas", "solicita", "sngpc", "sncr", "previs", "nota oficial", "fora do ar"):
         assert claim not in lowered, claim
-    assert not [node for node in notice.descendants() if node.tag == "a"]
 
 
 def test_comunicado_editorial_organization_and_active_notice_content():
@@ -511,7 +521,7 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     # 17/10/2026, 09h50: o aviso do Farmácia Popular sobre lembretes é o ativo mais recente; os demais descem uma posição.
     # 16/10/2026, 20h06: o aviso do CNES 10/2026 é o ativo mais recente; os demais descem uma posição.
     assert titles == [
-        "Instabilidade nos sistemas da Anvisa (19/10/2026)",
+        "Instabilidade na consulta de empresas da Anvisa (19/10/2026)",
         "Farmácia Popular: confira a origem de mensagens pelo WhatsApp",
         "CNES: envio da competência 10/2026 aberto até 9 de novembro",
         "SNCR: cronograma anunciado e nota da API",
