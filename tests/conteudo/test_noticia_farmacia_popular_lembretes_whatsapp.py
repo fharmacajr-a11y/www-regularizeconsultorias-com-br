@@ -223,12 +223,13 @@ def test_news_index_card_itemlist_and_counters():
     assert "85 notícias encontradas" in html
 
 
-def test_comunicado_informative_notice_is_active_first_and_internal():
+def test_comunicado_informative_notice_is_active_second_and_internal():
     articles = _active_notices()
     own = [a for a in articles if f'href="{ROUTE}"' in a]
 
-    assert len(articles) == 7
-    assert len(own) == 1 and articles.index(own[0]) == 0
+    # 19/10/2026, 15h40: o aviso da instabilidade nos sistemas da Anvisa é o ativo mais recente; os demais descem uma posição.
+    assert len(articles) == 8
+    assert len(own) == 1 and articles.index(own[0]) == 1
     notice = own[0]
     opening = notice.split(">", 1)[0]
     text = _text(notice)
@@ -257,7 +258,8 @@ def test_sitemap_lists_the_new_url_once_with_current_lastmods():
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
     assert re.search(rf"<loc>{re.escape(PUBLIC_URL)}</loc>\s*<lastmod>2026-10-17</lastmod>", sitemap)
     assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-10-17</lastmod>", sitemap)
-    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/comunicado/</loc>\s*<lastmod>2026-10-17</lastmod>", sitemap)
+    # 19/10/2026: o comunicado ganhou o aviso da instabilidade nos sistemas da Anvisa.
+    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/comunicado/</loc>\s*<lastmod>2026-10-19</lastmod>", sitemap)
     # A URL nova entra logo depois da listagem, como as demais matérias novas.
     locs = re.findall(r"<loc>([^<]+)</loc>", sitemap)
     assert locs[locs.index("https://www.regularizeconsultorias.com.br/noticias/") + 1] == PUBLIC_URL

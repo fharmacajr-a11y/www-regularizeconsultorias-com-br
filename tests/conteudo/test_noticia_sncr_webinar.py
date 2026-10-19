@@ -180,7 +180,7 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     assert "29/10" not in card and "31/10" not in card
 
 
-def test_comunicado_keeps_one_sncr_card_and_seven_active_notices():
+def test_comunicado_keeps_one_sncr_card_and_eight_active_notices():
     html = COMUNICADO_PATH.read_text(encoding="utf-8")
     active = _active_notices(html)
     sncr_cards = [article for article in active if 'data-category="sncr"' in article]
@@ -190,8 +190,9 @@ def test_comunicado_keeps_one_sncr_card_and_seven_active_notices():
     # 11/10/2026: o aviso do CNES 09/2026 passou ao histórico (6 ativos).
     # 16/10/2026, 20h06: aviso informativo do CNES 10/2026 (6 ativos, depois do encerramento do aviso PF).
     # 17/10/2026, 09h50: aviso informativo do Farmácia Popular sobre lembretes (7 ativos).
-    assert len(active) == 7
-    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', html) == ["7", "7"]
+    # 19/10/2026, 15h40: aviso informativo sobre a instabilidade nos sistemas da Anvisa (8 ativos).
+    assert len(active) == 8
+    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', html) == ["8", "8"]
     assert len(sncr_cards) == 1
     card_text = _text(sncr_cards[0])
     paragraphs = [_text(item) for item in re.findall(r"<p>(.*?)</p>", sncr_cards[0], re.DOTALL)]
@@ -241,7 +242,8 @@ def test_comunicado_keeps_one_sncr_card_and_seven_active_notices():
     assert "como preparar o estabelecimento" not in card_text
     # 16/10/2026, 20h06: o aviso do CNES 10/2026 é o 1º ativo; o do SNCR passa ao 2º.
     # 17/10/2026, 09h50: o aviso do Farmácia Popular sobre lembretes é o 1º ativo; o do CNES, o 2º; o do SNCR passa ao 3º.
-    assert active[2] is sncr_cards[0]
+    # 19/10/2026, 15h40: o aviso da instabilidade nos sistemas da Anvisa é o 1º ativo; o do SNCR passa ao 4º.
+    assert active[3] is sncr_cards[0]
 
 
 def test_sncr_news_has_current_sitemap_lastmod():

@@ -20,13 +20,14 @@ CSS_PATHS = (
     ROOT / "assets/css/custom.css",
     ROOT / "assets/css/custom.min.css",
 )
-CURRENT_STORAGE_VERSION = "2026-10-17-avisos-7"
+CURRENT_STORAGE_VERSION = "2026-10-19-avisos-8"
 AFE_ROUTE = "/noticias/anvisa-edital-6-2026-afe-manipulacao-preparacoes-estereis/"
 CADASTRO_ROUTE = "/noticias/cadastro-anvisa-govbr-transicao-sistemas/"
 CNES_ROUTE = "/noticias/cnes-competencia-09-2026-prazo-transmissao/"
 PF_ROUTE = "/noticias/produtos-quimicos-controlados-siproquim2-assinador-pf/"
 MAPA_ROUTE = "/noticias/mapa-portaria-1617-2026-aditivos-antimicrobianos-alimentacao-animal/"
 PRODUTOS_ROUTE = "/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
+INSTABILIDADE_ID = "instabilidade-anvisa-2026-10-19"
 REPRESENTATIVE_ROUTES = (
     "/",
     "/farmacia-popular/",
@@ -165,7 +166,7 @@ def _badge_texts(page):
     return page.locator(".aviso-badge").all_text_contents()
 
 
-def test_comunicado_has_seven_active_notices_ten_historical_and_two_static_badges():
+def test_comunicado_has_eight_active_notices_ten_historical_and_two_static_badges():
     root = _parse_html(COMUNICADO_PATH)
     notice_lists = [node for node in root.descendants() if node.attrs.get("id") == "avisos-lista"]
     assert len(notice_lists) == 1
@@ -179,16 +180,63 @@ def test_comunicado_has_seven_active_notices_ten_historical_and_two_static_badge
     active = [article for article in articles if article not in inactive]
     badges = [node for node in root.descendants() if node.has_class("aviso-badge")]
 
+    # 19/10/2026, 15h40: aviso informativo sobre a instabilidade nos sistemas da Anvisa (8 ativos, 10 no histórico).
     # 17/10/2026, 09h50: aviso informativo do Farmácia Popular sobre lembretes pelo WhatsApp (7 ativos, 10 no histórico).
     # 16/10/2026, 20h06: aviso informativo do CNES 10/2026 (6 ativos, 10 no histórico).
     # 16/10/2026: o aviso dos mapas de setembro da PF passou ao histórico (5 ativos, 10 no histórico).
     # Antes, em 11/10/2026, o aviso do CNES 09/2026 já tinha passado (6 ativos, 9 no histórico).
-    assert len(articles) == 17
-    assert len(active) == 7
+    assert len(articles) == 18
+    assert len(active) == 8
     assert Counter(article.attrs.get("data-status", "").casefold() for article in inactive) == {"resolved": 10}
     assert all("data-placeholder" not in article.attrs for article in articles)
     assert len(badges) == 2
-    assert [badge.text() for badge in badges] == ["7", "7"]
+    assert [badge.text() for badge in badges] == ["8", "8"]
+
+
+def test_comunicado_instabilidade_anvisa_is_first_active_with_direct_anchor():
+    root = _parse_html(COMUNICADO_PATH)
+    notice_list = next(node for node in root.descendants() if node.attrs.get("id") == "avisos-lista")
+    articles = [node for node in notice_list.descendants() if node.tag == "article"]
+    active = [article for article in articles if article.attrs.get("data-status", "").casefold() != "resolved"]
+    anchored = [node for node in root.descendants() if node.attrs.get("id") == INSTABILIDADE_ID]
+
+    # 19/10/2026, 15h40: verificação da Regularize; às 17h, a situação continuava a mesma. Link direto para o status do WhatsApp:
+    # https://www.regularizeconsultorias.com.br/comunicado/#instabilidade-anvisa-2026-10-19
+    assert len(anchored) == 1
+    notice = anchored[0]
+    assert notice is active[0]
+    assert notice.tag == "article"
+    assert notice.attrs.get("data-status") == "informativo"
+    assert notice.attrs.get("data-category") == "anvisa"
+    assert notice.attrs.get("data-effective-at") == "2026-10-19T15:40:00-03:00"
+    assert notice.attrs.get("data-updated-at") == "19/10/2026 às 17h00"
+    assert {"border-orange-200", "bg-orange-50"} <= set(notice.attrs["class"].split())
+    text = " ".join(notice.text().split())
+    assert "INFORMATIVO" in text and "URGENTE" not in text
+    times = [node for node in notice.descendants() if node.tag == "time"]
+    assert [(node.attrs.get("datetime"), node.text()) for node in times] == [("2026-10-19T17:00:00-03:00", "19/10/2026 • 17h00")]
+    # Em telas pequenas o selo e a data quebram em linhas diferentes; o "•" entre eles só aparece a partir de 640 px.
+    separators = [node for node in notice.descendants() if node.tag == "span" and node.text() == "•"]
+    assert len(separators) == 1 and separators[0].attrs.get("class", "").split() == ["hidden", "sm:block"]
+    for term in (
+        "Instabilidade nos sistemas da Anvisa (19/10/2026)",
+        "O portal da Anvisa está em manutenção e a consulta de empresas (AFE/AE) apresenta erro. Ainda não há comunicado oficial da Anvisa.",
+        "Nesta segunda-feira (19/10), identificamos instabilidade nos sistemas da Anvisa.",
+        "O que verificamos por volta das 15h40:",
+        "As páginas do portal da Anvisa no gov.br exibem mensagem de manutenção.",
+        "A Consulta de Funcionamento de Empresas (AFE/AE) retorna erro e não exibe resultados.",
+        "Até o momento, a Anvisa não publicou comunicado oficial sobre a instabilidade.",
+        "Não é problema no seu computador ou na sua internet.",
+        "Tente novamente mais tarde.",
+        "Atualização às 17h: o portal da Anvisa continua em manutenção e a consulta de empresas segue apresentando erro.",
+        "Atualizaremos este comunicado assim que os sistemas voltarem a funcionar normalmente.",
+    ):
+        assert term in text, term
+    assert text.index("Atualização às 17h:") < text.index("Atualizaremos este comunicado")
+    lowered = text.casefold()
+    for claim in ("todos os sistemas", "solicita", "sngpc", "sncr", "previs", "nota oficial", "fora do ar"):
+        assert claim not in lowered, claim
+    assert not [node for node in notice.descendants() if node.tag == "a"]
 
 
 def test_comunicado_editorial_organization_and_active_notice_content():
@@ -240,9 +288,9 @@ def test_comunicado_editorial_organization_and_active_notice_content():
         if any(node.tag == "a" and node.attrs.get("href") == CNES_ROUTE for node in article.descendants())
     ]
 
-    assert len(active) == 7
+    assert len(active) == 8
     assert len(historical) == 10
-    assert len(articles) == 17
+    assert len(articles) == 18
     # Edital 6/2026: a ficha do AnvisaLegis apresenta o chamamento como encerrado (consulta de 09/10/2026).
     assert not afe_active
     assert len(afe_historical) == 1
@@ -459,9 +507,11 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     titles = [next(node.text() for node in article.descendants() if node.tag == "h3") for article in active]
     timestamps = [article.attrs.get("data-effective-at") for article in active]
 
+    # 19/10/2026, 15h40: o aviso da instabilidade nos sistemas da Anvisa é o ativo mais recente; os demais descem uma posição.
     # 17/10/2026, 09h50: o aviso do Farmácia Popular sobre lembretes é o ativo mais recente; os demais descem uma posição.
     # 16/10/2026, 20h06: o aviso do CNES 10/2026 é o ativo mais recente; os demais descem uma posição.
     assert titles == [
+        "Instabilidade nos sistemas da Anvisa (19/10/2026)",
         "Farmácia Popular: confira a origem de mensagens pelo WhatsApp",
         "CNES: envio da competência 10/2026 aberto até 9 de novembro",
         "SNCR: cronograma anunciado e nota da API",
@@ -473,14 +523,14 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     assert all(timestamp for timestamp in timestamps)
     assert all(len([node for node in article.descendants() if node.tag == "time"]) == 1 for article in active)
     assert timestamps == sorted(timestamps, reverse=True)
-    assert "URGENTE" in active[5].text()
+    assert "URGENTE" in active[6].text()
 
     # O CTA informativo de referência passa a ser o do MAPA (o da Polícia Federal saiu com o aviso, em 16/10/2026).
-    useful_badge = next(node for node in active[6].descendants() if node.tag == "span" and node.text() == "ÚTIL")
-    useful_cta = next(node for node in active[6].descendants() if node.tag == "a" and "Conferir orientações" in node.text())
-    informative_cta = next(node for node in active[4].descendants() if node.tag == "a" and "Leia a notícia sobre a Portaria 1.617/2026" in node.text())
+    useful_badge = next(node for node in active[7].descendants() if node.tag == "span" and node.text() == "ÚTIL")
+    useful_cta = next(node for node in active[7].descendants() if node.tag == "a" and "Conferir orientações" in node.text())
+    informative_cta = next(node for node in active[5].descendants() if node.tag == "a" and "Leia a notícia sobre a Portaria 1.617/2026" in node.text())
     assert {"border-emerald-200", "bg-emerald-50", "text-emerald-700"} <= set(useful_badge.attrs["class"].split())
-    assert {"border-emerald-200", "bg-emerald-50"} <= set(active[6].attrs["class"].split())
+    assert {"border-emerald-200", "bg-emerald-50"} <= set(active[7].attrs["class"].split())
     informative_to_useful = {
         "comunicado-cta--informativo": "comunicado-cta--util",
         "border-orange-200": "border-emerald-200",
@@ -639,8 +689,8 @@ def test_comunicado_useful_cta_computed_states(site_url, browser):
 
 
 def test_javascript_constants_and_files_are_exactly_equivalent():
-    expected_fallback = re.compile(r"^\s*var AVISOS_FALLBACK_COUNT = 7;$", re.MULTILINE)
-    expected_version = re.compile(r"^\s*var AVISOS_STORAGE_VERSION = '2026-10-17-avisos-7';$", re.MULTILINE)
+    expected_fallback = re.compile(r"^\s*var AVISOS_FALLBACK_COUNT = 8;$", re.MULTILINE)
+    expected_version = re.compile(r"^\s*var AVISOS_STORAGE_VERSION = '2026-10-19-avisos-8';$", re.MULTILINE)
     for path in MAIN_PATHS:
         source = path.read_text(encoding="utf-8")
         assert len(expected_fallback.findall(source)) == 1, path
@@ -664,7 +714,7 @@ def test_every_public_navbar_has_two_complete_notice_links():
         for link in links:
             badges = [node for node in link.descendants() if node.has_class("aviso-badge")]
             assert len(badges) == 1, relative_path
-            assert badges[0].text() == "7", relative_path
+            assert badges[0].text() == "8", relative_path
             assert badges[0].text() != "3", relative_path
             svgs = [node for node in link.descendants() if node.tag == "svg"]
             assert len(svgs) == 1, relative_path
@@ -703,7 +753,7 @@ def test_tablet_hide_regression_is_absent_and_navbar_rules_remain():
             assert rule.search(compact), f"{path}: {rule.pattern}"
 
 
-def test_fallback_is_seven_before_delayed_sync(browser, site_url):
+def test_fallback_is_eight_before_delayed_sync(browser, site_url):
     context = new_context(browser)
     context.add_init_script(
         "const originalFetch = window.fetch.bind(window);"
@@ -712,8 +762,8 @@ def test_fallback_is_seven_before_delayed_sync(browser, site_url):
     page = context.new_page()
     try:
         page.goto(f"{site_url}/", wait_until="domcontentloaded")
-        page.wait_for_function("[...document.querySelectorAll('.aviso-badge')].every(b => b.textContent.trim() === '7')")
-        assert _badge_texts(page) == ["7", "7"]
+        page.wait_for_function("[...document.querySelectorAll('.aviso-badge')].every(b => b.textContent.trim() === '8')")
+        assert _badge_texts(page) == ["8", "8"]
         assert "3" not in _badge_texts(page)
     finally:
         context.close()
@@ -728,16 +778,16 @@ def test_old_storage_is_ignored_when_sync_fails(browser, site_url):
     try:
         page.route("**/comunicado/", lambda route: route.abort("failed"))
         page.goto(f"{site_url}/", wait_until="domcontentloaded")
-        page.wait_for_function("[...document.querySelectorAll('.aviso-badge')].every(b => b.textContent.trim() === '7')")
-        assert _badge_texts(page) == ["7", "7"]
+        page.wait_for_function("[...document.querySelectorAll('.aviso-badge')].every(b => b.textContent.trim() === '8')")
+        assert _badge_texts(page) == ["8", "8"]
         assert "3" not in _badge_texts(page)
         assert not page_errors
     finally:
         context.close()
 
 
-def test_successful_sync_persists_seven_and_hides_zero(browser, site_url):
-    for count in (7, 0):
+def test_successful_sync_persists_eight_and_hides_zero(browser, site_url):
+    for count in (8, 0):
         context = new_context(browser)
         page = context.new_page()
         try:
@@ -749,7 +799,7 @@ def test_successful_sync_persists_seven_and_hides_zero(browser, site_url):
             page.wait_for_function(f"localStorage.getItem('avisos_count') === '{count}'")
             assert page.evaluate("localStorage.getItem('avisos_count_version')") == CURRENT_STORAGE_VERSION
             if count:
-                assert _badge_texts(page) == ["7", "7"]
+                assert _badge_texts(page) == ["8", "8"]
                 assert all(
                     page.locator(".aviso-badge").nth(index).evaluate("element => getComputedStyle(element).display") == "flex"
                     for index in range(2)
@@ -773,7 +823,7 @@ def test_responsive_notice_visibility_matrix(browser, site_url):
                 if route != "/comunicado/":
                     page.route(
                         "**/comunicado/",
-                        _notice_response(7),
+                        _notice_response(8),
                     )
                 page.goto(f"{site_url}{route}", wait_until="domcontentloaded")
                 top = page.locator('#navbar > div:first-child > div > div > a[href="/comunicado/"]')
@@ -788,7 +838,7 @@ def test_responsive_notice_visibility_matrix(browser, site_url):
                     toggle.click()
                     assert mobile.is_visible(), (route, width)
                     assert mobile.locator(".aviso-badge").is_visible(), (route, width)
-                    assert mobile.locator(".aviso-badge").text_content().strip() == "7"
+                    assert mobile.locator(".aviso-badge").text_content().strip() == "8"
                 elif width < 900:
                     assert top.is_visible(), (route, width)
                     assert toggle.is_visible(), (route, width)
@@ -798,13 +848,13 @@ def test_responsive_notice_visibility_matrix(browser, site_url):
                     assert mobile.locator(".aviso-badge").is_visible(), (route, width)
                     assert top.evaluate("element => getComputedStyle(element).display") != "none"
                     assert mobile.evaluate("element => getComputedStyle(element).display") != "none"
-                    assert top.locator(".aviso-badge").text_content().strip() == "7"
-                    assert mobile.locator(".aviso-badge").text_content().strip() == "7"
+                    assert top.locator(".aviso-badge").text_content().strip() == "8"
+                    assert mobile.locator(".aviso-badge").text_content().strip() == "8"
                 else:
                     assert top.is_visible(), (route, width)
                     assert not toggle.is_visible(), (route, width)
                     assert not mobile_menu.is_visible(), (route, width)
                     assert top.locator(".aviso-badge").is_visible(), (route, width)
-                    assert top.locator(".aviso-badge").text_content().strip() == "7"
+                    assert top.locator(".aviso-badge").text_content().strip() == "8"
             finally:
                 context.close()

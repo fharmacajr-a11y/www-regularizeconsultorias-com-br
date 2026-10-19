@@ -202,9 +202,10 @@ def test_titulos_carimbo_ordem_e_contagens():
     # 16/10/2026: o aviso dos mapas de setembro da PF passou ao histórico (5 ativos, 10 no histórico).
     # 16/10/2026, 20h06: aviso informativo do CNES 10/2026 (6 ativos, 10 no histórico).
     # 17/10/2026, 09h50: aviso informativo do Farmácia Popular sobre lembretes (7 ativos, 10 no histórico).
-    assert len([status for status in statuses if status != "resolved"]) == 7
+    # 19/10/2026, 15h40: aviso informativo sobre a instabilidade nos sistemas da Anvisa (8 ativos, 10 no histórico).
+    assert len([status for status in statuses if status != "resolved"]) == 8
     assert statuses.count("resolved") == 10
-    assert ">7</span>" in prazo
+    assert ">8</span>" in prazo
     assert len(list((ROOT / "noticias").glob("*/index.html"))) == 85
 
 
