@@ -33,21 +33,40 @@ cobria o botão do menu (z-index 9999 contra 50): o teste também abre o menu al
 O segundo teste mede, em todas as páginas que têm o cabeçalho, a altura dele
 fechado, a ausência de faixa vazia e de rolagem horizontal; aberto, se o menu
 cabe na janela e se o último destino pode ser trazido à vista; e, no fim da
-página, se o botão do menu continua livre.
+página, se o botão do menu continua livre. As páginas vêm da pasta servida (o
+repositório ou o artefato de PAGES_SITE_DIR), nunca do fonte quando se serve um
+artefato; um teste à parte confere essa lista com o sitemap da mesma pasta,
+para que uma página ausente não saia da cobertura em silêncio.
 
-Roda em subprocesso, como os outros testes de navegador.
+Roda em subprocesso, como os outros testes de navegador, com o ServidorDeTeste
+(fila de 128 conexões; ver tests/support.py). Desde antes da primeira navegação,
+as sondas registram os recursos do servidor local que não carregaram (página,
+janela, URL, tipo, erro e motivo). Documento, CSS, JavaScript ou fonte recusado,
+com outra falha de rede, abortado sem explicação ou com resposta HTTP de erro
+reprova o caso como falha de carregamento, separada das falhas funcionais do
+menu; o teste não decide se a causa está no servidor dos testes ou no site. Só
+um cancelamento com evidência (net::ERR_ABORTED depois que outra navegação da
+página começou, ou no encerramento do contexto) fica apenas registrado.
+
+A saída de cada sonda é conferida: campos obrigatórios e tipos e, na geometria,
+todas as combinações de rota e janela, sem sobra. Saída nula, vazia, parcial ou
+fora do formato reprova como erro da sonda. Se a sonda cai com exceção, o
+código de saída e o traceback original seguem no erro, com as falhas já
+registradas.
 """
 import json
 import subprocess
 import sys
 import threading
+import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler
+from urllib.parse import urlsplit
 
 import pytest
 
-from support import ROOT, SITE_DIR, public_html_paths, subprocess_env
+from support import ROOT, SITE_DIR, ServidorDeTeste, public_html_paths, subprocess_env
 
 
 PAGES = (("components", "/"), ("custom.min", "/comunicado/"))
@@ -142,19 +161,25 @@ window.__menu = (() => {
 """
 
 PROBE = r'''
+import atexit
 import json
 import os
 import sys
 
 from playwright.sync_api import sync_playwright
 
-from support import new_context
+from support import new_context, watch_local_loading
 
 base, path, width, height, scale = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5])
 destinations = json.loads(sys.argv[6])
 desktop = int(sys.argv[7])
 helpers = os.environ["MENU_MOBILE_JS"]
 failures = []
+# Recursos do servidor local que não carregaram: os essenciais reprovam o caso;
+# os outros só ficam registrados. A saída sai também quando a sonda cai.
+load_failures, other_load_failures = [], []
+atexit.register(lambda: print(json.dumps({"failures": failures, "load_failures": load_failures,
+                                          "other_load_failures": other_load_failures[:20]}, ensure_ascii=False)))
 label = f"{path} @{width}x{height}" + (f" escala {scale}" if scale != 1 else "")
 
 
@@ -300,6 +325,7 @@ with sync_playwright() as playwright:
     context = new_context(browser, viewport={"width": width, "height": height}, device_scale_factor=scale)
     context.add_init_script(helpers)
     page = context.new_page()
+    closing = watch_local_loading(page, base, load_failures, other_load_failures)
 
     # 1. Abrir pelo botão; os destinos existem pelo nome e pelo endereço.
     load()
@@ -485,20 +511,26 @@ with sync_playwright() as playwright:
                     check("899 px, fechado pelo botão", False)
             floating_restored(before, "899→900→899, fechado")
 
+    closing()
     context.close()
     browser.close()
-print(json.dumps({"failures": failures}, ensure_ascii=False))
 '''
 
 GEOMETRY_PROBE = r'''
+import atexit
 import json
 import sys
 
 from playwright.sync_api import sync_playwright
 
-from support import new_context
+from support import new_context, watch_local_loading
 
 base, routes, viewports = sys.argv[1], json.loads(sys.argv[2]), json.loads(sys.argv[3])
+# Como na sonda do menu: medidas, recursos do servidor local que não carregaram e
+# saída também quando a sonda cai. As medidas entram em output à medida que saem:
+# numa queda, as já feitas ficam, e o teste acusa as combinações que faltam.
+output = {"results": {}, "load_failures": [], "other_load_failures": []}
+atexit.register(lambda: print(json.dumps(dict(output, other_load_failures=output["other_load_failures"][:20]), ensure_ascii=False)))
 MEASURE = r"""() => {
   const box = el => { const r = el.getBoundingClientRect(); return {top: r.top, bottom: r.bottom, height: r.height}; };
   const header = document.getElementById('navbar');
@@ -535,12 +567,13 @@ TOGGLE_FREE = r"""() => { const t = document.getElementById('menu-toggle'), r = 
   const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
   return {free: !!hit && (hit === t || t.contains(hit)),
           blocker: hit && hit !== t && !t.contains(hit) ? ((hit.closest('a, button') || hit).getAttribute('aria-label') || hit.tagName) : null}; }"""
-results = {}
+results = output["results"]
 with sync_playwright() as playwright:
     browser = playwright.chromium.launch(headless=True)
     for width, height in viewports:
         context = new_context(browser, viewport={"width": width, "height": height})
         page = context.new_page()
+        closing = watch_local_loading(page, base, output["load_failures"], output["other_load_failures"])
         for route in routes:
             page.goto(base + route, wait_until="load")
             page.evaluate("document.fonts.ready.then(() => true)")
@@ -553,9 +586,9 @@ with sync_playwright() as playwright:
             page.evaluate(SETTLE)
             end = page.evaluate(TOGGLE_FREE)
             results[f"{route} @{width}x{height}"] = {"fechado": closed, "aberto": opened, "fim": end}
+        closing()
         context.close()
     browser.close()
-print(json.dumps(results))
 '''
 
 
@@ -565,7 +598,7 @@ class _QuietHandler(SimpleHTTPRequestHandler):
 
 
 def _serve():
-    server = ThreadingHTTPServer(("127.0.0.1", 0), partial(_QuietHandler, directory=str(SITE_DIR)))
+    server = ServidorDeTeste(("127.0.0.1", 0), partial(_QuietHandler, directory=str(SITE_DIR)))
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
     return server, thread
@@ -600,23 +633,136 @@ def probes():
     return completed
 
 
+class _OrNull:
+    """Formato que também aceita null (por exemplo, a caixa de um elemento ausente)."""
+
+    def __init__(self, shape):
+        self.shape = shape
+
+
+# Formatos esperados da saída das sondas: dict = campos obrigatórios, [x] = lista de x, tipo = valor desse tipo.
+NUMBER = (int, float)
+LOAD_FAILURE = {"tipo": str, "recurso": str, "url": str, "erro": str, "pagina": str, "janela": str,
+                "navegacao": bool, "motivo": str}
+LOAD_FIELDS = {"load_failures": [LOAD_FAILURE], "other_load_failures": [LOAD_FAILURE]}
+MENU_OUTPUT = {"failures": [str], **LOAD_FIELDS}
+BOX = {"top": NUMBER, "bottom": NUMBER, "height": NUMBER}
+GEOMETRY_RESULT = {
+    "fechado": {"overflowX": NUMBER, "banner": BOX, "header": BOX, "row": BOX, "spacer": _OrNull(BOX),
+                "content": _OrNull(BOX)},
+    "aberto": {"innerHeight": NUMBER, "menuBottom": NUMBER, "lastTop": NUMBER, "lastBottom": NUMBER,
+               "lastFree": bool, "floating": int, "count": int},
+    "fim": {"free": bool, "blocker": _OrNull(str)},
+}
+
+
+_TYPE_NAMES = {type(None): "null", bool: "booleano", int: "número", float: "número", str: "texto", list: "lista",
+               dict: "objeto"}
+
+
+def _kind(value):
+    return _TYPE_NAMES.get(type(value), type(value).__name__)
+
+
+def _shape_errors(value, shape, where):
+    """Diferenças entre value e o formato esperado, com o caminho de cada uma; vazio se confere."""
+    if isinstance(shape, _OrNull):
+        return [] if value is None else _shape_errors(value, shape.shape, where)
+    if isinstance(shape, dict):
+        if not isinstance(value, dict):
+            return [f"{where}: esperado objeto, veio {_kind(value)}"]
+        errors = [f"{where}: campo obrigatório {key!r} ausente" for key in shape if key not in value]
+        return errors + [e for key, sub in shape.items() if key in value for e in _shape_errors(value[key], sub, f"{where}.{key}")]
+    if isinstance(shape, list):
+        if not isinstance(value, list):
+            return [f"{where}: esperada lista, veio {_kind(value)}"]
+        return [e for index, item in enumerate(value) for e in _shape_errors(item, shape[0], f"{where}[{index}]")]
+    types = shape if isinstance(shape, tuple) else (shape,)
+    if not isinstance(value, types) or (isinstance(value, bool) and bool not in types):
+        expected = " ou ".join(dict.fromkeys(_TYPE_NAMES.get(t, t.__name__) for t in types))
+        return [f"{where}: esperado {expected}, veio {_kind(value)}"]
+    return []
+
+
+def _valid_items(output, key, shape):
+    """Itens de output[key] que conferem com o formato: os já coletados entram no erro mesmo com saída inválida."""
+    items = output.get(key) if isinstance(output, dict) else None
+    return [item for item in items if not _shape_errors(item, shape, key)] if isinstance(items, list) else []
+
+
+def _probe_output(completed):
+    """Saída JSON da sonda (gravada também quando ela cai); None se não for JSON."""
+    try:
+        return json.loads(completed.stdout)
+    except ValueError:
+        return None
+
+
+def _problems(completed, output, invalid, functional, limit):
+    """Erro da sonda (saída inválida), falhas de carregamento, falhas funcionais e queda, em seções separadas."""
+    parts = []
+    if output is None:
+        parts.append(f"erro da sonda: a saída não é JSON:\n{completed.stdout[-1500:]}")
+    elif invalid:
+        parts.append(f"erro da sonda: saída incompleta ou fora do formato ({len(invalid)} problema(s)):\n"
+                     + "\n".join(f"  {error}" for error in invalid[:20]))
+    load = _valid_items(output, "load_failures", LOAD_FAILURE)
+    if load:
+        parts.append(f"{len(load)} falha(s) de carregamento em recurso(s) essencial(is) do servidor local; o caso não "
+                     "foi avaliado com a página completa (o teste não determina se a causa está no servidor dos testes "
+                     "ou no site):\n" + "\n".join(
+                         f"  {f['tipo']}: {f['recurso']} {f['url']} ({f['erro']}); página {f['pagina'] or '/'}; "
+                         f"janela {f['janela']}" + ("; navegação" if f["navegacao"] else "") + f"; motivo: {f['motivo']}"
+                         for f in load[:15]))
+    if functional:
+        parts.append(f"{len(functional)} falha(s) funcional(is):\n" + "\n".join(functional[:limit]))
+    if completed.returncode != 0:
+        parts.append(f"a sonda terminou com código {completed.returncode}:\n{completed.stderr[-3000:]}")
+    return parts
+
+
+def _menu_problems(completed):
+    output = _probe_output(completed)
+    invalid = _shape_errors(output, MENU_OUTPUT, "saída") if output is not None else []
+    return _problems(completed, output, invalid, _valid_items(output, "failures", str), 25)
+
+
 @pytest.mark.parametrize("family,path", PAGES, ids=[family for family, _ in PAGES])
 @pytest.mark.parametrize("viewport", VIEWPORTS, ids=[f"{w}x{h}" + (f"@{s}x" if s != 1 else "") for w, h, s in VIEWPORTS])
 def test_mobile_menu_fits_and_every_destination_is_reachable(probes, family, path, viewport):
-    completed = probes[(family, path, viewport)]
-    assert completed.returncode == 0, completed.stderr[-3000:]
-    failures = json.loads(completed.stdout)["failures"]
-    assert not failures, f"{len(failures)} falha(s):\n" + "\n".join(failures[:25])
+    problems = _menu_problems(probes[(family, path, viewport)])
+    assert not problems, "\n\n".join(problems)
+
+
+def _served_pages():
+    """Páginas HTML da pasta servida: no fonte, as públicas do repositório; num artefato, as do próprio artefato."""
+    if SITE_DIR == ROOT:
+        return [(page, page.relative_to(ROOT).as_posix()) for page in public_html_paths()]
+    return [(page, page.relative_to(SITE_DIR).as_posix()) for page in sorted(SITE_DIR.rglob("*.html"))]
 
 
 def _header_routes():
     routes = []
-    for page in public_html_paths():
-        relative = page.relative_to(ROOT).as_posix()
+    for page, relative in _served_pages():
         if relative.startswith(("tests/", ".")) or 'id="mobile-menu"' not in page.read_text(encoding="utf-8"):
             continue
         routes.append("/" + relative[: -len("index.html")] if relative.endswith("index.html") else "/" + relative)
     return routes
+
+
+def _sitemap_routes():
+    """Caminhos das URLs do sitemap.xml da pasta servida."""
+    root = ET.parse(SITE_DIR / "sitemap.xml").getroot()
+    namespace = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+    return {urlsplit(loc.text.strip()).path for loc in root.findall("s:url/s:loc", namespace)}
+
+
+def test_header_routes_match_the_served_sitemap():
+    """As páginas medidas pela geometria são as do sitemap da mesma pasta: uma ausente não some em silêncio."""
+    routes = set(_header_routes())
+    expected = _sitemap_routes()
+    assert routes == expected, (f"páginas com menu fora do sitemap: {sorted(routes - expected)}; "
+                                f"URLs do sitemap sem página com menu na pasta servida: {sorted(expected - routes)}")
 
 
 @pytest.fixture(scope="module")
@@ -631,13 +777,39 @@ def geometry():
         )
     finally:
         _stop(server, thread)
-    assert completed.returncode == 0, completed.stderr[-3000:]
-    return routes, json.loads(completed.stdout)
+    return routes, completed, _probe_output(completed)
+
+
+def _geometry_results(output, routes):
+    """Problemas de formato da saída da geometria e as medidas válidas, que são avaliadas mesmo assim.
+
+    Os resultados têm de cobrir exatamente cada combinação de rota e janela:
+    null, vazio, parcial ou com combinação inesperada é saída inválida.
+    """
+    invalid = _shape_errors(output, {"results": dict, **LOAD_FIELDS}, "saída")
+    results = output.get("results") if isinstance(output, dict) else None
+    if not isinstance(results, dict):
+        return invalid, {}
+    expected = {f"{route} @{width}x{height}" for route in routes for width, height in GEOMETRY_VIEWPORTS}
+    missing, unexpected = sorted(expected - results.keys()), sorted(results.keys() - expected)
+    if missing:
+        invalid.append(f"saída.results: faltam {len(missing)} de {len(expected)} combinações de rota e janela: "
+                       f"{', '.join(missing[:10])}")
+    if unexpected:
+        invalid.append(f"saída.results: {len(unexpected)} combinação(ões) inesperada(s): {', '.join(unexpected[:10])}")
+    valid = {}
+    for key in sorted(expected & results.keys()):
+        errors = _shape_errors(results[key], GEOMETRY_RESULT, f"saída.results[{key!r}]")
+        invalid.extend(errors)
+        if not errors:
+            valid[key] = results[key]
+    return invalid, valid
 
 
 def test_header_geometry_and_open_menu_on_every_page(geometry):
-    routes, results = geometry
+    routes, completed, output = geometry
     assert len(routes) > 100, routes
+    invalid, results = _geometry_results(output, routes) if output is not None else ([], {})
     failures = []
     for key, result in results.items():
         closed, opened = result["fechado"], result["aberto"]
@@ -662,4 +834,5 @@ def test_header_geometry_and_open_menu_on_every_page(geometry):
             failures.append(f"{key}: {opened['floating']} botão(ões) flutuante(s) sobre o menu aberto")
         if not result["fim"]["free"]:
             failures.append(f"{key}: no fim da página o botão do menu fica sob {result['fim']['blocker']}")
-    assert not failures, f"{len(failures)} falha(s):\n" + "\n".join(failures[:40])
+    problems = _problems(completed, output, invalid, failures, 40)
+    assert not problems, "\n\n".join(problems)

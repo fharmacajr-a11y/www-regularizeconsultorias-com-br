@@ -2,6 +2,7 @@
 import json
 import os
 from html.parser import HTMLParser
+from http.server import ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -113,11 +114,108 @@ def new_page(browser, fonts="local", allow=(), **options):
     return new_context(browser, fonts=fonts, allow=allow, **options).new_page()
 
 
+ESSENTIAL_RESOURCES = ("document", "stylesheet", "script", "font")
+
+
+def watch_local_loading(page, base, essential, other):
+    """Registra, a partir de agora, os recursos do servidor local (base) que não carregaram nesta página.
+
+    Cada falha leva página (a que fez o pedido; numa navegação, o próprio
+    endereço), janela, URL, tipo do recurso, erro, se era uma navegação e o
+    motivo: conexão recusada, outra falha de rede, abortado ou resposta HTTP de
+    erro. Documento, CSS, JavaScript e fonte vão para essential: sem eles o caso
+    não pode ser avaliado, e o registro não diz se a causa está no servidor dos
+    testes ou no site. Os outros recursos vão para other.
+
+    Um net::ERR_ABORTED só é cancelamento esperado (other) com evidência: outra
+    navegação da página começou depois do pedido (a navegação dele foi
+    descartada) ou o contexto está sendo encerrado. Sem isso, o recurso
+    essencial abortado conta como falha. Recursos externos ficam de fora: a
+    rota de rede já os trata.
+
+    Devolve a função a chamar logo antes de context.close(): os cancelamentos
+    depois dela são do encerramento do contexto.
+    """
+    state = {"navigations": 0, "closing": False}
+    started = {}
+
+    def main_navigation(request):
+        try:
+            return request.is_navigation_request() and request.frame.parent_frame is None
+        except Exception:  # noqa: BLE001 - pedido sem frame (service worker) não é navegação da página
+            return False
+
+    def requested(request):
+        if main_navigation(request):
+            state["navigations"] += 1
+        started[request] = (state["navigations"], page.url)
+
+    def record(target, request, kind, error, reason):
+        navigation = request.is_navigation_request()
+        page_url = request.url if navigation else started.get(request, (0, page.url))[1]
+        viewport = page.viewport_size or {}
+        target.append({"tipo": kind, "recurso": request.resource_type, "url": request.url.replace(base, "", 1),
+                       "erro": error, "pagina": page_url.replace(base, "", 1),
+                       "janela": f"{viewport.get('width')}x{viewport.get('height')}", "navegacao": navigation,
+                       "motivo": reason})
+
+    def failed(request):
+        if not request.url.startswith(base):
+            return
+        error = request.failure or "falha sem descrição"
+        target = essential if request.resource_type in ESSENTIAL_RESOURCES else other
+        if "ERR_ABORTED" in error:
+            # Sem registro do início, vale a navegação atual: nada prova o descarte.
+            generation = started.get(request, (state["navigations"], None))[0]
+            if state["closing"]:
+                return record(other, request, "cancelamento esperado", error, "encerramento do contexto")
+            if state["navigations"] > generation:
+                return record(other, request, "cancelamento esperado", error,
+                              "navegação descartada: outra navegação da página começou depois do pedido")
+            return record(target, request, "abortado", error,
+                          "abortado sem navegação nova nem encerramento do contexto; não carregou na página avaliada")
+        if "ERR_CONNECTION_REFUSED" in error:
+            return record(target, request, "conexão recusada", error, "a conexão com o servidor local foi recusada")
+        return record(target, request, "falha de rede", error, "o pedido falhou antes da resposta")
+
+    def responded(response):
+        if response.url.startswith(base) and response.status >= 400:
+            target = essential if response.request.resource_type in ESSENTIAL_RESOURCES else other
+            record(target, response.request, "resposta HTTP de erro", f"HTTP {response.status}",
+                   "o servidor local respondeu com erro")
+
+    def closing():
+        state["closing"] = True
+
+    page.on("request", requested)
+    page.on("requestfailed", failed)
+    page.on("response", responded)
+    return closing
+
+
 def subprocess_env(**extra):
     """Ambiente dos subprocessos de teste: importam support por PYTHONPATH."""
     env = dict(os.environ, PYTHONIOENCODING="utf-8", **extra)
     env["PYTHONPATH"] = os.pathsep.join(filter(None, [str(TESTS_DIR), env.get("PYTHONPATH")]))
     return env
+
+
+class ServidorDeTeste(ThreadingHTTPServer):
+    """Servidor local dos testes de navegador com fila de conexões de 128.
+
+    No diagnóstico de 18/10/2026, o teste do menu mobile (4 sondas em paralelo;
+    o SimpleHTTPRequestHandler responde em HTTP/1.0, uma conexão por recurso)
+    teve documento, CSS e JS recusados (net::ERR_CONNECTION_REFUSED) com a fila
+    padrão da biblioteca (socketserver.TCPServer.request_queue_size = 5) e
+    nenhuma recusa com 128, mudando só a fila. A explicação é uma hipótese
+    sustentada por esse experimento, não um mecanismo medido: a fila de 5 enche
+    nas rajadas e o Windows recusa as conexões excedentes; a fila do sistema não
+    foi observada diretamente. O valor vale antes da ativação, porque o
+    construtor chama server_activate(), que faz listen(request_queue_size). Só
+    esta subclasse muda; protocolo, threads e handler continuam os da biblioteca.
+    """
+
+    request_queue_size = 128
 
 
 class Node:
