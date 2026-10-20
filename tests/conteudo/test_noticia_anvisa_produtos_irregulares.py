@@ -9,13 +9,15 @@ NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 SITEMAP_PATH = ROOT / "sitemap.xml"
 URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
 PUBLISHED = "2026-07-05T18:00:00-03:00"
-# 15/10/2026, 17h44: quadro da RE nº 4.035/2026 (DOU de 14/10/2026), instante real da edição.
-# Os carimbos anteriores foram 13/10/2026, 19h54 (alcance da RE nº 3.634/2026) e 11h51 (seis resoluções
-# do mesmo dia). SNCR e DCB permanecem às 09h06 de 13/10/2026.
-UPDATED = "2026-10-15T17:44:00-03:00"
+# 20/10/2026, 10h12: quadro das RE nº 4.090 e 4.105/2026 (DOU de 19/10/2026), publicado com o instante real do commit.
+# Os carimbos anteriores foram 15/10/2026, 17h44 (RE nº 4.035/2026), 13/10/2026, 19h54 (alcance da
+# RE nº 3.634/2026) e 11h51 (seis resoluções do mesmo dia). SNCR e DCB permanecem às 09h06 de 13/10/2026.
+UPDATED = "2026-10-20T10:12:00-03:00"
 UPDATED_DAY = f"{datetime.fromisoformat(UPDATED):%d/%m/%Y}"
 UPDATED_CLOCK = f"{datetime.fromisoformat(UPDATED):%Hh%M}"
 DOU_RE_4035_URL = "https://www.in.gov.br/web/dou/-/resolucao-re-n-4.035-de-9-de-outubro-de-2026-738059775"
+DOU_RE_4090_URL = "https://www.in.gov.br/web/dou/-/resolucao-re-n-4.090-de-15-de-outubro-de-2026-738844837"
+DOU_RE_4105_URL = "https://www.in.gov.br/web/dou/-/resolucao-re-n-4.105-de-15-de-outubro-de-2026-738856116"
 DOBUTAMINA_LOTES = ("24092127", "24102310", "25102244", "25102243", "25112308")
 
 
@@ -124,6 +126,7 @@ def test_september_update_reflects_re_3547_and_keeps_history():
     september = _september_callout(html)
     text = _text(september)
 
+    assert html.index("novas-medidas-19-outubro-title") < html.index("novas-medidas-14-outubro-title")
     assert html.index("novas-medidas-14-outubro-title") < html.index("novas-medidas-13-outubro-title")
     assert html.index("novas-medidas-13-outubro-title") < html.index("novas-medidas-06-outubro-title")
     assert html.index("novas-medidas-06-outubro-title") < html.index("novas-medidas-02-outubro-title")
@@ -132,8 +135,8 @@ def test_september_update_reflects_re_3547_and_keeps_history():
     assert html.index("novas-medidas-21-setembro-title") < html.index("novas-medidas-16-setembro-title")
     assert html.index("novas-medidas-16-setembro-title") < html.index("novas-medidas-setembro-title")
     assert html.index("novas-medidas-setembro-title") < html.index("novas-medidas-agosto-title")
-    # Nove quadros: o de 14/10/2026 ficou antes do de 13/10/2026.
-    assert html.count("data-news-update-callout aria-labelledby=") == 9
+    # Dez quadros: o de 19/10/2026 ficou antes do de 14/10/2026, que segue antes do de 13/10/2026.
+    assert html.count("data-news-update-callout aria-labelledby=") == 10
     assert "ATUALIZAÇÃO" in september
     assert "Resolução-RE nº 3.547/2026" in text
     assert "de 09/09/2026 e publicada no DOU em 11/09/2026" in text
@@ -310,18 +313,19 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
     # 15/10/2026, 17h44: o quadro da RE nº 4.035/2026 mantém o card na 1ª posição, com o resumo curto.
     # 16/10/2026, 20h06: o card do CNES 10/2026 (publicação mais recente) passa à frente; o consolidado fica em 2º.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma. O consolidado fica em 3º.
+    # 20/10/2026, 10h12: o quadro das RE nº 4.090 e 4.105/2026 leva o consolidado de volta à 1ª posição, com o mesmo resumo curto.
     summary = ("O DOU de 14/10/2026 publica a RE nº 4.035/2026, com seis medidas sobre produtos sem registro classificados como "
                "medicamento, inclusive itens com retatrutida e tirzepatida. Não é proibição geral da tirzepatida. A matéria mantém "
                "as seis RE publicadas em 13/10/2026 e as medidas anteriores, de 01/09 a 09/10/2026; o histórico completo "
                "permanece na página.")
-    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[2]
-    assert "news-card-compact" in cards[2].split(">", 1)[0]
-    assert f"{UPDATED_DAY} • {UPDATED_CLOCK}" in cards[2]
-    assert "09h06" not in cards[2]
-    assert f'data-summary="{summary}"' in cards[2]
-    assert f"<p class=\"text-slate-500 text-sm leading-relaxed mb-4\">{summary}</p>" in cards[2]
+    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[0]
+    assert "news-card-compact" in cards[0].split(">", 1)[0]
+    assert f"{UPDATED_DAY} • {UPDATED_CLOCK}" in cards[0]
+    assert "09h06" not in cards[0]
+    assert f'data-summary="{summary}"' in cards[0]
+    assert f"<p class=\"text-slate-500 text-sm leading-relaxed mb-4\">{summary}</p>" in cards[0]
     # Números e lotes do resumo de 13/10/2026 saíram do texto do card e seguem na busca pelas palavras-chave.
-    keywords = cards[2].split('data-keywords="', 1)[1].split('"', 1)[0]
+    keywords = cards[0].split('data-keywords="', 1)[1].split('"', 1)[0]
     for term in ("RE 3.989/2026", "RE 4.000/2026", "RE 4.001/2026", "RE 4.002/2026", "RE 4.009/2026", "RE 4.028/2026",
                  "HXTZ251015", "NDC 46785-162-03", "P07725A", "Xeomin", "cloreto de sódio", "insumos farmacêuticos"):
         assert term in keywords, term
@@ -331,9 +335,14 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
                  "Liberty Pharma", "ZPH Contabilidade", "zyntrashop.site", "peptideosdobrasil.com.br",
                  "oxygenkwpharmabrasil.com", "zphcstore.com.br"):
         assert term in keywords, term
-    assert "As RE nº 3.946 e 3.947/2026 foram publicadas no DOU de 06/10/2026" not in cards[2]
-    assert "União Vegetal Agroindustrial Ltda. como fabricante do Aloe Care" not in cards[2]
-    assert 'href="http' not in cards[2]
+    # 19/10/2026: atos, produtos e lotes do novo quadro entram só nas palavras-chave; o resumo não muda.
+    for term in ("RE 4.090/2026", "RE 4.105/2026", "19/10/2026", "Dysport", "Keytruda", "pembrolizumabe",
+                 "025155", "Z005197", "Z012354"):
+        assert term in keywords, term
+        assert term not in summary, term
+    assert "As RE nº 3.946 e 3.947/2026 foram publicadas no DOU de 06/10/2026" not in cards[0]
+    assert "União Vegetal Agroindustrial Ltda. como fabricante do Aloe Care" not in cards[0]
+    assert 'href="http' not in cards[0]
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
     assert f"<loc>{URL}</loc>\n    <lastmod>{UPDATED[:10]}</lastmod>" in sitemap
 
@@ -504,7 +513,7 @@ def test_re_3764_and_re_3743_keep_suspension_and_revocation_apart():
     higia = _text(html[higia_start:html.index("<h2>21 de setembro: RE nº 3.712", higia_start)])
 
     # A Fase 1D reaproveitou o quadro de 21 a 28/09; o de outubro (Fase 1G) é o sexto.
-    assert html.count("data-news-update-callout aria-labelledby=") == 9
+    assert html.count("data-news-update-callout aria-labelledby=") == 10
     assert "Atualização: medidas de 21 a 28/09/2026 e revogações de 01, 21 e 23/09/2026" in _text(callout)
     assert "publicações de 01, 21, 23, 25 e 28/09/2026" in _text(callout)
     assert "As RE nº 3.436, 3.718 e 3.743/2026 revogam, cada uma, uma medida anterior referente a uma empresa" in _text(callout)
@@ -560,7 +569,7 @@ def test_re_3718_and_re_3436_revoke_only_their_own_items():
     terapeutica = _text(html[terapeutica_start:html.index("<h2>Agosto amplia", terapeutica_start)])
 
     # Quadro de 21 a 28/09 reaproveitado: título e fecho cobrem 01/09; cada item novo traz sua publicação.
-    assert html.count("data-news-update-callout aria-labelledby=") == 9
+    assert html.count("data-news-update-callout aria-labelledby=") == 10
     assert "Atualização: medidas de 21 a 28/09/2026 e revogações de 01, 21 e 23/09/2026" in _text(callout)
     assert "publicações de 01, 21, 23, 25 e 28/09/2026" in _text(callout)
     assert "As RE nº 3.436, 3.718 e 3.743/2026 revogam, cada uma, uma medida anterior referente a uma empresa" in _text(callout)
@@ -633,7 +642,7 @@ def test_september_measures_of_re_3440_3479_3480_3546_and_3738_keep_their_own_sc
         "<h2>8 de setembro: RE nº 3.479/2026", "<h2>8 de setembro: RE nº 3.480/2026",
         "<h2>1º de setembro: RE nº 3.440/2026", "<h2>1º de setembro: RE nº 3.436/2026", "<h2>Agosto amplia")]
     assert positions == sorted(positions)
-    assert html.count("data-news-update-callout aria-labelledby=") == 9
+    assert html.count("data-news-update-callout aria-labelledby=") == 10
 
     # Quadros: dois itens da RE nº 3.738 no quadro do topo; referência separada no quadro de setembro.
     start = html.index('data-news-update-callout aria-labelledby="novas-medidas-25-setembro-title"')
@@ -757,6 +766,74 @@ def test_september_measures_of_re_3440_3479_3480_3546_and_3738_keep_their_own_sc
     assert "gopharma.shop/" not in html and "http://gopharma" not in html and "https://gopharma" not in html
 
 
+def _october_19_callout(html):
+    start = html.index('data-news-update-callout aria-labelledby="novas-medidas-19-outubro-title"')
+    return html[start:html.index("</aside>", start)]
+
+
+def test_october_19_callout_keeps_dysport_and_keytruda_lots_apart_and_links_only_the_dou():
+    html = NEWS_PATH.read_text(encoding="utf-8")
+    callout = _october_19_callout(html)
+    items = [_text(item) for item in _items(callout)]
+
+    # Primeiro quadro do corpo, antes do de 14/10/2026.
+    first = html.index("data-news-update-callout")
+    assert first == html.index('data-news-update-callout aria-labelledby="novas-medidas-19-outubro-title"')
+    assert "Atualização: medidas publicadas no DOU em 19/10/2026" in callout
+    assert "ATUALIZAÇÃO" in callout
+    assert len(items) == 2
+    dysport, keytruda = items
+
+    assert dysport.startswith("Dysport, lote 025155, empresa desconhecida (RE nº 4.090/2026):")
+    assert "apreensão e proibição de comercialização, distribuição e uso" in dysport
+    assert "A empresa e o CNPJ são desconhecidos, expediente 0781120/26-9" in dysport
+    assert "“DYSPORT (LOTE: 025155)”" in dysport and "sem indicar a apresentação" in dysport
+    assert "Beaufour Ipsen Farmacêutica Ltda., CNPJ 07.718.721/0001-80, detentora do registro" in dysport
+    assert "conclui que se trata de falsificação" in dysport
+    assert "A falsificação não é atribuída à detentora do registro" in dysport
+    # Sem apresentação inventada: o anexo do Dysport não traz dose, volume nem unidades.
+    for invented in ("500 U", "300 U", " mg", " mL", "toxina botulínica"):
+        assert invented not in dysport, invented
+    # O código de barras citado na motivação (lote W26232) não vira outro lote alcançado.
+    assert "W26232" not in callout
+
+    assert keytruda.startswith(
+        "Keytruda 100 mg/4 mL, lotes Z005197 e Z012354, empresa não identificada (RE nº 4.105/2026):")
+    assert "apreensão e proibição de comercialização, distribuição e uso" in keytruda
+    assert "A empresa não é identificada e o CNPJ é desconhecido, expediente 1057099/26-3" in keytruda
+    assert "“KEYTRUDA (LOTES: Z005197, Z012354)”" in keytruda
+    assert "a apresentação de 100 mg/4 mL consta da motivação" in keytruda
+    assert "Merck Sharp &amp; Dohme Farmacêutica Ltda., detentora do registro" in keytruda
+    # Classificação literal do ato: suspeita de falsificação, não lote falsificado.
+    assert "“caracterizando suspeita de falsificação”" in keytruda
+    assert "A suspeita não é atribuída à detentora do registro" in keytruda
+    assert "falsificado" not in keytruda and "lotes falsificados" not in callout
+
+    for item in items:
+        assert "O ato não determina recolhimento e não alcança outros lotes nem a marca" in item
+        assert "recolhimento" not in item.replace("não determina recolhimento", "")
+    assert "Ipsen" not in keytruda and "Merck" not in dysport and "MSD" not in callout
+
+    closing = _text(callout.split("</ul>", 1)[1])
+    assert "As Resoluções-RE nº 4.090 e 4.105 foram assinadas em 15/10/2026" in closing
+    assert "publicadas no DOU de 19/10/2026, edição 197, Seção 1, páginas 223 e 224, respectivamente" in closing
+    assert "data em que entraram em vigor, conforme o art. 2º de cada ato" in closing
+    assert "Cada medida vale só para os lotes indicados no próprio ato" in closing
+    assert "Íntegra da Resolução-RE nº 4.090/2026 no Diário Oficial da União (abre em nova aba)" in closing
+    assert "íntegra da Resolução-RE nº 4.105/2026 no Diário Oficial da União (abre em nova aba)" in closing
+    assert "conferidas com a edição certificada em 19/10/2026" in closing
+
+    # Os dois únicos links do quadro são as íntegras no DOU, uma vez cada na página.
+    assert re.findall(r"<a\b[^>]*>", callout) == [
+        f'<a href="{DOU_RE_4090_URL}" target="_blank" rel="noopener noreferrer">',
+        f'<a href="{DOU_RE_4105_URL}" target="_blank" rel="noopener noreferrer">',
+    ]
+    assert html.count(DOU_RE_4090_URL) == 1 and html.count(DOU_RE_4105_URL) == 1
+    assert "http" not in _text(callout)
+    for number in ("4.035", "3.717", "3.480"):
+        assert number not in callout, number
+
+
 def _october_14_callout(html):
     start = html.index('data-news-update-callout aria-labelledby="novas-medidas-14-outubro-title"')
     return html[start:html.index("</aside>", start)]
@@ -852,7 +929,7 @@ def test_october_13_callout_keeps_each_measure_bound_to_its_own_act_and_scope():
     callout = _october_13_callout(html)
     items = [_text(item) for item in _items(callout)]
 
-    assert html.count("data-news-update-callout aria-labelledby=") == 9
+    assert html.count("data-news-update-callout aria-labelledby=") == 10
     assert html.index("novas-medidas-13-outubro-title") < html.index("novas-medidas-06-outubro-title")
     assert "Atualização: medidas publicadas no DOU em 13/10/2026" in callout
     assert len(items) == 19
@@ -1033,7 +1110,7 @@ def test_october_callout_keeps_each_measure_bound_to_its_own_act_and_scope():
     items = [_text(item) for item in _items(callout)]
 
     # Quadro de 02/10/2026 antes dos cinco anteriores, que permanecem.
-    assert html.count("data-news-update-callout aria-labelledby=") == 9
+    assert html.count("data-news-update-callout aria-labelledby=") == 10
     assert html.index("novas-medidas-13-outubro-title") < html.index("novas-medidas-06-outubro-title")
     assert html.index("novas-medidas-06-outubro-title") < html.index("novas-medidas-02-outubro-title")
     assert html.index("novas-medidas-02-outubro-title") < html.index("novas-medidas-25-setembro-title")
@@ -1221,8 +1298,10 @@ def test_october_update_reaches_lead_summary_metadata_and_listing_search():
                  "RE 3.852/2026", "RE 3.854/2026", "RE 3.855/2026", "RE 3.856/2026", "RE 3.857/2026"):
         assert _normalize_search(term) in haystack, term
     assert _consolidated_card(news_index).count(f'data-updated="{UPDATED}"') == 1
-    # Só esta matéria recebeu o carimbo de 15/10/2026, 17h44. SNCR e DCB permanecem às 09h06 de 13/10/2026.
-    assert news_index.count(f'data-updated="{UPDATED}"') == 1
+    # O carimbo de 20/10/2026, 10h12, é desta matéria e da do SISPA, atualizadas na mesma edição; o consolidado vem antes.
+    # SNCR e DCB permanecem às 09h06 de 13/10/2026.
+    assert news_index.count(f'data-updated="{UPDATED}"') == 2
+    assert 'href="/noticias/mapa-sispa-registro-agrotoxicos/"' in news_index.split(f'data-updated="{UPDATED}"')[2]
     assert news_index.count('data-updated="2026-10-13T09:06:00-03:00"') == 2
 
 
@@ -1268,6 +1347,8 @@ _KEYWORDS_RE_4035 = (
     "ZPH Contabilidade, zyntrashop.site, peptideosdobrasil.com.br, oxygenkwpharmabrasil.com, zphcstore.com.br, "
     "GHK-Cu, BPC-157, TB-500, NAD+, HXTZ251015, NDC 46785-162-03, P07725A, insumos farmacêuticos"
 )
+# 19/10/2026: termos das RE nº 4.090 e 4.105/2026 ("Dysport" já estava nas palavras-chave).
+_KEYWORDS_RE_4090_4105 = "RE 4.090/2026, RE 4.105/2026, 19/10/2026, Keytruda, pembrolizumabe, 025155, Z005197, Z012354"
 
 
 def _listing_haystack(attrs, keywords, visible):
@@ -1290,7 +1371,8 @@ def test_shortened_summary_keeps_removed_names_searchable_through_keywords():
     assert len(summary) == 352
     assert news_index.count(summary) == 2
     assert f"<p class=\"text-slate-500 text-sm leading-relaxed mb-4\">{summary}</p>" in card
-    assert keywords == f"{_KEYWORDS_BEFORE_RESTORATION}, {_RESTORED_KEYWORDS}, {_KEYWORDS_RE_4035}"
+    assert keywords == (f"{_KEYWORDS_BEFORE_RESTORATION}, {_RESTORED_KEYWORDS}, {_KEYWORDS_RE_4035}, "
+                        f"{_KEYWORDS_RE_4090_4105}")
     assert "Tha &amp; Thi" in card.split(">", 1)[0]
     assert "Tha & Thi" not in card.split(">", 1)[0]
     received = _listing_haystack(attrs, _KEYWORDS_BEFORE_RESTORATION, visible)

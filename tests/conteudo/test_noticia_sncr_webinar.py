@@ -165,7 +165,8 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     # 13/10/2026, 09h06: o SNCR permanece na 2ª posição do HTML, empatado com a DCB. Produtos irregulares ficou à frente às 11h51.
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
-    assert cards.index(card) == 3
+    # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
+    assert cards.index(card) == 4
     assert "news-card-compact" in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
     assert f'<time datetime="{UPDATED}" class="leading-none">13/10/2026 • 09h06</time>' in card

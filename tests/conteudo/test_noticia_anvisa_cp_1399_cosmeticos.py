@@ -42,7 +42,8 @@ def test_listing_places_the_updated_cosmetics_card_eighth():
     # Lote de 09/10/2026: as 13 matérias atualizadas no lote sobem pelo carimbo; as demais descem.
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
-    card = cards[35]
+    # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
+    card = cards[36]
 
     assert len(cards) == 85
     assert "/noticias/anvisa-atualiza-listas-substancias-cosmeticos/" in card
@@ -53,7 +54,7 @@ def test_listing_places_the_updated_cosmetics_card_eighth():
     assert '>Todos</span><span class="text-xs text-slate-400">85<' in html
     assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in html
     assert (
-        '"position":36,"url":"https://www.regularizeconsultorias.com.br'
+        '"position":37,"url":"https://www.regularizeconsultorias.com.br'
         '/noticias/anvisa-atualiza-listas-substancias-cosmeticos/"'
     ) in html
     sitemap = SITEMAP.read_text(encoding="utf-8")

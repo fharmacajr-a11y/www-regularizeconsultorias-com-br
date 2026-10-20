@@ -188,7 +188,8 @@ def test_news_index_has_one_card_and_one_itemlist_entry():
     # A posição não troca o formato: todos os cards têm o mesmo modelo.
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
-    assert cards.index(own[0]) == 6
+    # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
+    assert cards.index(own[0]) == 7
     assert all("news-card-compact" in card.split(">", 1)[0] for card in cards)
     assert ">Atualização</span>" in own[0] and "Ler atualização" in own[0]
     assert len(cards) == 85

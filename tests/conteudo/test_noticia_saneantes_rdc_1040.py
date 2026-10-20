@@ -196,8 +196,9 @@ def test_index_saneantes_in_itemlist_position_16():
     items = coll_blocks[0]["mainEntity"]["itemListElement"]
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
-    assert items[39]["url"] == ARTICLE_URL, (
-        f"Posição 40 esperada para {ARTICLE_URL!r}, encontrado {items[39]['url']!r}"
+    # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
+    assert items[40]["url"] == ARTICLE_URL, (
+        f"Posição 41 esperada para {ARTICLE_URL!r}, encontrado {items[40]['url']!r}"
     )
     assert items[39]["position"] == 40
 
@@ -256,7 +257,8 @@ def test_index_saneantes_keeps_its_position_and_the_single_model():
         for index, block in enumerate(article_blocks)
         if "anvisa-rdc-1040-in-468-2026-saneantes-regularizacao" in block
     )
-    assert saneantes_index == 39
+    # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
+    assert saneantes_index == 40
     assert "news-card-compact" in article_blocks[saneantes_index].split(">", 1)[0]
     # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
     assert all("news-card-compact" in block.split(">", 1)[0] for block in article_blocks)

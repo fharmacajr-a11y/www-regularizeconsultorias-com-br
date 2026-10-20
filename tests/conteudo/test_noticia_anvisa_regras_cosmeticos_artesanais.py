@@ -198,7 +198,8 @@ def test_listing_places_the_updated_card_by_its_update_stamp():
     # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
-    card = cards[16]
+    # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
+    card = cards[17]
     opening = card.split(">", 1)[0]
     assert f'href="{ROUTE}"' in card
     assert html.count(f'href="{ROUTE}"') == 1
@@ -220,8 +221,8 @@ def test_listing_places_the_updated_card_by_its_update_stamp():
     collection = next(block for block in _jsonld(html) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
     assert len(items) == 85
-    assert items[16]["position"] == 17
-    assert items[16]["url"] == URL
+    assert items[17]["position"] == 18
+    assert items[17]["url"] == URL
     assert [item["position"] for item in items] == list(range(1, 86))
 
 
@@ -229,10 +230,10 @@ def test_sitemap_adds_only_the_new_url_and_the_listing_lastmod():
     sitemap = SITEMAP.read_text(encoding="utf-8")
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
     assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-09</lastmod>" in sitemap
-    # 13/10/2026: a listagem e a matéria do SNCR mudaram de novo.
+    # 13/10/2026: a listagem e a matéria do SNCR mudaram de novo. 20/10/2026: a listagem reordenou dois cards.
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-10-17</lastmod>"
+        "    <lastmod>2026-10-20</lastmod>"
     ) in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/</loc>\n"

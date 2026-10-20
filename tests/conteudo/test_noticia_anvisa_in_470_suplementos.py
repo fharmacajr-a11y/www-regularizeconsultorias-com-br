@@ -207,7 +207,8 @@ def test_index_has_one_card_in_fifth_position_and_expected_counts():
     assert len(card_blocks) == 85
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
-    assert f'/noticias/{SLUG}/' in card_blocks[38]
+    # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
+    assert f'/noticias/{SLUG}/' in card_blocks[39]
     # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
     assert all("news-card-compact" in value for value in classes)
     assert '>Todos</span><span class="text-xs text-slate-400">85<' in html

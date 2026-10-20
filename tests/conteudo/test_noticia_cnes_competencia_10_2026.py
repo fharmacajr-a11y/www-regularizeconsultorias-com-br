@@ -164,10 +164,11 @@ def test_news_index_card_itemlist_and_counters():
     assert ">Atualização</span>" in card and "Ler atualização" in card
     assert "news-amber-card" in card and "news-card-compact" in card.split(">", 1)[0]
     # A posição vem da data. 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
-    assert cards.index(card) == 1
+    # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
+    assert cards.index(card) == 3
     items = re.findall(r'\{"@type":"ListItem","position":(\d+),"url":"([^"]+)"\}', html)
     assert [int(p) for p, _ in items] == list(range(1, 86))
-    assert items[1][1] == PUBLIC_URL
+    assert items[3][1] == PUBLIC_URL
     assert html.count(f'"url":"{PUBLIC_URL}"') == 1
     assert '<span>Todos</span><span class="text-xs text-slate-400">85</span>' in html
     assert '<span>CNES</span><span class="text-xs text-slate-400">6</span>' in html
@@ -206,5 +207,5 @@ def test_sitemap_lists_the_new_url_once():
     assert sitemap.count("<loc>") == 106
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
     assert re.search(rf"<loc>{re.escape(PUBLIC_URL)}</loc>\s*<lastmod>2026-10-16</lastmod>", sitemap)
-    # 17/10/2026: a listagem ganhou o card do esclarecimento do Farmácia Popular.
-    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-10-17</lastmod>", sitemap)
+    # 17/10/2026: a listagem ganhou o card do esclarecimento do Farmácia Popular. 20/10/2026: reordenou dois cards.
+    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-10-20</lastmod>", sitemap)

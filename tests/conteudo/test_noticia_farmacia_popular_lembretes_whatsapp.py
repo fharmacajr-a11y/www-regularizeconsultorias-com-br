@@ -152,9 +152,13 @@ def test_no_external_links_and_no_exception():
 
     assert re.findall(r'href="([^"]+)"', body) == []
     assert re.findall(r'href="(https?://[^"]+)"', main) == []
-    # A exceção de link oficial vale só para a RE nº 4.035/2026; esta página não entra nela.
+    # A exceção de link oficial vale só para as RE nº 4.035, 4.090 e 4.105/2026, na matéria de produtos irregulares,
+    # e para o Comunicado nº 1/2026 da CGAA, na matéria do SISPA; esta página não entra nela.
     assert f"noticias/{SLUG}/index.html" not in NEWS_OFFICIAL_SOURCE_LINKS
-    assert list(NEWS_OFFICIAL_SOURCE_LINKS) == ["noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/index.html"]
+    assert list(NEWS_OFFICIAL_SOURCE_LINKS) == [
+        "noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/index.html",
+        "noticias/mapa-sispa-registro-agrotoxicos/index.html",
+    ]
 
 
 def test_institutional_notice_related_news_and_whatsapp_text():
@@ -211,11 +215,12 @@ def test_news_index_card_itemlist_and_counters():
     # Resumo curto do card.
     summary = re.search(r'<p class="text-slate-500 text-sm leading-relaxed mb-4">([^<]+)</p>', card).group(1)
     assert len(summary) <= 160 and "canais oficiais" in summary
-    # A posição vem da data: é o card mais recente da listagem.
-    assert cards.index(card) == 0
+    # A posição vem da data: era o card mais recente da listagem.
+    # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
+    assert cards.index(card) == 2
     items = re.findall(r'\{"@type":"ListItem","position":(\d+),"url":"([^"]+)"\}', html)
     assert [int(p) for p, _ in items] == list(range(1, 86))
-    assert items[0][1] == PUBLIC_URL
+    assert items[2][1] == PUBLIC_URL
     assert html.count(f'"url":"{PUBLIC_URL}"') == 1
     assert '<span>Todos</span><span class="text-xs text-slate-400">85</span>' in html
     assert '<span>FARMÁCIA POPULAR</span><span class="text-xs text-slate-400">11</span>' in html
@@ -257,7 +262,8 @@ def test_sitemap_lists_the_new_url_once_with_current_lastmods():
     assert sitemap.count("<loc>") == 106
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
     assert re.search(rf"<loc>{re.escape(PUBLIC_URL)}</loc>\s*<lastmod>2026-10-17</lastmod>", sitemap)
-    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-10-17</lastmod>", sitemap)
+    # 20/10/2026: a listagem reordenou dois cards.
+    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-10-20</lastmod>", sitemap)
     # 19/10/2026: o comunicado ganhou o aviso da instabilidade nos sistemas da Anvisa.
     assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/comunicado/</loc>\s*<lastmod>2026-10-19</lastmod>", sitemap)
     # A URL nova entra logo depois da listagem, como as demais matérias novas.

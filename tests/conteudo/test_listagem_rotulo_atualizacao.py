@@ -113,7 +113,8 @@ def test_card_mostra_a_data_valida_da_materia_sem_prefixo():
         if "Atualizado em" in card or "Publicado em" in card:
             falhas.append((slug, "prefixo no card"))
     assert not falhas, falhas
-    assert atualizacoes == 48
+    # 20/10/2026, 10h12: a matéria do SISPA passa a declarar atualização; o card dela também.
+    assert atualizacoes == 49
 
 
 def test_materias_do_lote_de_09_10_mostram_a_atualizacao():

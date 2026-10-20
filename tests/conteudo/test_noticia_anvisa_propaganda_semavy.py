@@ -253,7 +253,8 @@ def test_index_card_is_first_informativo_and_counts_are_updated():
     assert len(cards) == 85
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
-    card = cards[37]
+    # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
+    card = cards[38]
     opening = card.split(">", 1)[0]
     assert f'href="/noticias/{SLUG}/"' in card
     assert "news-card-compact" in opening
@@ -271,7 +272,7 @@ def test_index_card_is_first_informativo_and_counts_are_updated():
 
 
 def test_index_card_is_searchable_by_product_substance_and_resolution():
-    card = _cards(_index_html())[37]
+    card = _cards(_index_html())[38]
     opening = card.split(">", 1)[0]
     tags = re.search(r'data-tags="([^"]*)"', opening).group(1).split()
     keywords = re.search(r'data-keywords="([^"]*)"', opening).group(1)
@@ -299,7 +300,8 @@ def test_itemlist_keeps_the_semavy_url_once():
     )
     items = collection["mainEntity"]["itemListElement"]
     urls = [item["url"] for item in items]
-    assert urls[37] == PUBLIC_URL
+    # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
+    assert urls[38] == PUBLIC_URL
     assert urls.count(PUBLIC_URL) == 1
     assert [item["position"] for item in items] == list(range(1, len(items) + 1))
     assert len(items) == 85

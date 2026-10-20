@@ -92,9 +92,10 @@ def test_listing_sitemap_and_cards_follow_the_review_timestamps():
         # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
         # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
         # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
-        ("anvisa-atualiza-acesso-sncr-afe-farmacias-privadas", AFE_UPDATED, "07/10/2026 • 09h08", 29, True, "2026-10-07"),
-        ("nova-regra-anvisa-cnes-receitas-farmacias", CNES_UPDATED, "06/10/2026 • 22h09", 31, True, "2026-10-06"),
-        ("canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao", GLP1_UPDATED, "30/09/2026 • 09h30", 36, True, "2026-09-30"),
+        # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
+        ("anvisa-atualiza-acesso-sncr-afe-farmacias-privadas", AFE_UPDATED, "07/10/2026 • 09h08", 30, True, "2026-10-07"),
+        ("nova-regra-anvisa-cnes-receitas-farmacias", CNES_UPDATED, "06/10/2026 • 22h09", 32, True, "2026-10-06"),
+        ("canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao", GLP1_UPDATED, "30/09/2026 • 09h30", 37, True, "2026-09-30"),
     )
     for slug, updated, label, position, compact, lastmod in expected:
         card = _card(index, slug)
