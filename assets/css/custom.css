@@ -142,9 +142,11 @@ html {
 }
 
 /* ---------- 2. Base e tipografia ---------- */
-html {
-  scroll-behavior: smooth;
-}
+/* O html fica sem rolagem suave global, como no base.css. Com ela, o destino de
+   um link com âncora era calculado antes da troca para a fonte Inter, e a
+   página parava abaixo do card (/comunicado/#instabilidade-anvisa-2026-10-19,
+   20/10/2026); com Tab rápido, a rolagem de um foco anterior seguia depois do
+   foco. O voltar ao topo pede a rolagem suave no próprio main.js. */
 
 body {
   font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;

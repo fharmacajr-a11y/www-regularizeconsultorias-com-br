@@ -551,7 +551,9 @@ with sync_playwright() as playwright:
         page.goto(base + job["route"], wait_until="load")
         for width in job["widths"]:
             page.set_viewport_size({"width": width, "height": 800})
-            page.evaluate("() => window.scrollTo(0, 0)")
+            # Sem rolagem suave, o foco no CTA final da largura anterior leva a página ao fim e o main.js
+            # ancora a coluna; ela volta a fixed no quadro seguinte ao scrollTo(0, 0). Mede depois de dois quadros.
+            page.evaluate("() => new Promise(done => { window.scrollTo(0, 0); requestAnimationFrame(() => requestAnimationFrame(done)); })")
             item = page.evaluate(MEDIR)
             item.update({"slug": job["slug"], "familia": job["familia"], "width": width})
             saida.append(item)
