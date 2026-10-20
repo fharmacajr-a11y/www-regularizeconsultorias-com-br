@@ -176,7 +176,7 @@ def test_news_index_card_itemlist_and_counters():
     assert "85 notícias encontradas" in html
 
 
-def test_comunicado_informative_notice_is_active_and_third():
+def test_comunicado_informative_notice_is_active_and_second():
     html = COMUNICADO_PATH.read_text(encoding="utf-8")
     lista = html[html.index('id="avisos-lista"'):html.index("Histórico / encerrados")]
     articles = re.findall(r"<article\b[^>]*>.*?</article>", lista, re.DOTALL)
@@ -184,7 +184,8 @@ def test_comunicado_informative_notice_is_active_and_third():
 
     # 17/10/2026, 09h50: o aviso do Farmácia Popular sobre lembretes é o ativo mais recente; o do CNES passa ao 2º.
     # 19/10/2026, 15h40: o aviso da instabilidade nos sistemas da Anvisa entra em 1º; o do CNES passa ao 3º.
-    assert len(own) == 1 and articles.index(own[0]) == 2
+    # 20/10/2026: o aviso da instabilidade passa ao histórico; o do CNES volta ao 2º.
+    assert len(own) == 1 and articles.index(own[0]) == 1
     notice = own[0]
     opening = notice.split(">", 1)[0]
     text = _text(notice)
