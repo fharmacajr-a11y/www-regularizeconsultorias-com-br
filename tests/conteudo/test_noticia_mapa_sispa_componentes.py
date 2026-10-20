@@ -4,15 +4,13 @@ O Comunicado nº 1, de 16/10/2026, da Coordenação-Geral de Agrotóxicos e Afin
 no DOU de 19/10/2026, edição 197, Seção 3, página 3, suspende temporariamente o cadastro de componentes no SISPA
 enquanto o módulo passa por adequações. A migração dos produtos técnicos prossegue, e os prazos de componentes
 da Portaria SDA/MAPA nº 1.631/2026 serão revistos e republicados, sem data no ato. O parágrafo usa o nome do ato
-como está no DOU, termina com o link da íntegra (exceção de link oficial desta página), não anuncia fim da
+como está no DOU e cita o DOU de 19/10, Seção 3, sem link (regra de 20/10/2026), não anuncia fim da
 suspensão nem novo prazo e não se confunde com o "COMUNICADO SISPA N.º 1/2026" da página do sistema.
 """
 import json
 import re
 from datetime import datetime
 from pathlib import Path
-
-from support import NEWS_OFFICIAL_SOURCE_LINKS
 
 
 ROOT = Path(__file__).resolve().parent.parent.parent
@@ -28,14 +26,13 @@ PUBLISHED = "2026-06-22T09:20:00-03:00"
 UPDATED = "2026-10-20T10:12:00-03:00"
 UPDATED_DAY = f"{datetime.fromisoformat(UPDATED):%d/%m/%Y}"
 UPDATED_CLOCK = f"{datetime.fromisoformat(UPDATED):%Hh%M}"
+# Link retirado em 20/10/2026 (notícias sem links externos); não pode voltar.
 DOU_URL = "https://www.in.gov.br/web/dou/-/comunicado-n-1-de-16-de-outubro-de-2026-738998299"
 UPDATE_PARAGRAPH = (
     "<p><strong>Atualização em 19/10/2026:</strong> o Comunicado nº 1, de 16/10/2026, da Coordenação-Geral de "
     "Agrotóxicos e Afins do MAPA (DOU de 19/10, Seção 3), suspendeu temporariamente o cadastro de componentes no "
     "SISPA. A migração de produtos técnicos continua. Os prazos referentes aos componentes serão revistos e "
-    "republicados pelo MAPA, sem nova data definida até o momento. "
-    f'<a href="{DOU_URL}" target="_blank" rel="noopener noreferrer">Íntegra do Comunicado nº 1/2026 no Diário '
-    'Oficial da União<span class="sr-only"> (abre em nova aba)</span></a>.</p>'
+    "republicados pelo MAPA, sem nova data definida até o momento.</p>"
 )
 
 
@@ -60,7 +57,7 @@ def _article_jsonld(html):
     raise AssertionError("NewsArticle ausente")
 
 
-def test_update_paragraph_opens_the_body_with_the_exact_text_and_link():
+def test_update_paragraph_opens_the_body_with_the_exact_text():
     html = _html()
     body = _body(html)
     paragraphs = re.findall(r"<p>.*?</p>", body, re.DOTALL)
@@ -107,14 +104,14 @@ def test_update_is_declared_in_metadata_and_visible_dates():
     assert "article-badge-informativo" in html and "article-badge-atualizacao" not in html
 
 
-def test_the_only_external_link_is_the_dou_notice_inside_the_exception():
+def test_no_external_link_the_dou_is_cited_in_the_text():
     html = _html()
     main = html[html.index("<main>"):html.index("</main>")]
 
-    assert NEWS_OFFICIAL_SOURCE_LINKS[f"noticias/{SLUG}/index.html"] == (DOU_URL,)
-    assert re.findall(r'href="(https?://[^"]+)"', main) == [DOU_URL]
-    assert re.findall(r"<a\b[^>]*>", _body(html)) == [f'<a href="{DOU_URL}" target="_blank" rel="noopener noreferrer">']
-    assert html.count(DOU_URL) == 1
+    assert re.findall(r'href="(https?://[^"]+)"', main) == []
+    assert re.findall(r"<a\b[^>]*>", _body(html)) == []
+    assert DOU_URL not in html and "Íntegra do Comunicado" not in html
+    assert "(DOU de 19/10, Seção 3)" in _text(_body(html))
     assert "http" not in _text(_body(html))
 
 
@@ -128,7 +125,8 @@ def test_listing_card_moves_by_the_update_stamp_and_sitemap_follows():
     card = own[0]
     opening = card.split(">", 1)[0]
     # Mesmo carimbo da matéria de produtos irregulares, que vem antes na listagem.
-    assert cards.index(card) == 1
+    # 20/10/2026, 13h00: o card do SNCR, atualizado no lote 2, vem à frente dos dois.
+    assert cards.index(card) == 2
     assert f'data-updated="{UPDATED}"' in opening
     assert f'<time datetime="{UPDATED}" class="leading-none">{UPDATED_DAY} • {UPDATED_CLOCK}</time>' in card
     assert ">Informativo</span>" in card and "Ler notícia" in card
@@ -137,7 +135,7 @@ def test_listing_card_moves_by_the_update_stamp_and_sitemap_follows():
     assert keywords == ("MAPA, SISPA, Agrotóxicos, Sistemas oficiais, Cadastro de componentes, Produtos técnicos, "
                         "Comunicado nº 1/2026, 19/10/2026")
     items = re.findall(r'\{"@type":"ListItem","position":(\d+),"url":"([^"]+)"\}', index)
-    assert items[1] == ("2", PUBLIC_URL)
+    assert items[2] == ("3", PUBLIC_URL)
     assert index.count(f'"url":"{PUBLIC_URL}"') == 1
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
     assert f"<loc>{PUBLIC_URL}</loc>\n    <lastmod>{UPDATED[:10]}</lastmod>" in sitemap

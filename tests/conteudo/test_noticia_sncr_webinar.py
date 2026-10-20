@@ -11,10 +11,25 @@ NEWS_INDEX_PATH = ROOT / "noticias" / "index.html"
 COMUNICADO_PATH = ROOT / "comunicado" / "index.html"
 SERVICOS_PATH = ROOT / "servicos" / "index.html"
 SITEMAP_PATH = ROOT / "sitemap.xml"
+POP_PATH = ROOT / "manuais-e-pops" / "pop-sncr" / "index.html"
 ROUTE = "/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/"
 URL = f"https://www.regularizeconsultorias.com.br{ROUTE}"
 PUBLISHED = "2026-05-28T20:36:00-03:00"
-UPDATED = "2026-10-13T09:06:00-03:00"
+# 20/10/2026, 13h00: quadro do lote 2 (informe de 15/10 e Perguntas e Respostas sobre a integração, 1ª edição).
+UPDATED = "2026-10-20T13:00:00-03:00"
+UPDATE_20_10_ID = "sncr-atualizacao-20-outubro-title"
+STAGE_UPDATE_ID = "sncr-etapa-update-title"
+# Fora desta atualização: os 16 dígitos e o registro de mais de um medicamento por receita (anunciados para
+# 19/10/2026 às 18h, sem confirmação até 20/10/2026 às 10h30) e a pergunta 47, com marcas de rascunho no PDF.
+HELD_BACK_TERMS = (
+    "16 dígitos",
+    "16 digitos",
+    "14 para 16",
+    "mais de um medicamento",
+    "P47",
+    "pergunta 47",
+    "questão 47",
+)
 TITLE = "SNCR: etapa anunciada, transição e sistemas"
 ADSENSE_SCRIPT_MARKER = "pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
 WHATSAPP_NEWS_TEXT = (
@@ -48,8 +63,8 @@ def _text(html):
     return " ".join(re.sub(r"<[^>]+>", " ", html).split())
 
 
-def _callout(html):
-    start = html.index("<aside data-news-update-callout")
+def _callout(html, labelled_by=STAGE_UPDATE_ID):
+    start = html.index(f'<aside data-news-update-callout aria-labelledby="{labelled_by}"')
     return html[start:html.index("</aside>", start)]
 
 
@@ -84,11 +99,13 @@ def test_sncr_news_keeps_publication_and_updates_the_september_stage():
     assert f'<meta property="article:published_time" content="{PUBLISHED}" />' in html
     assert f'<meta property="article:modified_time" content="{UPDATED}" />' in html
     assert f'<time datetime="{PUBLISHED}">28/05/2026</time> às 20h36' in html
-    assert f'<time datetime="{UPDATED}">13/10/2026</time> às 09h06' in html
+    assert f'<time datetime="{UPDATED}">20/10/2026</time> às 13h00' in html
     assert_profiles_separated(html)
     assert f'<link rel="canonical" href="{URL}" />' in html
     assert html.count(ADSENSE_SCRIPT_MARKER) == 1
-    assert html.count("data-news-update-callout") - html.count("[data-news-update-callout]") == 1
+    # Quadro de 20/10/2026 (lote 2) acima do quadro da etapa de setembro.
+    assert html.count("data-news-update-callout") - html.count("[data-news-update-callout]") == 2
+    assert html.index(f'aria-labelledby="{UPDATE_20_10_ID}"') < html.index(f'aria-labelledby="{STAGE_UPDATE_ID}"')
     assert "<h2>Fontes oficiais</h2>" not in html
     assert "Página oficial do SNCR na Anvisa" not in html
     assert "https://www.gov.br/anvisa/" not in html
@@ -141,7 +158,8 @@ def test_sncr_news_explains_the_stage_without_false_claims():
     ):
         assert term in body or term in html, term
 
-    assert "e-CNPJ" not in html
+    # O e-CNPJ só aparece no resumo da pergunta 51 das Perguntas e Respostas sobre a integração (quadro de 20/10/2026).
+    assert html.count("e-CNPJ") == 1 and "e-CNPJ" in _callout(html, UPDATE_20_10_ID)
 
     for path in (NEWS_PATH, NEWS_INDEX_PATH, COMUNICADO_PATH, SERVICOS_PATH):
         text = _text(path.read_text(encoding="utf-8")).casefold()
@@ -166,10 +184,11 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
     # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
-    assert cards.index(card) == 4
+    # 20/10/2026, 13h00: o quadro do lote 2 leva o card do SNCR à 1ª posição; os quatro que ficavam à frente descem uma.
+    assert cards.index(card) == 0
     assert "news-card-compact" in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
-    assert f'<time datetime="{UPDATED}" class="leading-none">13/10/2026 • 09h06</time>' in card
+    assert f'<time datetime="{UPDATED}" class="leading-none">20/10/2026 • 13h00</time>' in card
     for term in (
         TITLE,
         "30/09/2026",
@@ -251,7 +270,7 @@ def test_sncr_news_has_current_sitemap_lastmod():
     sitemap = SITEMAP_PATH.read_text(encoding="utf-8")
 
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
-    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-13</lastmod>" in sitemap
+    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-20</lastmod>" in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/servicos/</loc>\n"
         "    <lastmod>2026-10-09</lastmod>"
@@ -558,6 +577,7 @@ MUTATION_CASES = (
     ("pares-cartilha", _swap_october_pairs),
     ("url-no-corpo", lambda html: _insert_paragraph(html, "Consulta governamental: https://www.gov.br/anvisa/pt-br/assuntos/noticias-anvisa/2026/.")),
     ("url-no-corpo", lambda html: _insert_paragraph(html, "Consulta externa: https://exemplo.org/nota-sncr.")),
+    ("url-no-corpo", lambda html: _insert_paragraph(html, 'Veja o <a href="https://www.gov.br/anvisa/pt-br/assuntos/medicamentos/controlados/sncr">SNCR</a>.')),
     ("afe-cnes-publico", _invert_afe_cnes),
     ("art18-marco-relativo", _shift_art18),
     ("procedimento", lambda html: _insert_paragraph(html, "Faça login no Cadastro Anvisa, inclua colaboradores e atribua permissões antes de dispensar.")),
@@ -581,3 +601,102 @@ def test_sncr_article_rejects_material_regressions_on_a_temporary_copy(tmp_path)
         copy = tmp_path / f"{guard_id}-{len(found)}.html"
         copy.write_text(mutated, encoding="utf-8")
         assert rejecting_guards(copy.read_text(encoding="utf-8")) == found
+
+
+def _update_20_10(html):
+    return _callout(html, UPDATE_20_10_ID)
+
+
+def test_sncr_update_of_20_october_follows_the_official_notices_and_the_integration_qa():
+    html = NEWS_PATH.read_text(encoding="utf-8")
+    callout = _update_20_10(html)
+    text = _text(callout)
+    paragraphs = [_plain(item) for item in re.findall(r"<p\b[^>]*>.*?</p>", callout, re.DOTALL)]
+    items = [_plain(item) for item in re.findall(r"<li>(.*?)</li>", callout, re.DOTALL)]
+
+    assert "ATUALIZAÇÃO" in text
+    assert f'<h2 id="{UPDATE_20_10_ID}" class="article-spacing-flush-top">Atualização em 20/10/2026</h2>' in callout
+    # Informe de 15/10/2026: correção do erro de solicitação de RCE e RET, distinta do limite de numeração.
+    fixed = next(item for item in paragraphs if "15/10/2026" in item)
+    for term in (
+        "correção",
+        "erro que impedia a solicitação de numerações",
+        "Receitas de Controle Especial",
+        "receitas sujeitas à retenção",
+        "prescritores já cadastrados no SNCR",
+        "funcionalidade está regularizada",
+        "não trata do limite de numeração",
+    ):
+        assert term in fixed, term
+    # Perguntas e Respostas sobre a integração, 1ª edição, de 16/10/2026: perguntas 49, 50, 51 e 53, nessa ordem.
+    assert any("16/10/2026" in item and "1ª edição" in item for item in paragraphs)
+    assert [re.search(r"\(pergunta (\d+)\)", item).group(1) for item in items] == ["49", "50", "51", "53"]
+    p49, p50, p51, p53 = items
+    for term in ("exclusivamente pelo farmacêutico", "portal web do SNCR", "Cadastro Anvisa"):
+        assert term in p49, term
+    # P50: só o que o texto diz; a data descreve o conjunto de funcionalidades, não um prazo para a integração.
+    for term in (
+        "a resposta é “Não”",
+        "No conjunto de funcionalidades previstas até 30 de setembro de 2026",
+        "não há previsão de endpoint para integração com sistemas de ponto de venda (PDV) ou ERPs de farmácias",
+    ):
+        assert term in p50, term
+    for term in (
+        "não é obrigatório para acesso e operação no SNCR",
+        "requisitos de acesso futuro",
+        "e-CNPJ",
+        "AFE válida emitida pela Anvisa",
+        "estabelecimento regularizado",
+        "conta Gov.br dos gestores ou responsáveis",
+        "farmácias e dispensários públicos",
+    ):
+        assert term in p51, term
+    for term in ("receituário físico convencional em papel", "continua válido", "offline", "sincronização posterior"):
+        assert term in p53, term
+    # Limite de numeração de 09/10/2026: sem solução anunciada, transição até 29/10/2026 e a divergência de 30/10/2026.
+    limit = next(item for item in paragraphs if "limite de numeração" in item and "09/10/2026" in item and "15/10" not in item)
+    for term in (
+        "segue sem solução anunciada",
+        "algumas Unidades da Federação",
+        "até 29/10/2026",
+        "2ª edição das Perguntas e Respostas sobre a RDC nº 1.000/2025",
+        "30/10/2026",
+        "continua registrada abaixo",
+    ):
+        assert term in limit, term
+    assert re.findall(r"\d{2}/\d{2}/\d{4}", limit) == ["09/10/2026", "29/10/2026", "30/10/2026"]
+    folded = text.casefold()
+    for claim in (
+        "foi resolvido",
+        "foi resolvida",
+        "foi solucionado",
+        "foi solucionada",
+        "ampliação foi concluída",
+        "ampliação concluída",
+        "novo prazo",
+        "prorroga",
+        "sem api pdv/erp até",
+        "até 30/09/2026, não haverá",
+    ):
+        assert claim not in folded, claim
+    # Sem link (regra de 20/10/2026): o documento é citado pelo nome e pela data, e o parágrafo do limite fecha o quadro.
+    assert "<a " not in callout and "href=" not in callout and "http" not in callout
+    assert any(
+        "Em 16/10/2026, a Anvisa publicou a 1ª edição das Perguntas e Respostas sobre a integração dos sistemas de "
+        "prescrição eletrônica ao SNCR" in item for item in paragraphs
+    )
+    last = re.findall(r"<p\b[^>]*>", callout)[-1]
+    assert last == '<p class="article-spacing-flush-bottom">' and paragraphs[-1] == limit
+
+
+def test_sncr_pages_leave_out_the_items_held_for_another_update():
+    for path in (NEWS_PATH, POP_PATH, NEWS_INDEX_PATH, COMUNICADO_PATH):
+        html = path.read_text(encoding="utf-8")
+        visible = _text(html)
+        for term in HELD_BACK_TERMS:
+            assert term not in html and term not in visible, (path.relative_to(ROOT), term)
+    # Nada de notícia nova nem de card novo no comunicado: o contador continua em 8.
+    comunicado = COMUNICADO_PATH.read_text(encoding="utf-8")
+    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', comunicado) == ["8", "8"]
+    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', NEWS_PATH.read_text(encoding="utf-8")) == ["8", "8"]
+    assert len(list((ROOT / "noticias").glob("*/index.html"))) == 85

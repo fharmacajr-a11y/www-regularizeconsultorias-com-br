@@ -16,21 +16,6 @@ EXCLUDED_PUBLIC_PATHS = {
     Path("noticias/template-noticia.html"),
     Path("whatsapp/index.html"),
 }
-# Única exceção à regra de não encaminhar o leitor para fora nas notícias: link oficial
-# conferido, por página e destino exato. Desde 15/10/2026, a íntegra da RE nº 4.035/2026 no DOU,
-# no quadro de 14/10/2026 da matéria consolidada de produtos irregulares; desde 20/10/2026, também
-# as íntegras das RE nº 4.090 e 4.105/2026, no quadro de 19/10/2026 da mesma matéria, e a íntegra do
-# Comunicado nº 1/2026 da Coordenação-Geral de Agrotóxicos e Afins, no parágrafo de 19/10/2026 da matéria do SISPA.
-NEWS_OFFICIAL_SOURCE_LINKS = {
-    "noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/index.html": (
-        "https://www.in.gov.br/web/dou/-/resolucao-re-n-4.035-de-9-de-outubro-de-2026-738059775",
-        "https://www.in.gov.br/web/dou/-/resolucao-re-n-4.090-de-15-de-outubro-de-2026-738844837",
-        "https://www.in.gov.br/web/dou/-/resolucao-re-n-4.105-de-15-de-outubro-de-2026-738856116",
-    ),
-    "noticias/mapa-sispa-registro-agrotoxicos/index.html": (
-        "https://www.in.gov.br/web/dou/-/comunicado-n-1-de-16-de-outubro-de-2026-738998299",
-    ),
-}
 
 # ---------------------------------------------------------------------------
 # Rede dos testes de navegador

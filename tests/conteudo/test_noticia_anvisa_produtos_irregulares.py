@@ -11,10 +11,12 @@ URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medica
 PUBLISHED = "2026-07-05T18:00:00-03:00"
 # 20/10/2026, 10h12: quadro das RE nº 4.090 e 4.105/2026 (DOU de 19/10/2026), publicado com o instante real do commit.
 # Os carimbos anteriores foram 15/10/2026, 17h44 (RE nº 4.035/2026), 13/10/2026, 19h54 (alcance da
-# RE nº 3.634/2026) e 11h51 (seis resoluções do mesmo dia). SNCR e DCB permanecem às 09h06 de 13/10/2026.
+# RE nº 3.634/2026) e 11h51 (seis resoluções do mesmo dia). A DCB permanece às 09h06 de 13/10/2026; o SNCR saiu desse
+# carimbo em 20/10/2026, às 13h00 (lote 2 do SNCR).
 UPDATED = "2026-10-20T10:12:00-03:00"
 UPDATED_DAY = f"{datetime.fromisoformat(UPDATED):%d/%m/%Y}"
 UPDATED_CLOCK = f"{datetime.fromisoformat(UPDATED):%Hh%M}"
+# Links das íntegras retirados em 20/10/2026 (notícias sem links externos); não podem voltar.
 DOU_RE_4035_URL = "https://www.in.gov.br/web/dou/-/resolucao-re-n-4.035-de-9-de-outubro-de-2026-738059775"
 DOU_RE_4090_URL = "https://www.in.gov.br/web/dou/-/resolucao-re-n-4.090-de-15-de-outubro-de-2026-738844837"
 DOU_RE_4105_URL = "https://www.in.gov.br/web/dou/-/resolucao-re-n-4.105-de-15-de-outubro-de-2026-738856116"
@@ -314,18 +316,19 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
     # 16/10/2026, 20h06: o card do CNES 10/2026 (publicação mais recente) passa à frente; o consolidado fica em 2º.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma. O consolidado fica em 3º.
     # 20/10/2026, 10h12: o quadro das RE nº 4.090 e 4.105/2026 leva o consolidado de volta à 1ª posição, com o mesmo resumo curto.
+    # 20/10/2026, 13h00: o card do SNCR, atualizado no lote 2, passa à frente; o consolidado fica em 2º.
     summary = ("O DOU de 14/10/2026 publica a RE nº 4.035/2026, com seis medidas sobre produtos sem registro classificados como "
                "medicamento, inclusive itens com retatrutida e tirzepatida. Não é proibição geral da tirzepatida. A matéria mantém "
                "as seis RE publicadas em 13/10/2026 e as medidas anteriores, de 01/09 a 09/10/2026; o histórico completo "
                "permanece na página.")
-    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[0]
-    assert "news-card-compact" in cards[0].split(">", 1)[0]
-    assert f"{UPDATED_DAY} • {UPDATED_CLOCK}" in cards[0]
-    assert "09h06" not in cards[0]
-    assert f'data-summary="{summary}"' in cards[0]
-    assert f"<p class=\"text-slate-500 text-sm leading-relaxed mb-4\">{summary}</p>" in cards[0]
+    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[1]
+    assert "news-card-compact" in cards[1].split(">", 1)[0]
+    assert f"{UPDATED_DAY} • {UPDATED_CLOCK}" in cards[1]
+    assert "09h06" not in cards[1]
+    assert f'data-summary="{summary}"' in cards[1]
+    assert f"<p class=\"text-slate-500 text-sm leading-relaxed mb-4\">{summary}</p>" in cards[1]
     # Números e lotes do resumo de 13/10/2026 saíram do texto do card e seguem na busca pelas palavras-chave.
-    keywords = cards[0].split('data-keywords="', 1)[1].split('"', 1)[0]
+    keywords = cards[1].split('data-keywords="', 1)[1].split('"', 1)[0]
     for term in ("RE 3.989/2026", "RE 4.000/2026", "RE 4.001/2026", "RE 4.002/2026", "RE 4.009/2026", "RE 4.028/2026",
                  "HXTZ251015", "NDC 46785-162-03", "P07725A", "Xeomin", "cloreto de sódio", "insumos farmacêuticos"):
         assert term in keywords, term
@@ -340,9 +343,9 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
                  "025155", "Z005197", "Z012354"):
         assert term in keywords, term
         assert term not in summary, term
-    assert "As RE nº 3.946 e 3.947/2026 foram publicadas no DOU de 06/10/2026" not in cards[0]
-    assert "União Vegetal Agroindustrial Ltda. como fabricante do Aloe Care" not in cards[0]
-    assert 'href="http' not in cards[0]
+    assert "As RE nº 3.946 e 3.947/2026 foram publicadas no DOU de 06/10/2026" not in cards[1]
+    assert "União Vegetal Agroindustrial Ltda. como fabricante do Aloe Care" not in cards[1]
+    assert 'href="http' not in cards[1]
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
     assert f"<loc>{URL}</loc>\n    <lastmod>{UPDATED[:10]}</lastmod>" in sitemap
 
@@ -771,7 +774,7 @@ def _october_19_callout(html):
     return html[start:html.index("</aside>", start)]
 
 
-def test_october_19_callout_keeps_dysport_and_keytruda_lots_apart_and_links_only_the_dou():
+def test_october_19_callout_keeps_dysport_and_keytruda_lots_apart_without_links():
     html = NEWS_PATH.read_text(encoding="utf-8")
     callout = _october_19_callout(html)
     items = [_text(item) for item in _items(callout)]
@@ -818,17 +821,11 @@ def test_october_19_callout_keeps_dysport_and_keytruda_lots_apart_and_links_only
     assert "As Resoluções-RE nº 4.090 e 4.105 foram assinadas em 15/10/2026" in closing
     assert "publicadas no DOU de 19/10/2026, edição 197, Seção 1, páginas 223 e 224, respectivamente" in closing
     assert "data em que entraram em vigor, conforme o art. 2º de cada ato" in closing
-    assert "Cada medida vale só para os lotes indicados no próprio ato" in closing
-    assert "Íntegra da Resolução-RE nº 4.090/2026 no Diário Oficial da União (abre em nova aba)" in closing
-    assert "íntegra da Resolução-RE nº 4.105/2026 no Diário Oficial da União (abre em nova aba)" in closing
-    assert "conferidas com a edição certificada em 19/10/2026" in closing
+    assert closing.endswith("Cada medida vale só para os lotes indicados no próprio ato.")
 
-    # Os dois únicos links do quadro são as íntegras no DOU, uma vez cada na página.
-    assert re.findall(r"<a\b[^>]*>", callout) == [
-        f'<a href="{DOU_RE_4090_URL}" target="_blank" rel="noopener noreferrer">',
-        f'<a href="{DOU_RE_4105_URL}" target="_blank" rel="noopener noreferrer">',
-    ]
-    assert html.count(DOU_RE_4090_URL) == 1 and html.count(DOU_RE_4105_URL) == 1
+    # Desde 20/10/2026, o quadro cita DOU, edição, seção e páginas no texto, sem link para as íntegras.
+    assert re.findall(r"<a\b[^>]*>", callout) == []
+    assert DOU_RE_4090_URL not in html and DOU_RE_4105_URL not in html and "Íntegra da Resolução" not in callout
     assert "http" not in _text(callout)
     for number in ("4.035", "3.717", "3.480"):
         assert number not in callout, number
@@ -839,7 +836,7 @@ def _october_14_callout(html):
     return html[start:html.index("</aside>", start)]
 
 
-def test_october_14_callout_keeps_each_re_4035_item_apart_and_links_only_the_dou():
+def test_october_14_callout_keeps_each_re_4035_item_apart_without_links():
     html = NEWS_PATH.read_text(encoding="utf-8")
     callout = _october_14_callout(html)
     items = [_text(item) for item in _items(callout)]
@@ -901,9 +898,9 @@ def test_october_14_callout_keeps_each_re_4035_item_apart_and_links_only_the_dou
     for term in ("uso próprio", "armazenamento", "Autorização de Funcionamento"):
         assert [term in item for item in items] == [False, False, False, True, False, False], term
 
-    # Os sítios dos vendedores ficam só como texto. O único link do quadro é a íntegra no DOU.
-    assert re.findall(r"<a\b[^>]*>", callout) == [f'<a href="{DOU_RE_4035_URL}" target="_blank" rel="noopener noreferrer">']
-    assert html.count(DOU_RE_4035_URL) == 1
+    # Os sítios dos vendedores ficam só como texto. Desde 20/10/2026, o quadro também não tem link para a íntegra.
+    assert re.findall(r"<a\b[^>]*>", callout) == []
+    assert DOU_RE_4035_URL not in html and "Íntegra da Resolução" not in callout
     assert "http" not in _text(callout)
     for site in ("zyntrashop", "peptideosdobrasil", "oxygenkwpharmabrasil", "zphcstore"):
         assert f"//{site}" not in html and f"//www.{site}" not in html, site
@@ -913,8 +910,7 @@ def test_october_14_callout_keeps_each_re_4035_item_apart_and_links_only_the_dou
     assert "publicada no DOU de 14/10/2026, edição 194, Seção 1, página 73" in closing
     assert "data em que entrou em vigor, conforme o art. 2º" in closing
     assert "o ato não é proibição geral da tirzepatida nem de outra substância" in closing
-    assert "Íntegra da Resolução-RE nº 4.035/2026 no Diário Oficial da União (abre em nova aba)" in closing
-    assert "conferida com a edição certificada em 15/10/2026" in closing
+    assert closing.endswith("Os endereços eletrônicos citados identificam os anúncios descritos no ato e não são indicados como referência.")
     for number in ("3.989", "4.009", "3.947"):
         assert number not in callout
 
@@ -1299,10 +1295,11 @@ def test_october_update_reaches_lead_summary_metadata_and_listing_search():
         assert _normalize_search(term) in haystack, term
     assert _consolidated_card(news_index).count(f'data-updated="{UPDATED}"') == 1
     # O carimbo de 20/10/2026, 10h12, é desta matéria e da do SISPA, atualizadas na mesma edição; o consolidado vem antes.
-    # SNCR e DCB permanecem às 09h06 de 13/10/2026.
+    # A DCB permanece às 09h06 de 13/10/2026; o SNCR passou às 13h00 de 20/10/2026 (lote 2 do SNCR).
     assert news_index.count(f'data-updated="{UPDATED}"') == 2
     assert 'href="/noticias/mapa-sispa-registro-agrotoxicos/"' in news_index.split(f'data-updated="{UPDATED}"')[2]
-    assert news_index.count('data-updated="2026-10-13T09:06:00-03:00"') == 2
+    assert news_index.count('data-updated="2026-10-13T09:06:00-03:00"') == 1
+    assert news_index.count('data-updated="2026-10-20T13:00:00-03:00"') == 1
 
 
 # Resumo do commit 1624995. A busca lia este texto; o patch revisado trocou-o pelo resumo curto

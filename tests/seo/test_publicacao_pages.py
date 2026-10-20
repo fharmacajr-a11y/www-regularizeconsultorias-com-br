@@ -32,6 +32,7 @@ NOT_PUBLISHED = (
     "noticias/a-publicar/rascunho/index.html",
     ".gitignore",
     "tests/__pycache__/support.cpython-313.pyc",
+    "CLAUDE.md",
 )
 PUBLISHED = (
     "index.html",

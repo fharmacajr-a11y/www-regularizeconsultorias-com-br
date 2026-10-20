@@ -47,7 +47,8 @@ FP_LEMBRETES_WHATSAPP_URL = "https://www.regularizeconsultorias.com.br/noticias/
 EDITAL_6_2026_AFE_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-edital-6-2026-afe-manipulacao-preparacoes-estereis/"
 # Notícia CNES/SNCR revisada em 28/09/2026 e reposicionada pelo dateModified.
 CNES_SNCR_URL = "https://www.regularizeconsultorias.com.br/noticias/cnes-continua-obrigatorio-sncr-afe-farmacias/"
-# Notícia SNCR atualizada com a etapa de 30/09/2026 e reposicionada pelo dateModified.
+# Notícia SNCR atualizada com a etapa de 30/09/2026 e reposicionada pelo dateModified; atualizada de novo em
+# 20/10/2026 às 13h00 (lote 2 do SNCR: informe de 15/10 e Perguntas e Respostas sobre a integração, 1ª edição).
 SNCR_WEBINAR_URL = "https://www.regularizeconsultorias.com.br/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/"
 # Nova notícia sobre a proibição da propaganda do Semavy (RE nº 3.750/2026).
 SEMAVY_PROPAGANDA_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-proibe-propaganda-semavy-consumidor/"
@@ -187,17 +188,18 @@ def test_news_index_itemlist_ordering():
 
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
+    # 20/10/2026, 13h00: o SNCR (lote 2) ocupa a 1ª posição; os quatro que ficavam à frente dele descem uma.
+    assert urls[0] == SNCR_WEBINAR_URL
     # 20/10/2026, 10h12: produtos irregulares (RE nº 4.090 e 4.105/2026) e SISPA (Comunicado nº 1/2026), atualizados
-    # na mesma edição, ocupam a 1ª e a 2ª posições, nessa ordem; os que ficavam entre eles descem uma.
-    assert urls[0] == PRODUTOS_IRREGULARES_URL
-    assert urls[1] == SISPA_URL
+    # na mesma edição, vêm em seguida, nessa ordem.
+    assert urls[1] == PRODUTOS_IRREGULARES_URL
+    assert urls[2] == SISPA_URL
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entrou na 1ª posição da listagem.
-    assert urls[2] == FP_LEMBRETES_WHATSAPP_URL
+    assert urls[3] == FP_LEMBRETES_WHATSAPP_URL
     # 16/10/2026, 20h06: o card do CNES 10/2026 entrou na 1ª posição da listagem.
-    assert urls[3] == CNES_COMPETENCIA_10_2026_URL
-    # SNCR e DCB seguem empatados às 09h06 de 13/10.
+    assert urls[4] == CNES_COMPETENCIA_10_2026_URL
+    # A DCB segue às 09h06 de 13/10; o SNCR saiu desse empate em 20/10.
     # A matéria eleitoral (12/10/2026, 18h08) e o CNES 09/2026 (11/10/2026, 06h07) vêm em seguida.
-    assert urls[4] == SNCR_WEBINAR_URL
     assert urls[5] == DCB_IN462_URL
     assert urls[6] == "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-adequacao-materiais-periodo-eleitoral/"
     assert urls[7] == CNES_COMPETENCIA_09_2026_URL
@@ -288,7 +290,7 @@ def test_news_index_itemlist_ordering():
     assert urls[dispositivos_position + 1] == PARAMOL_URL
     dcb_position = urls.index(DCB_IN462_URL)
     assert dcb_position == 5
-    assert urls[dcb_position - 1] == SNCR_WEBINAR_URL
+    assert urls[dcb_position - 1] == CNES_COMPETENCIA_10_2026_URL
     eleitoral = "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-adequacao-materiais-periodo-eleitoral/"
     assert urls[dcb_position + 1] == eleitoral
     paramol_position = urls.index(PARAMOL_URL)

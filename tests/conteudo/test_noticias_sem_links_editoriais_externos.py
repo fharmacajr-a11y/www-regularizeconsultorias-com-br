@@ -4,14 +4,14 @@ A varredura cobre o <main> de cada matéria: corpo, quadros, FAQ, cartões de
 fontes e blocos equivalentes. Ficam de fora o cabeçalho técnico, os scripts,
 os metadados, o rodapé, a navegação global, os botões flutuantes e o contato
 institucional da Regularize. Link interno e arquivo servido pelo próprio site
-não são referência de terceiro. A única exceção é o link oficial conferido de
-support.NEWS_OFFICIAL_SOURCE_LINKS, aceito só como href de <a> na página e no
-destino exatos listados.
+não são referência de terceiro. Regra do site desde 20/10/2026: notícias não
+têm links externos, sem exceção. A fonte é citada no texto (órgão, ato, data,
+DOU com seção e página), sem link. Os comunicados (/comunicado/) ficam fora.
 """
 import re
 from urllib.parse import urlsplit
 
-from support import NEWS_OFFICIAL_SOURCE_LINKS, ROOT, TreeParser
+from support import ROOT, TreeParser
 
 
 NEWS_DIRECTORY = ROOT / "noticias"
@@ -33,6 +33,13 @@ REMOVED_DESTINATIONS = (
     "https://www.gov.br/anvisa/pt-br/assuntos/farmacopeia/farmacopeia-brasileira",
     "anvisalegis.datalegis.net",
     "cnes2.datasus.gov.br",
+    # Links oficiais que as notícias tiveram até 20/10/2026 (RE nº 4.035, 4.090 e 4.105/2026, Comunicado nº 1/2026
+    # da CGAA e Perguntas e Respostas sobre a integração ao SNCR); a fonte segue citada no texto.
+    "https://www.in.gov.br/web/dou/-/resolucao-re-n-4.035-de-9-de-outubro-de-2026-738059775",
+    "https://www.in.gov.br/web/dou/-/resolucao-re-n-4.090-de-15-de-outubro-de-2026-738844837",
+    "https://www.in.gov.br/web/dou/-/resolucao-re-n-4.105-de-15-de-outubro-de-2026-738856116",
+    "https://www.in.gov.br/web/dou/-/comunicado-n-1-de-16-de-outubro-de-2026-738998299",
+    "https://www.gov.br/anvisa/pt-br/assuntos/medicamentos/controlados/sncr/documentos-do-sncr/perguntas-e-respostas-sncr-2-0-integracao.pdf",
 )
 
 
@@ -94,7 +101,6 @@ def editorial_external_problems(html, page):
     root = parse_text(html)
     main = _main(root)
     problems = []
-    authorized = NEWS_OFFICIAL_SOURCE_LINKS.get(page, ())
 
     for node in [main, *main.descendants()]:
         if node.tag in {"script", "style"}:
@@ -104,8 +110,6 @@ def editorial_external_problems(html, page):
             for part in value.split(","):
                 destination = external_forward(part.strip().split(" ")[0])
                 if not destination:
-                    continue
-                if node.tag == "a" and attribute == "href" and destination in authorized:
                     continue
                 anchor = " ".join(node.text_content().split())[:160]
                 problems.append(
@@ -140,8 +144,3 @@ def test_news_editorial_content_does_not_forward_to_external_references():
         page = path.relative_to(ROOT).as_posix()
         problems.extend(editorial_external_problems(path.read_text(encoding="utf-8"), page))
     assert not problems, "erro editorial: referência externa no conteúdo público das notícias\n" + "\n".join(problems)
-    # A exceção não fica órfã: cada link autorizado aparece uma vez, como href, na página listada.
-    for page, destinations in NEWS_OFFICIAL_SOURCE_LINKS.items():
-        html = (ROOT / page).read_text(encoding="utf-8")
-        for destination in destinations:
-            assert html.count(destination) == 1 and f'href="{destination}"' in html, (page, destination)

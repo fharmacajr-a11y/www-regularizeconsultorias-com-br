@@ -1,7 +1,7 @@
 from pathlib import Path
 from urllib.parse import urlsplit
 
-from support import NEWS_OFFICIAL_SOURCE_LINKS, ROOT, parse_html
+from support import ROOT, parse_html
 
 
 NEWS_DIRECTORY = ROOT / "noticias"
@@ -64,9 +64,8 @@ def test_editorial_update_callouts_follow_the_global_contract():
             assert not any("w-[" in class_name for class_name in classes), relative_path
             assert any("ATUALIZAÇÃO" in normalized_text(node) for node in descendants(callout, "span")), relative_path
             for link in links:
+                # Desde 20/10/2026, nenhum link externo nos quadros das notícias, sem exceção.
                 href = link.attrs.get("href", "")
-                if href in NEWS_OFFICIAL_SOURCE_LINKS.get(relative_path.as_posix(), ()):
-                    continue
                 assert not href.startswith("//"), (
                     f"erro editorial: quadro com encaminhamento externo {relative_path.as_posix()} → {href}"
                 )

@@ -165,10 +165,11 @@ def test_news_index_card_itemlist_and_counters():
     assert "news-amber-card" in card and "news-card-compact" in card.split(">", 1)[0]
     # A posição vem da data. 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
     # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
-    assert cards.index(card) == 3
+    # 20/10/2026, 13h00: o card do SNCR, atualizado no lote 2, sobe para a 1ª posição; os que ficavam à frente dele descem uma.
+    assert cards.index(card) == 4
     items = re.findall(r'\{"@type":"ListItem","position":(\d+),"url":"([^"]+)"\}', html)
     assert [int(p) for p, _ in items] == list(range(1, 86))
-    assert items[3][1] == PUBLIC_URL
+    assert items[4][1] == PUBLIC_URL
     assert html.count(f'"url":"{PUBLIC_URL}"') == 1
     assert '<span>Todos</span><span class="text-xs text-slate-400">85</span>' in html
     assert '<span>CNES</span><span class="text-xs text-slate-400">6</span>' in html
