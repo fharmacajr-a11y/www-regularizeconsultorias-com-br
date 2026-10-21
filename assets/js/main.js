@@ -628,11 +628,33 @@
      5. BOTÃO VOLTAR AO TOPO: exibe após 300 px de scroll e rola suavemente
         Com movimento reduzido (prefers-reduced-motion: reduce), vai direto
         ao topo, sem animação; a preferência é lida a cada clique.
+        Logo depois de iniciar a rolagem, o foco vai para o primeiro elemento
+        do body (a faixa da Portaria), com tabindex="-1" só enquanto ele tem
+        o foco. O botão some no topo; sem isso, o próximo Tab partiria do fim
+        da página (WhatsApp) e o Shift+Tab voltaria ao rodapé.
         → custom.css controla a transição via .is-visible em .floating-btn--top
      ================================================================= */
   var btnVoltarTopo = document.getElementById('btn-voltar-topo');
 
   if (btnVoltarTopo) {
+    var inicioDaPagina = document.body.firstElementChild;
+
+    var focarInicioDaPagina = function () {
+      if (!inicioDaPagina) return;
+
+      if (!inicioDaPagina.hasAttribute('tabindex')) {
+        inicioDaPagina.setAttribute('tabindex', '-1');
+        // Sem o contorno de foco do navegador em volta da faixa inteira.
+        inicioDaPagina.style.outline = 'none';
+        inicioDaPagina.addEventListener('blur', function () {
+          inicioDaPagina.removeAttribute('tabindex');
+          inicioDaPagina.style.removeProperty('outline');
+        }, { once: true });
+      }
+
+      inicioDaPagina.focus({ preventScroll: true });
+    };
+
     var handleScrollTop = function () {
       if (window.scrollY > 300) {
         btnVoltarTopo.classList.add('is-visible');
@@ -647,6 +669,7 @@
     btnVoltarTopo.addEventListener('click', function () {
       var reduzMovimento = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       window.scrollTo({ top: 0, behavior: reduzMovimento ? 'auto' : 'smooth' });
+      focarInicioDaPagina();
     });
   }
 
