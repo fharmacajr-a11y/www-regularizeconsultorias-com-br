@@ -285,7 +285,8 @@ SIDEBAR_STATE_JS = """() => {
     const column = document.querySelector('aside .news-sidebar');
     const header = document.getElementById('navbar').getBoundingClientRect().bottom;
     const box = column.getBoundingClientRect();
-    const controls = [...column.querySelectorAll('a[href], button, input')];
+    // Controles exibidos: abaixo de 1024 px "Falar com a Regularize" fica com display: none.
+    const controls = [...column.querySelectorAll('a[href], button, input')].filter(node => node.getClientRects().length);
     return {
         position: getComputedStyle(column).position, top: box.top, bottom: box.bottom,
         innerScroll: column.scrollHeight - column.clientHeight,
@@ -293,18 +294,33 @@ SIDEBAR_STATE_JS = """() => {
         focused: controls.indexOf(document.activeElement),
         controls: controls.map(node => {
             const r = node.getBoundingClientRect();
-            const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+            // Recorte da faixa que rola na horizontal abaixo de 1024 px (o próprio controle fica de fora).
+            let clip = {left: 0, right: document.documentElement.clientWidth};
+            for (let e = node.parentElement; e && e !== column; e = e.parentElement) {
+                if (getComputedStyle(e).overflowX !== 'visible') {
+                    const q = e.getBoundingClientRect();
+                    clip = {left: Math.max(clip.left, q.left), right: Math.min(clip.right, q.right)};
+                }
+            }
+            const vertical = r.top >= header - 0.5 && r.bottom <= innerHeight + 0.5;
+            const inside = r.left >= clip.left - 0.5 && r.right <= clip.right + 0.5;
+            const hit = inside && document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+            const free = !!hit && (hit === node || node.contains(hit));
             return {
                 label: (node.textContent.trim() || node.id).replace(/\\s+/g, ' ').slice(0, 30), top: r.top, bottom: r.bottom,
-                // Inteiro entre o cabeçalho e o fim da tela, e nada por cima no centro.
-                shown: r.top >= header - 0.5 && r.bottom <= innerHeight + 0.5 && !!hit && (hit === node || node.contains(hit)),
+                // Inteiro entre o cabeçalho e o fim da tela, dentro da faixa, e nada por cima no centro.
+                shown: vertical && inside && free,
+                // Pela roda vertical: a linha dele aparece inteira; fora da parte exposta da faixa, o
+                // controle se alcança rolando a faixa (dedo ou Tab), não a página.
+                reachable: vertical && (!inside || free),
             };
         }),
     };
 }"""
 # (largura, altura, escala). 1024x576 é 1280x720 com 125% de zoom; 1280x720 e
-# 960x540 são 1920x1080 com 150% e 200%. Abaixo de 1024 px a coluna vem depois
-# da lista.
+# 960x540 são 1920x1080 com 150% e 200%. Abaixo de 1024 px a coluna vem antes
+# da lista, compacta (pesquisa e faixa de categorias e ordenação que rola na
+# horizontal).
 SIDEBAR_VIEWPORTS = (
     (1024, 576, 1.25), (1024, 600, 1), (1280, 480, 1), (1280, 720, 1.5),
     (1366, 768, 1), (1440, 900, 1), (960, 540, 2), (390, 844, 3),
@@ -343,7 +359,7 @@ def _coluna(browser, base):
 
         # Roda do mouse: de cada posição, a página rola na direção da coluna até
         # passar por ela inteira (acima de 1024 px a coluna fica ao lado do topo
-        # da lista; abaixo, depois dela).
+        # da lista; abaixo, antes dela).
         page.mouse.move(width / 2, height * 0.6)
         for name, y in positions.items():
             page.evaluate("y => window.scrollTo(0, y)", y)
@@ -351,7 +367,7 @@ def _coluna(browser, base):
             middle_of_column = (current["docTop"] + current["docBottom"]) / 2
             direction = 1 if middle_of_column > current["scrollY"] + current["viewport"] / 2 else -1
             step = max(100, (current["viewport"] - current["header"]) / 2)
-            seen = [control["shown"] for control in current["controls"]]
+            seen = [control["reachable"] for control in current["controls"]]
             for _ in range(40):
                 band_top, band_bottom = current["scrollY"] + current["header"], current["scrollY"] + current["viewport"]
                 if (band_top >= current["docBottom"]) if direction > 0 else (band_bottom <= current["docTop"]):
@@ -360,7 +376,7 @@ def _coluna(browser, base):
                 page.mouse.wheel(0, direction * max(step, gap))
                 _settle(page)
                 previous, current = current["scrollY"], state()
-                seen = [old or control["shown"] for old, control in zip(seen, current["controls"])]
+                seen = [old or control["reachable"] for old, control in zip(seen, current["controls"])]
                 if current["scrollY"] == previous:
                     break
             missing = [control["label"] for control, ok in zip(current["controls"], seen) if not ok]

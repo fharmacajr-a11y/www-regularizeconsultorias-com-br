@@ -26,9 +26,11 @@ borda esquerda dela. O teste abre cada página em cada janela (com a Inter local
 5. Home: os cards de "Por que escolher" (superfícies sem link) não ficam sob a coluna, e a seta seguinte da
    vitrine cumpre o critério de foco do item 2.
 
-Exceções declaradas: na listagem de notícias, a coluna de filtros (aside) não reserva a faixa porque
-assets/js/pages/noticias.js recolhe os botões enquanto ela passa por eles; elementos fixos ou sticky (cabeçalho,
-faixa regulatória) e os próprios controles ficam fora. A matriz inclui janelas com a barra de rolagem clássica do
+Exceções declaradas: elementos fixos ou sticky (cabeçalho, faixa regulatória) e os próprios controles ficam fora.
+Até 21/10/2026 a coluna de filtros da listagem de notícias também ficava, porque vinha depois da lista e o
+assets/js/pages/noticias.js recolhia os botões enquanto ela passava por eles; desde então ela vem antes da lista,
+compacta abaixo de 1024 px, e a pesquisa e a faixa de categorias reservam a faixa como os outros blocos (o
+conteúdo da faixa que rola conta só na parte exposta, pelo recorte do overflow). A matriz inclui janelas com a barra de rolagem clássica do
 Chromium (sem --hide-scrollbars): as media queries usam a largura da janela e o layout, a largura útil (15 px a
 menos). Inclui também telas baixas (568x320, 667x375, 740x360 e 812x375): com pouca altura, o herói e o começo da
 página, que em altura normal ficam acima do alcance da coluna, passam pela faixa dela.
@@ -78,9 +80,8 @@ async () => {
   window.scrollTo({top: 0, behavior: 'instant'}); await quadro(); await quadro();
   const fixo = el => { for (let e = el; e && e !== document.documentElement; e = e.parentElement) {
     const p = getComputedStyle(e).position; if (p === 'fixed' || p === 'sticky') return true; } return false; };
-  const listagem = !!document.querySelector('#news-article-list');
   const fora = el => el.closest('script, style, noscript, template, svg, .floating-buttons, .sr-only')
-    || (listagem && el.closest('main aside')) || fixo(el) || !el.closest('main, footer');
+    || fixo(el) || !el.closest('main, footer');
   const clip = el => {
     let c = {l: -1e9, t: -1e9, r: 1e9, b: 1e9};
     for (let e = el; e && e !== document.body; e = e.parentElement) {

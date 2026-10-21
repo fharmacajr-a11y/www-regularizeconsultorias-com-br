@@ -1,28 +1,30 @@
 """Controles flutuantes sobre a coluna lateral das Notícias.
 
-Abaixo de 1024 px a coluna lateral (pesquisa, categorias, ordenação e
-atendimento) vem depois da lista, com a largura toda do miolo, e a coluna fixa
-de voltar ao topo e WhatsApp passava sobre a borda direita dela: em 960 px o
-WhatsApp cobria a contagem "54" de ANVISA. A listagem recolhe esses botões
-enquanto eles estão na região da coluna e os devolve ao sair dela.
+Até 21/10/2026, abaixo de 1024 px, a coluna lateral (pesquisa, categorias,
+ordenação e atendimento) vinha depois da lista, com a largura toda do miolo, e
+a coluna fixa de voltar ao topo e WhatsApp passava sobre a borda direita dela:
+em 960 px o WhatsApp cobria a contagem "54" de ANVISA. A listagem recolhia esses
+botões enquanto eles estavam na região da coluna. Desde então a coluna vem
+antes da lista, compacta (pesquisa e faixa de categorias e ordenação que rola
+na horizontal, sem o bloco de atendimento), e a pesquisa e a faixa reservam a
+faixa da coluna fixa como os outros blocos: os botões não recolhem mais, nem no
+topo da página, onde a coluna fica logo abaixo do herói.
 
 Em cada largura o teste reproduz o caso de 960 px (centro de ANVISA na altura
 do centro do WhatsApp), rola com a roda do mouse para baixo e para cima por
 toda a coluna, com passo menor que um botão, percorre os controles dela por
 Tab e por Shift+Tab, aplica filtros pelo mouse e pelo teclado e faz uma busca
-(a lista muda de altura e a coluna se move sem rolagem). Também salta, de uma
-vez, do fim da página (coluna fixa ancorada acima dos créditos pelo main.js)
-até as categorias e das categorias até o fim, com a medida logo depois do salto
-e sem outra rolagem, e redimensiona a janela com a coluna sob os botões. Em
-cada parada, com a rolagem e as transições terminadas,
-nenhum botão flutuante visível pode ficar sobre o texto da coluna (nomes e
-contagens das categorias inclusive), sobre os campos ou sobre o anel de foco
-do controle focado. Também confere que os botões estão visíveis longe da
-coluna, que o estado troca no máximo uma vez na entrada e outra na saída, que
-um botão recolhido não recebe foco, que o foco de mouse deixado num botão não
-fica preso num botão oculto e que um botão com foco de teclado não some. Os
-contatos da página ("Falar com a Regularize" e o WhatsApp de "Orientação
-técnica") continuam visíveis em todas as paradas.
+(a lista muda de altura). Também salta, de uma vez, do fim da página (coluna
+fixa ancorada acima dos créditos pelo main.js) até as categorias e das
+categorias até o fim, com a medida logo depois do salto e sem outra rolagem, e
+redimensiona a janela com a coluna sob os botões. Em cada parada, com a
+rolagem e as transições terminadas, nenhum botão flutuante visível pode ficar
+sobre o texto da coluna (nomes e contagens das categorias inclusive, na parte
+exposta da faixa), sobre os campos ou sobre o anel de foco do controle focado,
+e os botões nunca recolhem. Também confere que um botão com foco de teclado
+não some e que os contatos exibidos da página ("Falar com a Regularize" a
+partir de 1024 px e o WhatsApp de "Orientação técnica") continuam visíveis em
+todas as paradas.
 """
 import json
 import os
@@ -39,7 +41,7 @@ from support import SITE_DIR, subprocess_env
 
 
 # (largura, altura): celular, limites de 640, 768 e 1024 px, meia tela de
-# 1920 px e desktop. Até 1023 px a coluna fica empilhada depois da lista.
+# 1920 px e desktop. Até 1023 px a coluna fica empilhada antes da lista.
 VIEWPORTS = (
     (320, 640), (360, 780), (390, 844), (414, 896),
     (639, 900), (640, 900), (767, 900), (768, 1024),
@@ -50,8 +52,6 @@ STACKED_LIMIT = 1023
 # Passo da roda menor que o WhatsApp (44 px no celular) + uma linha de texto:
 # toda linha da coluna passa por baixo dele em alguma parada.
 WHEEL_STEP = 40
-# Longe da coluna (ou ao lado dela), os botões têm de estar visíveis.
-FAR = 40
 
 HELPERS = r"""
 window.__flutuantes = (() => {
@@ -84,6 +84,18 @@ window.__flutuantes = (() => {
     }
     return Math.max(0, reach);
   };
+  // Parte exposta: recorte pelos ancestrais com overflow dentro da coluna (a
+  // faixa que rola abaixo de 1024 px e os títulos só para leitores de tela).
+  const exposed = (node, r) => {
+    let c = {left: r.left, right: r.right, top: r.top, bottom: r.bottom};
+    for (let e = node; e && e !== sidebar().parentElement; e = e.parentElement) {
+      const s = getComputedStyle(e);
+      if (s.overflowX === 'visible' && s.overflowY === 'visible') continue;
+      const q = e.getBoundingClientRect();
+      c = {left: Math.max(c.left, q.left), right: Math.min(c.right, q.right), top: Math.max(c.top, q.top), bottom: Math.min(c.bottom, q.bottom)};
+    }
+    return c.right - c.left >= 0.5 && c.bottom - c.top >= 0.5 ? c : null;
+  };
   const regions = () => {
     const column = sidebar();
     const found = [];
@@ -96,17 +108,19 @@ window.__flutuantes = (() => {
       const range = document.createRange();
       range.selectNodeContents(text);
       for (const r of range.getClientRects()) {
-        if (r.width && r.height) found.push({kind, name: value.slice(0, 40), ...box(r)});
+        const part = r.width && r.height ? exposed(text.parentElement, r) : null;
+        if (part) found.push({kind, name: value.slice(0, 40), ...part});
       }
     }
     for (const field of column.querySelectorAll('input, select, textarea')) {
-      found.push({kind: 'campo', name: field.id, ...box(field.getBoundingClientRect())});
+      const part = field.getClientRects().length ? exposed(field, field.getBoundingClientRect()) : null;
+      if (part) found.push({kind: 'campo', name: field.id, ...part});
     }
     const active = document.activeElement;
     if (active && column.contains(active)) {
       const r = active.getBoundingClientRect(), reach = ring(active);
-      found.push({kind: 'foco', name: describe(active),
-                  left: r.left - reach, right: r.right + reach, top: r.top - reach, bottom: r.bottom + reach});
+      const part = exposed(active.parentElement, {left: r.left - reach, right: r.right + reach, top: r.top - reach, bottom: r.bottom + reach});
+      if (part) found.push({kind: 'foco', name: describe(active), ...part});
     }
     return found;
   };
@@ -170,8 +184,10 @@ window.__flutuantes = (() => {
         }
       }
       const active = document.activeElement;
+      // "Falar com a Regularize" só a partir de 1024 px (abaixo, display: none).
       const contacts = [document.querySelector('aside .news-sidebar a[href="/contato/"]'),
-                        [...document.querySelectorAll('main a[href^="/whatsapp/"]')].find(a => a.closest('.border-l-4'))];
+                        [...document.querySelectorAll('main a[href^="/whatsapp/"]')].find(a => a.closest('.border-l-4'))]
+        .filter(node => !node || node.getClientRects().length);
       const controls = [...sidebar().querySelectorAll('a[href], button, input')];
       return {
         scrollY, overlaps: [...new Set(overlaps)],
@@ -212,9 +228,9 @@ from playwright.sync_api import sync_playwright
 
 from support import new_context
 
-base, width, height, stacked_limit, wheel_step, far = sys.argv[1:]
+base, width, height, stacked_limit, wheel_step = sys.argv[1:]
 helpers = os.environ["NOTICIAS_FLUTUANTES_JS"]
-width, height, stacked_limit, wheel_step, far = map(int, (width, height, stacked_limit, wheel_step, far))
+width, height, stacked_limit, wheel_step = map(int, (width, height, stacked_limit, wheel_step))
 stacked = width <= stacked_limit
 failures, stats = [], {"stops": 0, "collapsedStops": 0}
 
@@ -223,7 +239,7 @@ def settle():
     page.evaluate("window.__flutuantes.settle()")
 
 
-def check(where, expect_far_visible=True):
+def check(where):
     state = page.evaluate("window.__flutuantes.state()")
     stats["stops"] += 1
     stats["collapsedStops"] += state["collapsed"]
@@ -231,15 +247,12 @@ def check(where, expect_far_visible=True):
     failures.extend(f"{label}: {overlap}" for overlap in state["overlaps"][:3])
     if not state["activeShown"]:
         failures.append(f"{label}: foco em botão flutuante oculto")
-    if expect_far_visible and (state["beside"] or state["gap"] > far) and (state["collapsed"] or state["whatsappOpacity"] < 0.99):
-        failures.append(f"{label}: botões recolhidos longe da coluna (distância {state['gap']:.0f} px)")
+    # Desde 21/10/2026 os botões não recolhem: perto da coluna, longe dela ou cruzando a faixa dela.
+    if state["collapsed"] or state["whatsappOpacity"] < 0.99:
+        failures.append(f"{label}: botões recolhidos (distância da coluna {state['gap']:.0f} px)")
     if not state["contactsShown"]:
         failures.append(f"{label}: contato da página oculto")
     return state
-
-
-def toggles(states):
-    return sum(a != b for a, b in zip(states, states[1:]))
 
 
 with sync_playwright() as playwright:
@@ -280,16 +293,11 @@ with sync_playwright() as playwright:
             if state["scrollY"] == previous or (direction > 0 and state["scrollY"] >= end) or (direction < 0 and state["scrollY"] <= start):
                 break
             previous = state["scrollY"]
-        stats[label] = toggles(states)
-        if toggles(states) > 2:
-            failures.append(f"@{width} {label}: o estado dos botões trocou {toggles(states)} vezes ({states})")
-        if stacked and not any(states):
-            failures.append(f"@{width} {label}: os botões não recolheram ao passar pela coluna")
-        if not stacked and any(states):
-            failures.append(f"@{width} {label}: os botões recolheram com a coluna ao lado")
+        stats[label] = sum(states)
 
     # 3. Teclado: Tab do topo e Shift+Tab a partir do primeiro card.
-    controls = page.evaluate("document.querySelectorAll('aside .news-sidebar :is(a[href], button, input)').length")
+    controls = page.evaluate("[...document.querySelectorAll('aside .news-sidebar :is(a[href], button, input)')]"
+                             ".filter(node => node.getClientRects().length).length")
     for key, start_at in (("Tab", "main h1"), ("Shift+Tab", "#news-article-list [data-news-card] p")):
         page.evaluate("window.scrollTo(0, 0)")
         settle()
@@ -308,7 +316,8 @@ with sync_playwright() as playwright:
             failures.append(f"@{width} {key}: {len(reached)} de {controls} controles da coluna alcançados")
 
     if stacked:
-        # 4. Filtros em uso: a lista muda de altura e a coluna se move sem rolagem.
+        # 4. Filtros em uso: a lista muda de altura (e o noticias.js pode rolar
+        #    até a faixa para mostrar o 1º card).
         page.evaluate("window.__flutuantes.alignAnvisa()")
         settle()
         page.locator("[data-news-category=sngpc]").click()
@@ -325,7 +334,7 @@ with sync_playwright() as playwright:
         settle()
         check("depois de limpar a busca")
 
-        # 5. Foco de mouse deixado no "voltar ao topo" não fica preso num botão oculto.
+        # 5. Foco de mouse deixado no "voltar ao topo" e a coluna de novo na altura dos botões.
         page.evaluate("window.scrollTo(0, 600)")
         settle()
         page.locator(".floating-btn--top").click()
@@ -334,23 +343,28 @@ with sync_playwright() as playwright:
         settle()
         check("ANVISA depois de clicar em voltar ao topo")
 
-        # 6. Botão com foco de teclado não some; ao sair do foco, recolhe.
-        # No rodapé, longe da coluna, os botões voltam; depois o Tab chega a eles.
+        # 6. Botão com foco de teclado não some; sem o foco, continua visível.
+        # Do último link do rodapé, o Tab chega a eles: voltar ao topo e, no
+        # Tab seguinte, o WhatsApp. Com a coluna antes da lista, ANVISA fica
+        # perto do topo (scrollY abaixo de 300), onde o main.js esconde o
+        # voltar ao topo em qualquer página; a conferência usa o WhatsApp.
         page.locator("footer a").last.focus()
         settle()
         check("último link do rodapé")
         page.keyboard.press("Tab")
         settle()
+        page.keyboard.press("Tab")
+        settle()
+        if not page.evaluate("document.activeElement.classList.contains('floating-btn--whatsapp')"):
+            failures.append(f"@{width}: o 2º Tab depois do rodapé não chegou ao WhatsApp")
         page.evaluate("window.__flutuantes.alignAnvisa()")
         settle()
         state = page.evaluate("window.__flutuantes.state()")
         if not state["activeInGroup"] or state["collapsed"]:
             failures.append(f"@{width}: botão flutuante com foco de teclado sumiu ({state['activeLabel']})")
-        page.locator("aside .news-sidebar h2").nth(1).click()
+        page.locator("aside .news-sidebar h2").first.click()
         settle()
-        state = check("depois de tirar o foco do botão flutuante")
-        if not state["collapsed"]:
-            failures.append(f"@{width}: sem foco, os botões não recolheram sobre a coluna")
+        check("depois de tirar o foco do botão flutuante")
 
         # 7. Saltos instantâneos entre o rodapé (coluna fixa ancorada pelo
         #    main.js) e as categorias, nos dois sentidos. A medida vem logo
@@ -367,23 +381,20 @@ with sync_playwright() as playwright:
         settle()
         if not page.evaluate("window.__flutuantes.footer()")["docked"]:
             failures.append(f"@{width}: a coluna fixa não estava ancorada no rodapé antes do salto")
-        state = jump("window.__flutuantes.jumpToAnvisa()", "salto do rodapé até ANVISA")
-        if not state["collapsed"]:
-            failures.append(f"@{width} salto do rodapé até ANVISA: os botões não recolheram")
+        jump("window.__flutuantes.jumpToAnvisa()", "salto do rodapé até ANVISA")
         # O inverso parte de um estado próprio: do topo até ANVISA, rolando.
         page.evaluate("window.scrollTo(0, 0)")
         settle()
         page.evaluate("window.__flutuantes.alignAnvisa()")
         settle()
-        if not check("ANVISA antes do salto ao rodapé")["collapsed"]:
-            failures.append(f"@{width}: os botões não recolheram antes do salto ao rodapé")
+        check("ANVISA antes do salto ao rodapé")
         jump("window.__flutuantes.jumpToBottom()", "salto de ANVISA até o rodapé")
         footer = page.evaluate("window.__flutuantes.footer()")
         if not footer["docked"] or abs(footer["gapToCredits"] - 16) > 0.5 or footer["covered"]:
             failures.append(f"@{width} salto de ANVISA até o rodapé: ancoragem fora do previsto {footer}")
 
-        # 8. Redimensionar com a coluna sob os botões: no desktop eles voltam
-        #    (a lateral fica ao lado); de volta à largura, nada fica coberto.
+        # 8. Redimensionar com a coluna na altura dos botões: no desktop a
+        #    lateral fica ao lado; de volta à largura, nada fica coberto.
         page.evaluate("window.__flutuantes.alignAnvisa()")
         settle()
         page.set_viewport_size({"width": 1440, "height": height})
@@ -415,7 +426,7 @@ def probes():
         width, height = viewport
         return subprocess.run(
             [sys.executable, "-c", PROBE, base, str(width), str(height), str(STACKED_LIMIT),
-             str(WHEEL_STEP), str(FAR)],
+             str(WHEEL_STEP)],
             capture_output=True,
             text=True,
             encoding="utf-8",

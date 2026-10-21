@@ -1,80 +1,70 @@
 /* =================================================================
-   Notícias: controles flutuantes recolhidos sobre a coluna lateral
-   Abaixo de 1024 px a coluna lateral (pesquisa, categorias, ordenação e
-   atendimento) vem depois da lista, na largura toda do miolo, e a coluna
-   fixa de voltar ao topo e WhatsApp cobriria a borda direita dela, onde
-   ficam as contagens das categorias. Enquanto as duas se cruzam (com 1rem
-   de folga), a coluna fixa recebe o atributo inert e os botões recolhem
-   (pages/noticias.css); ao sair, voltam. No desktop a lateral fica à
-   esquerda e nunca cruza a coluna fixa.
-   Recolher muda só opacidade e visibilidade: a caixa da coluna fixa
-   continua no mesmo lugar, então a medida não depende do próprio estado e
-   não há ida e volta na borda. Com inert, os botões saem da ordem do Tab e
-   o navegador tira deles o foco de mouse deixado por um clique. Um botão
-   com foco de teclado não some.
-   A medida vem depois do main.js, que reposiciona a coluna fixa (ancorada
-   ou não acima dos créditos do rodapé) num requestAnimationFrame. Medida no
-   próprio evento de rolagem, ela lia a posição do quadro anterior: num salto
-   do rodapé até a lateral, a coluna ainda ancorada parecia longe dela.
+   Notícias: faixa de filtros abaixo de 1024 px
+   Abaixo de 1024 px a coluna de filtros (pesquisa e faixa de categorias e
+   ordenação, pages/noticias.css) vem antes da lista, como no HTML.
+   1. Botão focado inteiro na faixa. O Chromium só rola a faixa até o botão
+      focado quando ele está todo fora dela: um botão cortado pela borda, sob
+      o esmaecido, ficava como estava. Com nearest e o scroll-padding-inline
+      da faixa, ele aparece inteiro, antes do esmaecido.
+   2. Resultado do filtro à vista. Com a faixa no pé da janela, uma categoria
+      ou a ordenação mudava a lista abaixo da dobra, sem nada à vista. Depois
+      do clique (pelo mouse, pelo toque ou por Enter e Espaço), se o topo do
+      1º card não aparece na janela, a página rola de uma vez até a faixa
+      ficar logo abaixo do cabeçalho (o scroll-padding-top do html), com o 1º
+      card logo depois dela. O foco continua no botão usado. O ouvinte fica na
+      faixa e recebe o clique depois do ouvinte do próprio botão no main.js,
+      que já atualizou a lista.
+   A partir de 1024 px a faixa não rola, a lista fica ao lado da coluna e
+   nada muda. Sem JavaScript a faixa continua visível e rola pelo dedo.
+   Até 21/10/2026 este arquivo recolhia voltar ao topo e WhatsApp enquanto
+   eles passavam pela coluna, que vinha depois da lista. Agora a pesquisa e a
+   faixa reservam a faixa da coluna fixa e os botões não recolhem.
    ================================================================= */
 (function () {
   'use strict';
 
-  var column = document.querySelector('aside .news-sidebar');
-  var floating = document.querySelector('.floating-buttons');
+  var column = document.querySelector('main aside');
+  var filters = document.querySelector('.news-filters');
+  var strip = document.querySelector('.news-filters__strip');
+  var list = document.getElementById('news-article-list');
+  var navbar = document.getElementById('navbar');
 
-  if (!column || !floating) return;
+  if (!column || !filters || !strip || !list) return;
 
-  var GAP = 16;
-  var frame = 0;
-
-  var keyboardFocusInside = function () {
-    var active = document.activeElement;
-
-    if (!active || !floating.contains(active)) return false;
-    try {
-      return active.matches(':focus-visible');
-    } catch (error) {
-      return true;
+  strip.addEventListener('focusin', function (event) {
+    if (strip.scrollWidth > strip.clientWidth) {
+      event.target.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' });
     }
-  };
+  });
 
-  var update = function () {
-    var area = column.getBoundingClientRect();
-    var group = floating.getBoundingClientRect();
-    var crossing = area.height > 0 &&
-      area.left < group.right + GAP && area.right > group.left - GAP &&
-      area.top < group.bottom + GAP && area.bottom > group.top - GAP;
+  // Quanto do 1º card precisa aparecer acima do fim da janela: a linha de
+  // selos e data e o começo do título.
+  var VISIBLE = 96;
 
-    floating.toggleAttribute('inert', crossing && !keyboardFocusInside());
-  };
+  var firstCard = function () {
+    var cards = list.querySelectorAll('[data-news-card]');
 
-  // Uma medida por quadro, só quando algum evento pede. Os ouvintes do
-  // main.js foram registrados antes (o script dele carrega primeiro), e os
-  // pedidos de quadro rodam na ordem em que foram feitos: o reposicionamento
-  // dele vem antes desta medida, ainda antes da pintura.
-  var requestUpdate = function () {
-    if (!frame) {
-      frame = window.requestAnimationFrame(function () {
-        frame = 0;
-        update();
-      });
+    for (var index = 0; index < cards.length; index += 1) {
+      if (cards[index].getClientRects().length) return cards[index];
     }
+    return null;
   };
 
-  window.addEventListener('scroll', requestUpdate, { passive: true });
-  window.addEventListener('resize', requestUpdate);
-  window.addEventListener('load', requestUpdate);
-  floating.addEventListener('focusin', requestUpdate);
-  // Na saída do foco o destino ainda não está focado; no quadro, já está.
-  floating.addEventListener('focusout', requestUpdate);
+  var revealResults = function () {
+    // Lado a lado (1024 px ou mais): a lista começa no topo da coluna.
+    if (column.getBoundingClientRect().bottom > list.getBoundingClientRect().top + 1) return;
 
-  // Filtros, busca e "Ver mais" mudam a altura da lista e movem a coluna. O
-  // observador do main.js, criado antes, já reposicionou a coluna fixa neste
-  // mesmo ciclo; a medida vem na hora, sem esperar outro quadro.
-  if ('ResizeObserver' in window) {
-    new ResizeObserver(update).observe(document.body);
-  }
+    var card = firstCard();
+    if (!card) return;
 
-  update();
+    var top = card.getBoundingClientRect().top;
+    var header = navbar ? navbar.getBoundingClientRect().bottom : 0;
+
+    if (top >= header && top <= window.innerHeight - VISIBLE) return;
+    filters.scrollIntoView({ block: 'start', behavior: 'instant' });
+  };
+
+  filters.addEventListener('click', function (event) {
+    if (event.target.closest('[data-news-category], [data-news-sort]')) revealResults();
+  });
 })();

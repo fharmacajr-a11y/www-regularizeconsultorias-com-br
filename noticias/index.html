@@ -33,7 +33,7 @@
   <link rel="stylesheet" href="/assets/css/tailwind.min.css?v=20261003-acessibilidade-1">
   <link rel="stylesheet" href="/assets/css/base.css?v=20261019-rolagem-1">
   <link rel="stylesheet" href="/assets/css/components.css?v=20261010-layout-1">
-  <link rel="stylesheet" href="/assets/css/pages/noticias.css?v=20261012-noticias-3">
+  <link rel="stylesheet" href="/assets/css/pages/noticias.css?v=20261021-ordem-tab-1">
   <link rel="stylesheet" href="/assets/css/pages/noticias-tipos.css?v=20261014-layout-1">
   <script type="application/ld+json">
 {
@@ -231,52 +231,56 @@
     <section class="py-8 md:py-10 bg-slate-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
-          <aside class="order-2 lg:order-1 lg:col-span-4 xl:col-span-3">
+          <aside class="lg:col-span-4 xl:col-span-3">
             <div class="news-sidebar space-y-6">
-              <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+              <div class="news-search-card bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
                 <h2 class="text-base font-bold text-slate-950 mb-3">Pesquisar notícias</h2>
                 <label for="news-search" class="block text-sm font-medium text-slate-600 mb-2">Tema, órgão ou palavra-chave</label>
                 <input id="news-search" type="search" class="form-input" placeholder="Ex.: AFE, SNGPC, vigilância..." autocomplete="off" />
                 <p id="news-result-count" class="mt-3 text-sm text-slate-500" aria-live="polite">85 notícias encontradas</p>
               </div>
 
-              <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-                <h2 class="text-base font-bold text-slate-950 mb-4">Categorias</h2>
-                <div class="flex flex-col gap-2" aria-label="Filtros de categoria">
-                  <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="todos" aria-pressed="true"><span>Todos</span><span class="text-xs text-slate-400">85</span></button>
-                  <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="anvisa" aria-pressed="false"><span>ANVISA</span><span class="text-xs text-slate-400">54</span></button>
-                  <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="farmacia-popular" aria-pressed="false"><span>FARMÁCIA POPULAR</span><span class="text-xs text-slate-400">11</span></button>
-                  <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="cnes" aria-pressed="false"><span>CNES</span><span class="text-xs text-slate-400">6</span></button>
-                  <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="ministerio-saude" aria-pressed="false"><span>MINISTÉRIO DA SAÚDE</span><span class="text-xs text-slate-400">1</span></button>
-                  <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="crf" aria-pressed="false"><span>CRF</span><span class="text-xs text-slate-400">3</span></button>
-                  <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="mapa" aria-pressed="false"><span>M.A.P.A</span><span class="text-xs text-slate-400">3</span></button>
-                  <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="visa" aria-pressed="false"><span>VIGILÂNCIA SANITÁRIA</span><span class="text-xs text-slate-400">2</span></button>
-                  <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="sncr" aria-pressed="false"><span>SNCR</span><span class="text-xs text-slate-400">2</span></button>
-                  <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="sngpc" aria-pressed="false"><span>SNGPC</span><span class="text-xs text-slate-400">1</span></button>
-                  <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="pf" aria-pressed="false"><span>POLÍCIA FEDERAL</span><span class="text-xs text-slate-400">2</span></button>
+              <div class="news-filters">
+                <div class="news-filters__strip">
+                  <div class="news-filters__block bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                    <h2 class="news-filters__title text-base font-bold text-slate-950 mb-4">Categorias</h2>
+                    <div class="news-filters__categories flex flex-col gap-2" aria-label="Filtros de categoria">
+                      <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="todos" aria-pressed="true"><span>Todos</span><span class="text-xs text-slate-400">85</span></button>
+                      <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="anvisa" aria-pressed="false"><span>ANVISA</span><span class="text-xs text-slate-400">54</span></button>
+                      <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="farmacia-popular" aria-pressed="false"><span>FARMÁCIA POPULAR</span><span class="text-xs text-slate-400">11</span></button>
+                      <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="cnes" aria-pressed="false"><span>CNES</span><span class="text-xs text-slate-400">6</span></button>
+                      <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="ministerio-saude" aria-pressed="false"><span>MINISTÉRIO DA SAÚDE</span><span class="text-xs text-slate-400">1</span></button>
+                      <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="crf" aria-pressed="false"><span>CRF</span><span class="text-xs text-slate-400">3</span></button>
+                      <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="mapa" aria-pressed="false"><span>M.A.P.A</span><span class="text-xs text-slate-400">3</span></button>
+                      <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="visa" aria-pressed="false"><span>VIGILÂNCIA SANITÁRIA</span><span class="text-xs text-slate-400">2</span></button>
+                      <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="sncr" aria-pressed="false"><span>SNCR</span><span class="text-xs text-slate-400">2</span></button>
+                      <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="sngpc" aria-pressed="false"><span>SNGPC</span><span class="text-xs text-slate-400">1</span></button>
+                      <button type="button" class="news-filter-button flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2.5 text-left text-sm font-semibold text-slate-600 hover:border-brand hover:text-brand transition-colors" data-news-category="pf" aria-pressed="false"><span>POLÍCIA FEDERAL</span><span class="text-xs text-slate-400">2</span></button>
+                    </div>
+                  </div>
+
+                  <div class="news-filters__block bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                    <div class="news-filters__title mb-4 flex items-center gap-2 font-semibold text-slate-950">
+                      <svg class="h-4 w-4 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18M7 12h10M10 18h4"/>
+                      </svg>
+                      <h2 class="text-base font-bold">Ordenar notícias</h2>
+                    </div>
+                    <div class="news-filters__sort grid grid-cols-2 gap-2 rounded-lg border border-slate-200 bg-slate-100 p-1" role="group" aria-label="Ordenação das notícias">
+                      <button type="button" class="news-sort-button rounded-md px-3 py-2 text-sm font-semibold text-slate-600 transition-colors hover:text-brand" data-news-sort="desc" aria-pressed="true">
+                        <span class="block font-bold">Z-A</span>
+                        <span class="block text-xs">Mais nova</span>
+                      </button>
+                      <button type="button" class="news-sort-button rounded-md px-3 py-2 text-sm font-semibold text-slate-600 transition-colors hover:text-brand" data-news-sort="asc" aria-pressed="false">
+                        <span class="block font-bold">A-Z</span>
+                        <span class="block text-xs">Mais velha</span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-                <div class="mb-4 flex items-center gap-2 font-semibold text-slate-950">
-                  <svg class="h-4 w-4 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18M7 12h10M10 18h4"/>
-                  </svg>
-                  <h2 class="text-base font-bold">Ordenar notícias</h2>
-                </div>
-                <div class="grid grid-cols-2 gap-2 rounded-lg border border-slate-200 bg-slate-100 p-1" role="group" aria-label="Ordenação das notícias">
-                  <button type="button" class="news-sort-button rounded-md px-3 py-2 text-sm font-semibold text-slate-600 transition-colors hover:text-brand" data-news-sort="desc" aria-pressed="true">
-                    <span class="block font-bold">Z-A</span>
-                    <span class="block text-xs">Mais nova</span>
-                  </button>
-                  <button type="button" class="news-sort-button rounded-md px-3 py-2 text-sm font-semibold text-slate-600 transition-colors hover:text-brand" data-news-sort="asc" aria-pressed="false">
-                    <span class="block font-bold">A-Z</span>
-                    <span class="block text-xs">Mais velha</span>
-                  </button>
-                </div>
-              </div>
-
-              <div class="rounded-xl border border-brand/20 bg-brand-dark p-5 text-white shadow-sm">
+              <div class="news-contact-card rounded-xl border border-brand/20 bg-brand-dark p-5 text-white shadow-sm">
                 <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-brand-light">Atendimento técnico</p>
                 <h2 class="text-xl font-extrabold leading-tight mb-3">Precisa analisar um processo?</h2>
                 <p class="text-sm text-slate-200 leading-relaxed mb-5">
@@ -287,7 +291,7 @@
             </div>
           </aside>
 
-          <div class="order-1 lg:order-2 lg:col-span-8 xl:col-span-9">
+          <div class="lg:col-span-8 xl:col-span-9">
             <div id="news-article-list" class="flex flex-col gap-4">
               <article class="news-card news-card-compact news-featured-card news-amber-card rounded-xl border bg-white p-5 transition-colors duration-300" data-news-card data-category="sncr" data-updated="2026-10-20T13:00:00-03:00" data-title="SNCR: etapa anunciada, transição e sistemas" data-summary="A etapa anunciada pela Anvisa para 30/09/2026 é gradual. A nota da API, de 01/10, trata dos serviços de prescrição. Papel e SNGPC continuam nas hipóteses aplicáveis. Informes de 09/10/2026 tratam do limite de numeração em algumas Unidades da Federação e de numerações disponibilizadas incorretamente." data-tags="sncr rdc receita-digital medicamentos-controlados" data-keywords="SNCR, RDC, Receita digital, Medicamentos controlados">
                 <div class="flex flex-col gap-3 mb-5 text-xs font-semibold sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3 sm:mb-4">
@@ -1882,6 +1886,6 @@
   </div>
 
   <script src="/assets/js/main.min.js?v=20261020-foco-1"></script>
-  <script src="/assets/js/pages/noticias.js?v=20261004-salto-1" defer></script>
+  <script src="/assets/js/pages/noticias.js?v=20261021-ordem-tab-1" defer></script>
 </body>
 </html>

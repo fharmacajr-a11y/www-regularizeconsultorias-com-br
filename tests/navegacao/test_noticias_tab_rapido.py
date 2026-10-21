@@ -2,8 +2,10 @@
 
 Até 19/10/2026 o base.css tinha `html { scroll-behavior: smooth; }`. Na
 listagem, a coluna lateral (busca, categorias, ordenação e atendimento) vem
-antes da lista no documento e termina abaixo da dobra: abaixo de 1024 px ela
-aparece depois da lista; a partir daí, à esquerda. Tabs seguidos por ela
+antes da lista no documento e termina abaixo da dobra: até 21/10/2026, abaixo
+de 1024 px ela aparecia depois da lista; a partir daí, à esquerda. Desde
+21/10/2026 ela vem antes da lista também na tela, compacta abaixo de 1024 px
+(test_noticias_ordem_tab.py). Tabs seguidos por ela
 iniciavam rolagens suaves que o Tab seguinte redirecionava antes de a página
 andar. O foco chegava ao link do 1º card ainda visível, e o Chromium não rolava
 para ele nem interrompia a animação em curso. A página terminava na coluna, com

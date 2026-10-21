@@ -1,11 +1,14 @@
 """Bordas da coluna lateral das Notícias em relação aos outros cards.
 
-Abaixo de 1024 px a coluna vem depois da lista e cada bloco dela (Pesquisar,
-Categorias, Ordenar, Atendimento técnico) tem de ocupar a mesma largura útil
-de "Orientação técnica", dos cards de notícia e de "Sobre o conteúdo". Até a
-rodada de 04/10/2026 um margin-right só da coluna a terminava 56 a 60 px antes
-da borda dos demais. A partir de 1024 px ficam as duas colunas do grid: a
-lateral na borda esquerda de "Sobre o conteúdo" e a lista na borda direita.
+Abaixo de 1024 px a coluna vem antes da lista (desde 21/10/2026; antes vinha
+depois, com order) e fica compacta: o bloco da pesquisa e o cartão da faixa de
+categorias e ordenação, sem o bloco "Atendimento técnico". Os dois têm de
+ocupar a mesma largura útil de "Orientação técnica", dos cards de notícia e de
+"Sobre o conteúdo". Até a rodada de 04/10/2026 um margin-right só da coluna a
+terminava 56 a 60 px antes da borda dos demais. A partir de 1024 px ficam as
+duas colunas do grid, com os quatro blocos (Pesquisar, Categorias, Ordenar,
+Atendimento técnico): a lateral na borda esquerda de "Sobre o conteúdo" e a
+lista na borda direita.
 """
 import json
 import subprocess
@@ -41,22 +44,30 @@ MEASURE = """() => {
     return {
         innerWidth, clientWidth: document.documentElement.clientWidth,
         overflowX: document.documentElement.scrollWidth - document.documentElement.clientWidth,
-        blocks: [...sidebar.children].map(el => ({
-            name: el.querySelector('h2, p').textContent.trim(), ...box(el)})),
+        // Blocos com caixa e borda: abaixo de 1024 px os de categorias e de
+        // ordenação são display: contents dentro do cartão da faixa, e o de
+        // atendimento é display: none.
+        blocks: [...sidebar.querySelectorAll('.news-search-card, .news-filters, .news-filters__block, .news-contact-card')]
+            .filter(el => el.getClientRects().length && getComputedStyle(el).borderTopWidth !== '0px')
+            .map(el => ({name: el.querySelector('h2, p').textContent.trim(), ...box(el)})),
         aside: box(sidebar.closest('aside')), listColumn: box(list.parentElement),
         card: box(list.querySelector('[data-news-card]')),
         orientacao: box(kicker('Orientação técnica')),
         sobre: box(kicker('Sobre o conteúdo')),
     };
 }"""
-# Com cada botão flutuante na altura de cada controle da lateral, o centro do
-# controle continua sendo dele.
+# Com cada botão flutuante na altura de cada controle exibido da lateral, o
+# centro do controle continua sendo dele. Na faixa que rola, o controle é
+# trazido para dentro dela antes (nearest, com o scroll-padding da faixa).
 COVERED = """async () => {
     document.documentElement.style.scrollBehavior = 'auto';
     const frame = () => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(done)));
     const middle = r => r.top + r.height / 2;
     const covered = [];
-    for (const node of document.querySelectorAll('aside .news-sidebar :is(a[href], button, input)')) {
+    const nodes = [...document.querySelectorAll('aside .news-sidebar :is(a[href], button, input)')]
+        .filter(node => node.getClientRects().length);
+    for (const node of nodes) {
+        node.scrollIntoView({block: 'nearest', inline: 'nearest'});
         for (const button of document.querySelectorAll('.floating-buttons .floating-btn')) {
             window.scrollBy(0, middle(node.getBoundingClientRect()) - middle(button.getBoundingClientRect()));
             await frame();
@@ -118,20 +129,19 @@ def _edges(box):
     return round(box["left"], 2), round(box["right"], 2)
 
 
-def _assert_common(state, width):
+def _assert_common(state, width, names):
     assert state["innerWidth"] == width and state["clientWidth"] == width, state
     assert state["overflowX"] <= 0, state["overflowX"]
-    names = [block["name"] for block in state["blocks"]]
-    assert names == ["Pesquisar notícias", "Categorias", "Ordenar notícias", "Atendimento técnico"], names
+    assert [block["name"] for block in state["blocks"]] == names, state["blocks"]
     assert state["covered"] == [], f"@{width}: botões flutuantes sobre o centro de {state['covered']}"
 
 
 @pytest.mark.parametrize("width", STACKED_WIDTHS)
 def test_stacked_sidebar_blocks_share_the_edges_of_the_other_cards(geometry, width):
     state = geometry[width]
-    _assert_common(state, width)
-    # Empilhada: a lateral vem depois da lista.
-    assert state["aside"]["top"] >= state["listColumn"]["bottom"] - TOLERANCE, (state["aside"], state["listColumn"])
+    _assert_common(state, width, ["Pesquisar notícias", "Categorias"])
+    # Empilhada: a lateral vem antes da lista, como no HTML.
+    assert state["aside"]["bottom"] <= state["listColumn"]["top"] + TOLERANCE, (state["aside"], state["listColumn"])
 
     reference = state["sobre"]
     for name in ("orientacao", "card"):
@@ -147,7 +157,7 @@ def test_stacked_sidebar_blocks_share_the_edges_of_the_other_cards(geometry, wid
 @pytest.mark.parametrize("width", TWO_COLUMN_WIDTHS)
 def test_two_column_sidebar_keeps_the_grid_edges(geometry, width):
     state = geometry[width]
-    _assert_common(state, width)
+    _assert_common(state, width, ["Pesquisar notícias", "Categorias", "Ordenar notícias", "Atendimento técnico"])
     aside, column, sobre = state["aside"], state["listColumn"], state["sobre"]
     # Lado a lado, no topo da seção.
     assert aside["top"] == pytest.approx(column["top"], abs=TOLERANCE), (aside, column)
