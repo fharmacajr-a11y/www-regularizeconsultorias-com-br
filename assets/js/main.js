@@ -626,6 +626,8 @@
 
   /* =================================================================
      5. BOTÃO VOLTAR AO TOPO: exibe após 300 px de scroll e rola suavemente
+        Com movimento reduzido (prefers-reduced-motion: reduce), vai direto
+        ao topo, sem animação; a preferência é lida a cada clique.
         → custom.css controla a transição via .is-visible em .floating-btn--top
      ================================================================= */
   var btnVoltarTopo = document.getElementById('btn-voltar-topo');
@@ -643,7 +645,8 @@
     handleScrollTop();
 
     btnVoltarTopo.addEventListener('click', function () {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      var reduzMovimento = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reduzMovimento ? 'auto' : 'smooth' });
     });
   }
 

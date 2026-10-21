@@ -134,7 +134,8 @@ def test_atualizacao_e_secao_ficam_entre_consulta_e_cta():
 
 
 def test_bloco_normativo_compacto_aponta_para_nova_noticia():
-    assert "Atualização normativa • 12/08/2026" in HTML
+    # O "•" e a data ficam num span sem quebra (não terminam a linha em celular).
+    assert "Atualização normativa • 12/08/2026" in re.sub(r"<[^>]+>", "", HTML)
     assert "Farmácia Popular tem novas regras para participação e acompanhamento" in HTML
     assert "Entender o que mudou" in HTML
     banner_end = HTML.index("</aside>", HTML.index('<aside class="site-regulatory-banner"')) + len("</aside>")
@@ -199,4 +200,4 @@ def test_script_da_consulta_tem_cache_busting_alinhado_ao_dataset():
     assert "?v=" in src, "script da consulta deve ter cache-busting"
 
     # O bump não pode ter afetado o versionamento global resolvido antes.
-    assert '/assets/js/main.min.js?v=20261020-avisos-1' in HTML
+    assert '/assets/js/main.min.js?v=20261020-topo-1' in HTML
