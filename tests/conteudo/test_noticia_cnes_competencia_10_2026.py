@@ -210,4 +210,5 @@ def test_sitemap_lists_the_new_url_once():
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
     assert re.search(rf"<loc>{re.escape(PUBLIC_URL)}</loc>\s*<lastmod>2026-10-16</lastmod>", sitemap)
     # 17/10/2026: a listagem ganhou o card do esclarecimento do Farmácia Popular. 20/10/2026: reordenou dois cards.
-    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-10-20</lastmod>", sitemap)
+    # 21/10/2026: reordenou o card de produtos irregulares.
+    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-10-21</lastmod>", sitemap)

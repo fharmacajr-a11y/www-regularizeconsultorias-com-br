@@ -213,7 +213,8 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
     assert f"<loc>{PUBLIC_URL}</loc>\n    <lastmod>2026-10-06</lastmod>" in sitemap
     # 13/10/2026: a listagem reordenou produtos irregulares, SNCR e DCB. 20/10/2026: reordenou produtos irregulares e SISPA.
+    # 21/10/2026: reordenou produtos irregulares.
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-10-20</lastmod>"
+        "    <lastmod>2026-10-21</lastmod>"
     ) in sitemap

@@ -184,8 +184,8 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
     # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
-    # 20/10/2026, 13h00: o quadro do lote 2 leva o card do SNCR à 1ª posição; os quatro que ficavam à frente descem uma.
-    assert cards.index(card) == 0
+    # 21/10/2026, 17h45: a atualização de produtos irregulares devolve aquele card à 1ª posição; o SNCR fica em 2º.
+    assert cards.index(card) == 1
     assert "news-card-compact" in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
     assert f'<time datetime="{UPDATED}" class="leading-none">20/10/2026 • 13h00</time>' in card

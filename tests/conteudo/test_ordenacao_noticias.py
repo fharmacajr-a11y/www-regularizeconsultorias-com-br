@@ -18,7 +18,7 @@ CBPF_IN451_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atua
 RPBR_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-periodicidade-rpbr-farmacovigilancia/"
 SIPROQUIM_IN338_URL = "https://www.regularizeconsultorias.com.br/noticias/produtos-quimicos-controlados-siproquim2-assinador-pf/"
 PRODUTOS_IRREGULARES_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
-PRODUTOS_IRREGULARES_UPDATED = "2026-10-20T10:12:00-03:00"
+PRODUTOS_IRREGULARES_UPDATED = "2026-10-21T18:42:00-03:00"
 # Notícia do SISPA, atualizada em 20/10/2026 às 10h12 (Comunicado nº 1/2026 da CGAA/DSV/SDA/MAPA).
 SISPA_URL = "https://www.regularizeconsultorias.com.br/noticias/mapa-sispa-registro-agrotoxicos/"
 SISPA_UPDATED = "2026-10-20T10:12:00-03:00"
@@ -188,11 +188,10 @@ def test_news_index_itemlist_ordering():
 
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
-    # 20/10/2026, 13h00: o SNCR (lote 2) ocupa a 1ª posição; os quatro que ficavam à frente dele descem uma.
-    assert urls[0] == SNCR_WEBINAR_URL
-    # 20/10/2026, 10h12: produtos irregulares (RE nº 4.090 e 4.105/2026) e SISPA (Comunicado nº 1/2026), atualizados
-    # na mesma edição, vêm em seguida, nessa ordem.
-    assert urls[1] == PRODUTOS_IRREGULARES_URL
+    # 21/10/2026, 17h45: produtos irregulares (RE nº 4.140/2026 e correção da RE nº 3.159/2026) voltam à 1ª posição.
+    assert urls[0] == PRODUTOS_IRREGULARES_URL
+    # 20/10/2026, 13h00: o SNCR (lote 2) fica em 2º. SISPA (Comunicado nº 1/2026) segue em 3º.
+    assert urls[1] == SNCR_WEBINAR_URL
     assert urls[2] == SISPA_URL
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entrou na 1ª posição da listagem.
     assert urls[3] == FP_LEMBRETES_WHATSAPP_URL

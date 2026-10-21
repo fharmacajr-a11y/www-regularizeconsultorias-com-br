@@ -40,6 +40,9 @@ REMOVED_DESTINATIONS = (
     "https://www.in.gov.br/web/dou/-/resolucao-re-n-4.105-de-15-de-outubro-de-2026-738856116",
     "https://www.in.gov.br/web/dou/-/comunicado-n-1-de-16-de-outubro-de-2026-738998299",
     "https://www.gov.br/anvisa/pt-br/assuntos/medicamentos/controlados/sncr/documentos-do-sncr/perguntas-e-respostas-sncr-2-0-integracao.pdf",
+    # 21/10/2026: RE nº 4.140/2026 e republicação da RE nº 3.159/2026. A fonte segue citada no texto, sem link.
+    "https://www.in.gov.br/web/dou/-/resolucao-re-n-4.140-de-19-de-outubro-de-2026-739392776",
+    "https://www.in.gov.br/web/dou/-/resolucao-re-n-3.159-de-12-de-agosto-de-2026-*-739134036",
 )
 
 

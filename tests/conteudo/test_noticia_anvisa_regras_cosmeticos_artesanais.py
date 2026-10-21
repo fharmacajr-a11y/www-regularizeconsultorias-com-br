@@ -231,10 +231,10 @@ def test_sitemap_adds_only_the_new_url_and_the_listing_lastmod():
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
     assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-09</lastmod>" in sitemap
     # 13/10/2026: a listagem e a matéria do SNCR mudaram de novo. 20/10/2026: a listagem reordenou dois cards, e a
-    # matéria do SNCR recebeu o quadro de 20/10/2026 (lote 2 do SNCR).
+    # matéria do SNCR recebeu o quadro de 20/10/2026 (lote 2 do SNCR). 21/10/2026: a listagem reordenou produtos irregulares.
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-10-20</lastmod>"
+        "    <lastmod>2026-10-21</lastmod>"
     ) in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/</loc>\n"

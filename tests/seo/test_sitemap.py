@@ -132,7 +132,8 @@ def test_portaria_news_news_index_and_comunicado_have_expected_sitemap_metadata(
     # 16/10/2026, 20h06: a listagem ganhou o card do CNES 10/2026.
     # 17/10/2026, 09h50: a listagem ganhou o card do esclarecimento do Farmácia Popular.
     # 20/10/2026, 10h12: a listagem reordenou os cards de produtos irregulares e do SISPA, atualizados no mesmo dia.
-    assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-20"
+    # 21/10/2026, 17h45: a listagem reordenou o card de produtos irregulares (RE nº 4.140/2026).
+    assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-21"
     # 17/10/2026, 09h50: Comunicados ganhou o aviso informativo do Farmácia Popular.
     # 19/10/2026, 15h40: Comunicados ganhou o aviso informativo da instabilidade nos sistemas da Anvisa.
     # 20/10/2026: o aviso da instabilidade na Anvisa passou ao histórico.
