@@ -25,6 +25,12 @@ e os botões nunca recolhem. Também confere que um botão com foco de teclado
 não some e que os contatos exibidos da página ("Falar com a Regularize" a
 partir de 1024 px e o WhatsApp de "Orientação técnica") continuam visíveis em
 todas as paradas.
+
+As janelas rodam com mouse (o contexto padrão do Playwright), em que a faixa de
+categorias quebra em linhas abaixo de 1024 px desde 21/10/2026; 390x844,
+768x1024 e 960x900 rodam também com toque (has_touch e is_mobile), em que a
+faixa rola na horizontal. A roda e os cliques do teste são os do Playwright nos
+dois casos.
 """
 import json
 import os
@@ -48,6 +54,10 @@ VIEWPORTS = (
     (940, 900), (960, 900), (1023, 900),
     (1024, 768), (1440, 900),
 )
+# Com toque (has_touch e is_mobile), a faixa que rola na horizontal.
+TOUCH_VIEWPORTS = ((390, 844), (768, 1024), (960, 900))
+CASES = tuple((width, height, "mouse") for width, height in VIEWPORTS) + tuple(
+    (width, height, "toque") for width, height in TOUCH_VIEWPORTS)
 STACKED_LIMIT = 1023
 # Passo da roda menor que o WhatsApp (44 px no celular) + uma linha de texto:
 # toda linha da coluna passa por baixo dele em alguma parada.
@@ -228,7 +238,7 @@ from playwright.sync_api import sync_playwright
 
 from support import new_context
 
-base, width, height, stacked_limit, wheel_step = sys.argv[1:]
+base, width, height, stacked_limit, wheel_step, pointer = sys.argv[1:]
 helpers = os.environ["NOTICIAS_FLUTUANTES_JS"]
 width, height, stacked_limit, wheel_step = map(int, (width, height, stacked_limit, wheel_step))
 stacked = width <= stacked_limit
@@ -243,7 +253,7 @@ def check(where):
     state = page.evaluate("window.__flutuantes.state()")
     stats["stops"] += 1
     stats["collapsedStops"] += state["collapsed"]
-    label = f"@{width}x{height} {where} (y={state['scrollY']:.0f})"
+    label = f"@{width}x{height} {pointer} {where} (y={state['scrollY']:.0f})"
     failures.extend(f"{label}: {overlap}" for overlap in state["overlaps"][:3])
     if not state["activeShown"]:
         failures.append(f"{label}: foco em botão flutuante oculto")
@@ -257,7 +267,8 @@ def check(where):
 
 with sync_playwright() as playwright:
     browser = playwright.chromium.launch(headless=True)
-    context = new_context(browser, allow=(base,), viewport={"width": width, "height": height})
+    touch = {"has_touch": True, "is_mobile": True} if pointer == "toque" else {}
+    context = new_context(browser, allow=(base,), viewport={"width": width, "height": height}, **touch)
     context.add_init_script(helpers)
     page = context.new_page()
     page.goto(base + "/noticias/", wait_until="load")
@@ -422,11 +433,11 @@ def probes():
     thread.start()
     base = f"http://127.0.0.1:{server.server_port}"
 
-    def run(viewport):
-        width, height = viewport
+    def run(case):
+        width, height, pointer = case
         return subprocess.run(
             [sys.executable, "-c", PROBE, base, str(width), str(height), str(STACKED_LIMIT),
-             str(WHEEL_STEP)],
+             str(WHEEL_STEP), pointer],
             capture_output=True,
             text=True,
             encoding="utf-8",
@@ -436,7 +447,7 @@ def probes():
 
     try:
         with ThreadPoolExecutor(max_workers=4) as pool:
-            completed = dict(zip(VIEWPORTS, pool.map(run, VIEWPORTS)))
+            completed = dict(zip(CASES, pool.map(run, CASES)))
     finally:
         server.shutdown()
         server.server_close()
@@ -444,9 +455,9 @@ def probes():
     return completed
 
 
-@pytest.mark.parametrize("width,height", VIEWPORTS, ids=[f"{w}x{h}" for w, h in VIEWPORTS])
-def test_floating_buttons_never_hide_the_news_sidebar(probes, width, height):
-    completed = probes[(width, height)]
+@pytest.mark.parametrize("width,height,pointer", CASES, ids=[f"{w}x{h}-{p}" for w, h, p in CASES])
+def test_floating_buttons_never_hide_the_news_sidebar(probes, width, height, pointer):
+    completed = probes[(width, height, pointer)]
     assert completed.returncode == 0, completed.stderr
     result = json.loads(completed.stdout)
     failures = result["failures"]

@@ -19,6 +19,10 @@ Toda parada tem de aparecer inteira: dentro da janela, abaixo do cabeçalho e de
 contêineres com overflow. Na listagem, todos os controles exibidos da coluna de filtros recebem o foco.
 Com o HTML de c74d97b, a listagem falha em 390 e 960 px e passa em 1440 px.
 
+Todas as páginas rodam com mouse (o contexto padrão do Playwright). Desde 21/10/2026, abaixo de 1024 px, a faixa
+de categorias da listagem quebra em linhas com mouse e rola na horizontal com toque; a listagem também roda com
+mouse em 768x1024 (três linhas) e com toque (has_touch e is_mobile) em 390x844 e 960x900.
+
 Roda em subprocesso com o ServidorDeTeste (fila de 128; ver tests/support.py) e registra os recursos
 locais que não carregaram, como test_noticias_tab_rapido.py.
 """
@@ -36,13 +40,18 @@ from support import SITE_DIR, ServidorDeTeste, subprocess_env
 
 VIEWPORTS = ((390, 844), (960, 900), (1440, 900))
 PAGES = ("/noticias/", "/", "/manuais-e-pops/", "/comunicado/")
+# (página, largura, altura, ponteiro): todas com mouse e, na listagem, também 768x1024 com mouse e a faixa com toque.
+CASES = tuple((path, width, height, "mouse") for path in PAGES for width, height in VIEWPORTS) + (
+    ("/noticias/", 768, 1024, "mouse"), ("/noticias/", 390, 844, "toque"), ("/noticias/", 960, 900, "toque"),
+)
 
 PROBE = r"""
 import json, sys
 from playwright.sync_api import sync_playwright
 from support import new_context, watch_local_loading
 
-base, path, width, height = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])
+base, path, width, height, pointer = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), sys.argv[5]
+TOUCH = {"has_touch": True, "is_mobile": True} if pointer == "toque" else {}
 output = {"failures": [], "load_failures": [], "other_load_failures": [], "stops": []}
 
 STOP = '''() => {
@@ -87,7 +96,7 @@ COLUMN_CONTROLS = '''() => [...document.querySelectorAll('main aside :is(a[href]
 try:
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
-        context = new_context(browser, viewport={"width": width, "height": height}, locale="pt-BR")
+        context = new_context(browser, viewport={"width": width, "height": height}, locale="pt-BR", **TOUCH)
         page = context.new_page()
         closing = watch_local_loading(page, base, output["load_failures"], output["other_load_failures"])
         page.goto(base + path, wait_until="load")
@@ -150,12 +159,10 @@ def base_url():
         thread.join(timeout=5)
 
 
-@pytest.mark.parametrize("viewport", VIEWPORTS, ids=[f"{w}x{h}" for w, h in VIEWPORTS])
-@pytest.mark.parametrize("path", PAGES)
-def test_tab_order_follows_the_screen_order(base_url, path, viewport):
-    width, height = viewport
+@pytest.mark.parametrize("path,width,height,pointer", CASES, ids=[f"{p}-{w}x{h}-{t}" for p, w, h, t in CASES])
+def test_tab_order_follows_the_screen_order(base_url, path, width, height, pointer):
     completed = subprocess.run(
-        [sys.executable, "-c", PROBE, base_url, path, str(width), str(height)],
+        [sys.executable, "-c", PROBE, base_url, path, str(width), str(height), pointer],
         capture_output=True, text=True, encoding="utf-8", timeout=240, env=subprocess_env(),
     )
     try:
@@ -167,6 +174,7 @@ def test_tab_order_follows_the_screen_order(base_url, path, viewport):
     if completed.returncode:
         pytest.fail(f"sonda caiu (código {completed.returncode}); falhas já registradas {output['failures']}; "
                     f"carregamento {output['load_failures']}:\n{completed.stderr[-4000:]}")
-    assert not output["load_failures"], f"recursos locais que não carregaram em {path} {width}x{height}: {output['load_failures']}"
-    assert len(output["stops"]) >= 5, f"{path} {width}x{height}: só {len(output['stops'])} paradas do Tab"
-    assert not output["failures"], f"{path} {width}x{height}: " + "; ".join(output["failures"][:8])
+    label = f"{path} {width}x{height} {pointer}"
+    assert not output["load_failures"], f"recursos locais que não carregaram em {label}: {output['load_failures']}"
+    assert len(output["stops"]) >= 5, f"{label}: só {len(output['stops'])} paradas do Tab"
+    assert not output["failures"], f"{label}: " + "; ".join(output["failures"][:8])

@@ -99,7 +99,8 @@
    todas as larguras: a ordem do Tab é a ordem visual. A partir de 1024 px ela
    fica à esquerda com os quatro blocos. Abaixo disso ela fica compacta antes
    da lista: a pesquisa e, logo abaixo, uma faixa que rola na horizontal com as
-   categorias e, no fim, a ordenação (sem acrescentar uma linha). O bloco
+   categorias e, no fim, a ordenação (sem acrescentar uma linha). Com mouse,
+   a faixa quebra em linhas (bloco "Com mouse" abaixo). O bloco
    "Atendimento técnico" sai abaixo de 1024 px com display: none, fora do Tab;
    a página já tem "Orientação técnica" e "Entrar em contato" depois da lista.
    Os blocos de categorias e de ordenação viram display: contents, os botões
@@ -175,9 +176,13 @@
     align-self: stretch;
   }
 
+  /* Todos os botões da faixa com pelo menos 44 px de altura, com toque e com
+     mouse (desde 21/10/2026; antes 42 px nas categorias e 36 px na
+     ordenação). */
   .news-filters__strip .news-filter-button {
     flex: 0 0 auto;
     gap: 0.5rem;
+    min-height: 2.75rem;
     white-space: nowrap;
   }
 
@@ -187,6 +192,10 @@
   }
 
   .news-filters__sort .news-sort-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
     white-space: nowrap;
   }
 
@@ -196,6 +205,56 @@
 
   .news-filters__sort .news-sort-button span + span {
     margin-left: 0.25rem;
+  }
+}
+
+/* Com mouse (hover e ponteiro fino), abaixo de 1024 px, desde 21/10/2026: a
+   faixa que rola foi pensada para o dedo. Na janela em meia tela, com mouse de
+   roda, ela não tinha barra nem setas, e as categorias escondidas não se
+   alcançavam. Aqui as categorias e a ordenação quebram em linhas, todas à
+   vista, sem rolagem horizontal, sem o esmaecido e sem o espaço do fim. O
+   espaçamento lateral dos botões e o vão entre eles diminuem (0,625rem e
+   0,375rem) para caberem em menos linhas; a altura mínima de 44 px é a de
+   cima, comum ao toque. A ordenação
+   pode encolher até a largura da faixa: onde os dois botões não cabem lado a
+   lado com o texto numa linha (320 px), "Mais velha" desce para baixo de
+   "A-Z", como a partir de 1024 px. Com toque, a faixa que rola continua como
+   acima. */
+@media (max-width: 1023px) and (hover: hover) and (pointer: fine) {
+  .news-filters__strip {
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    overflow-x: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .news-filters__strip::after {
+    content: none;
+  }
+
+  .news-filters__strip .news-filter-button {
+    gap: 0.375rem;
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+  }
+
+  .news-filters__sort {
+    flex-shrink: 1;
+    min-width: 0;
+    max-width: 100%;
+    margin-left: 0;
+  }
+
+  .news-filters__sort .news-sort-button {
+    flex-wrap: wrap;
+    column-gap: 0.25rem;
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+  }
+
+  .news-filters__sort .news-sort-button span + span {
+    margin-left: 0;
   }
 }
 

@@ -310,33 +310,39 @@ SIDEBAR_STATE_JS = """() => {
                 label: (node.textContent.trim() || node.id).replace(/\\s+/g, ' ').slice(0, 30), top: r.top, bottom: r.bottom,
                 // Inteiro entre o cabeçalho e o fim da tela, dentro da faixa, e nada por cima no centro.
                 shown: vertical && inside && free,
-                // Pela roda vertical: a linha dele aparece inteira; fora da parte exposta da faixa, o
-                // controle se alcança rolando a faixa (dedo ou Tab), não a página.
+                // Com toque, pela roda vertical: a linha dele aparece inteira; fora da parte exposta da
+                // faixa, o controle se alcança rolando a faixa (dedo ou Tab), não a página.
                 reachable: vertical && (!inside || free),
             };
         }),
     };
 }"""
-# (largura, altura, escala). 1024x576 é 1280x720 com 125% de zoom; 1280x720 e
-# 960x540 são 1920x1080 com 150% e 200%. Abaixo de 1024 px a coluna vem antes
-# da lista, compacta (pesquisa e faixa de categorias e ordenação que rola na
-# horizontal).
+# (largura, altura, escala, ponteiro). 1024x576 é 1280x720 com 125% de zoom;
+# 1280x720 e 960x540 são 1920x1080 com 150% e 200%. Abaixo de 1024 px a coluna
+# vem antes da lista, compacta: a pesquisa e a faixa de categorias e ordenação,
+# que quebra em linhas com mouse (desde 21/10/2026; cada controle tem de
+# aparecer inteiro pela roda) e rola na horizontal com toque (has_touch e
+# is_mobile; basta a linha dele aparecer inteira pela roda).
 SIDEBAR_VIEWPORTS = (
-    (1024, 576, 1.25), (1024, 600, 1), (1280, 480, 1), (1280, 720, 1.5),
-    (1366, 768, 1), (1440, 900, 1), (960, 540, 2), (390, 844, 3),
+    (1024, 576, 1.25, "mouse"), (1024, 600, 1, "mouse"), (1280, 480, 1, "mouse"), (1280, 720, 1.5, "mouse"),
+    (1366, 768, 1, "mouse"), (1440, 900, 1, "mouse"), (960, 540, 2, "mouse"), (390, 844, 3, "mouse"),
+    (960, 540, 2, "toque"), (390, 844, 3, "toque"),
 )
 
 
 def _coluna(browser, base):
     """Coluna lateral das Notícias: presa só se couber; todo controle alcançável e visível."""
     failures = []
-    for width, height, scale in SIDEBAR_VIEWPORTS:
-        context = new_context(browser, viewport={"width": width, "height": height}, device_scale_factor=scale)
+    for width, height, scale, pointer in SIDEBAR_VIEWPORTS:
+        touch = {"has_touch": True, "is_mobile": True} if pointer == "toque" else {}
+        context = new_context(browser, viewport={"width": width, "height": height}, device_scale_factor=scale, **touch)
         page = context.new_page()
         page.goto(base + "/noticias/")
         page.add_style_tag(content="html{scroll-behavior:auto!important}")
         page.locator("#btn-carregar-mais").click()
-        label = f"@{width}x{height}"
+        label = f"@{width}x{height} {pointer}"
+        # Com mouse, cada controle aparece inteiro e livre em alguma parada da roda.
+        wheel = "shown" if pointer == "mouse" else "reachable"
         state = lambda: page.evaluate(SIDEBAR_STATE_JS)
         cards = page.locator("#news-article-list [data-news-card]")
         middle, last = cards.nth(cards.count() // 2), cards.nth(cards.count() - 1)
@@ -367,7 +373,7 @@ def _coluna(browser, base):
             middle_of_column = (current["docTop"] + current["docBottom"]) / 2
             direction = 1 if middle_of_column > current["scrollY"] + current["viewport"] / 2 else -1
             step = max(100, (current["viewport"] - current["header"]) / 2)
-            seen = [control["reachable"] for control in current["controls"]]
+            seen = [control[wheel] for control in current["controls"]]
             for _ in range(40):
                 band_top, band_bottom = current["scrollY"] + current["header"], current["scrollY"] + current["viewport"]
                 if (band_top >= current["docBottom"]) if direction > 0 else (band_bottom <= current["docTop"]):
@@ -376,7 +382,7 @@ def _coluna(browser, base):
                 page.mouse.wheel(0, direction * max(step, gap))
                 _settle(page)
                 previous, current = current["scrollY"], state()
-                seen = [old or control["reachable"] for old, control in zip(seen, current["controls"])]
+                seen = [old or control[wheel] for old, control in zip(seen, current["controls"])]
                 if current["scrollY"] == previous:
                     break
             missing = [control["label"] for control, ok in zip(current["controls"], seen) if not ok]

@@ -1,21 +1,27 @@
 """Filtro da listagem de notícias no celular: o 1º card do resultado aparece na janela.
 
-Abaixo de 1024 px a coluna de filtros vem antes da lista: a pesquisa e, logo abaixo, a faixa que rola na
-horizontal com as categorias e a ordenação (pages/noticias.css). Até 21/10/2026 a coluna vinha depois da
-lista e o resultado de um filtro ficava inteiro acima da janela (em 390x844, Enter em "SNCR" deixava o
-1º card de −1.488 a −978 px). Agora, depois do clique numa categoria ou na ordenação, o
+Abaixo de 1024 px a coluna de filtros vem antes da lista: a pesquisa e, logo abaixo, a faixa com as
+categorias e a ordenação (pages/noticias.css), que rola na horizontal com toque e, desde 21/10/2026, quebra
+em linhas com mouse. Até 21/10/2026 a coluna vinha depois da lista e o resultado de um filtro ficava inteiro
+acima da janela (em 390x844, Enter em "SNCR" deixava o 1º card de −1.488 a −978 px). Agora, depois do clique
+numa categoria ou na ordenação, o
 assets/js/pages/noticias.js rola até a faixa ficar logo abaixo do cabeçalho quando o topo do 1º card não
 aparece; se já aparece, a página não se move.
 
-Casos, em retrato de celular (390x844 e 360x640) e no tablet (768x1024):
+Casos com toque (hasTouch, isMobile) em retrato de celular (390x844 e 360x640) e no tablet (768x1024), e com
+mouse (o contexto padrão do Playwright) em 390x844, 768x1024 e 960x900 (a janela em meia tela):
 - teclado: Tab do topo até "SNCR" e Enter;
-- toque (hasTouch, isMobile): a faixa no pé da janela, com o 1º card abaixo dela (pré-condição, exigida
-  no celular; em 768x1024 a faixa não chega ao pé da janela e o caso não se aplica), e um toque em "SNCR";
+- toque ou clique: a faixa no pé da janela, com o 1º card abaixo dela (pré-condição, exigida abaixo de
+  640 px; em 768x1024 e 960x900 a faixa não chega ao pé da janela e o caso não se aplica), e um toque (ou
+  clique) em "SNCR";
 - ordenação: Tab até "A-Z Mais velha", no fim da faixa, e Enter.
 Em cada um, a contagem e a categoria do resultado têm de bater, o topo do 1º card tem de ficar abaixo do
-cabeçalho e pelo menos 96 px acima do fim da janela, e o botão usado continua com o foco (no toque, no
-lugar) e inteiro na janela, abaixo do cabeçalho e dentro da faixa. Em 1440x900 (coluna ao lado da lista)
-um clique em "SNCR" não rola a página.
+cabeçalho e pelo menos 96 px acima do fim da janela, e o botão usado continua com o foco (no toque e no
+clique, no lugar) e inteiro na janela, abaixo do cabeçalho e dentro da faixa.
+Com mouse, a faixa em linhas ocupa mais altura: com a faixa logo abaixo do cabeçalho, o topo do 1º card só fica
+96 px acima do fim da janela a partir de 382 px de altura em 960 px de largura, 432 px em 768, 653 px em 390 e
+753 px em 360 (oito linhas de botões). Por isso a janela de 360x640 entra só com toque.
+Em 1440x900 (coluna ao lado da lista) um clique em "SNCR" não rola a página.
 
 Sem JavaScript (o main.js não roda), a pesquisa e a faixa continuam visíveis em 390 px, com os 85 cards
 exibidos, e o bloco "Atendimento técnico" fica fora (display: none); em 1440 px a coluna mantém os quatro
@@ -33,7 +39,9 @@ import pytest
 from support import SITE_DIR, ServidorDeTeste, subprocess_env
 
 
-STACKED = ((390, 844), (360, 640), (768, 1024))
+# (largura, altura, ponteiro).
+STACKED = ((390, 844, "toque"), (360, 640, "toque"), (768, 1024, "toque"),
+           (390, 844, "mouse"), (768, 1024, "mouse"), (960, 900, "mouse"))
 VISIBLE = 96
 
 PROBE = r"""
@@ -42,6 +50,8 @@ from playwright.sync_api import sync_playwright
 from support import new_context, watch_local_loading
 
 base, mode, width, height, visible = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5])
+pointer = sys.argv[6]
+TOUCH = {"has_touch": True, "is_mobile": True} if pointer == "toque" else {}
 output = {"failures": [], "load_failures": [], "other_load_failures": [], "cases": {}}
 
 SETTLE = '''async () => {
@@ -68,7 +78,7 @@ STATE = '''(selector) => {
 
 def check(name, state, before=None, count=None, category=None, focused=True):
     output["cases"][name] = {"antes": before, "depois": state}
-    label = f"{width}x{height} {name}"
+    label = f"{width}x{height} {pointer} {name}"
     if count and state["count"] != count:
         output["failures"].append(f"{label}: contagem '{state['count']}', esperada '{count}'")
     if category and state["categories"] != [category]:
@@ -89,7 +99,7 @@ def tab_to(page, selector, limit=80):
         page.keyboard.press("Tab")
         if page.evaluate("s => document.activeElement === document.querySelector(s)", selector):
             return True
-    output["failures"].append(f"{width}x{height}: {selector} não recebeu o foco em {limit} Tabs")
+    output["failures"].append(f"{width}x{height} {pointer}: {selector} não recebeu o foco em {limit} Tabs")
     return False
 
 
@@ -107,7 +117,7 @@ try:
         browser = playwright.chromium.launch()
         sncr, asc = "[data-news-category=sncr]", "[data-news-sort=asc]"
         if mode == "empilhada":
-            context, page, closing = open_page(browser)
+            context, page, closing = open_page(browser, **TOUCH)
             if tab_to(page, sncr):
                 page.keyboard.press("Enter")
                 page.evaluate(SETTLE)
@@ -115,7 +125,7 @@ try:
             closing()
             context.close()
 
-            context, page, closing = open_page(browser, has_touch=True, is_mobile=True)
+            context, page, closing = open_page(browser, **TOUCH)
             button = page.locator(sncr)
             button.scroll_into_view_if_needed()
             page.evaluate('''s => { const b = document.querySelector(s).getBoundingClientRect();
@@ -123,21 +133,22 @@ try:
             page.evaluate(SETTLE)
             before = page.evaluate(STATE, sncr)
             applicable = before["firstTop"] is not None and before["firstTop"] > before["innerHeight"] - visible
+            gesture = "toque" if pointer == "toque" else "clique"
             if not applicable and width < 640:
-                output["failures"].append(f"{width}x{height} toque: pré-condição falhou, o 1º card já aparecia antes do toque "
-                                          f"(topo {before['firstTop']})")
+                output["failures"].append(f"{width}x{height} {pointer}: pré-condição falhou, o 1º card já aparecia antes do "
+                                          f"{gesture} (topo {before['firstTop']})")
             if applicable:
-                button.tap()
+                button.tap() if pointer == "toque" else button.click()
                 page.evaluate(SETTLE)
-                check("toque em SNCR com a faixa no pé da janela", page.evaluate(STATE, sncr), before,
+                check(f"{gesture} em SNCR com a faixa no pé da janela", page.evaluate(STATE, sncr), before,
                       count="2 notícias encontradas", category="sncr", focused=False)
             else:
                 # Janela alta (tablet em retrato): a faixa não chega ao pé da janela e o 1º card já aparece.
-                output["cases"]["toque em SNCR com a faixa no pé da janela"] = {"antes": before, "depois": "não se aplica"}
+                output["cases"][f"{gesture} em SNCR com a faixa no pé da janela"] = {"antes": before, "depois": "não se aplica"}
             closing()
             context.close()
 
-            context, page, closing = open_page(browser)
+            context, page, closing = open_page(browser, **TOUCH)
             if tab_to(page, asc):
                 page.keyboard.press("Enter")
                 page.evaluate(SETTLE)
@@ -155,7 +166,7 @@ try:
             after = page.evaluate("scrollY")
             output["cases"]["lado a lado: clique em SNCR"] = {"antes": before, "depois": after}
             if after != before:
-                output["failures"].append(f"{width}x{height}: o clique em SNCR rolou a página de {before} para {after}")
+                output["failures"].append(f"{width}x{height} {pointer}: o clique em SNCR rolou a página de {before} para {after}")
             closing()
             context.close()
         browser.close()
@@ -216,9 +227,9 @@ def base_url():
         thread.join(timeout=5)
 
 
-def _probe(base_url, mode, width, height):
+def _probe(base_url, mode, width, height, pointer="mouse"):
     completed = subprocess.run(
-        [sys.executable, "-c", PROBE, base_url, mode, str(width), str(height), str(VISIBLE)],
+        [sys.executable, "-c", PROBE, base_url, mode, str(width), str(height), str(VISIBLE), pointer],
         capture_output=True, text=True, encoding="utf-8", timeout=240, env=subprocess_env(),
     )
     try:
@@ -233,9 +244,9 @@ def _probe(base_url, mode, width, height):
     return output
 
 
-@pytest.mark.parametrize("viewport", STACKED, ids=[f"{w}x{h}" for w, h in STACKED])
-def test_mobile_filter_shows_the_first_result_card(base_url, viewport):
-    output = _probe(base_url, "empilhada", *viewport)
+@pytest.mark.parametrize("width,height,pointer", STACKED, ids=[f"{w}x{h}-{t}" for w, h, t in STACKED])
+def test_mobile_filter_shows_the_first_result_card(base_url, width, height, pointer):
+    output = _probe(base_url, "empilhada", width, height, pointer)
     assert not output["failures"], "; ".join(output["failures"])
 
 

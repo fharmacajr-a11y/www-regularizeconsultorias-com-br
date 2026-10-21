@@ -9,6 +9,10 @@ terminava 56 a 60 px antes da borda dos demais. A partir de 1024 px ficam as
 duas colunas do grid, com os quatro blocos (Pesquisar, Categorias, Ordenar,
 Atendimento técnico): a lateral na borda esquerda de "Sobre o conteúdo" e a
 lista na borda direita.
+
+Empilhada, cada largura roda com mouse (o contexto padrão do Playwright), em
+que a faixa quebra em linhas desde 21/10/2026, e com toque (has_touch e
+is_mobile), em que ela rola na horizontal. Lado a lado, só com mouse.
 """
 import json
 import subprocess
@@ -24,6 +28,7 @@ from support import SITE_DIR, subprocess_env
 
 STACKED_WIDTHS = (320, 360, 390, 414, 639, 640, 767, 768, 940, 944, 950, 960, 1023)
 TWO_COLUMN_WIDTHS = (1024, 1279, 1280, 1440, 1920)
+STACKED_CASES = tuple((width, pointer) for width in STACKED_WIDTHS for pointer in ("mouse", "toque"))
 TOLERANCE = 0.5
 
 PROBE = r'''
@@ -33,7 +38,7 @@ from playwright.sync_api import sync_playwright
 
 from support import new_context
 
-base, widths = sys.argv[1], json.loads(sys.argv[2])
+base, cases = sys.argv[1], json.loads(sys.argv[2])
 MEASURE = """() => {
     const box = el => { const r = el.getBoundingClientRect();
         return {left: r.left, right: r.right, top: r.top + scrollY, bottom: r.bottom + scrollY}; };
@@ -57,8 +62,9 @@ MEASURE = """() => {
     };
 }"""
 # Com cada botão flutuante na altura de cada controle exibido da lateral, o
-# centro do controle continua sendo dele. Na faixa que rola, o controle é
-# trazido para dentro dela antes (nearest, com o scroll-padding da faixa).
+# centro do controle continua sendo dele. Na faixa que rola (com toque), o
+# controle é trazido para dentro dela antes (nearest, com o scroll-padding da
+# faixa).
 COVERED = """async () => {
     document.documentElement.style.scrollBehavior = 'auto';
     const frame = () => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(done)));
@@ -84,13 +90,14 @@ COVERED = """async () => {
 results = {}
 with sync_playwright() as playwright:
     browser = playwright.chromium.launch(headless=True)
-    for width in widths:
-        context = new_context(browser, allow=(base,), viewport={"width": width, "height": 900})
+    for width, pointer in cases:
+        touch = {"has_touch": True, "is_mobile": True} if pointer == "toque" else {}
+        context = new_context(browser, allow=(base,), viewport={"width": width, "height": 900}, **touch)
         page = context.new_page()
         page.goto(base + "/noticias/", wait_until="load")
         state = page.evaluate(MEASURE)
         state["covered"] = page.evaluate(COVERED)
-        results[width] = state
+        results[f"{width} {pointer}"] = state
         context.close()
     browser.close()
 print(json.dumps(results))
@@ -110,7 +117,8 @@ def geometry():
     try:
         completed = subprocess.run(
             [sys.executable, "-c", PROBE, f"http://127.0.0.1:{server.server_port}",
-             json.dumps(STACKED_WIDTHS + TWO_COLUMN_WIDTHS)],
+             json.dumps([[width, pointer] for width, pointer in STACKED_CASES]
+                        + [[width, "mouse"] for width in TWO_COLUMN_WIDTHS])],
             capture_output=True,
             text=True,
             encoding="utf-8",
@@ -122,7 +130,7 @@ def geometry():
         server.server_close()
         thread.join(timeout=5)
     assert completed.returncode == 0, completed.stderr
-    return {int(width): state for width, state in json.loads(completed.stdout).items()}
+    return {(int(key.split()[0]), key.split()[1]): state for key, state in json.loads(completed.stdout).items()}
 
 
 def _edges(box):
@@ -136,9 +144,9 @@ def _assert_common(state, width, names):
     assert state["covered"] == [], f"@{width}: botões flutuantes sobre o centro de {state['covered']}"
 
 
-@pytest.mark.parametrize("width", STACKED_WIDTHS)
-def test_stacked_sidebar_blocks_share_the_edges_of_the_other_cards(geometry, width):
-    state = geometry[width]
+@pytest.mark.parametrize("width,pointer", STACKED_CASES, ids=[f"{w}-{p}" for w, p in STACKED_CASES])
+def test_stacked_sidebar_blocks_share_the_edges_of_the_other_cards(geometry, width, pointer):
+    state = geometry[(width, pointer)]
     _assert_common(state, width, ["Pesquisar notícias", "Categorias"])
     # Empilhada: a lateral vem antes da lista, como no HTML.
     assert state["aside"]["bottom"] <= state["listColumn"]["top"] + TOLERANCE, (state["aside"], state["listColumn"])
@@ -149,14 +157,14 @@ def test_stacked_sidebar_blocks_share_the_edges_of_the_other_cards(geometry, wid
     for block in state["blocks"]:
         assert block["left"] == pytest.approx(reference["left"], abs=TOLERANCE), (block, reference)
         assert block["right"] == pytest.approx(reference["right"], abs=TOLERANCE), (
-            f"@{width}: '{block['name']}' termina em {block['right']:.2f} px, "
+            f"@{width} {pointer}: '{block['name']}' termina em {block['right']:.2f} px, "
             f"'Sobre o conteúdo' e 'Orientação técnica' em {reference['right']:.2f} px"
         )
 
 
 @pytest.mark.parametrize("width", TWO_COLUMN_WIDTHS)
 def test_two_column_sidebar_keeps_the_grid_edges(geometry, width):
-    state = geometry[width]
+    state = geometry[(width, "mouse")]
     _assert_common(state, width, ["Pesquisar notícias", "Categorias", "Ordenar notícias", "Atendimento técnico"])
     aside, column, sobre = state["aside"], state["listColumn"], state["sobre"]
     # Lado a lado, no topo da seção.
