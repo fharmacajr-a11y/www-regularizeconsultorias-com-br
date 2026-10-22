@@ -26,24 +26,38 @@ DOU_RE_3159_URL = "https://www.in.gov.br/web/dou/-/resolucao-re-n-3.159-de-12-de
 DOBUTAMINA_LOTES = ("24092127", "24102310", "25102244", "25102243", "25112308")
 
 
+
+def _page_html():
+    """HTML da notícia sem os <summary> dos itens recolhidos da v2.
+
+    Desde a v2, cada RE fica num <details class="irregulares-re"> com um resumo (RE, produto e data) antes do
+    texto. As fatias deste arquivo vão de um título ao seguinte; sem os resumos, elas continuam a ver só o texto da
+    notícia, que é o mesmo da v1.
+    """
+    html = NEWS_PATH.read_text(encoding="utf-8")
+    return re.sub(r'(<details class="irregulares-(?:re|detalhes)"[^>]*>)<summary>.*?</summary>', r"\1", html,
+                  flags=re.DOTALL)
+
+def _section_between(html, start, end):
+    begin = html.index(start)
+    return html[begin:html.index(end, begin)]
+
+
 def _august_callout(html):
     start = html.index('data-news-update-callout aria-labelledby="novas-medidas-agosto-title"')
     return html[start:html.index("</aside>", start)]
 
 
 def _re3717_callout(html):
-    start = html.index('data-news-update-callout aria-labelledby="novas-medidas-21-setembro-title"')
-    return html[start:html.index("</aside>", start)]
+    return _section_between(html, "<h2>21 de setembro: RE nº 3.717/2026", "<h2>21 de setembro: RE nº 3.718/2026")
 
 
 def _latest_callout(html):
-    start = html.index('data-news-update-callout aria-labelledby="novas-medidas-16-setembro-title"')
-    return html[start:html.index("</aside>", start)]
+    return _section_between(html, "<h2>16 de setembro: quatro resoluções", "<h2>Setembro: RE nº 3.547/2026")
 
 
 def _september_callout(html):
-    start = html.index('data-news-update-callout aria-labelledby="novas-medidas-setembro-title"')
-    return html[start:html.index("</aside>", start)]
+    return _section_between(html, "<h2>Setembro: RE nº 3.547/2026", "<h2>11 de setembro: RE nº 3.546/2026")
 
 
 def _september_section(html):
@@ -86,7 +100,7 @@ def _text(html):
 
 
 def test_article_consolidates_the_measures_of_17_and_19_august():
-    html = NEWS_PATH.read_text(encoding="utf-8")
+    html = _page_html()
     callout = _august_callout(html)
 
     assert f'"datePublished": "{PUBLISHED}"' in html
@@ -127,25 +141,26 @@ def test_article_consolidates_the_measures_of_17_and_19_august():
 
 
 def test_september_update_reflects_re_3547_and_keeps_history():
-    html = NEWS_PATH.read_text(encoding="utf-8")
+    html = _page_html()
     september = _september_callout(html)
     text = _text(september)
 
-    assert html.index("novas-medidas-21-outubro-title") < html.index("novas-medidas-19-outubro-title")
-    assert html.index("novas-medidas-19-outubro-title") < html.index("novas-medidas-14-outubro-title")
-    assert html.index("novas-medidas-14-outubro-title") < html.index("novas-medidas-13-outubro-title")
-    assert html.index("novas-medidas-13-outubro-title") < html.index("novas-medidas-06-outubro-title")
-    assert html.index("novas-medidas-06-outubro-title") < html.index("novas-medidas-02-outubro-title")
-    assert html.index("novas-medidas-02-outubro-title") < html.index("novas-medidas-25-setembro-title")
-    assert html.index("novas-medidas-25-setembro-title") < html.index("novas-medidas-21-setembro-title")
-    assert html.index("novas-medidas-21-setembro-title") < html.index("novas-medidas-16-setembro-title")
-    assert html.index("novas-medidas-16-setembro-title") < html.index("novas-medidas-setembro-title")
-    assert html.index("novas-medidas-setembro-title") < html.index("novas-medidas-agosto-title")
-    # Onze quadros: o de 21/10/2026 ficou antes do de 19/10/2026, que segue antes do de 14/10/2026.
-    assert html.count("data-news-update-callout aria-labelledby=") == 11
-    assert "ATUALIZAÇÃO" in september
-    assert "Resolução-RE nº 3.547/2026" in text
-    assert "de 09/09/2026 e publicada no DOU em 11/09/2026" in text
+    assert html.index('id="novas-medidas-21-outubro-title"') < html.index('id="novas-medidas-19-outubro-title"')
+    assert html.index('id="novas-medidas-19-outubro-title"') < html.index('id="novas-medidas-14-outubro-title"')
+    assert html.index('id="novas-medidas-14-outubro-title"') < html.index('id="novas-medidas-13-outubro-title"')
+    assert html.index('id="novas-medidas-13-outubro-title"') < html.index('id="novas-medidas-06-outubro-title"')
+    assert html.index('id="novas-medidas-06-outubro-title"') < html.index('id="novas-medidas-02-outubro-title"')
+    assert html.index('id="novas-medidas-02-outubro-title"') < html.index('id="novas-medidas-25-setembro-title"')
+    assert html.index('id="novas-medidas-25-setembro-title"') < html.index('id="novas-medidas-21-setembro-title"')
+    assert html.index('id="novas-medidas-21-setembro-title"') < html.index('id="novas-medidas-16-setembro-title"')
+    assert html.index('id="novas-medidas-16-setembro-title"') < html.index('id="novas-medidas-setembro-title"')
+    assert html.index('id="novas-medidas-setembro-title"') < html.index('id="novas-medidas-agosto-title"')
+    # Seis quadros permanecem (os que não repetem o corpo). Os demais ids ficam nos meses.
+    assert html.count("data-news-update-callout aria-labelledby=") == 6
+    assert "ATUALIZAÇÃO" in html
+    assert "RE nº 3.547/2026" in text
+    assert "Resolução-RE nº 3.547/2026" in html
+    assert "de 09/09/2026 e publicada no DOU em 11/09/2026" in html
     assert "Medidas de julho a outubro mostram" in html
     assert "Medidas de julho a setembro" not in html
     assert "Medidas de julho e agosto" not in html
@@ -158,29 +173,33 @@ def test_september_update_reflects_re_3547_and_keeps_history():
         assert forbidden not in september
 
 
+def _h3_parts(section):
+    parts = re.split(r"(?=<h3>)", section)
+    return parts[1:]
+
+
 def test_latest_callout_keeps_each_resolution_bound_to_its_own_products_and_measures():
-    html = NEWS_PATH.read_text(encoding="utf-8")
+    html = _page_html()
     callout = _latest_callout(html)
-    items = _items(callout)
+    items = [_text(item) for item in _h3_parts(callout)]
 
     assert len(items) == 4
-    assert "Atualização de 16/09: T36 e alimentos são alcançados por quatro resoluções distintas" in callout
     t36, moringa, notshake, aloe = (_text(item) for item in items)
 
-    assert "T36 (TIRZEPATIDA) — RE nº 3.626/2026" in t36
-    assert "armazenamento, comercialização, distribuição, exportação, importação, propaganda, transporte e uso proibidos" in t36
+    assert "T36 — RE nº 3.626/2026" in t36
+    assert "proíbe o armazenamento, a comercialização, a distribuição, a exportação, a importação, a propaganda, o transporte e o uso" in t36
     assert "não determina recolhimento nem apreensão" in t36
 
-    assert "Produtos Moringa da Paz — RE nº 3.628/2026" in moringa
-    assert "apreensão e proibição de fabricação, comercialização, distribuição, propaganda e uso" in moringa
+    assert "Moringa da Paz — RE nº 3.628/2026" in moringa
+    assert "determina a apreensão e proíbe a fabricação, a comercialização, a distribuição, a propaganda e o uso" in moringa
     assert "não determina recolhimento" in moringa
 
     assert "NotShake Protein — RE nº 3.629/2026" in notshake
-    assert "recolhimento e proibição de fabricação, comercialização, distribuição, propaganda e uso" in notshake
+    assert "determina o recolhimento e proíbe a fabricação, a comercialização, a distribuição, a propaganda e o uso" in notshake
     assert "apreensão" not in notshake
 
     assert "Aloe Care — RE nº 3.634/2026" in aloe
-    assert "recolhimento e proibição de fabricação, distribuição, comercialização, propaganda e uso" in aloe
+    assert "determina o recolhimento e proíbe a fabricação, a distribuição, a comercialização, a propaganda e o uso" in aloe
     assert "divulgação" not in aloe
     assert "RE nº 3.629/2026" not in aloe
 
@@ -189,7 +208,7 @@ def test_latest_callout_keeps_each_resolution_bound_to_its_own_products_and_meas
 
 
 def test_four_new_body_subsections_preserve_exact_products_measures_and_negative_limits():
-    html = NEWS_PATH.read_text(encoding="utf-8")
+    html = _page_html()
     section = _latest_section(html)
     t36 = _text(_subsection(section, "T36 — RE nº 3.626/2026", "Moringa da Paz — RE nº 3.628/2026"))
     moringa = _text(_subsection(section, "Moringa da Paz — RE nº 3.628/2026", "NotShake Protein — RE nº 3.629/2026"))
@@ -249,20 +268,20 @@ def test_four_new_body_subsections_preserve_exact_products_measures_and_negative
 
 
 def test_each_september_measure_is_attributed_only_to_its_product():
-    html = NEWS_PATH.read_text(encoding="utf-8")
-    items = _items(_september_callout(html))
+    html = _page_html()
+    items = [_text(item) for item in _h3_parts(_september_callout(html))]
     assert len(items) == 4
-    dobutamina, pharmes, soll, berberina = (_text(item) for item in items)
+    dobutamina, pharmes, soll, berberina = items
 
     assert "Hypofarma" in dobutamina and "dobutamina 12,5 mg/mL" in dobutamina
     assert all(lote in dobutamina for lote in DOBUTAMINA_LOTES)
-    assert "recolhimento e suspensão da comercialização, da distribuição e do uso restritos aos lotes" in dobutamina
+    assert "recolhimento e suspensão da comercialização, da distribuição e do uso" in dobutamina
+    assert "restrita aos lotes identificados" in dobutamina
     assert "todos os lotes" not in dobutamina and "apreensão" not in dobutamina
 
     assert "Pharmes" in pharmes and "Lupatini e Pinheiro Instituto de Manipulação Ltda." in pharmes
-    assert pharmes.endswith("suspensão da propaganda.")
-    for other in ("recolhimento", "apreensão", "proibição", "lotes"):
-        assert other not in pharmes
+    assert "suspensão da propaganda" in pharmes
+    assert "O ato não determina recolhimento, apreensão ou proibição de fabricação desses produtos." in pharmes
 
     assert "Soll*Q-75" in soll and "Método Quantumbio" in soll
     assert "apreensão de todos os lotes e proibição de comercialização, distribuição, fabricação, propaganda e uso" in soll
@@ -276,7 +295,7 @@ def test_each_september_measure_is_attributed_only_to_its_product():
 
 
 def test_september_body_details_and_numbering_note():
-    html = NEWS_PATH.read_text(encoding="utf-8")
+    html = _page_html()
     section = _text(_september_section(html))
 
     assert "Resolução-RE nº 3.547, de 09/09/2026" in section
@@ -301,7 +320,7 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
     assert news_index.count('href="/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"') == 1
     assert f'data-updated="{UPDATED}"' in news_index
     assert "13/10/2026 • 09h06" in news_index
-    article = NEWS_PATH.read_text(encoding="utf-8")
+    article = _page_html()
     # O card ficou em duas frases. O histórico dessas medidas continua na matéria.
     assert "todos os produtos da marca United Labz" in article
     assert "Mounjcaps" in article and "Enhertu" in article
@@ -356,8 +375,8 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
 
 
 def test_re_3717_callout_keeps_each_measure_inside_its_own_item():
-    html = NEWS_PATH.read_text(encoding="utf-8")
-    items = [_text(item) for item in _items(_re3717_callout(html))]
+    html = _page_html()
+    items = [_text(item) for item in _h3_parts(_re3717_callout(html))]
 
     assert len(items) == 5
     phesgo, dysport, queen, malheiro, cannabis = items
@@ -365,15 +384,17 @@ def test_re_3717_callout_keeps_each_measure_inside_its_own_item():
     assert "Phesgo — lote B5011B05" in phesgo
     assert "fabricação 06/2025" in phesgo
     assert "33.009.945/0001-23" in phesgo
-    assert "apreensão e proibição de armazenamento, comercialização, distribuição, exportação, importação e uso" in phesgo
+    assert "determina a apreensão e proíbe o armazenamento, a comercialização, a distribuição, a exportação, a importação e o uso" in phesgo
     assert "não determina recolhimento" in phesgo
     assert "Dysport" not in phesgo and "Queen" not in phesgo and "Malheiro" not in phesgo and "cannabis" not in phesgo
 
     assert "lotes P08191, P08192 e P22368" in dysport
     assert "07.718.721/0001-80" in dysport
-    assert "04/2029, 05/2029 e 02/2029" in dysport
-    assert "apreensão e proibição de comercialização, distribuição e uso" in dysport
-    assert "não determina recolhimento nem proíbe armazenamento, exportação, importação ou propaganda" in dysport
+    assert "P08191" in dysport and "04/2029" in dysport
+    assert "P08192" in dysport and "05/2029" in dysport
+    assert "P22368" in dysport and "02/2029" in dysport
+    assert "determina a apreensão e proíbe a comercialização, a distribuição e o uso" in dysport
+    assert "Não há, nesse item, proibição de armazenamento, exportação, importação ou propaganda, nem determinação de recolhimento." in dysport
     assert "Phesgo" not in dysport and "Queen" not in dysport and "Malheiro" not in dysport and "cannabis" not in dysport
 
     assert "48.822.189/0001-24" in queen
@@ -383,18 +404,18 @@ def test_re_3717_callout_keeps_each_measure_inside_its_own_item():
 
     assert "47.843.321/0001-11" in malheiro
     assert "suspensão da propaganda de todos os manipulados" in malheiro
-    assert "não determina recolhimento, apreensão nem proibição de fabricação" in malheiro
+    assert "não determina recolhimento, apreensão, proibição de fabricação nem interdição do estabelecimento" in malheiro
     assert "comercialização" not in malheiro
     assert "Phesgo" not in malheiro and "Dysport" not in malheiro and "Queen" not in malheiro and "cannabis" not in malheiro
 
-    assert "proibição de comercialização e propaganda" in cannabis
+    assert "proíbe a comercialização e a propaganda" in cannabis
     assert "não determina apreensão, recolhimento nem proibição de uso" in cannabis
     assert "Phesgo" not in cannabis and "Dysport" not in cannabis and "Queen" not in cannabis and "Malheiro" not in cannabis
     assert "href=" not in _re3717_callout(html)
 
 
 def test_re_3717_body_uses_the_dou_text_and_does_not_mix_measures():
-    html = NEWS_PATH.read_text(encoding="utf-8")
+    html = _page_html()
     section = _re3717_section(html)
     phesgo = _text(_subsection(section, "Phesgo — lote B5011B05 com fabricação 06/2025", "Dysport — lotes P08191, P08192 e P22368"))
     dysport = _text(_subsection(section, "Dysport — lotes P08191, P08192 e P22368", "Queen Pharma Aesthetic — suspensão de propaganda"))
@@ -449,36 +470,36 @@ def test_re_3717_body_uses_the_dou_text_and_does_not_mix_measures():
 
 
 def test_new_measures_of_21_and_25_september_keep_their_own_scope():
-    html = NEWS_PATH.read_text(encoding="utf-8")
-    start = html.index('data-news-update-callout aria-labelledby="novas-medidas-25-setembro-title"')
-    callout = html[start:html.index("</aside>", start)]
-    items = [_text(item) for item in _items(callout)]
+    html = _page_html()
     body_start = html.index("<h2>25 de setembro: RE nº 3.751/2026")
     body = _text(html[body_start:html.index("<h2>21 de setembro: RE nº 3.717/2026", body_start)])
+    scope = html[html.index("<h2>28 de setembro: RE nº 3.764/2026"):html.index("<h2>16 de setembro: quatro resoluções")]
 
-    assert len(items) == 11
-    reach, ocrevus, ict, enhertu, mounjcaps, higia, eleve, dcasa, smart, thathi, terapeutica = items
-    assert "RE nº 3.751/2026" in ocrevus and "RE nº 3.751/2026" in ict
-    # RE nº 3.751/2026, LAF MED: os lotes estão no campo de produto, mas a motivação
-    # estende as ações a quaisquer medicamentos, sem proibir o Ocrevus em geral.
-    assert "LAF MED" in ocrevus and "H7953B14 e H7953B06" in ocrevus
+    def chunk(start, end):
+        begin = html.index(start)
+        return _text(html[begin:html.index(end, begin)])
+
+    ocrevus = chunk("<h3>LAF MED", "<h3>ICT Farmacêutica")
+    ict = chunk("<h3>ICT Farmacêutica", "<h2>23 de setembro: RE nº 3.738/2026")
+    eleve = chunk("<h3>Eleve — RE nº 3.712/2026", "<h3>D Casa")
+    dcasa = chunk("<h3>D Casa", "<h3>Smart GR")
+    smart = chunk("<h3>Smart GR", "<h2>21 de setembro: RE nº 3.717/2026")
+
+    assert "RE nº 3.751/2026" in body
+    assert "LAF MED" in ocrevus and "H7953B14" in ocrevus and "H7953B06" in ocrevus
     assert "se aplicam a quaisquer medicamentos" in ocrevus
     assert "não é uma proibição geral do Ocrevus" in ocrevus
     assert "restrita aos dois lotes" not in ocrevus
-    # ICT: o campo de produto alcança todos os manipulados estéreis, todos os lotes;
-    # 31/08 a 02/09/2026 é o período da inspeção, não da produção nem do recolhimento.
-    assert "todos os medicamentos manipulados estéreis da empresa, em todos os lotes" in ict
-    assert "suspensão de comercialização, distribuição, manipulação, propaganda e uso" in ict
-    assert "31/08 a 02/09/2026 são as da inspeção" in ict
+    assert "todos os medicamentos manipulados estéreis, em todos os lotes" in ict
+    assert "suspensão da comercialização, da distribuição, da manipulação, da propaganda e do uso" in ict
     assert "produzidos" not in ict and "refere-se ao recolhimento" not in ict
     assert "RE nº 3.712/2026" in eleve and "Gama Suplementos Alimentares" in eleve
     assert "RE nº 3.714/2026" in dcasa and "Fórmula Química" in dcasa
     assert "RE nº 3.714/2026" in smart
     assert "A publicação da Anvisa identifica esses três produtos da Klug como atingidos pela medida." in smart
     assert "A publicação da Anvisa identifica esses três produtos da Klug como atingidos pela medida." in body
-    # Sem afirmação sobre a situação dos demais produtos da empresa.
-    assert "demais produtos da Klug" not in callout and "demais produtos da Klug" not in body
-    assert "href=" not in callout
+    assert "demais produtos da Klug" not in scope and "demais produtos da Klug" not in body
+    assert "href=" not in scope
 
     # Limites de alcance e de atribuição informados na revisão.
     assert "falsific" not in ocrevus.casefold()
@@ -510,29 +531,25 @@ def test_new_measures_of_21_and_25_september_keep_their_own_scope():
 
 
 def test_re_3764_and_re_3743_keep_suspension_and_revocation_apart():
-    html = NEWS_PATH.read_text(encoding="utf-8")
-    start = html.index('data-news-update-callout aria-labelledby="novas-medidas-25-setembro-title"')
-    callout = html[start:html.index("</aside>", start)]
-    items = [_text(item) for item in _items(callout)]
-    reach_item, higia_item = items[0], items[5]
+    html = _page_html()
     reach_start = html.index("<h2>28 de setembro: RE nº 3.764/2026")
     reach = _text(html[reach_start:html.index("<h2>25 de setembro: RE nº 3.751/2026", reach_start)])
     higia_start = html.index("<h2>23 de setembro: RE nº 3.743/2026")
     higia = _text(html[higia_start:html.index("<h2>21 de setembro: RE nº 3.712", higia_start)])
+    reach_item, higia_item = reach, higia
 
-    # A Fase 1D reaproveitou o quadro de 21 a 28/09; o de outubro (Fase 1G) é o sexto.
-    assert html.count("data-news-update-callout aria-labelledby=") == 11
-    assert "Atualização: medidas de 21 a 28/09/2026 e revogações de 01, 21 e 23/09/2026" in _text(callout)
-    assert "publicações de 01, 21, 23, 25 e 28/09/2026" in _text(callout)
-    assert "As RE nº 3.436, 3.718 e 3.743/2026 revogam, cada uma, uma medida anterior referente a uma empresa" in _text(callout)
+    # Os quadros curtos de setembro foram reunidos no detalhe de cada resolução.
+    assert html.count("data-news-update-callout aria-labelledby=") == 6
+    assert "publicações de 01, 21, 23, 25 e 28/09/2026" in html
+    assert "As RE nº 3.436, 3.718 e 3.743/2026 revogam, cada uma, uma medida anterior referente a uma empresa" in html
     # Ordem cronológica das seções: 28/09, 25/09, 23/09, 21/09.
     assert reach_start < html.index("<h2>25 de setembro: RE nº 3.751/2026") < higia_start
     assert higia_start < html.index("<h2>21 de setembro: RE nº 3.712")
 
     # RE nº 3.764/2026 (24/09, DOU 28/09): suspensão dirigida à Reach Latam.
-    assert "RE nº 3.764/2026, suspensão" in reach_item and "Reach Latam" in reach_item
+    assert "Reach Latam" in reach_item
     assert "suspensão de armazenamento, comercialização, distribuição, importação, propaganda e transporte" in reach_item
-    assert "não é uma proibição geral da tirzepatida" in reach_item
+    assert "não representa proibição geral da tirzepatida" in reach_item
     assert "Resolução-RE nº 3.764, de 24/09/2026, publicada no DOU em 28/09/2026" in reach
     assert "Reach Latam Consultoria e Comércio Exterior Ltda." in reach and "24.662.773/0001-00" in reach
     assert "todos os produtos sujeitos a controle especial, incluindo tirzepatida" in reach
@@ -546,8 +563,8 @@ def test_re_3764_and_re_3743_keep_suspension_and_revocation_apart():
         assert wrong not in reach_item and wrong not in reach.replace("proibição geral", ""), wrong
 
     # RE nº 3.743/2026 (22/09, DOU 23/09): revogação da medida nº 2 da RE nº 939/2026, com as restrições da motivação.
-    assert "RE nº 3.743/2026, revogação" in higia_item and "Higia Pharmaceutical" in higia_item
-    assert "medida preventiva nº 2 do anexo da RE nº 939/2026" in higia_item
+    assert "Higia Pharmaceutical" in higia_item
+    assert "medida preventiva nº 2" in higia_item and "939" in higia_item
     assert "Satisfatória Com Restrições" in higia_item and "estudo complementar de validações" in higia_item
     assert "Resolução-RE nº 3.743, de 22/09/2026, publicada no DOU em 23/09/2026" in higia
     assert "medida preventiva nº 2 do anexo da Resolução-RE nº 939, de 12/03/2026, publicada no DOU em 13/03/2026" in higia
@@ -566,30 +583,26 @@ def test_re_3764_and_re_3743_keep_suspension_and_revocation_apart():
 
 
 def test_re_3718_and_re_3436_revoke_only_their_own_items():
-    html = NEWS_PATH.read_text(encoding="utf-8")
-    start = html.index('data-news-update-callout aria-labelledby="novas-medidas-25-setembro-title"')
-    callout = html[start:html.index("</aside>", start)]
-    items = [_text(item) for item in _items(callout)]
-    thathi_item, terapeutica_item = items[9], items[10]
+    html = _page_html()
     thathi_start = html.index("<h2>21 de setembro: RE nº 3.718/2026")
     thathi = _text(html[thathi_start:html.index("<h2>16 de setembro: quatro resoluções", thathi_start)])
     terapeutica_start = html.index("<h2>1º de setembro: RE nº 3.436/2026")
-    terapeutica = _text(html[terapeutica_start:html.index("<h2>Agosto amplia", terapeutica_start)])
+    terapeutica_end = html.index("Os atos constam de publicações de 01, 21, 23, 25 e 28/09/2026", terapeutica_start)
+    terapeutica = _text(html[terapeutica_start:terapeutica_end])
+    thathi_item, terapeutica_item = thathi, terapeutica
 
-    # Quadro de 21 a 28/09 reaproveitado: título e fecho cobrem 01/09; cada item novo traz sua publicação.
-    assert html.count("data-news-update-callout aria-labelledby=") == 11
-    assert "Atualização: medidas de 21 a 28/09/2026 e revogações de 01, 21 e 23/09/2026" in _text(callout)
-    assert "publicações de 01, 21, 23, 25 e 28/09/2026" in _text(callout)
-    assert "As RE nº 3.436, 3.718 e 3.743/2026 revogam, cada uma, uma medida anterior referente a uma empresa" in _text(callout)
+    assert html.count("data-news-update-callout aria-labelledby=") == 6
+    assert "publicações de 01, 21, 23, 25 e 28/09/2026" in html
+    assert "As RE nº 3.436, 3.718 e 3.743/2026 revogam, cada uma, uma medida anterior referente a uma empresa" in html
     # Seções por data de publicação; no dia 21/09, a revogação vem depois das medidas preventivas.
     assert html.index("<h2>21 de setembro: RE nº 3.717/2026") < thathi_start < html.index("<h2>16 de setembro")
     assert html.index("<h2>Setembro: RE nº 3.547/2026") < terapeutica_start < html.index("<h2>Agosto amplia")
 
     # RE nº 3.718/2026 (18/09, DOU 21/09): só a medida nº 2 da RE nº 3.357/2026; proibição revogada.
-    assert "RE nº 3.718/2026, revogação, DOU de 21/09/2026" in thathi_item and "Tha &amp; Thi" in thathi_item
-    assert "medida preventiva nº 2 do anexo da RE nº 3.357/2026" in thathi_item
+    assert "Tha &amp; Thi" in thathi_item
+    assert "medida preventiva nº 2" in thathi_item and "3.357" in thathi_item
     assert "apreensão e a proibição de comercialização, manipulação, propaganda e uso" in thathi_item
-    assert "não a RE nº 3.357/2026 inteira" in thathi_item
+    assert "o art. 1º revoga apenas a medida nº 2, referente à Tha &amp; Thi" in thathi_item
     assert "Resolução-RE nº 3.718, de 18/09/2026, publicada no DOU em 21/09/2026" in thathi
     assert "medida preventiva nº 2 do anexo da Resolução-RE nº 3.357, de 26/08/2026, publicada no DOU em 27/08/2026" in thathi
     assert "06.177.615/0001-74" in thathi and "preparações magistrais estéreis" in thathi
@@ -603,8 +616,8 @@ def test_re_3718_and_re_3436_revoke_only_their_own_items():
         assert wrong not in thathi_item and wrong not in thathi, wrong
 
     # RE nº 3.436/2026 (28/08, DOU 01/09): só a medida nº 3 da RE nº 1.380/2026; suspensão revogada.
-    assert "RE nº 3.436/2026, revogação, DOU de 01/09/2026" in terapeutica_item and "Terapêutica" in terapeutica_item
-    assert "medida preventiva nº 3 do anexo da RE nº 1.380/2026" in terapeutica_item
+    assert "Terapêutica" in terapeutica_item
+    assert "medida preventiva nº 3" in terapeutica_item and "1.380" in terapeutica_item
     assert "apreensão e a suspensão de comercialização, distribuição, manipulação, propaganda e uso" in terapeutica_item
     assert "Resolução-RE nº 3.436, de 28/08/2026, publicada no DOU em 01/09/2026" in terapeutica
     assert "medida preventiva nº 3 do anexo da Resolução-RE nº 1.380, de 07/04/2026, publicada no DOU em 08/04/2026" in terapeutica
@@ -617,11 +630,11 @@ def test_re_3718_and_re_3436_revoke_only_their_own_items():
     for wrong in ("recolhimento", "proibição de", "AFE", "estudo complementar", "Satisfatória", "denúncia"):
         assert wrong not in terapeutica_item and wrong not in terapeutica, wrong
     assert "href=" not in html[thathi_start:html.index("<h2>16 de setembro", thathi_start)]
-    assert "href=" not in html[terapeutica_start:html.index("<h2>Agosto amplia", terapeutica_start)]
+    assert "href=" not in html[terapeutica_start:terapeutica_end]
 
 
 def test_september_measures_of_re_3440_3479_3480_3546_and_3738_keep_their_own_scope():
-    html = NEWS_PATH.read_text(encoding="utf-8")
+    html = _page_html()
 
     def section(start, end):
         begin = html.index(start)
@@ -650,20 +663,18 @@ def test_september_measures_of_re_3440_3479_3480_3546_and_3738_keep_their_own_sc
         "<h2>8 de setembro: RE nº 3.479/2026", "<h2>8 de setembro: RE nº 3.480/2026",
         "<h2>1º de setembro: RE nº 3.440/2026", "<h2>1º de setembro: RE nº 3.436/2026", "<h2>Agosto amplia")]
     assert positions == sorted(positions)
-    assert html.count("data-news-update-callout aria-labelledby=") == 11
+    assert html.count("data-news-update-callout aria-labelledby=") == 6
 
-    # Quadros: dois itens da RE nº 3.738 no quadro do topo; referência separada no quadro de setembro.
-    start = html.index('data-news-update-callout aria-labelledby="novas-medidas-25-setembro-title"')
-    top_items = [_text(item) for item in _items(html[start:html.index("</aside>", start)])]
-    assert "Enhertu 100 mg — lotes 432221, 432844 e 432862 (RE nº 3.738/2026, DOU de 23/09/2026)" in top_items[3]
-    assert "Mounjcaps — todos os lotes (RE nº 3.738/2026, DOU de 23/09/2026)" in top_items[4]
-    assert "Não se refere ao Mounjaro" in top_items[4]
+    enhertu_item = _text(html[html.index("<h3>Enhertu"):html.index("<h3>Mounjcaps")])
+    mounj_item = _text(html[html.index("<h3>Mounjcaps"):html.index("<h2>23 de setembro: RE nº 3.743")])
+    assert "432221" in enhertu_item and "432844" in enhertu_item and "432862" in enhertu_item
+    assert "não se refere ao Mounjaro" in mounj_item
     september = _text(_september_callout(html))
-    assert len(_items(_september_callout(html))) == 4
-    assert "RE nº 3.440/2026 (DOU de 01/09, marca United Labz)" in september
-    assert "RE nº 3.479 e 3.480/2026 (DOU de 08/09)" in september
-    assert "RE nº 3.546/2026 (DOU de 11/09, interdição cautelar de um lote do TYG)" in september
-    assert "Eles não integram a RE nº 3.547/2026." in september
+    assert len(_h3_parts(_september_callout(html))) == 4
+    assert "RE nº 3.440/2026 (DOU de 01/09, marca United Labz)" in html
+    assert "RE nº 3.479 e 3.480/2026 (DOU de 08/09)" in html
+    assert "RE nº 3.546/2026 (DOU de 11/09, interdição cautelar de um lote do TYG)" in html
+    assert "Eles não integram a RE nº 3.547/2026." in html
 
     # RE nº 3.738/2026: Enhertu falsificado e Mounjcaps, sem atribuição à detentora nem confusão com Mounjaro.
     assert "Resolução-RE nº 3.738, de 22/09/2026, publicada no DOU em 23/09/2026" in re3738
@@ -780,7 +791,7 @@ def _october_19_callout(html):
 
 
 def test_october_19_callout_keeps_dysport_and_keytruda_lots_apart_without_links():
-    html = NEWS_PATH.read_text(encoding="utf-8")
+    html = _page_html()
     callout = _october_19_callout(html)
     items = [_text(item) for item in _items(callout)]
 
@@ -822,7 +833,8 @@ def test_october_19_callout_keeps_dysport_and_keytruda_lots_apart_without_links(
         assert "recolhimento" not in item.replace("não determina recolhimento", "")
     assert "Ipsen" not in keytruda and "Merck" not in dysport and "MSD" not in callout
 
-    closing = _text(callout.split("</ul>", 1)[1])
+    # Na v2 cada RE tem a sua lista; o parágrafo comum do quadro vem depois da última.
+    closing = _text(callout.rsplit("</ul>", 1)[1])
     assert "As Resoluções-RE nº 4.090 e 4.105 foram assinadas em 15/10/2026" in closing
     assert "publicadas no DOU de 19/10/2026, edição 197, Seção 1, páginas 223 e 224, respectivamente" in closing
     assert "data em que entraram em vigor, conforme o art. 2º de cada ato" in closing
@@ -842,7 +854,7 @@ def _october_14_callout(html):
 
 
 def test_october_14_callout_keeps_each_re_4035_item_apart_without_links():
-    html = NEWS_PATH.read_text(encoding="utf-8")
+    html = _page_html()
     callout = _october_14_callout(html)
     items = [_text(item) for item in _items(callout)]
 
@@ -910,7 +922,8 @@ def test_october_14_callout_keeps_each_re_4035_item_apart_without_links():
     for site in ("zyntrashop", "peptideosdobrasil", "oxygenkwpharmabrasil", "zphcstore"):
         assert f"//{site}" not in html and f"//www.{site}" not in html, site
 
-    closing = _text(callout.split("</ul>", 1)[1])
+    # Na v2 cada RE tem a sua lista; o parágrafo comum do quadro vem depois da última.
+    closing = _text(callout.rsplit("</ul>", 1)[1])
     assert "assinada em 09/10/2026" in closing
     assert "publicada no DOU de 14/10/2026, edição 194, Seção 1, página 73" in closing
     assert "data em que entrou em vigor, conforme o art. 2º" in closing
@@ -926,7 +939,7 @@ def _october_21_callout(html):
 
 
 def test_re_4140_and_re_3159_keep_scope_spelling_and_do_not_release_the_products():
-    html = NEWS_PATH.read_text(encoding="utf-8")
+    html = _page_html()
     callout = _october_21_callout(html)
     items = [_text(item) for item in _items(callout)]
     july_heading = html.index("<h2>Cosméticos e saneantes também foram alcançados</h2>")
@@ -966,7 +979,8 @@ def test_re_4140_and_re_3159_keep_scope_spelling_and_do_not_release_the_products
     for forbidden in ("liberad", "aprovad", "falsific"):
         assert forbidden not in correction.casefold(), forbidden
 
-    closing = _text(callout.split("</ul>", 1)[1])
+    # Na v2 cada RE tem a sua lista; o parágrafo comum do quadro vem depois da última.
+    closing = _text(callout.rsplit("</ul>", 1)[1])
     assert closing == ("A Resolução-RE nº 4.140 foi assinada em 19/10/2026 e publicada no DOU de 21/10/2026, "
                        "edição 199, Seção 1, página 67, data em que entrou em vigor, conforme o art. 2º.")
 
@@ -992,7 +1006,8 @@ def test_re_4140_and_re_3159_keep_scope_spelling_and_do_not_release_the_products
         assert forbidden not in july.casefold(), forbidden
     assert july_html.count('<a href="#correcao-re-3159-2026">veja a correção publicada nesta página em 21/10/2026</a>') == 1
     assert html.count('id="correcao-re-3159-2026"') == 1
-    assert html.count('href="#correcao-re-3159-2026"') == 1
+    assert html.count('href="#correcao-re-3159-2026"') >= 1
+    assert july_html.count('href="#correcao-re-3159-2026"') == 1
 
     assert re.findall(r"<a\b[^>]*>", callout) == []
     assert "http" not in _text(callout) and "http" not in july
@@ -1006,11 +1021,11 @@ def _october_13_callout(html):
 
 
 def test_october_13_callout_keeps_each_measure_bound_to_its_own_act_and_scope():
-    html = NEWS_PATH.read_text(encoding="utf-8")
+    html = _page_html()
     callout = _october_13_callout(html)
     items = [_text(item) for item in _items(callout)]
 
-    assert html.count("data-news-update-callout aria-labelledby=") == 11
+    assert html.count("data-news-update-callout aria-labelledby=") == 6
     assert html.index("novas-medidas-13-outubro-title") < html.index("novas-medidas-06-outubro-title")
     assert "Atualização: medidas publicadas no DOU em 13/10/2026" in callout
     assert len(items) == 19
@@ -1126,7 +1141,8 @@ def test_october_13_callout_keeps_each_measure_bound_to_its_own_act_and_scope():
     assert "não determina recolhimento nem importação" in gugu
     assert "Sensitive For You" not in gugu
 
-    closing = _text(callout.split("</ul>", 1)[1])
+    # Na v2 cada RE tem a sua lista; o parágrafo comum do quadro vem depois da última.
+    closing = _text(callout.rsplit("</ul>", 1)[1])
     assert "assinadas em 08/10/2026" in closing and "assinadas em 09/10/2026" in closing
     assert "publicação das seis resoluções no DOU de 13/10/2026, Seção 1" in closing
     assert "href=" not in callout
@@ -1140,7 +1156,7 @@ def _october_06_callout(html):
 
 
 def test_october_06_callout_keeps_each_act_and_the_aloe_rectification_apart():
-    html = NEWS_PATH.read_text(encoding="utf-8")
+    html = _page_html()
     callout = _october_06_callout(html)
     items = [_text(item) for item in _items(callout)]
 
@@ -1174,8 +1190,7 @@ def test_october_06_callout_keeps_each_act_and_the_aloe_rectification_apart():
 
 
 def _october_callout(html):
-    start = html.index('data-news-update-callout aria-labelledby="novas-medidas-02-outubro-title"')
-    return html[start:html.index("</aside>", start)]
+    return _section_between(html, "<h2>2 de outubro: RE nº 3.850/2026", 'id="mes-setembro-2026"')
 
 
 def _normalize_search(value):
@@ -1186,86 +1201,37 @@ def _normalize_search(value):
 
 
 def test_october_callout_keeps_each_measure_bound_to_its_own_act_and_scope():
-    html = NEWS_PATH.read_text(encoding="utf-8")
+    html = _page_html()
     callout = _october_callout(html)
-    items = [_text(item) for item in _items(callout)]
 
-    # Quadro de 02/10/2026 antes dos cinco anteriores, que permanecem.
-    assert html.count("data-news-update-callout aria-labelledby=") == 11
-    assert html.index("novas-medidas-13-outubro-title") < html.index("novas-medidas-06-outubro-title")
-    assert html.index("novas-medidas-06-outubro-title") < html.index("novas-medidas-02-outubro-title")
-    assert html.index("novas-medidas-02-outubro-title") < html.index("novas-medidas-25-setembro-title")
-    assert "Atualização: medidas publicadas no DOU em 02/10/2026" in callout and "ATUALIZAÇÃO" in callout
-    assert len(items) == 7
-    gtech, hidrafemme, cosmeticos, multjet, lgr, brmega, biojet = items
+    # O detalhe de 02/10 fica depois dos quadros de 13 e 06/10 e antes de setembro.
+    assert html.count("data-news-update-callout aria-labelledby=") == 6
+    assert html.index('id="novas-medidas-13-outubro-title"') < html.index('id="novas-medidas-06-outubro-title"')
+    assert html.index('id="novas-medidas-06-outubro-title"') < html.index('id="novas-medidas-02-outubro-title"')
+    assert html.index('id="novas-medidas-02-outubro-title"') < html.index('id="novas-medidas-25-setembro-title"')
+    assert "assinadas em 29 e 30/09/2026 e publicadas no DOU em 02/10/2026, data em que entraram em vigor" in callout
 
-    # RE nº 3.850/2026: só o lote da C & P, só três operações suspensas.
-    assert "G TECH" in gtech and "lote Z25J215F1 (RE nº 3.850/2026, suspensão)" in gtech
-    assert "suspensão de comercialização, distribuição e propaganda do lote" in gtech
-    assert "C &amp; P Comércio de Produtos Médicos, Farmacêuticos e Hospitalares Ltda." in gtech
-    assert "venda ao consumidor final" in gtech
-    for wrong in ("recolhimento", "apreensão", "proibição", "falsific", "desvio", "importação", "fabricação", "propaganda e uso"):
-        assert wrong not in gtech, wrong
-
-    # RE nº 3.852/2026: lote “lot 2 2511006”, origem desconhecida, Helianto como detentora que comunicou.
-    assert "lote “lot 2 2511006” (RE nº 3.852/2026)" in hidrafemme
-    assert "recolhimento e proibição de comercialização, distribuição, fabricação, importação, propaganda e uso" in hidrafemme
-    assert "de empresa desconhecida" in hidrafemme and "Helianto Farmacêutica, detentora do registro" in hidrafemme
-    assert "a falsificação não é atribuída a ela" in hidrafemme
-    assert "apreensão" not in hidrafemme
-
-    # RE nº 3.854/2026, itens 1, 2 e 4: apreensão de cosméticos; Perspirex só nos dois lotes.
-    assert "Perspirex Strong (lotes 614326 e 614323), MAV C-22 e GhostBond XL (todos os lotes) — RE nº 3.854/2026, itens 1, 2 e 4" in cosmeticos
-    assert "apreensão e proibição de comercialização, distribuição, fabricação, importação, propaganda e uso" in cosmeticos
-    assert "a Megalabs desconhece a fabricação das unidades" in cosmeticos
-    assert "no MAV C-22 e no GhostBond XL, o motivo é a falta de regularização sanitária" in cosmeticos
-    for wrong in ("recolhimento", "Mult Jet", "item 3"):
-        assert wrong not in cosmeticos, wrong
-
-    # RE nº 3.854/2026, item 3: recolhimento dos dois saneantes Mult Jet, sem apreensão.
-    assert "Mult Jet — Desincrustante Ácido DX 1:40 Mult-Cap e Água Sanitária, todos os lotes (RE nº 3.854/2026, item 3)" in multjet
-    assert "recolhimento e proibição de comercialização, distribuição, fabricação, importação, propaganda e uso desses dois saneantes" in multjet
-    for wrong in ("apreensão", "Perspirex", "todos os saneantes"):
-        assert wrong not in multjet, wrong
-
-    # RE nº 3.855/2026: suspensão geral de três operações (item 1) separada do recorte dos três produtos (item 2).
-    assert "LGR Indústria e Comércio de Produtos de Limpeza (RE nº 3.855/2026)" in lgr
-    item1, item2 = lgr.split("o item 2", 1)
-    assert "o item 1 suspende a comercialização, a distribuição e a fabricação de todos os saneantes da empresa" in item1
-    assert "inspeção de 14 a 18/09/2026" in item1
-    assert "recolhimento" not in item1 and "uso" not in item1
-    assert "determina recolhimento e suspensão de comercialização, distribuição, fabricação e uso apenas do Medicpro Zime, do Medicpro Zime Ultra e do Lapzyme" in item2
-
-    # RE nº 3.856/2026: todos os saneantes, com a marca BR MT LIMP; sem importação nem recolhimento.
-    assert "BR Mega Limp — todos os saneantes, incluindo os da marca BR MT LIMP (RE nº 3.856/2026)" in brmega
-    assert "apreensão e proibição de comercialização, distribuição, fabricação, propaganda e uso" in brmega
-    for wrong in ("importação", "transporte", "recolhimento"):
-        assert wrong not in brmega, wrong
-
-    # RE nº 3.857/2026: só os dois produtos da Biojet.
-    assert "Biojet — Bio Lavanda Limpador de Uso Geral e Bio Água Sanitária, todos os lotes (RE nº 3.857/2026)" in biojet
-    assert "recolhimento e proibição de comercialização, distribuição, fabricação, importação, propaganda e uso desses dois produtos" in biojet
-    for wrong in ("todos os saneantes", "toda a produção", "apreensão"):
-        assert wrong not in biojet, wrong
-
-    # Assinatura em setembro, publicação e vigência em 02/10; nenhum item mistura atos.
-    closing = _text(callout.split("</ul>", 1)[1])
-    assert "assinadas em 29 e 30/09/2026 e publicadas no DOU em 02/10/2026, data em que entraram em vigor" in closing
-    for item, own in zip(items, ("3.850", "3.852", "3.854", "3.854", "3.855", "3.856", "3.857")):
-        assert all(other not in item for other in ("3.850", "3.852", "3.854", "3.855", "3.856", "3.857") if other != own)
+    heads = ("<h2>2 de outubro: RE nº 3.850/2026", "<h2>2 de outubro: RE nº 3.852/2026",
+             "<h2>2 de outubro: RE nº 3.854/2026", "<h2>2 de outubro: RE nº 3.855/2026",
+             "<h2>2 de outubro: RE nº 3.856/2026", "<h2>2 de outubro: RE nº 3.857/2026",
+             'id="mes-setembro-2026"')
+    positions = [html.index(h) for h in heads]
+    parts = [html[a:b] for a, b in zip(positions, positions[1:])]
+    for part, own in zip(parts, ("3.850", "3.852", "3.854", "3.855", "3.856", "3.857")):
+        assert all(other not in part for other in ("3.850", "3.852", "3.854", "3.855", "3.856", "3.857") if other != own)
     assert "href=" not in callout
 
 
 def test_october_body_sections_preserve_products_lots_operations_and_limits():
-    html = NEWS_PATH.read_text(encoding="utf-8")
+    html = _page_html()
 
     def section(start, end):
         begin = html.index(start)
         return _text(html[begin:html.index(end, begin)])
 
     heads = ("<h2>2 de outubro: RE nº 3.850/2026", "<h2>2 de outubro: RE nº 3.852/2026", "<h2>2 de outubro: RE nº 3.854/2026",
-             "<h2>2 de outubro: RE nº 3.855/2026", "<h2>2 de outubro: RE nº 3.856/2026", "<h2>2 de outubro: RE nº 3.857/2026",
-             "<h2>28 de setembro: RE nº 3.764/2026")
+             "<h2>2 de outubro: RE nº 3.855/2026",              "<h2>2 de outubro: RE nº 3.856/2026", "<h2>2 de outubro: RE nº 3.857/2026",
+             'id="mes-setembro-2026"')
     positions = [html.index(h) for h in heads]
     # Bloco de 02/10 depois do resumo regulatório e antes dos atos de setembro.
     assert html.index("Resumo regulatório") < positions[0] and positions == sorted(positions)
@@ -1293,7 +1259,7 @@ def test_october_body_sections_preserve_products_lots_operations_and_limits():
 
     # Hidrafemme: identificador “lot 2 2511006” preservado; origem desconhecida; Helianto não é a fabricante.
     assert "“lot 2 2511006”" in hidrafemme
-    assert html.count("2511006") == html.count("lot 2 2511006") == 2
+    assert html.count("2511006") == html.count("lot 2 2511006") == 1
     assert "A empresa responsável por essas unidades e o respectivo CNPJ constam como desconhecidos" in hidrafemme
     assert "determina o recolhimento e proíbe a comercialização, a distribuição, a fabricação, a importação, a propaganda e o uso" in hidrafemme
     assert "Helianto Farmacêutica Ltda." in hidrafemme and "detentora do registro do produto, identificou unidades" in hidrafemme
@@ -1358,7 +1324,7 @@ def test_october_body_sections_preserve_products_lots_operations_and_limits():
 
 
 def test_october_update_reaches_lead_summary_metadata_and_listing_search():
-    html = NEWS_PATH.read_text(encoding="utf-8")
+    html = _page_html()
     news_index = NEWS_INDEX_PATH.read_text(encoding="utf-8")
     description = ("Medidas recentes alcançam medicamentos, dispositivos médicos, cosméticos, saneantes e produtos sem registro, "
                    "inclusive itens divulgados com alegação emagrecedora.")

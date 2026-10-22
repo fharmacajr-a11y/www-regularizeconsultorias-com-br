@@ -500,7 +500,8 @@ MEDIR = r'''
   const meta = document.querySelector('.article-meta-card');
   const corpo = document.querySelector('.article-body');
   const paragrafo = document.querySelector('.article-body > p');
-  const amarelo = document.querySelector('[data-news-update-callout]');
+  // Quadro amarelo do corpo; os da notícia de irregulares ficam dentro dos detalhes recolhidos de cada mês (v2).
+  const amarelo = [...document.querySelectorAll('[data-news-update-callout]')].find((el) => !el.closest('.irregulares-mes')) || null;
   const aviso = document.querySelector('.article-important-notice');
   const relacionadas = document.querySelector('.article-related-news');
   const cards = [...document.querySelectorAll('.article-related-news__card')];
@@ -653,7 +654,7 @@ def test_meia_tela_centraliza_e_preserva_folga_e_o_celular(alinhamento):
                 assert item["amarelo"]["l"] == pytest.approx(paragrafo["l"], abs=1.5)
                 assert item["amarelo"]["r"] == pytest.approx(paragrafo["r"], abs=1.5)
             else:
-                assert slug == "farmacopeia"
+                assert slug in ("farmacopeia", "irregulares")
             if item["artigoW"] < 928:
                 assert corpo["pl"] == pytest.approx(0, abs=0.5)
                 assert meta["ml"] == pytest.approx(0, abs=0.5)
