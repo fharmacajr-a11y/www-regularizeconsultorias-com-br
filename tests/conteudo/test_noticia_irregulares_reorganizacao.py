@@ -121,8 +121,9 @@ def test_ids_meses_busca_e_links_internos():
         "Notícias relacionadas",
     ):
         assert heading in new
-    assert 'datetime="2026-10-21T18:42:00-03:00"' in new
-    assert "21/10/2026" in new and "18h42" in new
+    # 22/10/2026, 22h40 (hora do commit): lote das RE nº 4.143, 4.147 e 4.150/2026.
+    assert 'datetime="2026-10-22T22:40:00-03:00"' in new
+    assert "22/10/2026" in new and "22h40" in new
 
 
 def _posicao(page, element_id):
@@ -218,14 +219,19 @@ def test_link_interno_abre_o_mes_e_a_busca_encontra_keytruda(origem):
 RESUMO = re.compile(r"^(?:RE nº \d\.\d{3}/2026|Sem número de RE) — .+ \((\d{2}/\d{2}/2026)\)$")
 # Quadros quebrados por RE: número de itens e as RE de cada um, na ordem.
 QUADROS = {
+    "novas-medidas-22-outubro-title": ["4.143", "4.147", "4.150"],
     "novas-medidas-21-outubro-title": ["4.140", "3.159"],
     "novas-medidas-19-outubro-title": ["4.090", "4.105"],
     "novas-medidas-14-outubro-title": ["4.035"],
     "novas-medidas-13-outubro-title": ["3.989", "4.000", "4.001", "4.002", "4.009", "4.028"],
     "novas-medidas-06-outubro-title": ["3.946", "3.947", "3.634"],
 }
-# Meta revista em 22/10/2026 para manter uma linha por produto na tabela (antes, 5.000 px em 1280 px).
-ALTURA_MAXIMA = {390: 10000, 1280: 5500}
+# A meta fixa de altura (10.000 px em 390 px e 5.500 px em 1280 px) saiu em 22/10/2026: a tabela do mês aberto
+# cresce a cada RE até o mês virar, e o mês anterior fecha quando entra um mês novo (CLAUDE.md). No lugar dela, o
+# teste confere a estrutura (só o mês atual aberto, detalhes fechados, cartões de até 3 linhas em 390 px e linhas de
+# até 2 linhas em 1280 px) e que a parte fixa da página (altura total menos a tabela do mês aberto) não passe de 10%
+# acima do valor medido em 22/10/2026.
+PARTE_FIXA_BASE = {390: 6148, 1280: 3703}
 
 
 def _itens(html):
@@ -244,7 +250,7 @@ def _mes(html, month):
 def test_cada_re_fica_num_item_recolhido_com_resumo_e_os_detalhes_comecam_fechados():
     new = _new_html()
     itens = _itens(new)
-    assert len(itens) == 45
+    assert len(itens) == 48  # 45 da v2 + RE nº 4.143, 4.147 e 4.150/2026 (22/10/2026)
     for item_id, resumo, _ in itens:
         assert RESUMO.match(resumo), (item_id, resumo)
     # Nenhum item, nem o bloco de detalhes de cada mês, vem aberto: em outubro, só a tabela aparece.
@@ -313,7 +319,7 @@ def test_cada_linha_da_tabela_leva_ao_item_da_sua_re_e_data():
                     assert celula_re.startswith(f"RE nº {numero.group(1)}/2026"), (alvo, celula_re, resumo)
                 else:
                     assert celula_re == "Sem número de RE", (alvo, celula_re)
-    assert total == {"mes-outubro-2026": 47, "mes-setembro-2026": 33, "mes-agosto-2026": 7, "mes-julho-2026": 12}
+    assert total == {"mes-outubro-2026": 50, "mes-setembro-2026": 33, "mes-agosto-2026": 7, "mes-julho-2026": 12}
     assert insubsistentes == ["Fluído Flesh Air Frionel", "Ecotec-Pro e Ecotec", "Bardahl Flush Promax", "Air Repair Pescan"]
 
 
@@ -410,18 +416,49 @@ def test_link_para_a_correcao_abre_o_mes_os_detalhes_e_o_item(origem):
         browser.close()
 
 
-def test_altura_da_pagina_como_o_leitor_encontra_fica_na_meta(origem):
-    alturas = {}
+def test_pagina_como_o_leitor_encontra_tem_tabela_compacta_e_parte_fixa_estavel(origem):
+    resultados = {}
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
-        for largura, maximo in ALTURA_MAXIMA.items():
+        for largura in PARTE_FIXA_BASE:
             context = new_context(browser, viewport={"width": largura, "height": 900}, locale="pt-BR")
             page = context.new_page()
             page.goto(origem, wait_until="load")
             page.evaluate("document.fonts.ready.then(() => true)")
-            assert page.evaluate("() => document.getElementById('mes-outubro-2026').open") is True
-            assert page.evaluate("() => document.querySelectorAll('.irregulares-re[open], .irregulares-detalhes[open]').length") == 0
-            alturas[largura] = page.evaluate("document.documentElement.scrollHeight")
+            resultados[largura] = page.evaluate(
+                """() => {
+                    const linhas = (el) => {
+                        const s = getComputedStyle(el);
+                        const altura = el.getBoundingClientRect().height - parseFloat(s.paddingTop) - parseFloat(s.paddingBottom);
+                        return Math.round(altura / parseFloat(s.lineHeight));
+                    };
+                    const abertos = [...document.querySelectorAll('.irregulares-mes[open]')].map((el) => el.id);
+                    const mes = document.querySelector('.irregulares-mes[open]');
+                    const linhasDaTabela = [...mes.querySelectorAll('tbody tr[data-alvo]')].map((tr) => {
+                        const tds = [...tr.querySelectorAll('td')];
+                        const cartao = linhas(tds[0]) + linhas(tds[1]) + Math.max(linhas(tds[2]), linhas(tds[3]));
+                        return {alvo: tr.getAttribute('data-alvo'), cartao, linha: Math.max(...tds.map(linhas))};
+                    });
+                    return {
+                        abertos,
+                        itensAbertos: document.querySelectorAll('.irregulares-re[open], .irregulares-detalhes[open]').length,
+                        linhas: linhasDaTabela,
+                        total: document.documentElement.scrollHeight,
+                        tabela: mes.querySelector('.irregulares-tabela-caixa').getBoundingClientRect().height,
+                    };
+                }"""
+            )
             context.close()
         browser.close()
-    assert {largura: altura for largura, altura in alturas.items() if altura > ALTURA_MAXIMA[largura]} == {}, alturas
+
+    for largura, r in resultados.items():
+        # Só o mês atual aberto, e todos os detalhes (bloco do mês e itens de RE) fechados.
+        assert r["abertos"] == ["mes-outubro-2026"], (largura, r["abertos"])
+        assert r["itensAbertos"] == 0, largura
+        assert len(r["linhas"]) >= 50, largura
+        parte_fixa = r["total"] - r["tabela"]
+        assert parte_fixa <= PARTE_FIXA_BASE[largura] * 1.10, (largura, round(parte_fixa), PARTE_FIXA_BASE[largura])
+    # Em 390 px, nenhum cartão passa de 3 linhas de texto (RE; produto ou empresa; medida e situação).
+    assert [l for l in resultados[390]["linhas"] if l["cartao"] > 3] == []
+    # Em 1280 px, nenhuma linha da tabela passa de 2 linhas.
+    assert [l for l in resultados[1280]["linhas"] if l["linha"] > 2] == []

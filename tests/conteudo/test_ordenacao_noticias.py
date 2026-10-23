@@ -18,7 +18,8 @@ CBPF_IN451_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atua
 RPBR_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-periodicidade-rpbr-farmacovigilancia/"
 SIPROQUIM_IN338_URL = "https://www.regularizeconsultorias.com.br/noticias/produtos-quimicos-controlados-siproquim2-assinador-pf/"
 PRODUTOS_IRREGULARES_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
-PRODUTOS_IRREGULARES_UPDATED = "2026-10-21T18:42:00-03:00"
+# 22/10/2026, 22h40 (hora do commit): RE nº 4.143, 4.147 e 4.150/2026; o SNCR recebeu o mesmo carimbo no mesmo lote.
+PRODUTOS_IRREGULARES_UPDATED = "2026-10-22T22:40:00-03:00"
 # Notícia do SISPA, atualizada em 20/10/2026 às 10h12 (Comunicado nº 1/2026 da CGAA/DSV/SDA/MAPA).
 SISPA_URL = "https://www.regularizeconsultorias.com.br/noticias/mapa-sispa-registro-agrotoxicos/"
 SISPA_UPDATED = "2026-10-20T10:12:00-03:00"

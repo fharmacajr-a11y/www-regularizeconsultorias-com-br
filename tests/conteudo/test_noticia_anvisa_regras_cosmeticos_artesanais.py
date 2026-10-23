@@ -233,12 +233,14 @@ def test_sitemap_adds_only_the_new_url_and_the_listing_lastmod():
     # 13/10/2026: a listagem e a matéria do SNCR mudaram de novo. 20/10/2026: a listagem reordenou dois cards, e a
     # matéria do SNCR recebeu o quadro de 20/10/2026 (lote 2 do SNCR). 21/10/2026: a listagem reordenou produtos irregulares.
     assert (
+        # 22/10/2026: a listagem reordenou produtos irregulares e SNCR.
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-10-21</lastmod>"
+        "    <lastmod>2026-10-22</lastmod>"
     ) in sitemap
     assert (
+        # 22/10/2026: a matéria do SNCR recebeu o quadro dos manuais.
         "<loc>https://www.regularizeconsultorias.com.br/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/</loc>\n"
-        "    <lastmod>2026-10-20</lastmod>"
+        "    <lastmod>2026-10-22</lastmod>"
     ) in sitemap
     import xml.etree.ElementTree as ET
 

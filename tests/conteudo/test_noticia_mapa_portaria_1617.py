@@ -215,6 +215,7 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     # 13/10/2026: a listagem reordenou produtos irregulares, SNCR e DCB. 20/10/2026: reordenou produtos irregulares e SISPA.
     # 21/10/2026: reordenou produtos irregulares.
     assert (
+        # 22/10/2026: a listagem reordenou produtos irregulares e SNCR.
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-10-21</lastmod>"
+        "    <lastmod>2026-10-22</lastmod>"
     ) in sitemap

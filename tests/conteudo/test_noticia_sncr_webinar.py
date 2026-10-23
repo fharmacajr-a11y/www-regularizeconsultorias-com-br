@@ -16,7 +16,9 @@ ROUTE = "/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/"
 URL = f"https://www.regularizeconsultorias.com.br{ROUTE}"
 PUBLISHED = "2026-05-28T20:36:00-03:00"
 # 20/10/2026, 13h00: quadro do lote 2 (informe de 15/10 e Perguntas e Respostas sobre a integração, 1ª edição).
-UPDATED = "2026-10-20T13:00:00-03:00"
+# 22/10/2026, 22h40 (hora do commit): quadro dos manuais do SNCR (farmácias, 2ª edição; Vigilâncias Sanitárias, 8ª edição).
+UPDATED = "2026-10-22T22:40:00-03:00"
+UPDATE_22_10_ID = "sncr-atualizacao-22-outubro-title"
 UPDATE_20_10_ID = "sncr-atualizacao-20-outubro-title"
 STAGE_UPDATE_ID = "sncr-etapa-update-title"
 # Fora desta atualização: os 16 dígitos e o registro de mais de um medicamento por receita (anunciados para
@@ -99,12 +101,13 @@ def test_sncr_news_keeps_publication_and_updates_the_september_stage():
     assert f'<meta property="article:published_time" content="{PUBLISHED}" />' in html
     assert f'<meta property="article:modified_time" content="{UPDATED}" />' in html
     assert f'<time datetime="{PUBLISHED}">28/05/2026</time> às 20h36' in html
-    assert f'<time datetime="{UPDATED}">20/10/2026</time> às 13h00' in html
+    assert f'<time datetime="{UPDATED}">22/10/2026</time> às 22h40' in html
     assert_profiles_separated(html)
     assert f'<link rel="canonical" href="{URL}" />' in html
     assert html.count(ADSENSE_SCRIPT_MARKER) == 1
-    # Quadro de 20/10/2026 (lote 2) acima do quadro da etapa de setembro.
-    assert html.count("data-news-update-callout") - html.count("[data-news-update-callout]") == 2
+    # Quadro de 22/10/2026 (manuais) acima do de 20/10/2026 (lote 2), que fica acima do quadro da etapa de setembro.
+    assert html.count("data-news-update-callout") - html.count("[data-news-update-callout]") == 3
+    assert html.index(f'aria-labelledby="{UPDATE_22_10_ID}"') < html.index(f'aria-labelledby="{UPDATE_20_10_ID}"')
     assert html.index(f'aria-labelledby="{UPDATE_20_10_ID}"') < html.index(f'aria-labelledby="{STAGE_UPDATE_ID}"')
     assert "<h2>Fontes oficiais</h2>" not in html
     assert "Página oficial do SNCR na Anvisa" not in html
@@ -188,7 +191,8 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     assert cards.index(card) == 1
     assert "news-card-compact" in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
-    assert f'<time datetime="{UPDATED}" class="leading-none">20/10/2026 • 13h00</time>' in card
+    # 22/10/2026, 22h40: o card do SNCR, atualizado com os manuais, segue em 2º, logo depois do consolidado de irregulares.
+    assert f'<time datetime="{UPDATED}" class="leading-none">22/10/2026 • 22h40</time>' in card
     for term in (
         TITLE,
         "30/09/2026",
@@ -272,7 +276,7 @@ def test_sncr_news_has_current_sitemap_lastmod():
     sitemap = SITEMAP_PATH.read_text(encoding="utf-8")
 
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
-    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-20</lastmod>" in sitemap
+    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-22</lastmod>" in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/servicos/</loc>\n"
         "    <lastmod>2026-10-09</lastmod>"
@@ -692,8 +696,17 @@ def test_sncr_update_of_20_october_follows_the_official_notices_and_the_integrat
 
 
 def test_sncr_pages_leave_out_the_items_held_for_another_update():
-    for path in (NEWS_PATH, POP_PATH, NEWS_INDEX_PATH, COMUNICADO_PATH):
-        html = path.read_text(encoding="utf-8")
+    # Desde 22/10/2026, "16 dígitos", "14 para 16" e "mais de um medicamento" aparecem na notícia só no quadro de
+    # 22/10/2026, atribuídos aos manuais e ao informe de 15/10/2026. Fora dele, e no POP, na listagem e no comunicado,
+    # continuam fora, como a pergunta 47.
+    news = NEWS_PATH.read_text(encoding="utf-8")
+    callout = _callout(news, UPDATE_22_10_ID)
+    for term in ("16 dígitos", "14 para 16", "mais de um medicamento"):
+        assert term in callout, term
+    for term in ("16 digitos", "P47", "pergunta 47", "questão 47"):
+        assert term not in callout, term
+    for path, html in ((NEWS_PATH, news.replace(callout, "")),
+                       *((path, path.read_text(encoding="utf-8")) for path in (POP_PATH, NEWS_INDEX_PATH, COMUNICADO_PATH))):
         visible = _text(html)
         for term in HELD_BACK_TERMS:
             assert term not in html and term not in visible, (path.relative_to(ROOT), term)
@@ -703,3 +716,43 @@ def test_sncr_pages_leave_out_the_items_held_for_another_update():
     assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', comunicado) == ["7", "7"]
     assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', NEWS_PATH.read_text(encoding="utf-8")) == ["7", "7"]
     assert len(list((ROOT / "noticias").glob("*/index.html"))) == 85
+
+
+def test_sncr_22_10_update_attributes_the_manuals_and_keeps_the_change_as_planned():
+    html = NEWS_PATH.read_text(encoding="utf-8")
+    callout = _callout(html, UPDATE_22_10_ID)
+    text = _text(callout)
+
+    assert "Atualização em 22/10/2026" in text and "ATUALIZAÇÃO" in text
+    for term in (
+        "2ª edição do Manual do SNCR para farmácias",
+        "os receituários eletrônicos passam a ter 16 dígitos, e os físicos continuam com 14",
+        "As numerações de 14 dígitos já geradas, físicas e eletrônicas, permanecem válidas",
+        "nas receitas eletrônicas, o registro de utilização passa a permitir até 20 medicamentos distintos por receita",
+        "essa permissão técnica não altera as regras da Portaria SVS/MS nº 344/1998",
+        "8ª edição do Manual do SNCR para Vigilâncias Sanitárias",
+        "“a partir de 19/10/2026”",
+        "informe de 15/10/2026",
+        "prevista",
+        "não havia informe de conclusão",
+    ):
+        assert term in text, term
+    # Informe de 22/10/2026 (dificuldade na numeração de RCE e RET), antes do parágrafo sobre a atualização prevista.
+    informe = ("Em informe de 22/10/2026, a Anvisa registrou relatos de dificuldade na requisição de numeração para receitas d"
+               "e controle especial (RCE) e receitas sujeitas a retenção (RET), ainda em investigação, e informou que, durante o período de transição, essas receitas podem continuar sendo emitidas em meio físico, sem a numeração do SNCR.")
+    paragraphs = [_text(item) for item in re.findall(r"<p\b[^>]*>(.*?)</p>", callout, re.DOTALL)]
+    assert paragraphs[-2] == informe
+    assert paragraphs[-1].startswith("Na página de informes do SNCR, o informe de 15/10/2026")
+    # O "a partir de 19/10/2026" fica atribuído ao manual das Vigilâncias.
+    assert text.index("8ª edição do Manual do SNCR para Vigilâncias Sanitárias") < text.index("“a partir de 19/10/2026”")
+    folded = text.casefold()
+    for claim in (
+        "entrou em vigor", "entra em vigor", "em vigor desde", "já está valendo", "já vale", "já valem",
+        "em funcionamento", "está funcionando", "foi implantad", "foi concluíd", "deixaram de valer", "deixam de valer",
+        "não valem mais", "perderam a validade", "sngpc", "compatível", "papel", "receita física", "receitas físicas",
+        "29/10", "30/10", "acima da portaria", "além da portaria", "mais de 20",
+    ):
+        assert claim not in folded, claim
+    assert "<a " not in callout and "href=" not in callout and "http" not in callout
+    # O quadro de 22/10/2026 fica acima do de 20/10/2026.
+    assert html.index(f'aria-labelledby="{UPDATE_22_10_ID}"') < html.index(f'aria-labelledby="{UPDATE_20_10_ID}"')

@@ -211,4 +211,5 @@ def test_sitemap_lists_the_new_url_once():
     assert re.search(rf"<loc>{re.escape(PUBLIC_URL)}</loc>\s*<lastmod>2026-10-16</lastmod>", sitemap)
     # 17/10/2026: a listagem ganhou o card do esclarecimento do Farmácia Popular. 20/10/2026: reordenou dois cards.
     # 21/10/2026: reordenou o card de produtos irregulares.
-    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-10-21</lastmod>", sitemap)
+    # 22/10/2026: a listagem reordenou os cards de produtos irregulares e do SNCR, atualizados no mesmo lote.
+    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-10-22</lastmod>", sitemap)
