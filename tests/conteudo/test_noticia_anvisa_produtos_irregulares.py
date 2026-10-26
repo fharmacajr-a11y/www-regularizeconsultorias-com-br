@@ -345,17 +345,18 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
     # 21/10/2026, 17h45: a RE nº 4.140/2026 e a correção da RE nº 3.159/2026 devolvem o consolidado à 1ª posição.
     # 22/10/2026, 22h40: as RE nº 4.143, 4.147 e 4.150/2026 mantêm o consolidado na 1ª posição, com resumo novo.
     # 26/10/2026, 08h30: as matérias do MAPA 1.617 e do período eleitoral, atualizadas, sobem para a 1ª e a 2ª posições; as que ficavam acima delas descem duas (até a 6ª) ou uma (da 8ª à 35ª). O consolidado fica em 3º.
+    # 26/10/2026, 08h30: a matéria do SNCR, atualizada (itens A-1 e M-1), entra no mesmo carimbo do MAPA e do período eleitoral e fica em 3º, logo depois delas; o consolidado de irregulares desce para o 4º.
     summary = ("O DOU de 22/10/2026 publica a RE nº 4.143/2026, que proíbe dois produtos Accu-Chek Active identifica"
                "dos no anexo, em caso enquadrado como falsificação; a RE nº 4.147/2026, sobre o lote 11-2025 do NAC "
                "(N-acetil L-cisteína) Lauton; e a RE nº 4.150/2026, que determina, por 90 dias, a interdição cautelar do lote 25D0808 do Fauldleuco, da Libbs.")
-    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[2]
-    assert "news-card-compact" in cards[2].split(">", 1)[0]
-    assert f"{UPDATED_DAY} • {UPDATED_CLOCK}" in cards[2]
-    assert "09h06" not in cards[2]
-    assert f'data-summary="{summary}"' in cards[2]
-    assert f"<p class=\"text-slate-500 text-sm leading-relaxed mb-4\">{summary}</p>" in cards[2]
+    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[3]
+    assert "news-card-compact" in cards[3].split(">", 1)[0]
+    assert f"{UPDATED_DAY} • {UPDATED_CLOCK}" in cards[3]
+    assert "09h06" not in cards[3]
+    assert f'data-summary="{summary}"' in cards[3]
+    assert f"<p class=\"text-slate-500 text-sm leading-relaxed mb-4\">{summary}</p>" in cards[3]
     # Números e lotes do resumo de 13/10/2026 saíram do texto do card e seguem na busca pelas palavras-chave.
-    keywords = cards[2].split('data-keywords="', 1)[1].split('"', 1)[0]
+    keywords = cards[3].split('data-keywords="', 1)[1].split('"', 1)[0]
     for term in ("RE 3.989/2026", "RE 4.000/2026", "RE 4.001/2026", "RE 4.002/2026", "RE 4.009/2026", "RE 4.028/2026",
                  "HXTZ251015", "NDC 46785-162-03", "P07725A", "Xeomin", "cloreto de sódio", "insumos farmacêuticos"):
         assert term in keywords, term
@@ -370,9 +371,9 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
                  "025155", "Z005197", "Z012354"):
         assert term in keywords, term
         assert term not in summary, term
-    assert "As RE nº 3.946 e 3.947/2026 foram publicadas no DOU de 06/10/2026" not in cards[2]
-    assert "União Vegetal Agroindustrial Ltda. como fabricante do Aloe Care" not in cards[2]
-    assert 'href="http' not in cards[2]
+    assert "As RE nº 3.946 e 3.947/2026 foram publicadas no DOU de 06/10/2026" not in cards[3]
+    assert "União Vegetal Agroindustrial Ltda. como fabricante do Aloe Care" not in cards[3]
+    assert 'href="http' not in cards[3]
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
     assert f"<loc>{URL}</loc>\n    <lastmod>{UPDATED[:10]}</lastmod>" in sitemap
 
@@ -1353,8 +1354,8 @@ def test_october_update_reaches_lead_summary_metadata_and_listing_search():
     assert _consolidated_card(news_index).count(f'data-updated="{UPDATED}"') == 1
     # O carimbo de 21/10/2026, 17h45, é só desta matéria. O SISPA permanece às 10h12 de 20/10/2026.
     # A DCB permanece às 09h06 de 13/10/2026; o SNCR permanece às 13h00 de 20/10/2026.
-    # Desde 22/10/2026 o carimbo é dividido com a matéria do SNCR, atualizada no mesmo lote.
-    assert news_index.count(f'data-updated="{UPDATED}"') == 2
+    # De 22 a 26/10/2026 o carimbo foi dividido com a matéria do SNCR; desde 26/10/2026 o SNCR tem carimbo próprio.
+    assert news_index.count(f'data-updated="{UPDATED}"') == 1
     assert news_index.count('data-updated="2026-10-20T10:12:00-03:00"') == 1
     assert 'href="/noticias/mapa-sispa-registro-agrotoxicos/"' in news_index
     assert news_index.count('data-updated="2026-10-13T09:06:00-03:00"') == 1

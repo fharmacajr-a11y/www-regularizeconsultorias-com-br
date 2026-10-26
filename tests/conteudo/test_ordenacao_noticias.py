@@ -190,10 +190,11 @@ def test_news_index_itemlist_ordering():
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
     # 26/10/2026, 08h30: as matérias do MAPA 1.617 e do período eleitoral, atualizadas, sobem para a 1ª e a 2ª posições; as que ficavam acima delas descem duas (até a 6ª) ou uma (da 8ª à 35ª).
+    # 26/10/2026, 08h30: a matéria do SNCR, atualizada (itens A-1 e M-1), entra no mesmo carimbo do MAPA e do período eleitoral e fica em 3º, logo depois delas; o consolidado de irregulares desce para o 4º.
+    assert urls[2] == SNCR_WEBINAR_URL
     # 21/10/2026, 17h45: produtos irregulares (RE nº 4.140/2026 e correção da RE nº 3.159/2026) voltam à 1ª posição.
-    assert urls[2] == PRODUTOS_IRREGULARES_URL
-    # 20/10/2026, 13h00: o SNCR (lote 2) fica em 2º. SISPA (Comunicado nº 1/2026) segue em 3º.
-    assert urls[3] == SNCR_WEBINAR_URL
+    assert urls[3] == PRODUTOS_IRREGULARES_URL
+    # SISPA (Comunicado nº 1/2026) segue logo depois.
     assert urls[4] == SISPA_URL
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entrou na 1ª posição da listagem.
     assert urls[5] == FP_LEMBRETES_WHATSAPP_URL

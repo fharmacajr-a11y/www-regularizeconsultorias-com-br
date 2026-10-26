@@ -17,7 +17,8 @@ URL = f"https://www.regularizeconsultorias.com.br{ROUTE}"
 PUBLISHED = "2026-05-28T20:36:00-03:00"
 # 20/10/2026, 13h00: quadro do lote 2 (informe de 15/10 e Perguntas e Respostas sobre a integração, 1ª edição).
 # 22/10/2026, 22h40 (hora do commit): quadro dos manuais do SNCR (farmácias, 2ª edição; Vigilâncias Sanitárias, 8ª edição).
-UPDATED = "2026-10-22T22:40:00-03:00"
+# 26/10/2026, 08h30 (a mesma hora do MAPA e do período eleitoral): itens A-1 e M-1 do CONSOLIDADO de 23/10.
+UPDATED = "2026-10-26T08:30:00-03:00"
 UPDATE_22_10_ID = "sncr-atualizacao-22-outubro-title"
 UPDATE_20_10_ID = "sncr-atualizacao-20-outubro-title"
 STAGE_UPDATE_ID = "sncr-etapa-update-title"
@@ -101,7 +102,7 @@ def test_sncr_news_keeps_publication_and_updates_the_september_stage():
     assert f'<meta property="article:published_time" content="{PUBLISHED}" />' in html
     assert f'<meta property="article:modified_time" content="{UPDATED}" />' in html
     assert f'<time datetime="{PUBLISHED}">28/05/2026</time> às 20h36' in html
-    assert f'<time datetime="{UPDATED}">22/10/2026</time> às 22h40' in html
+    assert f'<time datetime="{UPDATED}">26/10/2026</time> às 08h30' in html
     assert_profiles_separated(html)
     assert f'<link rel="canonical" href="{URL}" />' in html
     assert html.count(ADSENSE_SCRIPT_MARKER) == 1
@@ -189,12 +190,13 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
     # 21/10/2026, 17h45: a atualização de produtos irregulares devolve aquele card à 1ª posição; o SNCR fica em 2º.
     # 26/10/2026, 08h30: as matérias do MAPA 1.617 e do período eleitoral, atualizadas, sobem para a 1ª e a 2ª posições; as que ficavam acima delas descem duas (até a 6ª) ou uma (da 8ª à 35ª).
-    assert cards.index(card) == 3
+    # 26/10/2026, 08h30: a matéria do SNCR, atualizada (itens A-1 e M-1), entra no mesmo carimbo do MAPA e do período eleitoral e fica em 3º, logo depois delas; o consolidado de irregulares desce para o 4º.
+    assert cards.index(card) == 2
     assert "news-card-compact" in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
     # 22/10/2026, 22h40: o card do SNCR, atualizado com os manuais, segue em 2º, logo depois do consolidado de irregulares
     # (4º desde 26/10/2026).
-    assert f'<time datetime="{UPDATED}" class="leading-none">22/10/2026 • 22h40</time>' in card
+    assert f'<time datetime="{UPDATED}" class="leading-none">26/10/2026 • 08h30</time>' in card
     for term in (
         TITLE,
         "30/09/2026",
@@ -279,7 +281,8 @@ def test_sncr_news_has_current_sitemap_lastmod():
     sitemap = SITEMAP_PATH.read_text(encoding="utf-8")
 
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
-    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-22</lastmod>" in sitemap
+    # 26/10/2026: itens A-1 e M-1.
+    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-26</lastmod>" in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/servicos/</loc>\n"
         "    <lastmod>2026-10-09</lastmod>"
@@ -641,8 +644,18 @@ def test_sncr_update_of_20_october_follows_the_official_notices_and_the_integrat
     assert any("16/10/2026" in item and "1ª edição" in item for item in paragraphs)
     assert [re.search(r"\(pergunta (\d+)\)", item).group(1) for item in items] == ["49", "50", "51", "53"]
     p49, p50, p51, p53 = items
-    for term in ("exclusivamente pelo farmacêutico", "portal web do SNCR", "Cadastro Anvisa"):
+    # 26/10/2026 (M-1): a resposta 49 é a do arquivo da 1ª edição que a Anvisa publicou em 22/10/2026 no lugar do
+    # anterior, sem o "exclusivamente pelo farmacêutico", sem dizer quem passou a poder registrar e sem falar em 2ª edição
+    # ou API.
+    for term in (
+        "no arquivo do Perguntas e Respostas de Integração dos Sistemas de Prescrição Eletrônica ao SNCR (1ª edição) que a "
+        "Anvisa publicou em 22/10/2026 no lugar do anterior, a resposta 49 diz",
+        "a resposta 49 diz que o registro de uso é feito no portal web do SNCR, mediante autenticação de acesso institucional gerenciada pelo sistema Cadastro Anvisa",
+        "A resposta 52 segue dizendo que o Responsável Legal delega os perfis aos profissionais designados",
+    ):
         assert term in p49, term
+    for claim in ("exclusivamente", "2ª edição", "API", "liberou", "passou a poder", "passaram a poder", "outro funcionário"):
+        assert claim not in p49, claim
     # P50: só o que o texto diz; a data descreve o conjunto de funcionalidades, não um prazo para a integração.
     for term in (
         "a resposta é “Não”",
@@ -742,8 +755,12 @@ def test_sncr_22_10_update_attributes_the_manuals_and_keeps_the_change_as_planne
     ):
         assert term in text, term
     # Informe de 22/10/2026 (dificuldade na numeração de RCE e RET), antes do parágrafo sobre a atualização prevista.
-    informe = ("Em informe de 22/10/2026, a Anvisa registrou relatos de dificuldade na requisição de numeração para receitas d"
-               "e controle especial (RCE) e receitas sujeitas a retenção (RET), ainda em investigação, e informou que, durante o período de transição, essas receitas podem continuar sendo emitidas em meio físico, sem a numeração do SNCR.")
+    # 26/10/2026 (A-1): o informe, modificado em 23/10/2026, fala do formato eletrônico até 29/10/2026 e da RCE e da RET em
+    # papel; a frase antiga ("durante o período de transição ... em meio físico") saiu.
+    informe = ("Segundo o informe da Anvisa de 22/10/2026 (“Relatos de dificuldade na requisição de numeração para RCE e RET”), "
+               "modificado em 23/10/2026, às 09h28, até 29/10/2026 esses receituários no formato eletrônico ainda podem ser "
+               "emitidos sem numeração do SNCR, e a RCE e a RET em papel continuam existindo sem numeração do SNCR. O informe "
+               "registra que a situação está sendo investigada e que a causa ainda não foi confirmada.")
     paragraphs = [_text(item) for item in re.findall(r"<p\b[^>]*>(.*?)</p>", callout, re.DOTALL)]
     assert paragraphs[-2] == informe
     assert paragraphs[-1].startswith("Na página de informes do SNCR, o informe de 15/10/2026")
@@ -753,8 +770,13 @@ def test_sncr_22_10_update_attributes_the_manuals_and_keeps_the_change_as_planne
     for claim in (
         "entrou em vigor", "entra em vigor", "em vigor desde", "já está valendo", "já vale", "já valem",
         "em funcionamento", "está funcionando", "foi implantad", "foi concluíd", "deixaram de valer", "deixam de valer",
-        "não valem mais", "perderam a validade", "sngpc", "compatível", "papel", "receita física", "receitas físicas",
-        "29/10", "30/10", "acima da portaria", "além da portaria", "mais de 20",
+        "não valem mais", "perderam a validade", "sngpc", "compatível", "receita física", "receitas físicas",
+        "30/10", "acima da portaria", "além da portaria", "mais de 20",
+        # 26/10/2026 (A-1): "papel" e "29/10" entram com o informe modificado em 23/10/2026; continua proibido dizer que o
+        # papel acaba, que a emissão eletrônica fica proibida a partir de 30/10, que a causa foi identificada ou chamar de
+        # prorrogação.
+        "meio físico", "período de transição", "papel acaba", "papel deixa", "fim do papel", "proibida a partir",
+        "proibido a partir", "causa foi identificada", "causa identificada", "prorrog",
     ):
         assert claim not in folded, claim
     assert "<a " not in callout and "href=" not in callout and "http" not in callout

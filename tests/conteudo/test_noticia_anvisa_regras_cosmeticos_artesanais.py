@@ -240,9 +240,9 @@ def test_sitemap_adds_only_the_new_url_and_the_listing_lastmod():
         "    <lastmod>2026-10-26</lastmod>"
     ) in sitemap
     assert (
-        # 22/10/2026: a matéria do SNCR recebeu o quadro dos manuais.
+        # 22/10/2026: a matéria do SNCR recebeu o quadro dos manuais. 26/10/2026: itens A-1 e M-1.
         "<loc>https://www.regularizeconsultorias.com.br/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/</loc>\n"
-        "    <lastmod>2026-10-22</lastmod>"
+        "    <lastmod>2026-10-26</lastmod>"
     ) in sitemap
     import xml.etree.ElementTree as ET
 
