@@ -303,7 +303,7 @@ def test_sncr_news_cta_and_floating_whatsapp_use_the_service_message():
     assert unquote(query["text"][0]) == WHATSAPP_NEWS_TEXT
 
     cta = re.search(
-        r'article-final-cta__link--primary" href="(/whatsapp/\?text=[^"]+)"',
+        r'article-final-cta__link--primary botao botao--principal" href="(/whatsapp/\?text=[^"]+)"',
         html,
     )
     assert cta is not None

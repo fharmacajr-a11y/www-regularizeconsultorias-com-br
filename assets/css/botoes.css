@@ -1,0 +1,142 @@
+/* ================================================================
+   Regularize Consultoria — Botões (desde 23/10/2026)
+   ----------------------------------------------------------------
+   Um estilo para cada tipo de botão, em todas as páginas:
+   - .botao--principal: azul da marca com texto branco, sobre fundo claro;
+   - .botao--secundario: branco com borda slate-300 e texto escuro, sobre
+     fundo claro (o "Ver mais notícias");
+   - .botao--claro: branco cheio com texto azul-escuro, sobre fundo escuro;
+   - .botao--contorno: transparente, borda branca a 40% e texto branco,
+     sobre fundo escuro.
+   Os quatro têm a mesma altura mínima (2,75rem = 44 px), os mesmos cantos
+   (0,75rem), a mesma fonte (0,9375rem = 15 px, peso 700, linha de 1,25rem) e
+   borda de 1px, transparente no principal e no claro, para que a altura e o
+   alinhamento do texto sejam iguais lado a lado.
+   O seletor duplo (.botao.botao--tipo, especificidade 0,2,0) vence as
+   utilidades do Tailwind, as regras de um seletor só das páginas e o
+   border-radius: 4px do foco global (a:focus-visible, em components.css).
+   O display vem de :where(.botao), sem especificidade, para que hidden,
+   flex ou block do HTML continuem valendo.
+   Este é o último CSS das páginas; nas notícias e no modelo vem logo antes
+   de pages/noticias-tipos.css, que pinta os tipos de notícia.
+   ================================================================ */
+
+:where(.botao, .botao-card) {
+  display: inline-flex;
+}
+
+.botao:is(.botao--principal, .botao--secundario, .botao--claro, .botao--contorno) {
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: 0.75rem;
+  box-shadow: none;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.25rem;
+  letter-spacing: normal;
+  text-align: center;
+  text-decoration: none;
+  text-transform: none;
+  cursor: pointer;
+  transform: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.botao.botao--principal {
+  background-color: #1565c0;
+  color: #fff;
+}
+
+.botao.botao--principal:hover {
+  background-color: #1a3a5c;
+  color: #fff;
+}
+
+.botao.botao--secundario {
+  background-color: #fff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+.botao.botao--secundario:hover {
+  background-color: #f8fafc;
+  border-color: rgba(21, 101, 192, 0.45);
+  color: #1a3a5c;
+}
+
+.botao.botao--claro {
+  background-color: #fff;
+  color: #1a3a5c;
+}
+
+.botao.botao--claro:hover {
+  background-color: #f1f5f9;
+  color: #1a3a5c;
+}
+
+.botao.botao--contorno {
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #fff;
+}
+
+.botao.botao--contorno:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* Claro e contorno ficam sobre fundo escuro: o contorno de foco é branco,
+   como o das superfícies escuras em components.css. */
+.botao:is(.botao--claro, .botao--contorno):focus-visible {
+  outline-color: #fff;
+}
+
+/* Contagem entre parênteses ("Ver mais notícias (80)", "Ver mais documentos
+   (8)"): slate-600 em peso 600, 7,6:1 sobre o branco. */
+.botao.botao--secundario .botao__contagem {
+  color: #475569;
+  font-weight: 600;
+}
+
+.botao.botao--secundario:hover .botao__contagem {
+  color: inherit;
+}
+
+/* Botões dos cards: os das notícias ("Ler atualização", "Ler notícia", "Ler
+   orientação") e os do catálogo de Manuais ("Ver detalhes", "Solicitar
+   orçamento", "Solicitar análise"). Pílula de 2,75rem com fonte de 0,875rem
+   (14 px) em peso 600; a cor vem do tipo, em pages/noticias-tipos.css e
+   pages/manuais-e-pops.css. */
+.botao-card {
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.125rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  text-decoration: none;
+}
+
+/* Até 359 px, 16 px de padding dos lados em todos os botões (20 acima). Em 320
+   px o "Voltar ao Início" do Comunicado, centralizado, ficava a menos de 8 px
+   da coluna dos botões flutuantes; antes havia um recuo só para ele. */
+@media (max-width: 359px) {
+  .botao:is(.botao--principal, .botao--secundario, .botao--claro, .botao--contorno) {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .botao:is(.botao--principal, .botao--secundario, .botao--claro, .botao--contorno) {
+    transition: none;
+  }
+}

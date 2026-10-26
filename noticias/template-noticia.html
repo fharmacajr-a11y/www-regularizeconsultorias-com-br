@@ -32,8 +32,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/css/tailwind.min.css?v=20261003-acessibilidade-1">
-  <link rel="stylesheet" href="/assets/css/custom.min.css?v=20261020-rolagem-1" />
-  <link rel="stylesheet" href="/assets/css/pages/noticias-tipos.css?v=20261014-layout-1" />
+  <link rel="stylesheet" href="/assets/css/custom.min.css?v=20261023-botoes-1" />
+  <link rel="stylesheet" href="/assets/css/botoes.css?v=20261023-botoes-1" />
+  <link rel="stylesheet" href="/assets/css/pages/noticias-tipos.css?v=20261023-botoes-1" />
 
   <!-- CHANGE: JSON-LD fields (headline, description, url, datePublished, dateModified, articleSection) -->
   <script type="application/ld+json">
@@ -128,7 +129,8 @@
                                  selo <span class="article-badge-orientacao inline-flex items-center rounded-full px-2.5 py-1 whitespace-nowrap">Orientação</span>
            Na listagem: card news-amber-card / news-orange-card / news-urgent-card / news-card--orientation,
                         selo news-amber-badge / news-orange-badge / news-urgent-badge / news-orientacao-badge,
-                        botão news-amber-button / news-orange-button / news-urgent-button / news-orientacao-button (rounded-full), sem cor no HTML. -->
+                        botão news-amber-button / news-orange-button / news-urgent-button / news-orientacao-button (rounded-full) + botao-card
+                        (tamanho e fonte em assets/css/botoes.css), sem cor no HTML. -->
       <header class="article-hero-informativo py-10 sm:py-12 md:py-20">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav aria-label="Breadcrumb" class="mb-5">
@@ -192,8 +194,8 @@
               <h2 id="article-final-cta-title" class="article-final-cta__title">Precisa de apoio técnico?</h2>
               <p class="article-final-cta__text">A Regularize Consultoria auxilia farmácias, drogarias e empresas do setor regulado na organização documental, acompanhamento de exigências e regularização junto aos órgãos competentes.</p>
               <div class="article-final-cta__actions">
-                <a class="article-final-cta__link article-final-cta__link--primary" href="/contato/">Solicitar análise documental</a>
-                <a class="article-final-cta__link article-final-cta__link--secondary" href="/servicos/">Conhecer os serviços da Regularize</a>
+                <a class="article-final-cta__link article-final-cta__link--primary botao botao--principal" href="/contato/">Solicitar análise documental</a>
+                <a class="article-final-cta__link article-final-cta__link--secondary botao botao--secundario" href="/servicos/">Conhecer os serviços da Regularize</a>
               </div>
             </div>
           </div>

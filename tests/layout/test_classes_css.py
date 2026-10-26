@@ -13,19 +13,28 @@ from support import ROOT, public_html_paths
 
 CSS_FILES = (
     [ROOT / "assets/css/tailwind.min.css", ROOT / "assets/css/base.css",
-     ROOT / "assets/css/components.css", ROOT / "assets/css/custom.min.css"]
+     ROOT / "assets/css/components.css", ROOT / "assets/css/custom.min.css", ROOT / "assets/css/botoes.css"]
     + sorted((ROOT / "assets/css/pages").glob("*.css"))
 )
 HOOKS = {
+    "article-final-cta__link",
+    "article-final-cta__link--primary",
+    "article-final-cta__link--secondary",
     "aviso-badge",
     "aviso-tipo",
     "comunicado-historico__body",
+    "comunicado-historico__control",
     "comunicado-historico__icon",
     "contact-hero-content",
     "manuals-catalog-button-label",
+    "manuals-hero-button--primary",
+    "manuals-hero-button--secondary",
     "manuals-hero-content",
+    "news-load-more",
     "news-sidebar",
 }
+# Os botões do fim das matérias, do topo dos Manuais, do "Ver mais notícias" e do Comunicado ganharam o estilo de
+# assets/css/botoes.css (.botao e o tipo) em 23/10/2026; as classes antigas ficaram como ganchos dos testes.
 # contact-hero-section e manuals-hero-section saíram da lista no layout comum (10/10/2026): components.css passou a
 # usá-las nos seletores da reserva da faixa dos controles flutuantes (seção 18).
 HOOK_PREFIXES = ("manuals-page-",)

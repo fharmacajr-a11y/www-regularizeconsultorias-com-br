@@ -70,10 +70,10 @@ WIDTHS = (390, 1440)
 # deixa de ocupar a janela, e o texto fica mais perto da borda dos degradês.
 GRADIENT_WIDTHS = (320, 360, 640, 768, 896, 1024, 1280)
 HOVER_TARGETS = (
-    ("/comunicado/", "#avisos-lista a.rounded-lg"),
+    ("/comunicado/", "#avisos-lista a.botao"),
     ("/noticias/", "#news-article-list a.news-amber-button"),
     ("/noticias/", "#news-article-list a.news-orange-button"),
-    ("/contato/", "main a.rounded-xl[href^='/whatsapp/']"),
+    ("/contato/", "main a.botao[href^='/whatsapp/']"),
     ("/noticias/prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular/", "[data-news-update-callout] a"),
 )
 # Diferença máxima, por canal, entre a captura e o fundo CSS composto para o

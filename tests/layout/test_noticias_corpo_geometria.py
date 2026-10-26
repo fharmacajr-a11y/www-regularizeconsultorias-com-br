@@ -356,7 +356,7 @@ def test_reserva_e_regra_do_componente_compartilhado():
     ]
     for pagina in paginas:
         texto = pagina.read_text(encoding="utf-8")
-        assert "noticias-tipos.css?v=20261014-layout-1" in texto
+        assert "noticias-tipos.css?v=20261023-botoes-1" in texto
         assert "<br" not in texto[texto.index("<section class=\"article-body\"") : texto.index("</section>", texto.index("article-body"))]
 
 
@@ -640,7 +640,7 @@ def test_meia_tela_centraliza_e_preserva_folga_e_o_celular(alinhamento):
             assert item["controles"] == "fixed"
             assert item["whatsW"] == pytest.approx(44 if width <= 640 else 48, abs=0.6)
             folhas = " ".join(item["folhas"])
-            assert "noticias-tipos.css?v=20261014-layout-1" in folhas
+            assert "noticias-tipos.css?v=20261023-botoes-1" in folhas
             if familia == "custom.min.css":
                 assert "custom.min.css" in folhas
             else:

@@ -112,8 +112,9 @@ def test_banner_css_stays_sticky_and_uses_the_avisos_red():
         assert "white-space:nowrap" in compact_css, path.name
         assert "position:absolute" in compact_css, path.name
         assert "height:4.8rem" in compact_css, path.name
-        assert "@media(min-width:768px){.site-regulatory-banner__link{height:2.5rem;min-height:2.5rem" in compact_css, path.name
-        assert "#navbar{top:2.5rem" in compact_css, path.name
+        # 2,75rem (44 px) a partir de 768 px desde 23/10/2026 (antes 2,5rem).
+        assert "@media(min-width:768px){.site-regulatory-banner__link{height:2.75rem;min-height:2.75rem" in compact_css, path.name
+        assert "#navbar{top:2.75rem" in compact_css, path.name
 
 
 def test_contato_responsive_aside_rules_do_not_capture_the_global_banner():

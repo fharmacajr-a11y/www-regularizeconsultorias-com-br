@@ -52,7 +52,8 @@ def test_hero_modular_reserva_a_faixa_do_botao():
         if "noticia-detalhe.css" not in text:
             continue
         linked.append(text)
-        assert "noticia-detalhe.css?v=20261010-layout-1" in text
+        assert "noticia-detalhe.css?v=20261023-botoes-1" in text
+        assert "noticia-detalhe.css?v=20261010-layout-1" not in text
         assert "noticia-detalhe.css?v=20261005-tipos-1" not in text
         assert "noticia-detalhe.css?v=20261007-hero-1" not in text
     assert len(linked) == 29

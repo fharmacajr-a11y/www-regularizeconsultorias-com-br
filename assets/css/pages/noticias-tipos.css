@@ -58,9 +58,9 @@
 }
 
 /* ---------- 2. Botões nos cards de notícias ----------
-   A mesma cor nos dois formatos. O tamanho vem do formato: no compacto, da
-   regra .news-card-compact > a (pages/noticias.css); nos cinco destaques e
-   nos resultados grandes, daqui, com o mesmo acabamento unificado em pílula. */
+   A mesma cor nos dois formatos. O tamanho, os cantos e a fonte vêm de
+   .botao-card (assets/css/botoes.css), iguais nos dois formatos e nos cards
+   do catálogo de Manuais, desde 23/10/2026. */
 .news-amber-button {
   background-color: var(--tipo-atualizacao);
   color: var(--tipo-texto);
@@ -115,10 +115,8 @@
   border-radius: 9999px;
 }
 
+/* Tamanho e cantos: .botao-card (assets/css/botoes.css), desde 23/10/2026. */
 #news-article-list .news-featured-card:not(.news-card-compact) :is(.news-amber-button, .news-orange-button, .news-urgent-button, .news-orientacao-button) {
-  gap: 0.5rem;
-  padding: 0.625rem 1.375rem;
-  border-radius: 9999px;
   transition: background-color 0.2s ease, box-shadow 0.15s ease;
 }
 

@@ -160,6 +160,11 @@ try:
         else:
             context, page, closing = open_page(browser)
             page.evaluate("window.scrollTo(0, 400)")
+            # Se o botão ficar cortado no pé da janela, a página rola o que falta para ele ficar inteiro: o Playwright
+            # rola até o alvo antes de clicar, e essa rolagem seria da sonda, não da página (com as categorias de 44
+            # px, desde 23/10/2026, "SNCR" passava 6 px do fim da janela em 400 px).
+            page.evaluate("s => { const b = document.querySelector(s).getBoundingClientRect();"
+                          " if (b.bottom > innerHeight) window.scrollBy(0, b.bottom - innerHeight + 8); }", sncr)
             page.evaluate(SETTLE)
             before = page.evaluate("scrollY")
             page.locator(sncr).click()

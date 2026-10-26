@@ -814,7 +814,8 @@ def test_header_geometry_and_open_menu_on_every_page(geometry):
     for key, result in results.items():
         closed, opened = result["fechado"], result["aberto"]
         width = int(key.rsplit("@", 1)[1].split("x")[0])
-        banner, row = (76.8, 80) if width < 768 else (40, 96)
+        # A faixa tem 44 px a partir de 768 px desde 23/10/2026 (antes 40).
+        banner, row = (76.8, 80) if width < 768 else (44, 96)
         if closed["overflowX"] > 0:
             failures.append(f"{key}: rolagem horizontal de {closed['overflowX']} px")
         if abs(closed["banner"]["height"] - banner) > 0.5 or abs(closed["header"]["top"] - banner) > 0.5:

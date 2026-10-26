@@ -706,6 +706,7 @@
     margin-right: auto !important;
   }
 
+  /* Altura, padding, linha e fonte dos botões: assets/css/botoes.css (desde 23/10/2026). */
   body:has(.team-hero-section) .institutional-cta-section .flex.flex-col.sm\:flex-row > a,
   body:has(.services-hero-section) .institutional-cta-section .flex.flex-col.sm\:flex-row > a {
     display: inline-flex !important;
@@ -713,10 +714,7 @@
     justify-content: center !important;
     flex: 0 1 18.5rem !important;
     width: auto !important;
-    min-height: 3.25rem !important;
-    padding: 0.875rem 1.25rem !important;
     text-align: center !important;
-    line-height: 1.25 !important;
   }
 }
 

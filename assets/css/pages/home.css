@@ -318,12 +318,10 @@
     margin-right: auto;
   }
 
+  /* Altura, padding, linha e fonte dos botões: assets/css/botoes.css (desde 23/10/2026). */
   main > section.pt-6.pb-10.sm\:py-16.bg-white + .institutional-cta-section .flex.flex-col.sm\:flex-row > a {
     width: auto;
     flex: 0 1 20rem;
-    min-height: 3.25rem;
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
     text-align: center;
   }
 }
@@ -380,16 +378,14 @@
     margin-right: auto;
   }
 
+  /* Altura, padding, linha e fonte dos botões: assets/css/botoes.css (desde 23/10/2026). */
   body:has(.home-hero-section) .institutional-cta-section:not(.about-final-cta-section) .flex.flex-col.sm\:flex-row > a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex: 0 1 17rem;
     width: auto;
-    min-height: 3rem;
-    padding: 0.75rem 1rem;
     text-align: center;
-    line-height: 1.25;
   }
 }
 
@@ -734,8 +730,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.75rem;
+  height: 2.75rem;
   border: 1px solid rgba(148, 163, 184, 0.32);
   border-radius: 999px;
   background-color: rgba(255, 255, 255, 0.84);
@@ -891,10 +887,20 @@
     padding: 0.8rem 0.875rem 0.875rem;
   }
 
+  /* Com 44 px (desde 23/10/2026), a seta no meio da altura do painel passava
+     sobre o título do card em 320 px, onde o texto quebra mais e a imagem é
+     menor. Até 767 px ela fica no meio da imagem: o painel é contêiner de
+     consulta, 100cqw é a largura do card (até 22rem) e a imagem é quadrada;
+     1rem é o padding do painel (0.75rem) e o do carrossel (0.25rem). */
+  .home-manuals-carousel-shell {
+    container-type: inline-size;
+  }
+
   .home-manuals-nav {
     display: inline-flex;
-    width: 2rem;
-    height: 2rem;
+    top: calc(1rem + min(100cqw, 22rem) / 2);
+    width: 2.75rem;
+    height: 2.75rem;
   }
 
   .home-manuals-nav--prev {

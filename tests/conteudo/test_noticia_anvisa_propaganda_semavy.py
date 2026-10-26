@@ -224,7 +224,7 @@ def test_navigation_contact_and_related_news_follow_site_pattern():
     for link in links:
         assert (ROOT / link.strip("/") / "index.html").is_file(), link
     assert '<a class="article-back-link" href="/noticias/">Ver todas as notícias</a>' in html
-    assert 'class="article-final-cta__link article-final-cta__link--primary" href="/contato/"' in html
+    assert 'class="article-final-cta__link article-final-cta__link--primary botao botao--principal" href="/contato/"' in html
     assert "article-important-notice" in html
     assert "propaganda%20do%20Semavy" in html
     assert html.count("pagead2.googlesyndication.com/pagead/js/adsbygoogle.js") == 1

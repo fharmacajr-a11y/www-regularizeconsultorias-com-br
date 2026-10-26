@@ -401,51 +401,23 @@
   color: #64748b;
 }
 
+/* Categorias com pelo menos 44 px também na coluna lateral, a partir de
+   1024 px (antes 42 px; abaixo de 1024 px a faixa já tinha 44). */
+.news-filter-button {
+  min-height: 2.75rem;
+}
+
 .news-sort-button[aria-pressed="true"] {
   background-color: #fff;
   color: var(--color-brand);
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
 }
 
-/* "Ver mais notícias" (desde 23/10/2026): botão secundário do site, como o
-   "Conhecer os serviços" do fim das matérias (.article-final-cta__link--secondary)
-   e o "Ver detalhes" dos manuais (.manuals-card-link--secondary): fundo branco,
-   borda slate-300, texto escuro, cantos de 0,75rem e pelo menos 44 px de
-   altura. Antes era um link de texto azul, sem borda nem fundo, com 36 px. A
-   contagem entre parênteses é a de notícias do resultado que ainda não
-   aparecem (assets/js/pages/noticias.js). */
-.news-load-more {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  min-height: 2.75rem;
-  padding: 0.625rem 1.25rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 0.75rem;
-  background-color: #fff;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
-  color: #0f172a;
-  font-size: 0.9375rem;
-  font-weight: 700;
-  line-height: 1.25rem;
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-}
-
-.news-load-more:hover {
-  background-color: #f8fafc;
-  border-color: rgba(21, 101, 192, 0.45);
-  color: var(--color-brand-dark);
-}
-
-.news-load-more [data-news-remaining] {
-  color: #475569;
-  font-weight: 600;
-}
-
-.news-load-more:hover [data-news-remaining] {
-  color: inherit;
-}
+/* "Ver mais notícias" (desde 23/10/2026): o botão secundário do site
+   (.botao--secundario, em assets/css/botoes.css), com a contagem entre
+   parênteses das notícias do resultado que ainda não aparecem
+   (assets/js/pages/noticias.js). Antes era um link de texto azul, sem borda
+   nem fundo, com 36 px. */
 
 /* Até 639 px o botão centralizado passava sob a coluna fixa (voltar ao topo e
    WhatsApp) em 320 e 375 px. O bloco reserva a faixa dela, com a conta da
@@ -534,15 +506,10 @@
   margin-bottom: 1rem !important;
 }
 
+/* Tamanho, cantos e fonte dos botões dos cards (os dois modelos): .botao-card,
+   em assets/css/botoes.css, desde 23/10/2026 (antes 0,8125rem e 28 px no
+   compacto). */
 .news-card-compact > a {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 0.375rem !important;
-  border-radius: 9999px !important;
-  padding: 0.375rem 0.875rem !important;
-  font-size: 0.8125rem !important;
-  font-weight: 600 !important;
-  line-height: 1 !important;
   text-decoration: none !important;
   box-shadow: none !important;
   transition: background-color 0.2s ease, box-shadow 0.15s ease !important;
@@ -591,14 +558,6 @@
 }
 
 #news-article-list .news-card:not(.news-card-compact) > a {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 0.5rem !important;
-  border-radius: 9999px !important;
-  padding: 0.625rem 1.375rem !important;
-  font-size: 0.875rem !important;
-  font-weight: 600 !important;
-  line-height: 1.25rem !important;
   text-decoration: none !important;
   box-shadow: none !important;
 }

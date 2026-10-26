@@ -307,51 +307,11 @@ main > article > header .category-chip {
 
 /* A reserva da fileira de ações diante da coluna fixa (antes uma conta
    fixa por faixa de largura) fica em pages/noticias-tipos.css, relativa à
-   largura útil e com 1rem de folga para o foco e a sombra do botão
-   principal (layout comum, 10/10/2026). Título e texto do cartão
-   permanecem na largura original. */
-
-.article-final-cta__link {
-  align-items: center;
-  border-radius: 0.75rem;
-  display: inline-flex;
-  font-size: 0.9375rem;
-  font-weight: 700;
-  justify-content: center;
-  min-height: 2.75rem;
-  padding: 0.75rem 1rem;
-  text-decoration: none;
-  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease, transform 0.2s ease;
-}
-
-.article-final-cta__link:hover,
-.article-final-cta__link:focus-visible {
-  transform: translateY(-1px);
-}
-
-.article-final-cta__link--primary {
-  background-color: var(--color-brand);
-  box-shadow: 0 8px 20px rgba(21, 101, 192, 0.15);
-  color: #fff;
-}
-
-.article-final-cta__link--primary:hover,
-.article-final-cta__link--primary:focus-visible {
-  background-color: var(--color-brand-dark);
-  color: #fff;
-}
-
-.article-final-cta__link--secondary {
-  background-color: #fff;
-  border: 1px solid #cbd5e1;
-  color: #0f172a;
-}
-
-.article-final-cta__link--secondary:hover,
-.article-final-cta__link--secondary:focus-visible {
-  border-color: rgba(21, 101, 192, 0.35);
-  color: var(--color-brand);
-}
+   largura útil e com 1rem de folga para o foco do botão principal (layout
+   comum, 10/10/2026). Título e texto do cartão permanecem na largura
+   original. Os dois botões (.article-final-cta__link--primary e
+   --secondary) usam o principal e o secundário de assets/css/botoes.css
+   desde 23/10/2026. */
 
 .article-related-news__title {
   color: #0f172a;

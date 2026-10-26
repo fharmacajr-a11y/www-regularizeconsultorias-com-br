@@ -215,7 +215,11 @@ def test_dois_modelos_uniformes_dentro_de_cada_grupo(medidas):
             if len(acumulado[elemento]["maior"]) != 1 or len(acumulado[elemento]["compacto"]) != 1:
                 divergencias.append((janela["janela"], elemento, "grupo instavel",
                                      {k: len(v) for k, v in acumulado[elemento].items()}))
-            elif acumulado[elemento]["maior"] == acumulado[elemento]["compacto"]:
+            # O botão é o mesmo nos dois modelos desde 23/10/2026 (.botao-card, assets/css/botoes.css: 44 px e 14 px,
+            # como nos cards de Manuais); antes o do compacto era menor.
+            elif elemento == "botao" and acumulado[elemento]["maior"] != acumulado[elemento]["compacto"]:
+                divergencias.append((janela["janela"], elemento, "maior diferente do compacto"))
+            elif elemento != "botao" and acumulado[elemento]["maior"] == acumulado[elemento]["compacto"]:
                 divergencias.append((janela["janela"], elemento, "maior igual ao compacto"))
     assert not divergencias, json.dumps(divergencias, ensure_ascii=False)[:6000]
 

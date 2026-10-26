@@ -36,13 +36,18 @@
 
     var btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'manuals-catalog-toggle inline-flex items-center gap-2 py-2 text-brand text-sm font-semibold hover:text-brand-dark underline-offset-4 hover:underline transition-colors duration-200 focus:outline-none focus:underline';
+    // Botão secundário do site (assets/css/botoes.css), como o "Ver mais notícias".
+    btn.className = 'manuals-catalog-toggle botao botao--secundario';
     btn.setAttribute('aria-expanded', 'false');
     btn.setAttribute('aria-controls', 'manuals-catalog-grid');
 
     var label = document.createElement('span');
     label.className = 'manuals-catalog-button-label';
     label.textContent = 'Ver mais documentos';
+
+    // Quantos documentos ainda não aparecem, entre parênteses, só com a grade recolhida.
+    var count = document.createElement('span');
+    count.className = 'botao__contagem';
 
     // create svg icon
     var svgNS = 'http://www.w3.org/2000/svg';
@@ -60,6 +65,7 @@
     svg.appendChild(path);
 
     btn.appendChild(label);
+    btn.appendChild(count);
     btn.appendChild(svg);
     controls.appendChild(btn);
 
@@ -78,6 +84,8 @@
       });
       btn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
       label.textContent = isExpanded ? 'Ver menos documentos' : 'Ver mais documentos';
+      count.textContent = isExpanded ? '' : '(' + Math.max(cards.length - initialVisible, 0) + ')';
+      count.hidden = isExpanded;
     }
 
     setExpandedState(false);

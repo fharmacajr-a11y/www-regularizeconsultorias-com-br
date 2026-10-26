@@ -656,22 +656,14 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     informative_cta = next(node for node in active[1].descendants() if node.tag == "a" and "Leia a notícia sobre a competência 10/2026" in node.text())
     assert {"border-emerald-200", "bg-emerald-50", "text-emerald-700"} <= set(useful_badge.attrs["class"].split())
     assert {"border-emerald-200", "bg-emerald-50"} <= set(active[4].attrs["class"].split())
-    informative_to_useful = {
-        "comunicado-cta--informativo": "comunicado-cta--util",
-        "border-orange-200": "border-emerald-200",
-        "text-orange-700": "text-emerald-700",
-    }
-    assert useful_cta.attrs["class"].split() == [
-        informative_to_useful.get(class_name, class_name)
-        for class_name in informative_cta.attrs["class"].split()
-    ]
+    # Desde 23/10/2026 os botões dos avisos são o secundário do site (assets/css/botoes.css), iguais nos
+    # quatro tipos: a cor do tipo fica no card e no selo, não no botão.
+    assert useful_cta.attrs["class"].split() == informative_cta.attrs["class"].split() == ["botao", "botao--secundario"]
     assert "comunicado-util__cta" not in useful_cta.attrs["class"].split()
     assert "bg-white" not in useful_cta.attrs["class"].split()
     assert "bg-emerald-50" not in useful_cta.attrs["class"].split()
     assert ".comunicado-util__cta" not in source
-    assert "#avisos-lista .comunicado-cta:hover { border-color: var(--comunicado-cta-hover-border); background-color: var(--comunicado-cta-hover-background); color: var(--comunicado-cta-hover-color); }" in source
-    assert "#avisos-lista .comunicado-cta--informativo" in source
-    assert "#avisos-lista .comunicado-cta--util" in source
+    assert "comunicado-cta" not in source
 
     active_icon_colors = {
         "URGENTE": ("bg-red-100", "text-red-600"),
@@ -744,11 +736,10 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     )
     historical_controls = [node for article in historical for node in article.descendants() if node.tag in {"a", "button"} and "comunicado-historico__control" in node.attrs.get("class", "").split()]
     assert len(historical_controls) == 16
-    assert all({"border-slate-300", "text-slate-700", "focus:ring-slate-300"} <= set(node.attrs["class"].split()) for node in historical_controls)
+    assert all({"botao", "botao--secundario"} <= set(node.attrs["class"].split()) for node in historical_controls)
     assert all(not any("blue" in class_name for class_name in node.attrs["class"].split()) for node in historical_controls)
-    assert "#avisos-lista .comunicado-historico__control:focus { outline: none; box-shadow: none; }" in source
-    assert "#avisos-lista .comunicado-historico__control:focus-visible { outline: 2px solid #475569; outline-offset: 2px; box-shadow: 0 0 0 2px #cbd5e1; }" in source
-    assert "#avisos-lista .comunicado-historico__control:active { border-color: #94a3b8; background: #e2e8f0; color: #334155; }" in source
+    # O foco e o estado pressionado são os do botão secundário (sem regras próprias desde 23/10/2026).
+    assert "#avisos-lista .comunicado-historico__control:" not in source
     assert "text-slate-700" in next(node for node in notice_list.descendants() if node.tag == "h2" and node.text() == "Histórico / encerrados").attrs["class"]
 
     legend_cards = [node for node in root.descendants() if node.has_class("aviso-tipo")]
@@ -768,7 +759,7 @@ def test_comunicado_useful_cta_computed_states(site_url, browser):
         page.goto(f"{site_url}/comunicado/", wait_until="networkidle")
         useful_cta = page.locator('a[href="/noticias/farmacia-popular-listas-ean-junho-2026/"]')
         # O CTA informativo de referência é o do CNES 10/2026 (o do MAPA saiu com o aviso, em 26/10/2026).
-        informative_cta = page.locator(f'#avisos-lista a.comunicado-cta--informativo[href="{CNES_10_ROUTE}"]')
+        informative_cta = page.locator(f'#avisos-lista a.botao--secundario[href="{CNES_10_ROUTE}"]')
 
         def computed_state(locator):
             return locator.evaluate(
@@ -789,10 +780,10 @@ def test_comunicado_useful_cta_computed_states(site_url, browser):
         page.wait_for_timeout(250)
         useful_normal = computed_state(useful_cta)
         informative_normal = computed_state(informative_cta)
-        assert useful_normal["transparentBackground"]
-        assert informative_normal["transparentBackground"]
-        assert useful_normal["color"] != informative_normal["color"]
-        assert useful_normal["borderColor"] != informative_normal["borderColor"]
+        # Os dois são o botão secundário: o mesmo fundo branco, a mesma cor e a mesma borda.
+        assert useful_normal["backgroundColor"] == informative_normal["backgroundColor"] == "rgb(255, 255, 255)"
+        assert useful_normal["color"] == informative_normal["color"]
+        assert useful_normal["borderColor"] == informative_normal["borderColor"]
 
         useful_cta.hover()
         page.wait_for_timeout(250)
@@ -812,13 +803,14 @@ def test_comunicado_useful_cta_computed_states(site_url, browser):
 
         page.mouse.move(0, 0)
         page.wait_for_timeout(250)
-        assert computed_state(useful_cta)["transparentBackground"]
-        assert computed_state(informative_cta)["transparentBackground"]
+        # Fora do mouse, os dois voltam ao fundo do secundário.
+        assert computed_state(useful_cta)["backgroundColor"] == useful_normal["backgroundColor"]
+        assert computed_state(informative_cta)["backgroundColor"] == informative_normal["backgroundColor"]
         useful_cta.focus()
         page.wait_for_timeout(250)
         useful_focus = computed_state(useful_cta)
         assert useful_focus["focusVisible"]
-        assert useful_focus["transparentBackground"]
+        assert useful_focus["backgroundColor"] == useful_normal["backgroundColor"]
     finally:
         context.close()
 
@@ -876,7 +868,7 @@ def test_tablet_hide_regression_is_absent_and_navbar_rules_remain():
         re.compile(r'body:has\(#mobile-menu:not\(\.hidden\)\)\.floating-buttons\.floating-btn\{opacity:0;visibility:hidden;'
                    r'pointer-events:none;?\}'),
         re.compile(r'@media\(min-width:768px\)and\(max-width:899px\)\{#navbar#mobile-menu:not\(\.hidden\)\{'
-                   r'max-height:calc\(100vh-8\.5rem\);max-height:calc\(100dvh-8\.5rem\);?\}\}'),
+                   r'max-height:calc\(100vh-8\.75rem\);max-height:calc\(100dvh-8\.75rem\);?\}\}'),
         re.compile(r'\.floating-buttons\.is-docked\{position:absolute;bottom:auto;z-index:40;?\}'),
         re.compile(r'@media\(min-width:900px\)and\(max-width:1180px\)\{'),
     )

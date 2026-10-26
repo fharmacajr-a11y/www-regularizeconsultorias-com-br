@@ -107,8 +107,8 @@ def test_noticias_farmacia_popular_preservam_substituicoes_de_estilo():
                 if element.tag == "a" and button_text in element.text
             )
             button_classes = button.attrs.get("class", "").split()
-            assert "text-white" in button_classes
-            assert "no-underline" in button_classes
+            # Desde 23/10/2026 o botão é o principal de assets/css/botoes.css (antes, utilidades do Tailwind).
+            assert {"botao", "botao--principal"} <= set(button_classes)
             assert button.attrs.get("href") == button_href
 
         if "absent_href" in expected:
