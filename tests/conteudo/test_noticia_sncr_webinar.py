@@ -204,7 +204,7 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     assert "29/10" not in card and "31/10" not in card
 
 
-def test_comunicado_keeps_one_sncr_card_and_seven_active_notices():
+def test_comunicado_keeps_one_sncr_card_and_five_active_notices():
     html = COMUNICADO_PATH.read_text(encoding="utf-8")
     active = _active_notices(html)
     sncr_cards = [article for article in active if 'data-category="sncr"' in article]
@@ -216,8 +216,9 @@ def test_comunicado_keeps_one_sncr_card_and_seven_active_notices():
     # 17/10/2026, 09h50: aviso informativo do Farmácia Popular sobre lembretes (7 ativos).
     # 19/10/2026, 15h40: aviso informativo sobre a instabilidade nos sistemas da Anvisa (8 ativos).
     # 20/10/2026: o aviso da instabilidade na Anvisa passou ao histórico (7 ativos).
-    assert len(active) == 7
-    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', html) == ["7", "7"]
+    # 26/10/2026: os avisos do MAPA e do período eleitoral do Farmácia Popular passaram ao histórico (5 ativos).
+    assert len(active) == 5
+    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', html) == ["5", "5"]
     assert len(sncr_cards) == 1
     card_text = _text(sncr_cards[0])
     paragraphs = [_text(item) for item in re.findall(r"<p>(.*?)</p>", sncr_cards[0], re.DOTALL)]
@@ -711,10 +712,11 @@ def test_sncr_pages_leave_out_the_items_held_for_another_update():
         for term in HELD_BACK_TERMS:
             assert term not in html and term not in visible, (path.relative_to(ROOT), term)
     # Nada de notícia nova nem de card novo no comunicado. O contador, em 8 no lote 2, voltou a 7 em 20/10/2026 com o
-    # encerramento do aviso da instabilidade na Anvisa.
+    # encerramento do aviso da instabilidade na Anvisa, e a 5 em 26/10/2026 com o encerramento dos avisos do MAPA e do
+    # período eleitoral.
     comunicado = COMUNICADO_PATH.read_text(encoding="utf-8")
-    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', comunicado) == ["7", "7"]
-    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', NEWS_PATH.read_text(encoding="utf-8")) == ["7", "7"]
+    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', comunicado) == ["5", "5"]
+    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', NEWS_PATH.read_text(encoding="utf-8")) == ["5", "5"]
     assert len(list((ROOT / "noticias").glob("*/index.html"))) == 85
 
 

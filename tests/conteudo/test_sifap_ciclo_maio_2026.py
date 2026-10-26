@@ -206,9 +206,10 @@ def test_titulos_carimbo_ordem_e_contagens():
     # 17/10/2026, 09h50: aviso informativo do Farmácia Popular sobre lembretes (7 ativos, 10 no histórico).
     # 19/10/2026, 15h40: aviso informativo sobre a instabilidade nos sistemas da Anvisa (8 ativos, 10 no histórico).
     # 20/10/2026: o aviso da instabilidade na Anvisa passou ao histórico (7 ativos, 11 no histórico).
-    assert len([status for status in statuses if status != "resolved"]) == 7
-    assert statuses.count("resolved") == 11
-    assert ">7</span>" in prazo
+    # 26/10/2026: os avisos do MAPA e do período eleitoral passaram ao histórico (5 ativos, 13 no histórico).
+    assert len([status for status in statuses if status != "resolved"]) == 5
+    assert statuses.count("resolved") == 13
+    assert ">5</span>" in prazo
     assert len(list((ROOT / "noticias").glob("*/index.html"))) == 85
 
 
