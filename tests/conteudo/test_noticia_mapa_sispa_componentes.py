@@ -126,7 +126,8 @@ def test_listing_card_moves_by_the_update_stamp_and_sitemap_follows():
     opening = card.split(">", 1)[0]
     # Mesmo carimbo da matéria de produtos irregulares, que vem antes na listagem.
     # 20/10/2026, 13h00: o card do SNCR, atualizado no lote 2, vem à frente dos dois.
-    assert cards.index(card) == 2
+    # 26/10/2026, 08h30: as matérias do MAPA 1.617 e do período eleitoral, atualizadas, sobem para a 1ª e a 2ª posições; as que ficavam acima delas descem duas (até a 6ª) ou uma (da 8ª à 35ª).
+    assert cards.index(card) == 4
     assert f'data-updated="{UPDATED}"' in opening
     assert f'<time datetime="{UPDATED}" class="leading-none">{UPDATED_DAY} • {UPDATED_CLOCK}</time>' in card
     assert ">Informativo</span>" in card and "Ler notícia" in card
@@ -135,7 +136,7 @@ def test_listing_card_moves_by_the_update_stamp_and_sitemap_follows():
     assert keywords == ("MAPA, SISPA, Agrotóxicos, Sistemas oficiais, Cadastro de componentes, Produtos técnicos, "
                         "Comunicado nº 1/2026, 19/10/2026")
     items = re.findall(r'\{"@type":"ListItem","position":(\d+),"url":"([^"]+)"\}', index)
-    assert items[2] == ("3", PUBLIC_URL)
+    assert items[4] == ("5", PUBLIC_URL)
     assert index.count(f'"url":"{PUBLIC_URL}"') == 1
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
     assert f"<loc>{PUBLIC_URL}</loc>\n    <lastmod>{UPDATED[:10]}</lastmod>" in sitemap

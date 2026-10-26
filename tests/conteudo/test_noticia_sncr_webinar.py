@@ -188,10 +188,12 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
     # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
     # 21/10/2026, 17h45: a atualização de produtos irregulares devolve aquele card à 1ª posição; o SNCR fica em 2º.
-    assert cards.index(card) == 1
+    # 26/10/2026, 08h30: as matérias do MAPA 1.617 e do período eleitoral, atualizadas, sobem para a 1ª e a 2ª posições; as que ficavam acima delas descem duas (até a 6ª) ou uma (da 8ª à 35ª).
+    assert cards.index(card) == 3
     assert "news-card-compact" in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
-    # 22/10/2026, 22h40: o card do SNCR, atualizado com os manuais, segue em 2º, logo depois do consolidado de irregulares.
+    # 22/10/2026, 22h40: o card do SNCR, atualizado com os manuais, segue em 2º, logo depois do consolidado de irregulares
+    # (4º desde 26/10/2026).
     assert f'<time datetime="{UPDATED}" class="leading-none">22/10/2026 • 22h40</time>' in card
     for term in (
         TITLE,

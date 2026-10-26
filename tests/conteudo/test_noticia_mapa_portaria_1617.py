@@ -21,7 +21,8 @@ DESCRIPTION = (
 )
 PUBLIC_URL = f"https://www.regularizeconsultorias.com.br/noticias/{SLUG}/"
 STAMP = "2026-10-03T00:33:00-03:00"
-UPDATED = "2026-10-06T08:00:00-03:00"
+# 26/10/2026, 08h30: quadro "Atualização em 26/10/2026" (marco de 23/10 encerrado).
+UPDATED = "2026-10-26T08:30:00-03:00"
 SOURCES = (
     "https://www.in.gov.br/en/web/dou/-/portaria-sda/mapa-n-1.617-de-24-de-abril-de-2026-701457881",
     "https://www.gov.br/agricultura/pt-br/assuntos/insumos-agropecuarios/insumos-pecuarios/alimentacao-animal/copy_of_PORTARIASDA_MAPAN1.617DE24DEABRILDE2026PORTARIASDA_MAPAN1.617DE24DEABRILDE2026DOUImprensaNacional.pdf",
@@ -84,7 +85,7 @@ def test_portaria_1617_is_published_at_the_public_url():
     assert f'<meta property="article:published_time" content="{STAMP}" />' in html
     assert f'<meta property="article:modified_time" content="{UPDATED}" />' in html
     assert f'<time datetime="{STAMP}">03/10/2026</time> às 00h33' in html
-    assert f'Atualizado em:</span> <time datetime="{UPDATED}">06/10/2026</time> às 08h00' in html
+    assert f'Atualizado em:</span> <time datetime="{UPDATED}">26/10/2026</time> às 08h30' in html
     assert "restring" not in html.casefold()
     # O H1 tem hífens opcionais em "melhora&shy;dores" e "antimicro&shy;bianos" (layout comum, 10/10/2026); sem eles,
     # o título aparece nos mesmos cinco lugares.
@@ -186,7 +187,8 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
     # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
-    card = cards[35]
+    # 26/10/2026, 08h30: as matérias do MAPA 1.617 e do período eleitoral, atualizadas, sobem para a 1ª e a 2ª posições; as que ficavam acima delas descem duas (até a 6ª) ou uma (da 8ª à 35ª).
+    card = cards[0]
     opening = card.split(">", 1)[0]
     assert f'href="/noticias/{SLUG}/"' in card
     assert index.count(f'href="/noticias/{SLUG}/"') == 1
@@ -199,23 +201,24 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     assert ">Atualização<" in card and ">Informativo<" not in card
     assert "Ler atualização" in card
     assert ">M.A.P.A<" in card
-    assert f'<time datetime="{UPDATED}" class="leading-none">06/10/2026 • 08h00</time>' in card
+    assert f'<time datetime="{UPDATED}" class="leading-none">26/10/2026 • 08h30</time>' in card
     # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
     assert all("news-card-compact" in item.split(">", 1)[0] for item in cards)
-    assert "cadastro-anvisa-govbr-transicao-sistemas" in cards[31]
+    assert "cadastro-anvisa-govbr-transicao-sistemas" in cards[32]
 
     collection = next(block for block in _jsonld(index) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
     assert len(items) == 85
-    assert items[35]["position"] == 36
-    assert items[35]["url"] == PUBLIC_URL
+    assert items[0]["position"] == 1
+    assert items[0]["url"] == PUBLIC_URL
     assert [item["position"] for item in items] == list(range(1, 86))
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
-    assert f"<loc>{PUBLIC_URL}</loc>\n    <lastmod>2026-10-06</lastmod>" in sitemap
+    assert f"<loc>{PUBLIC_URL}</loc>\n    <lastmod>2026-10-26</lastmod>" in sitemap
     # 13/10/2026: a listagem reordenou produtos irregulares, SNCR e DCB. 20/10/2026: reordenou produtos irregulares e SISPA.
     # 21/10/2026: reordenou produtos irregulares.
     assert (
         # 22/10/2026: a listagem reordenou produtos irregulares e SNCR.
+        # 26/10/2026: a listagem reordenou os cards do MAPA 1.617 e do período eleitoral, atualizados no mesmo lote.
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-10-22</lastmod>"
+        "    <lastmod>2026-10-26</lastmod>"
     ) in sitemap

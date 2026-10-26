@@ -199,7 +199,8 @@ def test_listing_places_the_updated_card_by_its_update_stamp():
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
     # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
-    card = cards[17]
+    # 26/10/2026, 08h30: as matérias do MAPA 1.617 e do período eleitoral, atualizadas, sobem para a 1ª e a 2ª posições; as que ficavam acima delas descem duas (até a 6ª) ou uma (da 8ª à 35ª).
+    card = cards[18]
     opening = card.split(">", 1)[0]
     assert f'href="{ROUTE}"' in card
     assert html.count(f'href="{ROUTE}"') == 1
@@ -221,8 +222,8 @@ def test_listing_places_the_updated_card_by_its_update_stamp():
     collection = next(block for block in _jsonld(html) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
     assert len(items) == 85
-    assert items[17]["position"] == 18
-    assert items[17]["url"] == URL
+    assert items[18]["position"] == 19
+    assert items[18]["url"] == URL
     assert [item["position"] for item in items] == list(range(1, 86))
 
 
@@ -234,8 +235,9 @@ def test_sitemap_adds_only_the_new_url_and_the_listing_lastmod():
     # matéria do SNCR recebeu o quadro de 20/10/2026 (lote 2 do SNCR). 21/10/2026: a listagem reordenou produtos irregulares.
     assert (
         # 22/10/2026: a listagem reordenou produtos irregulares e SNCR.
+        # 26/10/2026: a listagem reordenou os cards do MAPA 1.617 e do período eleitoral, atualizados no mesmo lote.
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-10-22</lastmod>"
+        "    <lastmod>2026-10-26</lastmod>"
     ) in sitemap
     assert (
         # 22/10/2026: a matéria do SNCR recebeu o quadro dos manuais.

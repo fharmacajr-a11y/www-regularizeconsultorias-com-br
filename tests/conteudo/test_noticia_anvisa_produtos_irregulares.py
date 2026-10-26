@@ -344,17 +344,18 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
     # 20/10/2026, 13h00: o card do SNCR, atualizado no lote 2, passa à frente; o consolidado fica em 2º.
     # 21/10/2026, 17h45: a RE nº 4.140/2026 e a correção da RE nº 3.159/2026 devolvem o consolidado à 1ª posição.
     # 22/10/2026, 22h40: as RE nº 4.143, 4.147 e 4.150/2026 mantêm o consolidado na 1ª posição, com resumo novo.
+    # 26/10/2026, 08h30: as matérias do MAPA 1.617 e do período eleitoral, atualizadas, sobem para a 1ª e a 2ª posições; as que ficavam acima delas descem duas (até a 6ª) ou uma (da 8ª à 35ª). O consolidado fica em 3º.
     summary = ("O DOU de 22/10/2026 publica a RE nº 4.143/2026, que proíbe dois produtos Accu-Chek Active identifica"
                "dos no anexo, em caso enquadrado como falsificação; a RE nº 4.147/2026, sobre o lote 11-2025 do NAC "
                "(N-acetil L-cisteína) Lauton; e a RE nº 4.150/2026, que determina, por 90 dias, a interdição cautelar do lote 25D0808 do Fauldleuco, da Libbs.")
-    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[0]
-    assert "news-card-compact" in cards[0].split(">", 1)[0]
-    assert f"{UPDATED_DAY} • {UPDATED_CLOCK}" in cards[0]
-    assert "09h06" not in cards[0]
-    assert f'data-summary="{summary}"' in cards[0]
-    assert f"<p class=\"text-slate-500 text-sm leading-relaxed mb-4\">{summary}</p>" in cards[0]
+    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[2]
+    assert "news-card-compact" in cards[2].split(">", 1)[0]
+    assert f"{UPDATED_DAY} • {UPDATED_CLOCK}" in cards[2]
+    assert "09h06" not in cards[2]
+    assert f'data-summary="{summary}"' in cards[2]
+    assert f"<p class=\"text-slate-500 text-sm leading-relaxed mb-4\">{summary}</p>" in cards[2]
     # Números e lotes do resumo de 13/10/2026 saíram do texto do card e seguem na busca pelas palavras-chave.
-    keywords = cards[0].split('data-keywords="', 1)[1].split('"', 1)[0]
+    keywords = cards[2].split('data-keywords="', 1)[1].split('"', 1)[0]
     for term in ("RE 3.989/2026", "RE 4.000/2026", "RE 4.001/2026", "RE 4.002/2026", "RE 4.009/2026", "RE 4.028/2026",
                  "HXTZ251015", "NDC 46785-162-03", "P07725A", "Xeomin", "cloreto de sódio", "insumos farmacêuticos"):
         assert term in keywords, term
@@ -369,9 +370,9 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
                  "025155", "Z005197", "Z012354"):
         assert term in keywords, term
         assert term not in summary, term
-    assert "As RE nº 3.946 e 3.947/2026 foram publicadas no DOU de 06/10/2026" not in cards[0]
-    assert "União Vegetal Agroindustrial Ltda. como fabricante do Aloe Care" not in cards[0]
-    assert 'href="http' not in cards[0]
+    assert "As RE nº 3.946 e 3.947/2026 foram publicadas no DOU de 06/10/2026" not in cards[2]
+    assert "União Vegetal Agroindustrial Ltda. como fabricante do Aloe Care" not in cards[2]
+    assert 'href="http' not in cards[2]
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
     assert f"<loc>{URL}</loc>\n    <lastmod>{UPDATED[:10]}</lastmod>" in sitemap
 

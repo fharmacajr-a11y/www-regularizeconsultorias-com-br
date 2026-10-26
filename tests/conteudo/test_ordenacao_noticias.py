@@ -189,20 +189,21 @@ def test_news_index_itemlist_ordering():
 
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
+    # 26/10/2026, 08h30: as matérias do MAPA 1.617 e do período eleitoral, atualizadas, sobem para a 1ª e a 2ª posições; as que ficavam acima delas descem duas (até a 6ª) ou uma (da 8ª à 35ª).
     # 21/10/2026, 17h45: produtos irregulares (RE nº 4.140/2026 e correção da RE nº 3.159/2026) voltam à 1ª posição.
-    assert urls[0] == PRODUTOS_IRREGULARES_URL
+    assert urls[2] == PRODUTOS_IRREGULARES_URL
     # 20/10/2026, 13h00: o SNCR (lote 2) fica em 2º. SISPA (Comunicado nº 1/2026) segue em 3º.
-    assert urls[1] == SNCR_WEBINAR_URL
-    assert urls[2] == SISPA_URL
+    assert urls[3] == SNCR_WEBINAR_URL
+    assert urls[4] == SISPA_URL
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entrou na 1ª posição da listagem.
-    assert urls[3] == FP_LEMBRETES_WHATSAPP_URL
+    assert urls[5] == FP_LEMBRETES_WHATSAPP_URL
     # 16/10/2026, 20h06: o card do CNES 10/2026 entrou na 1ª posição da listagem.
-    assert urls[4] == CNES_COMPETENCIA_10_2026_URL
+    assert urls[6] == CNES_COMPETENCIA_10_2026_URL
     # A DCB segue às 09h06 de 13/10; o SNCR saiu desse empate em 20/10.
     # A matéria eleitoral (12/10/2026, 18h08) e o CNES 09/2026 (11/10/2026, 06h07) vêm em seguida.
-    assert urls[5] == DCB_IN462_URL
-    assert urls[6] == "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-adequacao-materiais-periodo-eleitoral/"
-    assert urls[7] == CNES_COMPETENCIA_09_2026_URL
+    assert urls[7] == DCB_IN462_URL
+    assert urls[1] == "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-adequacao-materiais-periodo-eleitoral/"
+    assert urls[8] == CNES_COMPETENCIA_09_2026_URL
     # Lote de conteúdo e dados de 09/10/2026, sem o consolidado de fiscalização, que subiu com o carimbo de 13/10.
     lote = [
         "policia-federal-classificacao-produtos-simples-compostos-siproquim",
@@ -217,44 +218,44 @@ def test_news_index_itemlist_ordering():
         "anvisa-regras-cosmeticos-artesanais",
         "anvisa-edital-6-2026-afe-manipulacao-preparacoes-estereis",
     ]
-    assert urls[8:19] == [f"https://www.regularizeconsultorias.com.br/noticias/{slug}/" for slug in lote]
+    assert urls[9:20] == [f"https://www.regularizeconsultorias.com.br/noticias/{slug}/" for slug in lote]
     # Fase 1M v2: As 6 matérias atualizadas em 08/10/2026 vêm logo depois.
     certidoes_url = "https://www.regularizeconsultorias.com.br/noticias/anvisa-certidoes-certificados-medicamentos-solicita/"
     alimentos_url = "https://www.regularizeconsultorias.com.br/noticias/anvisa-prazo-adequacao-notificacao-alimentos-setembro-2026/"
     cnes_08_url = "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
-    assert urls[19] == HEMOTERAPIA_URL
-    assert urls[20] == certidoes_url
-    assert urls[21] == EDITAL_5_2026_URL
-    assert urls[22] == alimentos_url
-    assert urls[23] == cnes_08_url
-    assert urls[24] == SICERT_URL
-    assert urls[25] == "https://www.regularizeconsultorias.com.br/noticias/novos-compendios-farmacopeia-brasileira-entram-em-vigor/"
-    assert urls[26] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-hmp-solicita-medicamentos-produtos-biologicos/"
+    assert urls[20] == HEMOTERAPIA_URL
+    assert urls[21] == certidoes_url
+    assert urls[22] == EDITAL_5_2026_URL
+    assert urls[23] == alimentos_url
+    assert urls[24] == cnes_08_url
+    assert urls[25] == SICERT_URL
+    assert urls[26] == "https://www.regularizeconsultorias.com.br/noticias/novos-compendios-farmacopeia-brasileira-entram-em-vigor/"
+    assert urls[27] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-hmp-solicita-medicamentos-produtos-biologicos/"
     # A suspensão do SIFAP permanece à frente das duas matérias empatadas às 11h13.
-    assert urls[27] == SIFAP_SUSPENSAO_URL
-    assert urls[28] == "https://www.regularizeconsultorias.com.br/noticias/prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular/"
-    assert urls[29] == "https://www.regularizeconsultorias.com.br/noticias/sifap-regularizacao-cadastral-farmacias-notificadas-13-maio/"
+    assert urls[28] == SIFAP_SUSPENSAO_URL
+    assert urls[29] == "https://www.regularizeconsultorias.com.br/noticias/prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular/"
+    assert urls[30] == "https://www.regularizeconsultorias.com.br/noticias/sifap-regularizacao-cadastral-farmacias-notificadas-13-maio/"
 
     # AFE e Cadastro continuam empatados em 07/10/2026 às 09h08. O SNCR saiu desse empate em 13/10/2026.
     assert urls.count(SNCR_WEBINAR_URL) == 1
-    assert urls[30] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-acesso-sncr-afe-farmacias-privadas/"
-    assert urls[31] == "https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/"
-    assert urls[32] == "https://www.regularizeconsultorias.com.br/noticias/nova-regra-anvisa-cnes-receitas-farmacias/"
+    assert urls[31] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-acesso-sncr-afe-farmacias-privadas/"
+    assert urls[32] == "https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/"
+    assert urls[33] == "https://www.regularizeconsultorias.com.br/noticias/nova-regra-anvisa-cnes-receitas-farmacias/"
     assert urls.count("https://www.regularizeconsultorias.com.br/noticias/cadastro-anvisa-govbr-transicao-sistemas/") == 1
-    assert urls[33] == CNES_SNCR_URL
+    assert urls[34] == CNES_SNCR_URL
     assert urls.count(CNES_SNCR_URL) == 1
-    assert urls[34] == "https://www.regularizeconsultorias.com.br/noticias/receituarios-controlados-modelos-oficiais-anvisa/"
-    assert urls[14] == PORTARIA_URL
-    assert urls[16] == CREDENCIAMENTO_URL
+    assert urls[35] == "https://www.regularizeconsultorias.com.br/noticias/receituarios-controlados-modelos-oficiais-anvisa/"
+    assert urls[15] == PORTARIA_URL
+    assert urls[17] == CREDENCIAMENTO_URL
     assert urls.count(PRODUTOS_IRREGULARES_URL) == 1
     assert urls.count(SISPA_URL) == 1
     mapa_portaria_1617 = "https://www.regularizeconsultorias.com.br/noticias/mapa-portaria-1617-2026-aditivos-antimicrobianos-alimentacao-animal/"
-    assert urls[35] == mapa_portaria_1617
+    assert urls[0] == mapa_portaria_1617
     assert urls.count(mapa_portaria_1617) == 1
     assert urls.count(CNES_COMPETENCIA_09_2026_URL) == 1
     assert urls[36] == COSMETICOS_URL
     assert urls.count(COSMETICOS_URL) == 1
-    assert urls[17] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-regras-cosmeticos-artesanais/"
+    assert urls[18] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-regras-cosmeticos-artesanais/"
     assert urls.count("https://www.regularizeconsultorias.com.br/noticias/anvisa-regras-cosmeticos-artesanais/") == 1
     assert urls[37] == GLP1_URL
     assert urls[38] == SEMAVY_PROPAGANDA_URL
@@ -263,7 +264,7 @@ def test_news_index_itemlist_ordering():
     assert urls.count(IN_470_SUPLEMENTOS_URL) == 1
     assert urls[40] == SANEANTES_URL
     assert urls.count(SANEANTES_URL) == 1
-    assert urls[18] == EDITAL_6_2026_AFE_URL
+    assert urls[19] == EDITAL_6_2026_AFE_URL
     assert urls.count(EDITAL_6_2026_AFE_URL) == 1
     assert urls[41] == PASSIVO_DISPOSITIVOS_URL
     assert urls[42] == IFAS_GLP1_PETICOES_URL
@@ -277,9 +278,9 @@ def test_news_index_itemlist_ordering():
     assert urls[50] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-cadastro-eletronico-fabricantes-internacionais-cosmeticos-saneantes/"
     assert urls[51] == FABRICANTES_INTERNACIONAIS_URL
     assert urls[52] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-formulario-cbpf-terapias-avancadas/"
-    assert urls[15] == MONITORAMENTO_URL
+    assert urls[16] == MONITORAMENTO_URL
     edital_position = urls.index(EDITAL_5_2026_URL)
-    assert edital_position == 21
+    assert edital_position == 22
     revisao_position = urls.index(REVISAO_PROPAGANDA_URL)
     assert revisao_position == 55
     assert urls[revisao_position - 1] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-amplia-painel-medicamentos-pendentes-registro/"
@@ -289,10 +290,12 @@ def test_news_index_itemlist_ordering():
     assert urls[dispositivos_position - 1] == REVISAO_PROPAGANDA_URL
     assert urls[dispositivos_position + 1] == PARAMOL_URL
     dcb_position = urls.index(DCB_IN462_URL)
-    assert dcb_position == 5
+    assert dcb_position == 7
     assert urls[dcb_position - 1] == CNES_COMPETENCIA_10_2026_URL
     eleitoral = "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-adequacao-materiais-periodo-eleitoral/"
-    assert urls[dcb_position + 1] == eleitoral
+    # Desde 26/10/2026 a matéria eleitoral está em 2º; depois da DCB vem o CNES 09/2026.
+    assert urls[1] == eleitoral
+    assert urls[dcb_position + 1] == CNES_COMPETENCIA_09_2026_URL
     paramol_position = urls.index(PARAMOL_URL)
     assert paramol_position == 57
     assert urls[paramol_position - 1] == DISPOSITIVOS_IRREGULARES_URL
@@ -304,7 +307,7 @@ def test_news_index_itemlist_ordering():
     assert urls[supervisao_position - 2] == RETATRUTIDA_URL
     assert urls[supervisao_position + 1] == "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-dispositivos-medicos-heuer-international/"
     assert CREDENCIAMENTO_URL in urls, "Credenciamento is missing from JSON-LD"
-    assert urls.index(CREDENCIAMENTO_URL) == 16
+    assert urls.index(CREDENCIAMENTO_URL) == 17
 
 
 def test_all_news_orders_match_effective_timestamp_sorting():

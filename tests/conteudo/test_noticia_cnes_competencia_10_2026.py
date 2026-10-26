@@ -166,10 +166,11 @@ def test_news_index_card_itemlist_and_counters():
     # A posição vem da data. 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
     # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
     # 20/10/2026, 13h00: o card do SNCR, atualizado no lote 2, sobe para a 1ª posição; os que ficavam à frente dele descem uma.
-    assert cards.index(card) == 4
+    # 26/10/2026, 08h30: as matérias do MAPA 1.617 e do período eleitoral, atualizadas, sobem para a 1ª e a 2ª posições; as que ficavam acima delas descem duas (até a 6ª) ou uma (da 8ª à 35ª).
+    assert cards.index(card) == 6
     items = re.findall(r'\{"@type":"ListItem","position":(\d+),"url":"([^"]+)"\}', html)
     assert [int(p) for p, _ in items] == list(range(1, 86))
-    assert items[4][1] == PUBLIC_URL
+    assert items[6][1] == PUBLIC_URL
     assert html.count(f'"url":"{PUBLIC_URL}"') == 1
     assert '<span>Todos</span><span class="text-xs text-slate-400">85</span>' in html
     assert '<span>CNES</span><span class="text-xs text-slate-400">6</span>' in html
@@ -212,4 +213,5 @@ def test_sitemap_lists_the_new_url_once():
     # 17/10/2026: a listagem ganhou o card do esclarecimento do Farmácia Popular. 20/10/2026: reordenou dois cards.
     # 21/10/2026: reordenou o card de produtos irregulares.
     # 22/10/2026: a listagem reordenou os cards de produtos irregulares e do SNCR, atualizados no mesmo lote.
-    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-10-22</lastmod>", sitemap)
+    # 26/10/2026: a listagem reordenou os cards do MAPA 1.617 e do período eleitoral, atualizados no mesmo lote.
+    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-10-26</lastmod>", sitemap)
