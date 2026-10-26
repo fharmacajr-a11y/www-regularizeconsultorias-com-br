@@ -19,9 +19,10 @@ Toda parada tem de aparecer inteira: dentro da janela, abaixo do cabeçalho e de
 contêineres com overflow. Na listagem, todos os controles exibidos da coluna de filtros recebem o foco.
 Com o HTML de c74d97b, a listagem falha em 390 e 960 px e passa em 1440 px.
 
-Todas as páginas rodam com mouse (o contexto padrão do Playwright). Desde 21/10/2026, abaixo de 1024 px, a faixa
-de categorias da listagem quebra em linhas com mouse e rola na horizontal com toque; a listagem também roda com
-mouse em 768x1024 (três linhas) e com toque (has_touch e is_mobile) em 390x844 e 960x900.
+Todas as páginas rodam com mouse (o contexto padrão do Playwright). Abaixo de 1024 px, a faixa de categorias da
+listagem rola na horizontal com toque e, com mouse, desde 23/10/2026, as categorias ficam num carrossel com setas
+(fora do Tab) e a ordenação fora dele; a listagem também roda com mouse em 768x1024 e com toque (has_touch e
+is_mobile) em 390x844 e 960x900.
 
 Roda em subprocesso com o ServidorDeTeste (fila de 128; ver tests/support.py) e registra os recursos
 locais que não carregaram, como test_noticias_tab_rapido.py.
@@ -90,7 +91,8 @@ STOP = '''() => {
             header: Math.round(header), clip: Object.fromEntries(Object.entries(clip).map(([k, v]) => [k, Math.round(v)]))},
   };
 }'''
-COLUMN_CONTROLS = '''() => [...document.querySelectorAll('main aside :is(a[href], button, input)')]
+# As setas do carrossel das categorias (com mouse, desde 23/10/2026) ficam fora do Tab (tabindex="-1").
+COLUMN_CONTROLS = '''() => [...document.querySelectorAll('main aside :is(a[href], button, input):not([tabindex="-1"])')]
   .filter(node => node.getClientRects().length).length'''
 
 try:

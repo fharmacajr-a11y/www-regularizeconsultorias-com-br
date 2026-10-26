@@ -26,8 +26,9 @@ não some e que os contatos exibidos da página ("Falar com a Regularize" a
 partir de 1024 px e o WhatsApp de "Orientação técnica") continuam visíveis em
 todas as paradas.
 
-As janelas rodam com mouse (o contexto padrão do Playwright), em que a faixa de
-categorias quebra em linhas abaixo de 1024 px desde 21/10/2026; 390x844,
+As janelas rodam com mouse (o contexto padrão do Playwright), em que as
+categorias ficam num carrossel com setas abaixo de 1024 px desde 23/10/2026
+(as setas ficam fora do Tab e da conta dos controles); 390x844,
 768x1024 e 960x900 rodam também com toque (has_touch e is_mobile), em que a
 faixa rola na horizontal. A roda e os cliques do teste são os do Playwright nos
 dois casos.
@@ -198,7 +199,7 @@ window.__flutuantes = (() => {
       const contacts = [document.querySelector('aside .news-sidebar a[href="/contato/"]'),
                         [...document.querySelectorAll('main a[href^="/whatsapp/"]')].find(a => a.closest('.border-l-4'))]
         .filter(node => !node || node.getClientRects().length);
-      const controls = [...sidebar().querySelectorAll('a[href], button, input')];
+      const controls = [...sidebar().querySelectorAll(':is(a[href], button, input):not([tabindex="-1"])')];
       return {
         scrollY, overlaps: [...new Set(overlaps)],
         collapsed: !shown(g.querySelector('.floating-btn--whatsapp')),
@@ -307,7 +308,7 @@ with sync_playwright() as playwright:
         stats[label] = sum(states)
 
     # 3. Teclado: Tab do topo e Shift+Tab a partir do primeiro card.
-    controls = page.evaluate("[...document.querySelectorAll('aside .news-sidebar :is(a[href], button, input)')]"
+    controls = page.evaluate("[...document.querySelectorAll('aside .news-sidebar :is(a[href], button, input):not([tabindex=\"-1\"])')]"
                              ".filter(node => node.getClientRects().length).length")
     for key, start_at in (("Tab", "main h1"), ("Shift+Tab", "#news-article-list [data-news-card] p")):
         page.evaluate("window.scrollTo(0, 0)")

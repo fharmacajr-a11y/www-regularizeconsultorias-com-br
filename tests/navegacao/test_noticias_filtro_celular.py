@@ -1,8 +1,9 @@
 """Filtro da listagem de notícias no celular: o 1º card do resultado aparece na janela.
 
 Abaixo de 1024 px a coluna de filtros vem antes da lista: a pesquisa e, logo abaixo, a faixa com as
-categorias e a ordenação (pages/noticias.css), que rola na horizontal com toque e, desde 21/10/2026, quebra
-em linhas com mouse. Até 21/10/2026 a coluna vinha depois da lista e o resultado de um filtro ficava inteiro
+categorias e a ordenação (pages/noticias.css), que rola na horizontal com toque; com mouse, desde 23/10/2026,
+as categorias ficam num carrossel com setas e a ordenação fora dele (de 21 a 23/10/2026 a faixa quebrava em
+linhas). Até 21/10/2026 a coluna vinha depois da lista e o resultado de um filtro ficava inteiro
 acima da janela (em 390x844, Enter em "SNCR" deixava o 1º card de −1.488 a −978 px). Agora, depois do clique
 numa categoria ou na ordenação, o
 assets/js/pages/noticias.js rola até a faixa ficar logo abaixo do cabeçalho quando o topo do 1º card não

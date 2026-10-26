@@ -1,7 +1,9 @@
 """Contraste do texto visível, medido com as cores renderizadas.
 
 Região medida: as linhas dos nós de texto de cada elemento (Range.getClientRects),
-sem os espaços das pontas e recortadas pelos ancestrais com overflow. Padding,
+sem os espaços das pontas e recortadas pelos ancestrais com overflow (e, desde
+23/10/2026, sem o trecho sob o esmaecido em degradê de um contêiner que rola na
+horizontal, onde ficam as setas do carrossel das categorias). Padding,
 bordas, ícones e controles filhos ficam fora por construção; os botões
 flutuantes ficam fora da coleta e ocultos na captura. Um elemento pintado por
 cima do texto (imagem, fundo, pseudo-elemento) é reprovado como sobreposição.
@@ -127,6 +129,16 @@ REGION_JS = r"""
       const left = box.left + node.clientLeft, top = box.top + node.clientTop;
       clip = [Math.max(clip[0], left), Math.max(clip[1], top),
               Math.min(clip[2], left + node.clientWidth), Math.min(clip[3], top + node.clientHeight)];
+      // Esmaecido de contêiner que rola na horizontal (máscara em degradê até o transparente, como o carrossel das
+      // categorias de /noticias/ com mouse, desde 23/10/2026): o trecho sob o degradê é aviso de que há mais
+      // itens, não texto para ler, e as setas do carrossel ficam sobre ele. Fica de fora, como o recortado.
+      const mask = ((s.maskImage && s.maskImage !== 'none' ? s.maskImage : s.webkitMaskImage) || '').replace(/\s+/g, '');
+      if (mask.startsWith('linear-gradient(toright,')) {
+        const start = /^linear-gradient\(toright,(?:rgba\(0,0,0,0\)|transparent)(?:0px)?,rgb\(0,0,0\)([\d.]+)px/.exec(mask);
+        const end = /rgb\(0,0,0\)calc\(100%-([\d.]+)px\),(?:rgba\(0,0,0,0\)|transparent)\)$/.exec(mask);
+        if (start) clip[0] = Math.max(clip[0], left + parseFloat(start[1]));
+        if (end) clip[2] = Math.min(clip[2], left + node.clientWidth - parseFloat(end[1]));
+      }
     }
     return lines
       .map(r => [Math.max(r[0], clip[0]), Math.max(r[1], clip[1]), Math.min(r[2], clip[2]), Math.min(r[3], clip[3])])

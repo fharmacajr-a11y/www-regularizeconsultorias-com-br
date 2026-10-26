@@ -11,8 +11,10 @@ Atendimento técnico): a lateral na borda esquerda de "Sobre o conteúdo" e a
 lista na borda direita.
 
 Empilhada, cada largura roda com mouse (o contexto padrão do Playwright), em
-que a faixa quebra em linhas desde 21/10/2026, e com toque (has_touch e
-is_mobile), em que ela rola na horizontal. Lado a lado, só com mouse.
+que as categorias ficam num carrossel com setas desde 23/10/2026 (de 21 a
+23/10/2026 a faixa quebrava em linhas), e com toque (has_touch e is_mobile),
+em que a faixa rola na horizontal. Lado a lado, só com mouse. As setas do
+carrossel ficam fora do Tab e da conta dos controles.
 """
 import json
 import subprocess
@@ -70,7 +72,7 @@ COVERED = """async () => {
     const frame = () => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(done)));
     const middle = r => r.top + r.height / 2;
     const covered = [];
-    const nodes = [...document.querySelectorAll('aside .news-sidebar :is(a[href], button, input)')]
+    const nodes = [...document.querySelectorAll('aside .news-sidebar :is(a[href], button, input):not([tabindex="-1"])')]
         .filter(node => node.getClientRects().length);
     for (const node of nodes) {
         node.scrollIntoView({block: 'nearest', inline: 'nearest'});

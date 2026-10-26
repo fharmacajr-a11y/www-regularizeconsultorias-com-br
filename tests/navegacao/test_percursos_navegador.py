@@ -286,7 +286,8 @@ SIDEBAR_STATE_JS = """() => {
     const header = document.getElementById('navbar').getBoundingClientRect().bottom;
     const box = column.getBoundingClientRect();
     // Controles exibidos: abaixo de 1024 px "Falar com a Regularize" fica com display: none.
-    const controls = [...column.querySelectorAll('a[href], button, input')].filter(node => node.getClientRects().length);
+    // As setas do carrossel das categorias (com mouse, desde 23/10/2026) ficam fora do Tab (tabindex="-1").
+    const controls = [...column.querySelectorAll(':is(a[href], button, input):not([tabindex="-1"])')].filter(node => node.getClientRects().length);
     return {
         position: getComputedStyle(column).position, top: box.top, bottom: box.bottom,
         innerScroll: column.scrollHeight - column.clientHeight,
@@ -319,10 +320,13 @@ SIDEBAR_STATE_JS = """() => {
 }"""
 # (largura, altura, escala, ponteiro). 1024x576 é 1280x720 com 125% de zoom;
 # 1280x720 e 960x540 são 1920x1080 com 150% e 200%. Abaixo de 1024 px a coluna
-# vem antes da lista, compacta: a pesquisa e a faixa de categorias e ordenação,
-# que quebra em linhas com mouse (desde 21/10/2026; cada controle tem de
-# aparecer inteiro pela roda) e rola na horizontal com toque (has_touch e
-# is_mobile; basta a linha dele aparecer inteira pela roda).
+# vem antes da lista, compacta: a pesquisa e a faixa de categorias e ordenação.
+# Com toque (has_touch e is_mobile) a faixa rola na horizontal e, com mouse
+# (desde 23/10/2026), as categorias ficam num carrossel com setas: nos dois
+# casos basta a linha do controle aparecer inteira pela roda; o que fica fora
+# da parte exposta se alcança rolando a faixa ou o carrossel (dedo, setas ou
+# Tab), não a página. A partir de 1024 px, com mouse, cada controle tem de
+# aparecer inteiro pela roda.
 SIDEBAR_VIEWPORTS = (
     (1024, 576, 1.25, "mouse"), (1024, 600, 1, "mouse"), (1280, 480, 1, "mouse"), (1280, 720, 1.5, "mouse"),
     (1366, 768, 1, "mouse"), (1440, 900, 1, "mouse"), (960, 540, 2, "mouse"), (390, 844, 3, "mouse"),
@@ -341,8 +345,8 @@ def _coluna(browser, base):
         page.add_style_tag(content="html{scroll-behavior:auto!important}")
         page.locator("#btn-carregar-mais").click()
         label = f"@{width}x{height} {pointer}"
-        # Com mouse, cada controle aparece inteiro e livre em alguma parada da roda.
-        wheel = "shown" if pointer == "mouse" else "reachable"
+        # Com mouse a partir de 1024 px, cada controle aparece inteiro e livre em alguma parada da roda.
+        wheel = "shown" if pointer == "mouse" and width >= 1024 else "reachable"
         state = lambda: page.evaluate(SIDEBAR_STATE_JS)
         cards = page.locator("#news-article-list [data-news-card]")
         middle, last = cards.nth(cards.count() // 2), cards.nth(cards.count() - 1)
