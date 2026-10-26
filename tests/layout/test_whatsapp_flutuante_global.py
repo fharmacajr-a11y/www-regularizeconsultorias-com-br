@@ -288,10 +288,32 @@ with sync_playwright() as playwright:
         layout["end"] = page.evaluate(
             """async () => {
                 document.documentElement.style.scrollBehavior = 'auto';
-                window.scrollTo(0, document.documentElement.scrollHeight);
-                // O main.js ancora a coluna no evento de rolagem; mede o quadro pintado.
-                await new Promise(done => requestAnimationFrame(() => requestAnimationFrame(done)));
+                // O main.js ancora a coluna no evento de rolagem e a reposiciona, antes da pintura, quando a
+                // altura da página muda (ResizeObserver). A medida vale para o quadro pintado com a página
+                // assentada no fim. Até 23/10/2026 ela era tirada dentro do segundo requestAnimationFrame: se a
+                // página crescia entre os dois quadros (na /comunicado/ em 390 px, 915 px quando a fonte e o
+                // load reorganizam o texto, logo depois do DOMContentLoaded), a leitura caía antes do
+                // ResizeObserver daquele quadro e via a coluna na posição antiga, que nunca chega a ser
+                // pintada (falhas intermitentes com groupTop de -405 px). Agora cada amostra é tirada numa
+                // tarefa depois do quadro (depois do ResizeObserver e da pintura), a página volta ao fim se o
+                // crescimento a tirou de lá, e a medida é a de duas amostras seguidas iguais.
                 const group = document.querySelector('.floating-buttons');
+                const frame = () => new Promise(done => requestAnimationFrame(() => setTimeout(done, 0)));
+                const sample = () => {
+                    const r = group.getBoundingClientRect();
+                    return [r.top, r.bottom, scrollY, document.documentElement.scrollHeight].join();
+                };
+                window.scrollTo(0, document.documentElement.scrollHeight);
+                await frame();
+                let last = sample();
+                for (let i = 0; i < 120; i++) {
+                    await frame();
+                    const end = document.documentElement.scrollHeight - innerHeight;
+                    if (scrollY < end - 1) window.scrollTo(0, document.documentElement.scrollHeight);
+                    const now = sample();
+                    if (now === last && scrollY >= end - 1) break;
+                    last = now;
+                }
                 const gr = group.getBoundingClientRect();
                 const intersects = (r) => r.width > 0 && r.height > 0 && r.left < gr.right &&
                     r.right > gr.left && r.top < gr.bottom && r.bottom > gr.top;
