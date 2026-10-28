@@ -236,8 +236,9 @@ def test_sitemap_adds_only_the_new_url_and_the_listing_lastmod():
     assert (
         # 22/10/2026: a listagem reordenou produtos irregulares e SNCR.
         # 26/10/2026: a listagem reordenou os cards do MAPA 1.617 e do período eleitoral, atualizados no mesmo lote.
+        # 28/10/2026: a listagem reordenou os cards do MAPA 1.617 e de produtos irregulares, atualizados no mesmo lote.
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-10-26</lastmod>"
+        "    <lastmod>2026-10-28</lastmod>"
     ) in sitemap
     assert (
         # 22/10/2026: a matéria do SNCR recebeu o quadro dos manuais. 26/10/2026: itens A-1 e M-1.

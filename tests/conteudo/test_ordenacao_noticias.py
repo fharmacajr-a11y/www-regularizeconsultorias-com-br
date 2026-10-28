@@ -19,7 +19,9 @@ RPBR_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-atualiza-p
 SIPROQUIM_IN338_URL = "https://www.regularizeconsultorias.com.br/noticias/produtos-quimicos-controlados-siproquim2-assinador-pf/"
 PRODUTOS_IRREGULARES_URL = "https://www.regularizeconsultorias.com.br/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
 # 22/10/2026, 22h40 (hora do commit): RE nº 4.143, 4.147 e 4.150/2026; o SNCR recebeu o mesmo carimbo no mesmo lote.
-PRODUTOS_IRREGULARES_UPDATED = "2026-10-22T22:40:00-03:00"
+# 28/10/2026, 18h50 (hora do commit): RE nº 4.160, 4.228, 4.231 e 4.232/2026; a matéria do
+# MAPA 1.617 recebeu o mesmo carimbo no mesmo lote.
+PRODUTOS_IRREGULARES_UPDATED = "2026-10-28T18:50:00-03:00"
 # Notícia do SISPA, atualizada em 20/10/2026 às 10h12 (Comunicado nº 1/2026 da CGAA/DSV/SDA/MAPA).
 SISPA_URL = "https://www.regularizeconsultorias.com.br/noticias/mapa-sispa-registro-agrotoxicos/"
 SISPA_UPDATED = "2026-10-20T10:12:00-03:00"
@@ -191,9 +193,10 @@ def test_news_index_itemlist_ordering():
     urls = [item.get("url") for item in items]
     # 26/10/2026, 08h30: as matérias do MAPA 1.617 e do período eleitoral, atualizadas, sobem para a 1ª e a 2ª posições; as que ficavam acima delas descem duas (até a 6ª) ou uma (da 8ª à 35ª).
     # 26/10/2026, 08h30: a matéria do SNCR, atualizada (itens A-1 e M-1), entra no mesmo carimbo do MAPA e do período eleitoral e fica em 3º, logo depois delas; o consolidado de irregulares desce para o 4º.
-    assert urls[2] == SNCR_WEBINAR_URL
+    # 28/10/2026, 18h50 (hora do commit): a matéria do MAPA 1.617 (Ofício-Circular nº 75/2026) e o consolidado de irregulares (RE nº 4.160, 4.228, 4.231 e 4.232/2026) recebem o mesmo carimbo; o MAPA segue em 1º, o consolidado sobe para o 2º e o período eleitoral e o SNCR descem para o 3º e o 4º.
+    assert urls[3] == SNCR_WEBINAR_URL
     # 21/10/2026, 17h45: produtos irregulares (RE nº 4.140/2026 e correção da RE nº 3.159/2026) voltam à 1ª posição.
-    assert urls[3] == PRODUTOS_IRREGULARES_URL
+    assert urls[1] == PRODUTOS_IRREGULARES_URL
     # SISPA (Comunicado nº 1/2026) segue logo depois.
     assert urls[4] == SISPA_URL
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entrou na 1ª posição da listagem.
@@ -203,7 +206,7 @@ def test_news_index_itemlist_ordering():
     # A DCB segue às 09h06 de 13/10; o SNCR saiu desse empate em 20/10.
     # A matéria eleitoral (12/10/2026, 18h08) e o CNES 09/2026 (11/10/2026, 06h07) vêm em seguida.
     assert urls[7] == DCB_IN462_URL
-    assert urls[1] == "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-adequacao-materiais-periodo-eleitoral/"
+    assert urls[2] == "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-adequacao-materiais-periodo-eleitoral/"
     assert urls[8] == CNES_COMPETENCIA_09_2026_URL
     # Lote de conteúdo e dados de 09/10/2026, sem o consolidado de fiscalização, que subiu com o carimbo de 13/10.
     lote = [
@@ -294,8 +297,8 @@ def test_news_index_itemlist_ordering():
     assert dcb_position == 7
     assert urls[dcb_position - 1] == CNES_COMPETENCIA_10_2026_URL
     eleitoral = "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-adequacao-materiais-periodo-eleitoral/"
-    # Desde 26/10/2026 a matéria eleitoral está em 2º; depois da DCB vem o CNES 09/2026.
-    assert urls[1] == eleitoral
+    # Desde 26/10/2026 a matéria eleitoral está em 2º (em 3º desde 28/10/2026); depois da DCB vem o CNES 09/2026.
+    assert urls[2] == eleitoral
     assert urls[dcb_position + 1] == CNES_COMPETENCIA_09_2026_URL
     paramol_position = urls.index(PARAMOL_URL)
     assert paramol_position == 57

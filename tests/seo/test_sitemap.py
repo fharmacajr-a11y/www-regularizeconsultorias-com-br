@@ -135,12 +135,14 @@ def test_portaria_news_news_index_and_comunicado_have_expected_sitemap_metadata(
     # 21/10/2026, 17h45: a listagem reordenou o card de produtos irregulares (RE nº 4.140/2026).
     # 22/10/2026: a listagem reordenou os cards de produtos irregulares e do SNCR, atualizados no mesmo lote.
     # 26/10/2026: a listagem reordenou os cards do MAPA 1.617 e do período eleitoral, atualizados no mesmo lote.
-    assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-26"
+    # 28/10/2026: a listagem reordenou os cards do MAPA 1.617 e de produtos irregulares, atualizados no mesmo lote.
+    assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-28"
     # 17/10/2026, 09h50: Comunicados ganhou o aviso informativo do Farmácia Popular.
     # 19/10/2026, 15h40: Comunicados ganhou o aviso informativo da instabilidade nos sistemas da Anvisa.
     # 20/10/2026: o aviso da instabilidade na Anvisa passou ao histórico.
     # 26/10/2026: os avisos do MAPA (marco de 23/10) e do período eleitoral do Farmácia Popular passaram ao histórico.
-    assert by_location[COMUNICADO_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-26"
+    # 28/10/2026: o aviso encerrado do MAPA ganhou a linha de atualização do Ofício-Circular nº 75/2026.
+    assert by_location[COMUNICADO_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-28"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-09"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:changefreq", namespaces=NS) == "monthly"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:priority", namespaces=NS) == "0.8"

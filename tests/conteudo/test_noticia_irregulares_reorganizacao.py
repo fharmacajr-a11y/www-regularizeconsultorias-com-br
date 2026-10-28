@@ -122,8 +122,9 @@ def test_ids_meses_busca_e_links_internos():
     ):
         assert heading in new
     # 22/10/2026, 22h40 (hora do commit): lote das RE nº 4.143, 4.147 e 4.150/2026.
-    assert 'datetime="2026-10-22T22:40:00-03:00"' in new
-    assert "22/10/2026" in new and "22h40" in new
+    # 28/10/2026, 18h50 (hora do commit): lote das RE nº 4.160, 4.228, 4.231 e 4.232/2026.
+    assert 'datetime="2026-10-28T18:50:00-03:00"' in new
+    assert "28/10/2026" in new and "18h50" in new
 
 
 def _posicao(page, element_id):
@@ -219,6 +220,8 @@ def test_link_interno_abre_o_mes_e_a_busca_encontra_keytruda(origem):
 RESUMO = re.compile(r"^(?:RE nº \d\.\d{3}/2026|Sem número de RE) — .+ \((\d{2}/\d{2}/2026)\)$")
 # Quadros quebrados por RE: número de itens e as RE de cada um, na ordem.
 QUADROS = {
+    "novas-medidas-28-outubro-title": ["4.228", "4.231", "4.232"],
+    "novas-medidas-26-outubro-title": ["4.160"],
     "novas-medidas-22-outubro-title": ["4.143", "4.147", "4.150"],
     "novas-medidas-21-outubro-title": ["4.140", "3.159"],
     "novas-medidas-19-outubro-title": ["4.090", "4.105"],
@@ -250,7 +253,9 @@ def _mes(html, month):
 def test_cada_re_fica_num_item_recolhido_com_resumo_e_os_detalhes_comecam_fechados():
     new = _new_html()
     itens = _itens(new)
-    assert len(itens) == 48  # 45 da v2 + RE nº 4.143, 4.147 e 4.150/2026 (22/10/2026)
+    # 45 da v2 + RE nº 4.143, 4.147 e 4.150/2026 (22/10/2026) + RE nº 4.160 (26/10/2026), 4.228, 4.231 e 4.232/2026
+    # (28/10/2026).
+    assert len(itens) == 52
     for item_id, resumo, _ in itens:
         assert RESUMO.match(resumo), (item_id, resumo)
     # Nenhum item, nem o bloco de detalhes de cada mês, vem aberto: em outubro, só a tabela aparece.
@@ -319,7 +324,8 @@ def test_cada_linha_da_tabela_leva_ao_item_da_sua_re_e_data():
                     assert celula_re.startswith(f"RE nº {numero.group(1)}/2026"), (alvo, celula_re, resumo)
                 else:
                     assert celula_re == "Sem número de RE", (alvo, celula_re)
-    assert total == {"mes-outubro-2026": 50, "mes-setembro-2026": 33, "mes-agosto-2026": 7, "mes-julho-2026": 12}
+    # 28/10/2026: seis linhas novas em outubro (RE nº 4.160, 4.228, os três lotes da RE nº 4.231 e a RE nº 4.232).
+    assert total == {"mes-outubro-2026": 56, "mes-setembro-2026": 33, "mes-agosto-2026": 7, "mes-julho-2026": 12}
     assert insubsistentes == ["Fluído Flesh Air Frionel", "Ecotec-Pro e Ecotec", "Bardahl Flush Promax", "Air Repair Pescan"]
 
 

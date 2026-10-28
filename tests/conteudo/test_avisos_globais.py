@@ -324,8 +324,11 @@ def test_comunicado_mapa_and_electoral_period_notices_are_closed_on_top_of_histo
             "aviso-historico-mapa-portaria-1617",
             "Atualização final em 26/10/2026: o marco de 23/10/2026 passou. Segundo o Ofício-Circular nº 29/2026, encerrado "
             "esse prazo, ficam proibidas a comercialização e a utilização dos produtos abrangidos pela Portaria SDA/MAPA nº "
-            "1.617/2026, e novos lotes do aditivo e novas importações seguem proibidos. Continua o prazo de recolhimento: o "
-            "detentor do registro deve recolher os estoques remanescentes do aditivo até 21/01/2027. Encerramos este comunicado.",
+            # 28/10/2026: o recolhimento até 21/01/2027 passou a ser atribuído ao Ofício-Circular nº 29/2026 (o nº 75/2026
+            # traz outra data e fica no histórico do card).
+            "1.617/2026, e novos lotes do aditivo e novas importações seguem proibidos. Pelo Ofício-Circular nº 29/2026, "
+            "continua o prazo de recolhimento: o detentor do registro deve recolher os estoques remanescentes do aditivo até "
+            "21/01/2027. Encerramos este comunicado.",
             "Leia a notícia sobre a Portaria 1.617/2026",
             (
                 "A Portaria SDA/MAPA nº 1.617/2026 proíbe a importação, a fabricação, a comercialização e o uso de aditivos "
@@ -335,6 +338,7 @@ def test_comunicado_mapa_and_electoral_period_notices_are_closed_on_top_of_histo
                 "Após 23/10/2026, o detentor do registro deve recolher os estoques remanescentes do aditivo até 21/01/2027; esse "
                 "prazo é de recolhimento, não de comercialização ou uso.",
                 "A medida não alcança o conjunto dos medicamentos veterinários.",
+                "Atualização em 28/10/2026: o Ofício-Circular nº 75/2026/CGIPE/DSA/SDA/MAPA, assinado em 19/10/2026",
             ),
         ),
     )

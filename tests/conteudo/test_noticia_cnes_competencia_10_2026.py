@@ -214,4 +214,5 @@ def test_sitemap_lists_the_new_url_once():
     # 21/10/2026: reordenou o card de produtos irregulares.
     # 22/10/2026: a listagem reordenou os cards de produtos irregulares e do SNCR, atualizados no mesmo lote.
     # 26/10/2026: a listagem reordenou os cards do MAPA 1.617 e do período eleitoral, atualizados no mesmo lote.
-    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-10-26</lastmod>", sitemap)
+    # 28/10/2026: a listagem reordenou os cards do MAPA 1.617 e de produtos irregulares, atualizados no mesmo lote.
+    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-10-28</lastmod>", sitemap)

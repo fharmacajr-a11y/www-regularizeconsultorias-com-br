@@ -260,10 +260,12 @@ def test_sitemap_lists_the_new_url_once_with_current_lastmods():
     # 20/10/2026: a listagem reordenou dois cards. 21/10/2026: reordenou o card de produtos irregulares.
     # 22/10/2026: a listagem reordenou os cards de produtos irregulares e do SNCR, atualizados no mesmo lote.
     # 26/10/2026: a listagem reordenou os cards do MAPA 1.617 e do período eleitoral, atualizados no mesmo lote.
-    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-10-26</lastmod>", sitemap)
+    # 28/10/2026: a listagem reordenou os cards do MAPA 1.617 e de produtos irregulares, atualizados no mesmo lote.
+    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-10-28</lastmod>", sitemap)
     # 19/10/2026: o comunicado ganhou o aviso da instabilidade nos sistemas da Anvisa; 20/10/2026: o aviso foi encerrado.
     # 26/10/2026: os avisos do MAPA e do período eleitoral foram encerrados.
-    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/comunicado/</loc>\s*<lastmod>2026-10-26</lastmod>", sitemap)
+    # 28/10/2026: o aviso encerrado do MAPA ganhou a linha de atualização do Ofício-Circular nº 75/2026.
+    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/comunicado/</loc>\s*<lastmod>2026-10-28</lastmod>", sitemap)
     # A URL nova entra logo depois da listagem, como as demais matérias novas.
     locs = re.findall(r"<loc>([^<]+)</loc>", sitemap)
     assert locs[locs.index("https://www.regularizeconsultorias.com.br/noticias/") + 1] == PUBLIC_URL
