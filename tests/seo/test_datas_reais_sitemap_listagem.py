@@ -107,7 +107,7 @@ def test_lastmod_das_paginas_institucionais_segue_a_ultima_mudanca_real_do_texto
         f"{BASE}/": ("2026-10-08", "index.html",
                      "Licenças e regularização (CRC e CLF) para empresas e estabelecimentos que operam com produtos químicos controlados"),
         f"{BASE}/equipe/": ("2026-10-08", "equipe/index.html", "junto ao Ministério da Agricultura e Pecuária"),
-        f"{BASE}/contato/": ("2026-10-12", "contato/index.html", "M.A.P.A, SNCR, SNGPC, Polícia Federal"),
+        f"{BASE}/contato/": ("2026-10-12", "contato/index.html", "MAPA, SNCR, SNGPC, Polícia Federal"),
         f"{BASE}/servicos/": ("2026-10-09", "servicos/index.html",
                               "Conferência da coerência entre o CNES e outros cadastros do estabelecimento, como Farmácia Popular"),
     }

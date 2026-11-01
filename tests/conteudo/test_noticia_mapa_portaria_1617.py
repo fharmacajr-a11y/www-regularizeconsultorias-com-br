@@ -81,7 +81,7 @@ def test_portaria_1617_is_published_at_the_public_url():
     assert "article-badge-atualizacao" in html and "article-badge-informativo" not in html
     assert ">Atualização<" in html and ">Informativo<" not in html
     assert "category-chip--mapa" in html
-    assert ">M.A.P.A<" in html
+    assert ">MAPA<" in html
     assert f'<link rel="canonical" href="{PUBLIC_URL}" />' in html
     assert f'<meta property="og:url" content="{PUBLIC_URL}" />' in html
     assert f'<meta property="article:published_time" content="{STAMP}" />' in html
@@ -108,7 +108,7 @@ def test_portaria_1617_is_published_at_the_public_url():
     assert article["datePublished"] == STAMP
     assert article["dateModified"] == UPDATED
     assert article["url"] == PUBLIC_URL
-    assert article["articleSection"] == "M.A.P.A"
+    assert article["articleSection"] == "MAPA"
     assert article["author"]["name"] == "Júnior Costa"
     assert article["publisher"]["name"] == "Regularize Consultoria"
     assert article["mainEntityOfPage"]["@id"] == PUBLIC_URL
@@ -181,7 +181,7 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     assert "85 notícias encontradas" in index
     assert '>Todos</span><span class="text-xs text-slate-400">85<' in index
     assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in index
-    assert '>M.A.P.A</span><span class="text-xs text-slate-400">3<' in index
+    assert '>MAPA</span><span class="text-xs text-slate-400">3<' in index
     assert len(re.findall(r'\bdata-category="mapa"', index)) == 3
 
     # Lote de 09/10/2026: as 13 matérias atualizadas no lote sobem pelo carimbo; as demais descem.
@@ -204,7 +204,7 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     assert f'data-summary="{DESCRIPTION}"' in opening
     assert ">Atualização<" in card and ">Informativo<" not in card
     assert "Ler atualização" in card
-    assert ">M.A.P.A<" in card
+    assert ">MAPA<" in card
     assert f'<time datetime="{UPDATED}" class="leading-none">28/10/2026 • 18h50</time>' in card
     # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
     assert all("news-card-compact" in item.split(">", 1)[0] for item in cards)
