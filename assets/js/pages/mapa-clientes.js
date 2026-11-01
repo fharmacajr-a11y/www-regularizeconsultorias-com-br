@@ -9,8 +9,8 @@
      o mapa até ele e abre as cidades, lidas de
      /assets/data/mapa/uf-<código>.json, com as cidades com clientes em
      destaque; "‹ Brasil" (ou Esc) volta;
-   - +, − e o botão de mapa inteiro; duplo clique ou duplo toque e pinça
-     aproximam; com o mapa aproximado, arrastar move o mapa.
+   - +, − e o botão de mapa inteiro; roda do mouse, duplo clique ou duplo
+     toque e pinça aproximam; com o mapa aproximado, arrastar move o mapa.
    Os números da legenda contam até o valor novo. Com movimento reduzido,
    tudo muda sem animação. Os dados são só cidade e estado.
    ================================================================ */
@@ -225,8 +225,8 @@
     caminho.classList.add('home-hero-mapa__municipio--ativo');
     var nome = caminho.getAttribute('data-municipio');
     status.textContent = caminho.hasAttribute('data-clientes')
-      ? nome + ': cidade com clientes da Regularize.'
-      : nome + ': ainda sem clientes nesta cidade.';
+      ? nome + ': cidade com clientes.'
+      : nome + ': sem clientes ainda.';
   }
 
   function fecharEstado() {
@@ -275,7 +275,7 @@
     legenda.textContent = 'Cidades com clientes';
     var ajuda = toque
       ? 'Toque numa cidade para ver o nome. Use dois dedos ou o + para aproximar.'
-      : 'Passe o mouse numa cidade para ver o nome. Use o + ou dois cliques para aproximar.';
+      : 'Passe o mouse numa cidade para ver o nome. Use a roda do mouse ou o + para aproximar.';
     status.textContent = dados.clientes ? ajuda : 'Ainda não temos clientes em ' + dados.nome + '. ' + ajuda;
     numeros(dados.clientes, dados.clientes === 1 ? 'cidade com clientes' : 'cidades com clientes',
       dados.municipios.length, 'cidades no estado');
@@ -459,6 +459,20 @@
       abrirEstado(alvo.getAttribute('data-codigo'), alvo);
     }
   });
+
+  /* Roda do mouse (computador e meia tela): para cima aproxima no ponto do
+     mouse; para baixo afasta. Com o mapa sem zoom, rodar para baixo rola a
+     página normalmente, para o mapa não prender a rolagem. */
+  svg.addEventListener('wheel', function (evento) {
+    var dy = evento.deltaY;
+    if (evento.deltaMode === 1) dy *= 16;
+    if (!dy || (dy > 0 && escala <= 1.001)) return;
+    evento.preventDefault();
+    esconderDica();
+    var fator = Math.min(1.35, Math.max(1 / 1.35, Math.pow(1.0018, -dy)));
+    var ponto = noMapa(evento.clientX, evento.clientY);
+    aproximar(fator, ponto[0], ponto[1], 0);
+  }, { passive: false });
 
   /* Duplo clique ou duplo toque: aproxima no ponto, com o estado aberto. */
   svg.addEventListener('dblclick', function (evento) {

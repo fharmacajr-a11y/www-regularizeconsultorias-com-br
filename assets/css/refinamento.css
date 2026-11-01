@@ -494,6 +494,7 @@ footer {
 
 .home-hero-mapa__numeros p {
   display: grid;
+  align-content: start;
   gap: 0.125rem;
   margin: 0;
 }
@@ -756,8 +757,9 @@ footer .border-t.border-slate-800 {
   }
 }
 
-/* ---------- R13. Página Sobre ----------
-   Só acabamento: nenhuma regra muda largura, margem ou padding dos blocos
+/* ---------- R13. Página Sobre (e cards da home) ----------
+   O mesmo cartão vale nos cards "Por que escolher" e "Nossos serviços"
+   da home, a pedido do Jr (01/11/2026). Só acabamento: nenhuma regra muda largura, margem ou padding dos blocos
    (a reserva da coluna dos botões flutuantes da Sobre fica em sobre.css).
    - Visão, Missão, Valores e "Quem atendemos": cartões brancos com borda,
      sombra curta, um fio azul em degradê no alto e o ícone em azul cheio
@@ -767,17 +769,23 @@ footer .border-t.border-slate-800 {
    - Números: os quatro viram um painel só, com divisórias, e os números
      ficam maiores, em azul-marinho. */
 .about-principles-card,
-.about-audience-card {
+.about-audience-card,
+.home-about-cards-grid > div,
+.home-services-grid > a {
   position: relative;
   overflow: hidden;
   border: 1px solid #e2e8f0;
   background-color: #fff;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -16px rgba(15, 23, 42, 0.18);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  /* all, como o transition-all dos cards da home (test_guarda_transicao
+     confere que a transição deles volta depois da carga). */
+  transition: all 0.25s ease;
 }
 
 .about-principles-card::before,
-.about-audience-card::before {
+.about-audience-card::before,
+.home-about-cards-grid > div::before,
+.home-services-grid > a::before {
   content: "";
   position: absolute;
   top: 0;
@@ -789,7 +797,9 @@ footer .border-t.border-slate-800 {
 
 @media (hover: hover) {
   .about-principles-card:hover,
-  .about-audience-card:hover {
+  .about-audience-card:hover,
+  .home-about-cards-grid > div:hover,
+  .home-services-grid > a:hover {
     border-color: rgba(21, 101, 192, 0.3);
     box-shadow: 0 2px 4px rgba(15, 23, 42, 0.05), 0 18px 36px -18px rgba(21, 101, 192, 0.35);
     transform: translateY(-2px);
@@ -797,13 +807,17 @@ footer .border-t.border-slate-800 {
 }
 
 .about-principles-card > div:first-child,
-.about-audience-card > div:first-child {
+.about-audience-card > div:first-child,
+.home-about-cards-grid > div > div:first-child,
+.home-services-grid > a > div:first-child {
   background: linear-gradient(145deg, #1565c0, #1a3a5c);
   box-shadow: 0 8px 18px -8px rgba(21, 101, 192, 0.6);
 }
 
 .about-principles-card > div:first-child svg,
-.about-audience-card > div:first-child svg {
+.about-audience-card > div:first-child svg,
+.home-about-cards-grid > div > div:first-child svg,
+.home-services-grid > a > div:first-child svg {
   color: #fff;
 }
 
@@ -875,12 +889,56 @@ footer .border-t.border-slate-800 {
 
 @media (prefers-reduced-motion: reduce) {
   .about-principles-card,
-  .about-audience-card {
+  .about-audience-card,
+  .home-about-cards-grid > div,
+  .home-services-grid > a {
     transition: none;
   }
 
   .about-principles-card:hover,
-  .about-audience-card:hover {
+  .about-audience-card:hover,
+  .home-about-cards-grid > div:hover,
+  .home-services-grid > a:hover {
     transform: none;
   }
+}
+
+/* ---------- R14. Home: espaços e mapa ----------
+   - Herói: a partir de 1280 px o espaço em cima e embaixo cai de 7rem
+     (lg:py-28) para 4rem; abaixo disso já é 2 a 3,25rem (pages/home.css).
+   - Cards da home: ícone de 48 px como na Sobre e menos espaço entre o
+     ícone e o título.
+   - Mapa: o clique do mouse deixa o foco no mapa (para as setas), sem o
+     contorno escuro do navegador; o contorno branco fica só no teclado.
+     O texto de ajuda reserva duas linhas, para o cartão não crescer
+     quando o nome da cidade é longo. */
+@media (min-width: 1280px) {
+  .home-hero-section {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+}
+
+.home-about-cards-grid > div > div:first-child {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 0.875rem;
+  border-radius: 0.75rem;
+}
+
+.home-about-cards-grid > div > div:first-child svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.home-services-grid > a > div:first-child {
+  margin-bottom: 0.75rem;
+}
+
+.home-hero-mapa__svg:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.home-hero-mapa__status {
+  min-height: 2.5rem;
 }
