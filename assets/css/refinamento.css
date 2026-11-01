@@ -173,9 +173,11 @@ footer {
 /* ---------- R8. Mapa de clientes no herói da home ----------
    No lugar da logo esmaecida, um cartão de vidro escuro com o mapa do
    Brasil por estado (malha do IBGE), as siglas e os estados com clientes
-   em azul-claro. Com o script (pages/mapa-clientes.js), tocar num estado
-   abre as cidades dele, com as cidades com clientes em destaque; + e −
-   aproximam, arrastar move o mapa aproximado e "‹ Brasil" volta. O mesmo
+   em azul-claro, e os números de clientes embaixo. Com o script
+   (pages/mapa-clientes.js): dica com o nome ao passar o mouse ou tocar;
+   tocar num estado aproxima até ele e abre as cidades, com as cidades
+   com clientes em destaque; + e −, duplo toque e pinça aproximam,
+   arrastar move o mapa aproximado e "‹ Brasil" (ou Esc) volta. O mesmo
    cartão vale em todas as larguras (R8b ajusta abaixo de 1280 px). Os
    botões do cartão têm 44 px. */
 .home-hero-mapa {
@@ -229,7 +231,7 @@ footer {
   min-width: 2.75rem;
   min-height: 2.75rem;
   border: 1px solid rgba(255, 255, 255, 0.22);
-  background-color: rgba(8, 20, 38, 0.5);
+  background-color: rgba(8, 20, 38, 0.55);
   color: #fff;
   cursor: pointer;
   transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
@@ -246,7 +248,7 @@ footer {
 
 .home-hero-mapa__voltar[hidden],
 .home-hero-mapa__zoom[hidden],
-.home-hero-mapa__escolha[hidden] {
+.home-hero-mapa__dica[hidden] {
   display: none;
 }
 
@@ -274,6 +276,11 @@ footer {
   height: auto;
   aspect-ratio: 1 / 1;
   overflow: hidden;
+  /* Com o mapa inteiro, um dedo rola a página na vertical e dois dedos
+     dão zoom no mapa (a pinça vai para o script, não para a página). */
+  touch-action: pan-y;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .home-hero-mapa--ampliado .home-hero-mapa__svg {
@@ -309,6 +316,62 @@ footer {
   opacity: 0.4;
 }
 
+/* "−" e "mapa inteiro" só aparecem com o mapa aproximado. */
+.home-hero-mapa:not(.home-hero-mapa--ampliado) .home-hero-mapa__zoom button:not([data-mapa-zoom="mais"]) {
+  display: none;
+}
+
+/* Dica que acompanha o mouse (ou aparece onde o dedo tocou). */
+.home-hero-mapa__dica {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  display: grid;
+  gap: 0.125rem;
+  max-width: 14rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 0.625rem;
+  background-color: rgba(6, 16, 30, 0.92);
+  box-shadow: 0 10px 24px -10px rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 0.8125rem;
+  line-height: 1.2rem;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.home-hero-mapa__dica strong {
+  font-weight: 700;
+}
+
+.home-hero-mapa__dica span {
+  color: #bae6fd;
+  font-size: 0.75rem;
+}
+
+/* Grupos do mapa: o do Brasil vem no HTML, o do estado o script cria e
+   entra com um esmaecido curto. */
+.home-hero-mapa__brasil,
+.home-hero-mapa__estado {
+  transform-box: view-box;
+}
+
+.home-hero-mapa__estado {
+  animation: home-hero-mapa-surgir 0.35s ease both;
+}
+
+@keyframes home-hero-mapa-surgir {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 /* Estados (mapa do Brasil). */
 .home-hero-mapa__uf {
   fill: rgba(255, 255, 255, 0.06);
@@ -316,7 +379,8 @@ footer {
   stroke-width: 1;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
-  transition: fill 0.2s ease;
+  transition: fill 0.2s ease, stroke 0.2s ease;
+  outline: none;
 }
 
 .home-hero-mapa__uf--clientes {
@@ -332,8 +396,30 @@ footer {
   fill: rgba(255, 255, 255, 0.16);
 }
 
-.home-hero-mapa--interativo .home-hero-mapa__uf--clientes:hover {
-  fill: rgba(41, 182, 246, 0.45);
+.home-hero-mapa--interativo .home-hero-mapa__uf--clientes:hover,
+.home-hero-mapa__uf--escolhido {
+  fill: rgba(41, 182, 246, 0.55);
+}
+
+.home-hero-mapa__uf--foco {
+  fill: rgba(41, 182, 246, 0.6);
+  stroke: #fff;
+  stroke-width: 2.5;
+}
+
+/* O contorno de foco fica dentro do cartão do mapa (a área corta o que
+   passa da borda). */
+.home-hero-mapa__svg:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: -2px;
+  border-radius: 0.875rem;
+}
+
+/* Durante o voo até o estado, os outros estados esmaecem. */
+.home-hero-mapa--voando .home-hero-mapa__uf:not(.home-hero-mapa__uf--escolhido),
+.home-hero-mapa--voando .home-hero-mapa__siglas {
+  opacity: 0.35;
+  transition: opacity 0.3s ease;
 }
 
 .home-hero-mapa__siglas text {
@@ -388,14 +474,42 @@ footer {
   fill: #7dd3fc;
 }
 
-/* Legenda, texto de estado e escolha pelo teclado. */
+/* Números, legenda e texto de ajuda. */
 .home-hero-mapa__legenda {
   grid-area: legenda;
   display: grid;
-  gap: 0.625rem;
+  gap: 0.75rem;
   color: #e2e8f0;
   font-size: 0.8125rem;
   line-height: 1.25rem;
+}
+
+.home-hero-mapa__numeros {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  padding-bottom: 0.875rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.home-hero-mapa__numeros p {
+  display: grid;
+  gap: 0.125rem;
+  margin: 0;
+}
+
+.home-hero-mapa__numeros strong {
+  color: #fff;
+  font-size: 1.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 2rem;
+}
+
+.home-hero-mapa__numeros span {
+  color: #cbd5e1;
+  font-size: 0.8125rem;
 }
 
 .home-hero-mapa__item {
@@ -403,12 +517,6 @@ footer {
   align-items: center;
   gap: 0.5rem;
   font-weight: 600;
-}
-
-/* Grupos do mapa: o do Brasil vem no HTML, o do estado o script cria. */
-.home-hero-mapa__brasil,
-.home-hero-mapa__estado {
-  transform-box: view-box;
 }
 
 .home-hero-mapa__item--clientes::before {
@@ -426,53 +534,22 @@ footer {
   color: #e2e8f0;
 }
 
-.home-hero-mapa__escolha {
-  display: grid;
-  gap: 0.375rem;
-}
-
-.home-hero-mapa__escolha span {
-  color: #cbd5e1;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-}
-
-.home-hero-mapa__escolha select {
-  width: 100%;
-  min-height: 2.75rem;
-  padding: 0 2.5rem 0 0.875rem;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 0.75rem;
-  background-color: rgba(8, 20, 38, 0.5);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e2e8f0' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-  background-position: right 0.75rem center;
-  background-repeat: no-repeat;
-  background-size: 1.125rem;
-  color: #fff;
-  font: inherit;
-  font-size: 0.875rem;
-  -webkit-appearance: none;
-  appearance: none;
-  cursor: pointer;
-}
-
-.home-hero-mapa__escolha select option {
-  background-color: #fff;
-  color: #0f172a;
-}
-
 /* ---------- R8b. Mapa em meia tela e no celular (até 1279 px) ----------
    Abaixo de 1280 px o herói tem uma coluna só: o cartão entra depois dos
-   botões, alinhado à esquerda como o texto, com a mesma reserva da coluna
-   dos botões flutuantes que o título e o resumo já têm (--home-reserva,
-   pages/home.css). De 640 a 1279 px o mapa fica à esquerda e a legenda à
-   direita; no celular, um embaixo do outro. */
+   botões e ocupa a largura do texto (até 52rem, centralizado na área que
+   sobra antes da coluna dos botões flutuantes, com a mesma reserva do
+   título e do resumo: --home-reserva, pages/home.css). De 640 a 1279 px o
+   mapa fica à esquerda e números e legenda à direita; no celular, um
+   embaixo do outro. */
 @media (max-width: 1279px) {
   .home-hero-grid > .home-hero-mark {
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     padding-right: var(--home-reserva);
+  }
+
+  .home-hero-mapa {
+    max-width: 52rem;
   }
 }
 
@@ -488,19 +565,39 @@ footer {
 
 @media (min-width: 640px) and (max-width: 1279px) {
   .home-hero-mapa {
-    grid-template-columns: minmax(0, 16rem) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
     grid-template-areas: "topo topo" "area legenda";
     align-items: center;
-    gap: 1rem 1.75rem;
-    max-width: 38rem;
-    padding: 1.25rem 1.5rem 1.5rem;
+    gap: 1rem 2rem;
+    padding: 1.5rem 1.75rem 1.75rem;
+  }
+
+  .home-hero-mapa__area {
+    width: 100%;
+    max-width: 24rem;
+    justify-self: center;
   }
 }
 
 @media (max-width: 639px) {
   .home-hero-mapa {
-    max-width: 24rem;
     padding: 1rem;
+  }
+
+  .home-hero-mapa__numeros strong {
+    font-size: 1.5rem;
+    line-height: 1.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-hero-mapa__estado {
+    animation: none;
+  }
+
+  .home-hero-mapa--voando .home-hero-mapa__uf:not(.home-hero-mapa__uf--escolhido),
+  .home-hero-mapa--voando .home-hero-mapa__siglas {
+    transition: none;
   }
 }
 
@@ -655,6 +752,135 @@ footer .border-t.border-slate-800 {
 
   .botao:is(.botao--principal, .botao--secundario, .botao--claro, .botao--contorno):hover,
   .botao:hover svg:last-child:not(:first-child) {
+    transform: none;
+  }
+}
+
+/* ---------- R13. Página Sobre ----------
+   Só acabamento: nenhuma regra muda largura, margem ou padding dos blocos
+   (a reserva da coluna dos botões flutuantes da Sobre fica em sobre.css).
+   - Visão, Missão, Valores e "Quem atendemos": cartões brancos com borda,
+     sombra curta, um fio azul em degradê no alto e o ícone em azul cheio
+     com o desenho branco; com mouse, o cartão sobe 2 px.
+   - "Nossa história": traço azul sob o título e o primeiro parágrafo um
+     pouco maior, como abertura.
+   - Números: os quatro viram um painel só, com divisórias, e os números
+     ficam maiores, em azul-marinho. */
+.about-principles-card,
+.about-audience-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  background-color: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -16px rgba(15, 23, 42, 0.18);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.about-principles-card::before,
+.about-audience-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #1a3a5c, #1565c0 55%, #29b6f6);
+}
+
+@media (hover: hover) {
+  .about-principles-card:hover,
+  .about-audience-card:hover {
+    border-color: rgba(21, 101, 192, 0.3);
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.05), 0 18px 36px -18px rgba(21, 101, 192, 0.35);
+    transform: translateY(-2px);
+  }
+}
+
+.about-principles-card > div:first-child,
+.about-audience-card > div:first-child {
+  background: linear-gradient(145deg, #1565c0, #1a3a5c);
+  box-shadow: 0 8px 18px -8px rgba(21, 101, 192, 0.6);
+}
+
+.about-principles-card > div:first-child svg,
+.about-audience-card > div:first-child svg {
+  color: #fff;
+}
+
+.about-history-section h2::after,
+.about-audience-section h2::after {
+  content: "";
+  display: block;
+  width: 2.5rem;
+  height: 3px;
+  margin-top: 0.75rem;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #1565c0, #29b6f6);
+}
+
+.about-audience-section h2::after {
+  margin-inline: auto;
+}
+
+.about-history-section .space-y-5 > p:first-child {
+  color: #334155;
+  font-size: 1.0625rem;
+  line-height: 1.75rem;
+}
+
+/* Painel dos números: a grade ganha o fundo e a borda; cada número perde
+   a caixa própria e ganha uma divisória. */
+.about-history-section .grid.grid-cols-2 {
+  overflow: hidden;
+  gap: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  background-color: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 10px 28px -18px rgba(15, 23, 42, 0.2);
+}
+
+.about-history-section .grid.grid-cols-2 > div {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.about-history-section .grid.grid-cols-2 > div + div {
+  border-left: 1px solid #e2e8f0;
+}
+
+.about-history-section .grid > div > p:first-child {
+  color: #1a3a5c;
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+}
+
+/* Em duas colunas (até 1023 px), a 3ª começa a 2ª linha: divisória em
+   cima, não à esquerda. */
+@media (max-width: 1023px) {
+  .about-history-section .grid.grid-cols-2 > div:nth-child(3) {
+    border-left: 0;
+  }
+
+  .about-history-section .grid.grid-cols-2 > div:nth-child(n + 3) {
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .about-history-section .grid > div > p:first-child {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-principles-card,
+  .about-audience-card {
+    transition: none;
+  }
+
+  .about-principles-card:hover,
+  .about-audience-card:hover {
     transform: none;
   }
 }
