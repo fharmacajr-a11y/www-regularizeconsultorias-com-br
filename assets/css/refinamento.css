@@ -126,8 +126,10 @@ main .rounded-2xl.border.border-slate-100:is(:hover, :focus-within):is(a, .hover
 }
 
 /* ---------- R6. Rodapé com a navegação em duas colunas ----------
-   A partir de 1024 px os nove links ficam em duas colunas. Um fio azul de
-   3 px no topo separa o rodapé da faixa de chamada. */
+   A partir de 1024 px os nove links ficam em duas colunas. Abaixo disso
+   continuam numa: em 320 px, com a reserva da coluna dos botões
+   flutuantes, duas colunas passavam 11 px da janela (test_rodape_espaco).
+   Um fio azul de 3 px no topo separa o rodapé da faixa de chamada. */
 @media (min-width: 1024px) {
   footer > .max-w-7xl > .grid > div:nth-child(2) > ul {
     display: grid;
@@ -168,81 +170,231 @@ footer {
   }
 }
 
-/* ---------- R8. Mapa do Brasil no herói da home ----------
-   No lugar da logo esmaecida, o mapa dos 27 estados (malha do IBGE), com
-   São Paulo, a sede, em azul-claro, e um ponto em cada cidade com cliente
-   (centróide do IBGE da cidade de cada cartão CNPJ). Só a partir de
-   1024 px, como a logo. O brilho fica preso à coluna do mapa, longe do
-   texto. */
+/* ---------- R8. Mapa de clientes no herói da home ----------
+   No lugar da logo esmaecida, um cartão de vidro escuro com o mapa do
+   Brasil por estado (malha do IBGE), as siglas e os estados com clientes
+   em azul-claro. Com o script (pages/mapa-clientes.js), tocar num estado
+   abre as cidades dele, com as cidades com clientes em destaque; + e −
+   aproximam, arrastar move o mapa aproximado e "‹ Brasil" volta. O mesmo
+   cartão vale em todas as larguras (R8b ajusta abaixo de 1280 px). Os
+   botões do cartão têm 44 px. */
 .home-hero-mapa {
   position: relative;
   display: grid;
-  justify-items: center;
-  gap: 1.25rem;
+  grid-template-areas: "topo" "area" "legenda";
+  gap: 1rem;
   width: 100%;
   max-width: 27rem;
   margin: 0;
+  padding: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 1.25rem;
+  background: linear-gradient(160deg, rgba(8, 20, 38, 0.38), rgba(8, 20, 38, 0.24));
+  box-shadow: 0 24px 48px -28px rgba(6, 16, 30, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  color: #fff;
 }
 
-.home-hero-mapa::before {
-  content: "";
-  position: absolute;
-  inset: -6% -8% 12%;
-  z-index: 0;
-  pointer-events: none;
-  background: radial-gradient(closest-side, rgba(41, 182, 246, 0.22), rgba(41, 182, 246, 0));
+.home-hero-mapa__topo {
+  grid-area: topo;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+}
+
+.home-hero-mapa__titulo {
+  margin: 0;
+  color: #e0f2fe;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1rem;
+  text-transform: uppercase;
+}
+
+.home-hero-mapa--estado .home-hero-mapa__titulo {
+  color: #fff;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.5rem;
+  text-transform: none;
+}
+
+.home-hero-mapa__voltar,
+.home-hero-mapa__zoom button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background-color: rgba(8, 20, 38, 0.5);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.home-hero-mapa__voltar {
+  gap: 0.25rem;
+  padding: 0 0.875rem 0 0.5rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+}
+
+.home-hero-mapa__voltar[hidden],
+.home-hero-mapa__zoom[hidden],
+.home-hero-mapa__escolha[hidden] {
+  display: none;
+}
+
+.home-hero-mapa__voltar svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.home-hero-mapa__voltar:hover,
+.home-hero-mapa__zoom button:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.home-hero-mapa__area {
+  grid-area: area;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.875rem;
 }
 
 .home-hero-mapa__svg {
-  position: relative;
-  z-index: 1;
   display: block;
   width: 100%;
   height: auto;
-  overflow: visible;
-  filter: drop-shadow(0 18px 28px rgba(6, 16, 30, 0.45));
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
 }
 
+.home-hero-mapa--ampliado .home-hero-mapa__svg {
+  cursor: grab;
+  touch-action: none;
+}
+
+.home-hero-mapa--arrastando .home-hero-mapa__svg {
+  cursor: grabbing;
+}
+
+.home-hero-mapa__zoom {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.home-hero-mapa__zoom button {
+  padding: 0;
+  border-radius: 0.75rem;
+}
+
+.home-hero-mapa__zoom button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.home-hero-mapa__zoom button:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+/* Estados (mapa do Brasil). */
 .home-hero-mapa__uf {
-  fill: rgba(255, 255, 255, 0.07);
-  stroke: rgba(226, 240, 255, 0.42);
+  fill: rgba(255, 255, 255, 0.06);
+  stroke: rgba(226, 240, 255, 0.38);
   stroke-width: 1;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
   transition: fill 0.2s ease;
 }
 
-.home-hero-mapa__uf:hover {
+.home-hero-mapa__uf--clientes {
+  fill: rgba(41, 182, 246, 0.3);
+  stroke: rgba(186, 230, 253, 0.7);
+}
+
+.home-hero-mapa--interativo .home-hero-mapa__uf {
+  cursor: pointer;
+}
+
+.home-hero-mapa--interativo .home-hero-mapa__uf:hover {
   fill: rgba(255, 255, 255, 0.16);
 }
 
-.home-hero-mapa__uf--sede {
+.home-hero-mapa--interativo .home-hero-mapa__uf--clientes:hover {
   fill: rgba(41, 182, 246, 0.45);
-  stroke: #bae6fd;
-  stroke-width: 1.5;
 }
 
-.home-hero-mapa__uf--sede:hover {
-  fill: rgba(41, 182, 246, 0.58);
+.home-hero-mapa__siglas text {
+  fill: #fff;
+  font-size: 0.95px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-anchor: middle;
+  dominant-baseline: central;
+  paint-order: stroke;
+  stroke: rgba(6, 16, 30, 0.55);
+  stroke-width: 0.16px;
+  pointer-events: none;
 }
 
-.home-hero-mapa__clientes circle {
-  fill: rgba(255, 255, 255, 0.95);
-  stroke: rgba(41, 182, 246, 0.9);
-  stroke-width: 1;
+.home-hero-mapa__siglas .home-hero-mapa__sigla--pequena {
+  font-size: 0.68px;
+}
+
+/* Cidades (estado aberto). */
+.home-hero-mapa__municipio {
+  fill: rgba(255, 255, 255, 0.05);
+  stroke: rgba(226, 240, 255, 0.26);
+  stroke-width: 0.6;
+  stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
+  cursor: pointer;
+  transition: fill 0.15s ease;
 }
 
+.home-hero-mapa__municipio:hover {
+  fill: rgba(255, 255, 255, 0.16);
+}
+
+.home-hero-mapa__municipio--clientes {
+  fill: rgba(41, 182, 246, 0.8);
+  stroke: #e0f2fe;
+  stroke-width: 1;
+}
+
+.home-hero-mapa__municipio--clientes:hover {
+  fill: #38bdf8;
+}
+
+.home-hero-mapa__municipio--ativo {
+  fill: rgba(255, 255, 255, 0.32);
+  stroke: #fff;
+  stroke-width: 2;
+}
+
+.home-hero-mapa__municipio--clientes.home-hero-mapa__municipio--ativo {
+  fill: #7dd3fc;
+}
+
+/* Legenda, texto de estado e escolha pelo teclado. */
 .home-hero-mapa__legenda {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.5rem 1.25rem;
+  grid-area: legenda;
+  display: grid;
+  gap: 0.625rem;
   color: #e2e8f0;
   font-size: 0.8125rem;
-  font-weight: 500;
   line-height: 1.25rem;
 }
 
@@ -250,29 +402,106 @@ footer {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  font-weight: 600;
 }
 
-.home-hero-mapa__item::before {
-  content: "";
-  flex: 0 0 auto;
-  width: 0.625rem;
-  height: 0.625rem;
-  border: 1px solid rgba(226, 240, 255, 0.6);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
+/* Grupos do mapa: o do Brasil vem no HTML, o do estado o script cria. */
+.home-hero-mapa__brasil,
+.home-hero-mapa__estado {
+  transform-box: view-box;
 }
 
 .home-hero-mapa__item--clientes::before {
-  width: 0.5rem;
-  height: 0.5rem;
-  border-color: #29b6f6;
-  background: #fff;
+  content: "";
+  flex: 0 0 auto;
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 1px solid #bae6fd;
+  border-radius: 0.25rem;
+  background: rgba(41, 182, 246, 0.55);
 }
 
-.home-hero-mapa__item--sede::before {
-  border-color: #bae6fd;
-  background: #29b6f6;
-  box-shadow: 0 0 0 3px rgba(41, 182, 246, 0.25);
+.home-hero-mapa__status {
+  margin: 0;
+  color: #e2e8f0;
+}
+
+.home-hero-mapa__escolha {
+  display: grid;
+  gap: 0.375rem;
+}
+
+.home-hero-mapa__escolha span {
+  color: #cbd5e1;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.home-hero-mapa__escolha select {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0 2.5rem 0 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 0.75rem;
+  background-color: rgba(8, 20, 38, 0.5);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e2e8f0' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1.125rem;
+  color: #fff;
+  font: inherit;
+  font-size: 0.875rem;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.home-hero-mapa__escolha select option {
+  background-color: #fff;
+  color: #0f172a;
+}
+
+/* ---------- R8b. Mapa em meia tela e no celular (até 1279 px) ----------
+   Abaixo de 1280 px o herói tem uma coluna só: o cartão entra depois dos
+   botões, alinhado à esquerda como o texto, com a mesma reserva da coluna
+   dos botões flutuantes que o título e o resumo já têm (--home-reserva,
+   pages/home.css). De 640 a 1279 px o mapa fica à esquerda e a legenda à
+   direita; no celular, um embaixo do outro. */
+@media (max-width: 1279px) {
+  .home-hero-grid > .home-hero-mark {
+    display: flex;
+    justify-content: flex-start;
+    padding-right: var(--home-reserva);
+  }
+}
+
+/* De 1280 a 1407 px a coluna da direita do herói ainda chega na coluna
+   dos botões flutuantes (o container de 80rem só ganha margem acima de
+   1280 px). O cartão encolhe o que falta: 688 px - 50vw é a sobreposição
+   sem barra de rolagem; os 16 px a mais cobrem a barra clássica. */
+@media (min-width: 1280px) and (max-width: 1407px) {
+  .home-hero-grid > .home-hero-mark {
+    padding-right: max(0px, calc(704px - 50vw));
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1279px) {
+  .home-hero-mapa {
+    grid-template-columns: minmax(0, 16rem) minmax(0, 1fr);
+    grid-template-areas: "topo topo" "area legenda";
+    align-items: center;
+    gap: 1rem 1.75rem;
+    max-width: 38rem;
+    padding: 1.25rem 1.5rem 1.5rem;
+  }
+}
+
+@media (max-width: 639px) {
+  .home-hero-mapa {
+    max-width: 24rem;
+    padding: 1rem;
+  }
 }
 
 /* ---------- R9. Selo do herói da home numa linha no celular ---------- */
@@ -282,6 +511,56 @@ footer {
     padding-left: 0.875rem;
     padding-right: 0.875rem;
   }
+}
+
+/* ---------- R12. Rodapé ----------
+   Fundo azul-noite com um brilho leve no canto esquerdo de cima, título de
+   cada coluna com um traço azul, links mais claros e ícones de contato em
+   quadradinhos, como os da página Contato. O fio de baixo some nas pontas.
+   O aviso legal e os créditos não mudam de fonte nem de largura
+   (test_rodape_espaco confere as quebras de linha). Vale em todas as
+   páginas, porque o rodapé é o mesmo. */
+footer {
+  background-color: #0f172a;
+  background-image:
+    radial-gradient(40rem 18rem at 0% 0%, rgba(21, 101, 192, 0.16), transparent 70%),
+    linear-gradient(#0f1b2e, #0b1220);
+}
+
+footer h2 {
+  color: #f1f5f9;
+}
+
+footer h2::after {
+  content: "";
+  display: block;
+  width: 1.5rem;
+  height: 2px;
+  margin-top: 0.625rem;
+  border-radius: 2px;
+  background-color: #29b6f6;
+}
+
+footer > .max-w-7xl > .grid p,
+footer li a {
+  color: #cbd5e1;
+}
+
+footer li a:hover {
+  color: #fff;
+}
+
+footer li > svg {
+  box-sizing: content-box;
+  padding: 0.4375rem;
+  border: 1px solid rgba(41, 182, 246, 0.2);
+  border-radius: 0.625rem;
+  background-color: rgba(41, 182, 246, 0.1);
+}
+
+footer .border-t.border-slate-800 {
+  border-top-color: transparent;
+  border-image: linear-gradient(to right, transparent, rgba(148, 163, 184, 0.28) 20%, rgba(148, 163, 184, 0.28) 80%, transparent) 1;
 }
 
 /* ---------- R10. Botão AVISOS! ----------
@@ -365,6 +644,9 @@ footer {
 @media (prefers-reduced-motion: reduce) {
   #navbar nav[aria-label="Navegação principal"] a::after,
   .home-hero-mapa__uf,
+  .home-hero-mapa__municipio,
+  .home-hero-mapa__voltar,
+  .home-hero-mapa__zoom button,
   .botao svg,
   #navbar a[href="/comunicado/"],
   .botao:is(.botao--principal, .botao--secundario, .botao--claro, .botao--contorno) {
