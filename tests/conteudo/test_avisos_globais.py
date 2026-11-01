@@ -322,11 +322,14 @@ def test_comunicado_mapa_and_electoral_period_notices_are_closed_on_top_of_histo
             "06/10/2026 às 08h00",
             "MAPA: estoques de aditivos com antimicrobianos do Anexo têm marco em 23/10",
             "aviso-historico-mapa-portaria-1617",
-            "Atualização final em 26/10/2026: o marco de 23/10/2026 passou. Segundo o Ofício-Circular nº 29/2026, encerrado "
-            "esse prazo, ficam proibidas a comercialização e a utilização dos produtos abrangidos pela Portaria SDA/MAPA nº "
+            # 31/10/2026: o texto final atribui o marco de 23/10/2026 ao Ofício-Circular nº 29/2026 e, como na matéria,
+            # segue com "esse ofício" e "o mesmo ofício", sem repetir o número.
+            "Atualização final em 26/10/2026: o marco de 23/10/2026, do Ofício-Circular nº 29/2026, passou. Segundo esse "
+            "ofício, encerrado o prazo, ficam proibidas a comercialização e a utilização dos produtos abrangidos pela "
+            "Portaria SDA/MAPA nº "
             # 28/10/2026: o recolhimento até 21/01/2027 passou a ser atribuído ao Ofício-Circular nº 29/2026 (o nº 75/2026
             # traz outra data e fica no histórico do card).
-            "1.617/2026, e novos lotes do aditivo e novas importações seguem proibidos. Pelo Ofício-Circular nº 29/2026, "
+            "1.617/2026, e novos lotes do aditivo e novas importações seguem proibidos. Pelo mesmo ofício, "
             "continua o prazo de recolhimento: o detentor do registro deve recolher os estoques remanescentes do aditivo até "
             "21/01/2027. Encerramos este comunicado.",
             "Leia a notícia sobre a Portaria 1.617/2026",
@@ -640,10 +643,12 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     # 19/10/2026, 15h40: o aviso da instabilidade nos sistemas da Anvisa é o ativo mais recente; os demais descem uma posição.
     # 17/10/2026, 09h50: o aviso do Farmácia Popular sobre lembretes é o ativo mais recente; os demais descem uma posição.
     # 16/10/2026, 20h06: o aviso do CNES 10/2026 é o ativo mais recente; os demais descem uma posição.
+    # 31/10/2026, 22h10: o aviso do SNCR, atualizado (prorrogação aprovada na 20ª ROP), passa ao 1º lugar; os dois que
+    # ficavam à frente dele descem uma posição.
     assert titles == [
+        "SNCR: cronograma anunciado e nota da API",
         "Farmácia Popular: confira a origem de mensagens pelo WhatsApp",
         "CNES: envio da competência 10/2026 aberto até 9 de novembro",
-        "SNCR: cronograma anunciado e nota da API",
         "Farmácia Popular: confira municípios com vagas para credenciamento",
         "Farmácia Popular: confira as listas EAN vigentes e os controles de prescrição",
     ]
@@ -657,7 +662,7 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     # Polícia Federal, em 16/10/2026).
     useful_badge = next(node for node in active[4].descendants() if node.tag == "span" and node.text() == "ÚTIL")
     useful_cta = next(node for node in active[4].descendants() if node.tag == "a" and "Conferir orientações" in node.text())
-    informative_cta = next(node for node in active[1].descendants() if node.tag == "a" and "Leia a notícia sobre a competência 10/2026" in node.text())
+    informative_cta = next(node for node in active[2].descendants() if node.tag == "a" and "Leia a notícia sobre a competência 10/2026" in node.text())
     assert {"border-emerald-200", "bg-emerald-50", "text-emerald-700"} <= set(useful_badge.attrs["class"].split())
     assert {"border-emerald-200", "bg-emerald-50"} <= set(active[4].attrs["class"].split())
     # Desde 23/10/2026 os botões dos avisos são o secundário do site (assets/css/botoes.css), iguais nos

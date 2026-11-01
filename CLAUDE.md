@@ -9,3 +9,12 @@ A página `/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/` a
 
 - Nova RE: linha na tabela do mês (no grupo da data do DOU: RE, produto ou empresa com link para o item, medida e situação) + item recolhido próprio no mês, com `<summary>` “RE nº X/2026 — produto ou empresa (data do DOU)” e o texto da RE + resumo de duas ou três linhas no topo.
 - Mês novo: deixe o mês novo aberto e feche o anterior. Revogação, retificação ou insubsistência entra no item da RE original e na coluna “situação”, sem repetir a resolução em outro quadro.
+
+## Conferência de atos do MAPA
+
+Os ofícios-circulares do MAPA não saem sempre na mesma página. Em toda conferência de atos do MAPA, abra as duas e anote o “Atualizado em” e os números dos ofícios do ano:
+
+- “Legislação – Alimentação Animal”: https://www.gov.br/agricultura/pt-br/assuntos/insumos-agropecuarios/insumos-pecuarios/alimentacao-animal/legislacao-alimentacao-animal
+- “Memorandos, Ofícios e Ofícios circulares” (Produtos veterinários > Legislação): https://www.gov.br/agricultura/pt-br/assuntos/insumos-agropecuarios/insumos-pecuarios/produtos-veterinarios/legislacao-1/memorandos-e-oficios
+
+O Ofício-Circular nº 75/2026, sobre a Portaria SDA/MAPA nº 1.617/2026, saiu só na segunda.

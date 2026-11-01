@@ -191,7 +191,8 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
     # 26/10/2026, 08h30: as matérias do MAPA 1.617 e do período eleitoral, atualizadas, sobem para a 1ª e a 2ª posições; as que ficavam acima delas descem duas (até a 6ª) ou uma (da 8ª à 35ª).
     # 28/10/2026, 18h50 (hora do commit): a matéria do MAPA 1.617 (Ofício-Circular nº 75/2026) e o consolidado de irregulares (RE nº 4.160, 4.228, 4.231 e 4.232/2026) recebem o mesmo carimbo; o MAPA segue em 1º, o consolidado sobe para o 2º e o período eleitoral e o SNCR descem para o 3º e o 4º.
-    card = cards[0]
+    # 31/10/2026, 22h10: a matéria do SNCR (prorrogação aprovada na 20ª ROP) sobe para a 1ª posição; o MAPA 1.617, o consolidado de irregulares e o período eleitoral descem uma (até a 4ª).
+    card = cards[1]
     opening = card.split(">", 1)[0]
     assert f'href="/noticias/{SLUG}/"' in card
     assert index.count(f'href="/noticias/{SLUG}/"') == 1
@@ -212,8 +213,8 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     collection = next(block for block in _jsonld(index) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
     assert len(items) == 85
-    assert items[0]["position"] == 1
-    assert items[0]["url"] == PUBLIC_URL
+    assert items[1]["position"] == 2
+    assert items[1]["url"] == PUBLIC_URL
     assert [item["position"] for item in items] == list(range(1, 86))
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
     assert f"<loc>{PUBLIC_URL}</loc>\n    <lastmod>2026-10-28</lastmod>" in sitemap
@@ -223,8 +224,9 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
         # 22/10/2026: a listagem reordenou produtos irregulares e SNCR.
         # 26/10/2026: a listagem reordenou os cards do MAPA 1.617 e do período eleitoral, atualizados no mesmo lote.
         # 28/10/2026: a listagem reordenou os cards do MAPA 1.617 e de produtos irregulares, atualizados no mesmo lote.
+        # 31/10/2026: a listagem trocou o resumo do card do SNCR e o levou à 1ª posição.
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-10-28</lastmod>"
+        "    <lastmod>2026-10-31</lastmod>"
     ) in sitemap
 
 
@@ -263,7 +265,9 @@ def test_portaria_1617_registers_oficio_circular_75_and_the_divergence_as_a_conf
     assert f'"datePublished": "{STAMP}"' in html and f'<link rel="canonical" href="{PUBLIC_URL}" />' in html
 
     assert text.endswith(
-        "O Ofício-Circular nº 75/2026/CGIPE/DSA/SDA/MAPA, assinado em 19/10/2026, trata da Portaria SDA/MAPA nº 1.617/2026. "
+        # 31/10/2026: o destinatário do ofício (os SISAs) entra logo depois da data de assinatura.
+        "O Ofício-Circular nº 75/2026/CGIPE/DSA/SDA/MAPA, assinado em 19/10/2026, dirigido aos Serviços de Fiscalização de "
+        "Insumos Pecuários e Saúde Animal (SISAs) do MAPA, trata da Portaria SDA/MAPA nº 1.617/2026. "
         "Segundo esse ofício, o prazo final para comercialização e utilização dos produtos fabricados ou importados antes da "
         "entrada em vigor da Portaria é 24/10/2026. A partir de 25/10/2026, os produtos à base desses antimicrobianos, quando "
         "registrados como aditivos melhoradores de desempenho, não podem mais ser comercializados nem utilizados, exceto nas "
@@ -274,8 +278,10 @@ def test_portaria_1617_registers_oficio_circular_75_and_the_divergence_as_a_conf
         "28/10/2026, o MAPA não publicou esclarecimento sobre qual delas prevalece. Quem tem estoque ou recolhimento a fazer "
         "deve confirmar diretamente com o MAPA.")
     assert "href=" not in callout and "http" not in callout and "gov.br" not in callout
-    # Nada que o PDF não diga: sem página do MAPA, destinatário ou hora de consulta no quadro.
-    for absent in ("Memorandos", "11h46", "SISAs", "14h53", "página"):
+    # Nada que o PDF não diga: sem página do MAPA ou hora de consulta no quadro. O destinatário (SISAs), que está no
+    # PDF, entrou em 31/10/2026, uma vez.
+    assert text.count("SISAs") == 1 and html.count("SISAs") == 1
+    for absent in ("Memorandos", "11h46", "14h53", "página"):
         assert absent not in text, absent
 
     # Nenhuma data é escolhida: "prevalece" só aparece em "qual ... prevalece", e o uso terapêutico não é ampliado.
@@ -346,9 +352,22 @@ def test_comunicado_mapa_card_stays_closed_with_the_oficio_75_in_its_history():
     # Texto final: o recolhimento até 21/01/2027 é o do OC 29; o OC 75 não aparece fora do histórico.
     history_start = card.index('<div id="aviso-historico-mapa-portaria-1617"')
     visible, history = card[:history_start], card[history_start:]
-    assert ("Pelo Ofício-Circular nº 29/2026, continua o prazo de recolhimento: o detentor do registro deve recolher os "
+    # 31/10/2026: como na matéria, o recolhimento vem "pelo mesmo ofício"; o OC 29 é citado uma vez no texto final.
+    assert "Segundo esse ofício, encerrado o prazo, ficam proibidas" in _text(visible)
+    assert _text(visible).count("Ofício-Circular nº 29/2026") == 1
+    assert ("Pelo mesmo ofício, continua o prazo de recolhimento: o detentor do registro deve recolher os "
             "estoques remanescentes do aditivo até 21/01/2027. Encerramos este comunicado.") in _text(visible)
-    assert "75/2026" not in visible and "28/10/2026" not in visible
+    # 31/10/2026: o começo do texto final atribui o marco ao OC 29 e, logo abaixo dele, fora do histórico, uma linha
+    # visível no padrão do card resume o complemento de 28/10/2026. O título, o texto de 06/10/2026 e o <wbr> não mudam.
+    assert "Atualização final em 26/10/2026: o marco de 23/10/2026, do Ofício-Circular nº 29/2026, passou." in _text(visible)
+    assert "o marco de 23/10/2026 passou" not in card
+    complement = re.findall(r'<p class="text-sm leading-relaxed text-slate-600">(Complemento em 28/10/2026:.*?)</p>', visible)
+    assert complement == [
+        "Complemento em 28/10/2026: o Ofício-Circular nº 75/2026 traz 24/10/2026 e 23/01/2027; "
+        "até 31/10/2026, o MAPA não esclareceu qual data prevalece. Detalhes no histórico."
+    ]
+    assert visible.index("Encerramos este comunicado.</p>") < visible.index("Complemento em 28/10/2026") < visible.index("<button")
+    assert "75/2026/" not in visible and "MAPA: estoques de aditivos com antimicrobianos do Anexo têm marco em 23/10" in card
 
     # Histórico: o OC 75 e a divergência, com data de 28/10/2026, depois do texto de 06/10/2026.
     paragraphs = [_text(p) for p in re.findall(r"<p>(.*?)</p>", history, re.DOTALL)]

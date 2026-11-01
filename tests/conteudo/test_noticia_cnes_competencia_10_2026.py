@@ -186,7 +186,8 @@ def test_comunicado_informative_notice_is_active_and_second():
     # 17/10/2026, 09h50: o aviso do Farmácia Popular sobre lembretes é o ativo mais recente; o do CNES passa ao 2º.
     # 19/10/2026, 15h40: o aviso da instabilidade nos sistemas da Anvisa entra em 1º; o do CNES passa ao 3º.
     # 20/10/2026: o aviso da instabilidade passa ao histórico; o do CNES volta ao 2º.
-    assert len(own) == 1 and articles.index(own[0]) == 1
+    # 31/10/2026, 22h10: o aviso do SNCR, atualizado, passa ao 1º lugar; o do CNES vai ao 3º.
+    assert len(own) == 1 and articles.index(own[0]) == 2
     notice = own[0]
     opening = notice.split(">", 1)[0]
     text = _text(notice)
@@ -215,4 +216,5 @@ def test_sitemap_lists_the_new_url_once():
     # 22/10/2026: a listagem reordenou os cards de produtos irregulares e do SNCR, atualizados no mesmo lote.
     # 26/10/2026: a listagem reordenou os cards do MAPA 1.617 e do período eleitoral, atualizados no mesmo lote.
     # 28/10/2026: a listagem reordenou os cards do MAPA 1.617 e de produtos irregulares, atualizados no mesmo lote.
-    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-10-28</lastmod>", sitemap)
+    # 31/10/2026: a listagem trocou o resumo do card do SNCR e o levou à 1ª posição.
+    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-10-31</lastmod>", sitemap)

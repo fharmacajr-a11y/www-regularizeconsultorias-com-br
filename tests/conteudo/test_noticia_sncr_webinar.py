@@ -18,7 +18,13 @@ PUBLISHED = "2026-05-28T20:36:00-03:00"
 # 20/10/2026, 13h00: quadro do lote 2 (informe de 15/10 e Perguntas e Respostas sobre a integração, 1ª edição).
 # 22/10/2026, 22h40 (hora do commit): quadro dos manuais do SNCR (farmácias, 2ª edição; Vigilâncias Sanitárias, 8ª edição).
 # 26/10/2026, 08h30 (a mesma hora do MAPA e do período eleitoral): itens A-1 e M-1 do CONSOLIDADO de 23/10.
-UPDATED = "2026-10-26T08:30:00-03:00"
+# 31/10/2026, 22h10: quadro da prorrogação aprovada na 20ª ROP de 29/10/2026 (consolidado de 30/10).
+UPDATED = "2026-10-31T22:10:00-03:00"
+UPDATE_31_10_ID = "sncr-atualizacao-31-outubro-title"
+ROP_NEWS_URL = (
+    "https://www.gov.br/anvisa/pt-br/assuntos/noticias-anvisa/2026/20a-reuniao-ordinaria-publica-da-anvisa-"
+    "periodo-de-transicao-para-emissao-de-receitas-eletronicas-no-sncr-e-prorrogado"
+)
 UPDATE_22_10_ID = "sncr-atualizacao-22-outubro-title"
 UPDATE_20_10_ID = "sncr-atualizacao-20-outubro-title"
 STAGE_UPDATE_ID = "sncr-etapa-update-title"
@@ -102,12 +108,16 @@ def test_sncr_news_keeps_publication_and_updates_the_september_stage():
     assert f'<meta property="article:published_time" content="{PUBLISHED}" />' in html
     assert f'<meta property="article:modified_time" content="{UPDATED}" />' in html
     assert f'<time datetime="{PUBLISHED}">28/05/2026</time> às 20h36' in html
-    assert f'<time datetime="{UPDATED}">26/10/2026</time> às 08h30' in html
+    assert f'<time datetime="{UPDATED}">31/10/2026</time> às 22h10' in html
     assert_profiles_separated(html)
     assert f'<link rel="canonical" href="{URL}" />' in html
     assert html.count(ADSENSE_SCRIPT_MARKER) == 1
+    # 31/10/2026: o quadro da prorrogação aprovada na 20ª ROP fica no topo do corpo, acima do de 22/10/2026 (manuais).
     # Quadro de 22/10/2026 (manuais) acima do de 20/10/2026 (lote 2), que fica acima do quadro da etapa de setembro.
-    assert html.count("data-news-update-callout") - html.count("[data-news-update-callout]") == 3
+    assert html.count("data-news-update-callout") - html.count("[data-news-update-callout]") == 4
+    body_start = html.index('<section class="article-body">')
+    assert html.index("<aside", body_start) == html.index(f'<aside data-news-update-callout aria-labelledby="{UPDATE_31_10_ID}"')
+    assert html.index(f'aria-labelledby="{UPDATE_31_10_ID}"') < html.index(f'aria-labelledby="{UPDATE_22_10_ID}"')
     assert html.index(f'aria-labelledby="{UPDATE_22_10_ID}"') < html.index(f'aria-labelledby="{UPDATE_20_10_ID}"')
     assert html.index(f'aria-labelledby="{UPDATE_20_10_ID}"') < html.index(f'aria-labelledby="{STAGE_UPDATE_ID}"')
     assert "<h2>Fontes oficiais</h2>" not in html
@@ -154,7 +164,8 @@ def test_sncr_news_explains_the_stage_without_false_claims():
         "Gov.br",
         "Cadastro Anvisa",
         "análise cadastral do estabelecimento",
-        "cartilha do SNCR para farmácias",
+        # 31/10/2026: o par "até 29/10 / a partir de 30/10" passou a ser atribuído à notícia da Anvisa de 21/09/2026.
+        "notícia da Anvisa de 21/09/2026",
         "SNCR-Farmácia",
         "Nenhum dos dois pares é tratado aqui como prazo único confirmado",
         "não impõe a cada farmácia desenvolver API",
@@ -169,6 +180,11 @@ def test_sncr_news_explains_the_stage_without_false_claims():
         text = _text(path.read_text(encoding="utf-8")).casefold()
         for claim in FORBIDDEN_CLAIMS:
             assert claim not in text, (path.relative_to(ROOT), claim)
+    assert "cartilha" not in body
+    # 31/10/2026: a descrição da transição no informe de 09/10/2026, no corpo, também foi para o passado.
+    assert ("permanecia descrita assim: até 29 de outubro de 2026, eles ainda podiam ser emitidos eletronicamente sem "
+            "numeração do SNCR") in body
+    assert "ainda podem" not in body
     assert_source_pairs(html)
     assert_art18_relative(html)
     assert_private_public_and_api(html)
@@ -192,21 +208,22 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     # 26/10/2026, 08h30: as matérias do MAPA 1.617 e do período eleitoral, atualizadas, sobem para a 1ª e a 2ª posições; as que ficavam acima delas descem duas (até a 6ª) ou uma (da 8ª à 35ª).
     # 26/10/2026, 08h30: a matéria do SNCR, atualizada (itens A-1 e M-1), entra no mesmo carimbo do MAPA e do período eleitoral e fica em 3º, logo depois delas; o consolidado de irregulares desce para o 4º.
     # 28/10/2026, 18h50 (hora do commit): a matéria do MAPA 1.617 (Ofício-Circular nº 75/2026) e o consolidado de irregulares (RE nº 4.160, 4.228, 4.231 e 4.232/2026) recebem o mesmo carimbo; o MAPA segue em 1º, o consolidado sobe para o 2º e o período eleitoral e o SNCR descem para o 3º e o 4º.
-    assert cards.index(card) == 3
+    # 31/10/2026, 22h10: a matéria do SNCR (prorrogação aprovada na 20ª ROP) sobe para a 1ª posição; o MAPA 1.617, o consolidado de irregulares e o período eleitoral descem uma (até a 4ª).
+    assert cards.index(card) == 0
     assert "news-card-compact" in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
     # 22/10/2026, 22h40: o card do SNCR, atualizado com os manuais, segue em 2º, logo depois do consolidado de irregulares
     # (4º desde 26/10/2026).
-    assert f'<time datetime="{UPDATED}" class="leading-none">26/10/2026 • 08h30</time>' in card
-    for term in (
-        TITLE,
-        "30/09/2026",
-        "01/10",
-        "gradual",
-        "SNGPC",
-    ):
-        assert term in card
-    assert "29/10" not in card and "31/10" not in card
+    assert f'<time datetime="{UPDATED}" class="leading-none">31/10/2026 • 22h10</time>' in card
+    # 31/10/2026: o resumo do card (data-summary e texto visível) passa a ser o da prorrogação aprovada na 20ª ROP,
+    # sem número de ato, sem "em vigor" e sem estender às Notificações de Receita ou ao SNGPC.
+    summary = ("Em 29/10/2026, a Anvisa informou a aprovação da prorrogação, até 03/03/2027, da transição de RCE e RET "
+               "eletrônicas no SNCR; a alteração da RDC nº 1.000/2025 ainda não foi publicada no DOU.")
+    assert f'data-summary="{summary}"' in card.split(">", 1)[0]
+    assert f'<p class="text-slate-500 text-sm leading-relaxed mb-4">{summary}</p>' in card
+    assert TITLE in card
+    for claim in ("em vigor", "Notificações de Receita", "SNGPC", "30/09/2026"):
+        assert claim not in card, claim
 
 
 def test_comunicado_keeps_one_sncr_card_and_five_active_notices():
@@ -268,22 +285,42 @@ def test_comunicado_keeps_one_sncr_card_and_five_active_notices():
         assert term not in incorrect
     assert "não se estendem a outros receituários" not in card_text
     assert "não se estendem a outros receituários" not in _text(NEWS_PATH.read_text(encoding="utf-8"))
-    assert "31/10" not in card_text
+    # 31/10/2026: o card ganha, no 1º parágrafo, a atualização da prorrogação aprovada na 20ª ROP, com link para a
+    # notícia oficial da Anvisa; a frase do prazo de 29/10/2026 vai para o passado.
+    update = next(item for item in paragraphs if item.startswith("Atualização em 31/10/2026"))
+    assert paragraphs.index(update) == 0
+    for term in (
+        "em 29/10/2026, a Anvisa informou que a Diretoria Colegiada aprovou a prorrogação, até 03/03/2027",
+        "Receitas de Controle Especial (RCE)",
+        "Receitas Sujeitas à Retenção (RET)",
+        "por meio de alteração da RDC nº 1.000/2025",
+        "Até 31/10/2026, a resolução não havia sido publicada no Diário Oficial da União",
+        "o número do ato e a data de vigência dependem dessa publicação",
+        "notícia da Anvisa",
+    ):
+        assert term in update, term
+    for claim in ("em vigor", "Notificações de Receita", "SNGPC"):
+        assert claim not in update, claim
+    assert "ainda podiam ser emitidos" in limit and "ainda podem" not in card_text
+    assert re.findall(r'href="([^"]+)"', sncr_cards[0]) == [ROP_NEWS_URL, ROUTE]
     assert "em operação desde" not in card_text
     assert "como preparar o estabelecimento" not in card_text
     # 16/10/2026, 20h06: o aviso do CNES 10/2026 é o 1º ativo; o do SNCR passa ao 2º.
     # 17/10/2026, 09h50: o aviso do Farmácia Popular sobre lembretes é o 1º ativo; o do CNES, o 2º; o do SNCR passa ao 3º.
     # 19/10/2026, 15h40: o aviso da instabilidade nos sistemas da Anvisa é o 1º ativo; o do SNCR passa ao 4º.
     # 20/10/2026: o aviso da instabilidade passa ao histórico; o do SNCR volta ao 3º.
-    assert active[2] is sncr_cards[0]
+    # 31/10/2026, 22h10: o aviso do SNCR, atualizado, passa ao 1º lugar entre os ativos (ordem de data-effective-at).
+    assert f'data-updated-at="31/10/2026 às 22h10" data-effective-at="{UPDATED}"' in sncr_cards[0].split(">", 1)[0]
+    assert f'<time datetime="{UPDATED}">31/10/2026 • 22h10</time>' in sncr_cards[0]
+    assert active[0] is sncr_cards[0]
 
 
 def test_sncr_news_has_current_sitemap_lastmod():
     sitemap = SITEMAP_PATH.read_text(encoding="utf-8")
 
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
-    # 26/10/2026: itens A-1 e M-1.
-    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-26</lastmod>" in sitemap
+    # 26/10/2026: itens A-1 e M-1. 31/10/2026: prorrogação aprovada na 20ª ROP.
+    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-31</lastmod>" in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/servicos/</loc>\n"
         "    <lastmod>2026-10-09</lastmod>"
@@ -366,7 +403,8 @@ def test_sncr_news_stays_informative_without_tutorial_or_universal_deadline():
 
     news_index = _text(NEWS_INDEX_PATH.read_text(encoding="utf-8"))
     comunicado = _text(COMUNICADO_PATH.read_text(encoding="utf-8"))
-    assert "gradual" in news_index
+    # 31/10/2026: o resumo do card passou a ser o da prorrogação aprovada; "gradual" segue na matéria e no comunicado.
+    assert "gradual" in body
     assert "implementação gradual" in comunicado
     assert "como preparar o estabelecimento" not in comunicado
     assert_concrete_errors_rejected(html)
@@ -415,7 +453,7 @@ def assert_profiles_separated(html):
 
 def assert_source_pairs(html):
     body = _article_body(html)
-    cartilha = _one_paragraph(body, "cartilha do SNCR para farmácias")
+    cartilha = _one_paragraph(body, "notícia da Anvisa de 21/09/2026")
     faq = _one_paragraph(body, "pergunta 30")
     caveat = _one_paragraph(body, "Nenhum dos dois pares")
     if "até 29/10/2026" not in cartilha or "a partir de 30/10/2026" not in cartilha or "31/10/2026" in cartilha:
@@ -555,7 +593,7 @@ def _insert_paragraph(html, sentence):
 
 def _swap_october_pairs(html):
     body = _article_body(html)
-    cartilha = next(paragraph for paragraph in _paragraphs(body) if "cartilha do SNCR para farmácias" in _plain(paragraph))
+    cartilha = next(paragraph for paragraph in _paragraphs(body) if "notícia da Anvisa de 21/09/2026" in _plain(paragraph))
     faq = next(paragraph for paragraph in _paragraphs(body) if "pergunta 30" in _plain(paragraph))
     new_cartilha = cartilha.replace("29/10/2026", "30/10/2026").replace("a partir de 30/10/2026", "a partir de 31/10/2026")
     new_faq = faq.replace("a 30/10/2026", "a 29/10/2026").replace("a partir de 31/10/2026", "a partir de 30/10/2026")
@@ -759,7 +797,8 @@ def test_sncr_22_10_update_attributes_the_manuals_and_keeps_the_change_as_planne
     # 26/10/2026 (A-1): o informe, modificado em 23/10/2026, fala do formato eletrônico até 29/10/2026 e da RCE e da RET em
     # papel; a frase antiga ("durante o período de transição ... em meio físico") saiu.
     informe = ("Segundo o informe da Anvisa de 22/10/2026 (“Relatos de dificuldade na requisição de numeração para RCE e RET”), "
-               "modificado em 23/10/2026, às 09h28, até 29/10/2026 esses receituários no formato eletrônico ainda podem ser "
+               # 31/10/2026: "ainda podem" passou a "ainda podiam" (prazo de 29/10/2026 encerrado).
+               "modificado em 23/10/2026, às 09h28, até 29/10/2026 esses receituários no formato eletrônico ainda podiam ser "
                "emitidos sem numeração do SNCR, e a RCE e a RET em papel continuam existindo sem numeração do SNCR. O informe "
                "registra que a situação está sendo investigada e que a causa ainda não foi confirmada.")
     paragraphs = [_text(item) for item in re.findall(r"<p\b[^>]*>(.*?)</p>", callout, re.DOTALL)]
