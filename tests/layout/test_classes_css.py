@@ -13,7 +13,8 @@ from support import ROOT, public_html_paths
 
 CSS_FILES = (
     [ROOT / "assets/css/tailwind.min.css", ROOT / "assets/css/base.css",
-     ROOT / "assets/css/components.css", ROOT / "assets/css/custom.min.css", ROOT / "assets/css/botoes.css"]
+     ROOT / "assets/css/components.css", ROOT / "assets/css/custom.min.css", ROOT / "assets/css/botoes.css",
+     ROOT / "assets/css/refinamento.css"]
     + sorted((ROOT / "assets/css/pages").glob("*.css"))
 )
 HOOKS = {
