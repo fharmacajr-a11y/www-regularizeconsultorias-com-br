@@ -245,7 +245,8 @@ def test_index_cards_share_the_single_model():
     html = _index_html()
     articles = re.findall(r'<article class="([^"]*)"[^>]*data-news-card', html)
     # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas.
-    assert len(articles) == 84
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert len(articles) == 83
     assert all("news-card-compact" in c for c in articles)
 
 

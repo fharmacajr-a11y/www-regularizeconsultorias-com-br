@@ -27,6 +27,7 @@ REUNIDAS = {
     "prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular",
     "sifap-regularizacao-cadastral-farmacias-notificadas-13-maio",
 }
+PARAMOL = "anvisa-suspende-recolhe-lote-114053-paramol-750-mg"
 
 
 def _url_elements():
@@ -71,11 +72,13 @@ def test_sitemap_is_valid_xml_with_unique_urls():
     assert all(location and location.strip() for location in locations)
     # 01/11/2026 (reenvio ao AdSense): +5 matérias novas e -6 páginas reunidas nelas. As reunidas continuam publicadas,
     # com noindex e aviso para a página nova, e saem do sitemap; toda outra página pública continua nele.
-    assert len(locations) == 105
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert len(locations) == 104
     assert len(locations) == len(set(locations))
     assert set(locations) == public_canonicals
+    # 02/11/2026 (decisão do Jr): além das seis reunidas, a notícia do Paramol (lote 114053) ganhou noindex.
     assert noindex_canonicals == {
-        f"https://www.regularizeconsultorias.com.br/noticias/{slug}/" for slug in REUNIDAS
+        f"https://www.regularizeconsultorias.com.br/noticias/{slug}/" for slug in REUNIDAS | {PARAMOL}
     }
     assert not noindex_canonicals & set(locations)
 

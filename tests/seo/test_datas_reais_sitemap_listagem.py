@@ -81,7 +81,14 @@ def test_lastmod_de_cada_materia_e_o_dia_da_ultima_atualizacao_declarada():
         if lastmods.get(url) != _dt(reference).date().isoformat():
             falhas.append((pagina.parent.name, lastmods.get(url), reference))
     assert falhas == []
-    assert len(reunidas) == 6
+    # 02/11/2026 (decisão do Jr): além das seis reunidas, a notícia do Paramol (lote 114053) ganhou noindex.
+    assert sorted(reunidas) == sorted([
+        "cnes-prorroga-transmissor-competencia-06-2026", "cnes-competencia-08-2026-prazo-transmissao",
+        "cnes-competencia-09-2026-prazo-transmissao", "cnes-competencia-10-2026-prazo-transmissao",
+        "prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular",
+        "sifap-regularizacao-cadastral-farmacias-notificadas-13-maio",
+        "anvisa-suspende-recolhe-lote-114053-paramol-750-mg",
+    ])
     # 01/11/2026: a matéria ganhou a seção "Antes de enviar ou renovar" (atualização declarada às 19h00); até 31/10/2026
     # o lastmod era 2026-04-28, o da publicação.
     assert lastmods[f"{BASE}/noticias/{CADASTRO}/"] == "2026-11-01"
@@ -90,7 +97,8 @@ def test_lastmod_de_cada_materia_e_o_dia_da_ultima_atualizacao_declarada():
 def test_card_da_now_foods_mostra_a_atualizacao_real_sem_mudar_de_posicao():
     cards = _cards()
     # 01/11/2026 (reenvio ao AdSense): 85 + 5 cards novos - 6 cards das páginas reunidas.
-    assert len(cards) == 84
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert len(cards) == 83
     own = [card for card in cards if f'href="/noticias/{NOW_FOODS}/"' in card]
     assert len(own) == 1
     card = own[0]
@@ -112,7 +120,8 @@ def test_card_da_now_foods_mostra_a_atualizacao_real_sem_mudar_de_posicao():
     assert _dt(after).date().isoformat() == "2026-04-28"
     # 01/11/2026 (reenvio ao AdSense): saem 6 cards à frente (as páginas reunidas), entram 5 à frente (as matérias novas)
     # e 2 que ficavam atrás passam à frente (as matérias de 28/04/2026 ampliadas em 01/11/2026): 81 - 6 + 5 + 2 = 82.
-    assert position == 82
+    # 02/11/2026 (decisão do Jr): sai o card do Paramol (30/07/2026), que ficava à frente: 82 - 1 = 81.
+    assert position == 81
 
 
 def test_lastmod_das_paginas_institucionais_segue_a_ultima_mudanca_real_do_texto():

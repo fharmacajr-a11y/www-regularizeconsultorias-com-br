@@ -186,7 +186,8 @@ def test_janelas_e_barra_classica(medidas):
         visiveis = {nome: len(e["cards"]) for nome, e in janela["estados"].items()}
         # 01/11/2026 (reenvio ao AdSense): 84 cards (85 + 5 novos - 6 das páginas reunidas); Farmácia Popular com 10
         # (saem as duas páginas do SIFAP de maio, entra a reunida).
-        assert visiveis == {"carga": 5, "ver_mais": 84, "filtro": 5, "filtro_ver_mais": 10, "busca": 5,
+        # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+        assert visiveis == {"carga": 5, "ver_mais": 83, "filtro": 5, "filtro_ver_mais": 10, "busca": 5,
                             "mais_velha": 5}, (janela["janela"], visiveis)
 
 

@@ -11,6 +11,9 @@ Regras do lote, pedidas no parecer:
 - Matérias ampliadas: as seis notícias curtas da tabela do parecer que ganharam parte prática passam de 500 palavras
   no <section class="article-body"> e declaram a atualização (dateModified, "Atualizado em", card e lastmod).
 - Nenhuma delas tem link externo no texto (regra de outubro de 2026, test_noticias_sem_links_editoriais_externos.py).
+- Decisão do Jr (02/11/2026): a notícia do Paramol (lote 114053, recolhimento encerrado) também ganha noindex, sem o
+  AdSense e fora do sitemap e da listagem. Não há página nova que a substitua, então não leva o aviso de página reunida;
+  nenhuma outra página aponta para ela, e o guia de recolhimentos cita o caso no texto, sem link.
 
 Os carimbos de 01/11/2026 são os da preparação do lote; na publicação, se forem trocados, mudam aqui junto.
 """
@@ -198,6 +201,37 @@ def test_so_as_paginas_reunidas_ainda_apontam_umas_para_as_outras():
     assert comunicado.count(f'href="/noticias/{SIFAP}/"') == 1
 
 
+PARAMOL = "anvisa-suspende-recolhe-lote-114053-paramol-750-mg"
+RECOLHIMENTOS = "recolhimentos-suspensoes-alertas-anvisa-como-a-farmacia-deve-reagir"
+
+
+def test_paramol_fica_publicado_com_noindex_sem_anuncio_e_sem_links():
+    index, _, slugs = _cards()
+    sitemap, _ = _sitemap()
+    html = _html(PARAMOL)
+    head = html.split("</head>", 1)[0]
+    url = f"{BASE}/noticias/{PARAMOL}/"
+    assert _canonical(head) == url
+    assert head.count(NOINDEX) == 1 and html.count('name="robots"') == 1
+    assert "adsbygoogle" not in html and "<ins" not in html
+    assert ">Página reunida</p>" not in html
+    assert url not in sitemap and PARAMOL not in slugs and url not in _itemlist(index)
+    for path in ROOT.rglob("*.html"):
+        if "a-publicar" in path.parts or path.parent.name == PARAMOL:
+            continue
+        assert f"/noticias/{PARAMOL}/" not in path.read_text(encoding="utf-8"), path.relative_to(ROOT).as_posix()
+    # O card de notícias relacionadas do guia passou do Paramol para o recolhimento de suplementos (Alivemed), indexável
+    # e do mesmo tema; o caso do Paramol continua citado no texto do guia.
+    guia = _html(RECOLHIMENTOS)
+    relacionadas = guia.split('<section class="article-related-news"', 1)[1].split("</section>", 1)[0]
+    assert re.findall(r'href="/noticias/([^"/]+)/"', relacionadas) == [
+        "anvisa-suspende-medicamento-proibe-produtos-irregulares",
+        "anvisa-nova-consulta-alertas-sanitarios-substitui-sistec",
+        "anvisa-recolhimento-suplementos-irregulares-alivemed",
+    ]
+    assert "Paramol 750 mg" in _body_text(guia)
+
+
 def test_materias_novas_tem_identidade_card_itemlist_sitemap_e_anuncio():
     index, cards, slugs = _cards()
     sitemap, sitemap_text = _sitemap()
@@ -261,10 +295,12 @@ def test_materias_ampliadas_passam_de_500_palavras_e_declaram_a_atualizacao():
 def test_listagem_contadores_e_lastmod():
     index, cards, _ = _cards()
     sitemap, _ = _sitemap()
-    assert len(cards) == 84 and "84 notícias encontradas" in index
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert len(cards) == 83 and "83 notícias encontradas" in index
     contadores = dict(re.findall(r"<span>([^<]+)</span><span class=\"text-xs text-slate-400\">(\d+)</span>", index))
-    assert contadores["Todos"] == "84"
-    assert contadores["ANVISA"] == "56"
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert contadores["Todos"] == "83"
+    assert contadores["ANVISA"] == "55"
     assert contadores["CNES"] == "3"
     assert contadores["SNCR"] == "3"
     assert contadores["FARMÁCIA POPULAR"] == "10"
