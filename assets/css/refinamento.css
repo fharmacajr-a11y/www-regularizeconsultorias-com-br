@@ -1770,20 +1770,26 @@ body:has(.services-hero-section) main > .institutional-cta-section:last-of-type 
    A grade de 12 cards vira 4 áreas. Em cada área, um card com os serviços
    em linhas: ícone, título e uma seta; aberto, o serviço mostra a
    descrição, o que está incluído e o botão "Falar sobre este serviço".
-   A partir de 1024 px o nome da área fica à esquerda e a lista à direita.
+   O nome e o resumo da área ficam centralizados acima da lista em todas
+   as larguras (pedido do Jr em 02/11/2026; antes, a partir de 1024 px,
+   ficavam numa coluna à esquerda).
    A lista termina antes da coluna dos botões flutuantes: só à direita até
    639 px e dos dois lados de 640 a 1359 px (--servicos-reserva,
    equipe-servicos.css). */
 .servicos-areas {
   display: grid;
-  gap: 2rem;
-  max-width: 66rem;
+  gap: 2.5rem;
+  max-width: 54rem;
   margin-inline: auto;
 }
 
 .servicos-area {
   display: grid;
-  gap: 1rem;
+  gap: 1.25rem;
+}
+
+.servicos-area__cabecalho {
+  text-align: center;
 }
 
 .servicos-area__titulo {
@@ -1800,13 +1806,15 @@ body:has(.services-hero-section) main > .institutional-cta-section:last-of-type 
   display: block;
   width: 2rem;
   height: 3px;
-  margin-top: 0.5rem;
+  margin: 0.5rem auto 0;
   border-radius: 3px;
   background: linear-gradient(90deg, #1565c0, #29b6f6);
 }
 
 .servicos-area__resumo {
-  margin: 0.625rem 0 0;
+  max-width: 44rem;
+  margin: 0.625rem auto 0;
+  text-wrap: balance;
   color: #64748b;
   font-size: 0.9375rem;
   line-height: 1.5rem;
@@ -1983,23 +1991,11 @@ body:has(.services-hero-section) main > .institutional-cta-section:last-of-type 
 
 @media (min-width: 1024px) {
   .servicos-areas {
-    gap: 0;
+    gap: 3rem;
   }
 
   .servicos-area {
-    grid-template-columns: 16rem minmax(0, 1fr);
-    gap: 2.5rem;
-    align-items: start;
-  }
-
-  .servicos-area + .servicos-area {
-    margin-top: 2.5rem;
-    padding-top: 2.5rem;
-    border-top: 1px solid #e2e8f0;
-  }
-
-  .servicos-area__cabecalho {
-    padding-top: 0.25rem;
+    gap: 1.5rem;
   }
 }
 
