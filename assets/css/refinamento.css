@@ -1765,3 +1765,283 @@ body:has(.services-hero-section) main > .institutional-cta-section:last-of-type 
     transform: none;
   }
 }
+
+/* ---------- R28. Serviços em lista por área (02/11/2026) ----------
+   A grade de 12 cards vira 4 áreas. Em cada área, um card com os serviços
+   em linhas: ícone, título e uma seta; aberto, o serviço mostra a
+   descrição, o que está incluído e o botão "Falar sobre este serviço".
+   A partir de 1024 px o nome da área fica à esquerda e a lista à direita.
+   A lista termina antes da coluna dos botões flutuantes: só à direita até
+   639 px e dos dois lados de 640 a 1359 px (--servicos-reserva,
+   equipe-servicos.css). */
+.servicos-areas {
+  display: grid;
+  gap: 2rem;
+  max-width: 66rem;
+  margin-inline: auto;
+}
+
+.servicos-area {
+  display: grid;
+  gap: 1rem;
+}
+
+.servicos-area__titulo {
+  margin: 0;
+  color: #0f172a;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.75rem;
+}
+
+.servicos-area__titulo::after {
+  content: "";
+  display: block;
+  width: 2rem;
+  height: 3px;
+  margin-top: 0.5rem;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #1565c0, #29b6f6);
+}
+
+.servicos-area__resumo {
+  margin: 0.625rem 0 0;
+  color: #64748b;
+  font-size: 0.9375rem;
+  line-height: 1.5rem;
+}
+
+.servicos-area__lista {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  background-color: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -16px rgba(15, 23, 42, 0.18);
+}
+
+.servicos-area__lista::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  height: 3px;
+  background: linear-gradient(90deg, #1a3a5c, #1565c0 55%, #29b6f6);
+}
+
+.servico + .servico {
+  border-top: 1px solid #eef2f7;
+}
+
+.servico__detalhes {
+  margin: 0;
+}
+
+.servico__resumo {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  min-height: 4.25rem;
+  padding: 0.875rem 1.25rem;
+  cursor: pointer;
+  list-style: none;
+  transition: background-color 0.2s ease;
+}
+
+.servico__resumo::-webkit-details-marker {
+  display: none;
+}
+
+.servico__resumo:hover,
+.servico__detalhes[open] > .servico__resumo {
+  background-color: #f8fafc;
+}
+
+.servico__resumo:focus-visible {
+  outline: 2px solid #1565c0;
+  outline-offset: -2px;
+  border-radius: 0;
+}
+
+.servico__icone {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.625rem;
+  background: linear-gradient(145deg, #1565c0, #1a3a5c);
+  box-shadow: 0 6px 14px -6px rgba(21, 101, 192, 0.55);
+  color: #fff;
+}
+
+.servico__icone svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.servico__titulo {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: #0f172a;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.375rem;
+}
+
+.servico__seta {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  background-color: rgba(21, 101, 192, 0.1);
+  color: #1565c0;
+  transition: transform 0.25s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.servico__seta svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.servico__detalhes[open] .servico__seta {
+  background-color: #1565c0;
+  color: #fff;
+  transform: rotate(180deg);
+}
+
+.servico__corpo {
+  padding: 0.25rem 1.25rem 1.375rem;
+  animation: servico-abrir 0.25s ease both;
+}
+
+.servico__corpo > p {
+  max-width: 46rem;
+  margin: 0;
+  color: #475569;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+.servico__itens {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0.875rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.servico__itens li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  color: #475569;
+  font-size: 0.875rem;
+  line-height: 1.375rem;
+}
+
+.servico__itens li svg {
+  margin-top: 0.1875rem;
+}
+
+.servico__contato {
+  margin-top: 1.125rem;
+}
+
+@keyframes servico-abrir {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* O texto aberto começa alinhado ao título (depois do ícone). */
+@media (min-width: 640px) {
+  .servico__corpo {
+    padding-left: calc(1.25rem + 2.5rem + 0.875rem);
+  }
+}
+
+@media (min-width: 768px) {
+  .servico__itens {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .servicos-areas {
+    gap: 0;
+  }
+
+  .servicos-area {
+    grid-template-columns: 16rem minmax(0, 1fr);
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .servicos-area + .servicos-area {
+    margin-top: 2.5rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .servicos-area__cabecalho {
+    padding-top: 0.25rem;
+  }
+}
+
+/* Espaço da coluna dos botões flutuantes. */
+@media (max-width: 639px) {
+  .servicos-areas {
+    margin-right: var(--servicos-reserva);
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1359px) {
+  .servicos-areas {
+    width: calc(100% - 2 * var(--servicos-reserva));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .servico__resumo,
+  .servico__seta {
+    transition: none;
+  }
+
+  .servico__corpo {
+    animation: none;
+  }
+}
+
+/* Até 359 px a linha do serviço não comporta ícone, título e seta sem
+   cortar palavras longas ("Estabelecimentos", "Credenciamento") na faixa
+   que sobra antes da coluna dos botões flutuantes: o ícone sai e as
+   margens internas diminuem (test_institucional_faixa_controles, 320 px). */
+@media (max-width: 359px) {
+  .servico__resumo {
+    gap: 0.625rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .servico__icone {
+    display: none;
+  }
+
+  .servico__corpo {
+    padding-inline: 1rem;
+  }
+}
