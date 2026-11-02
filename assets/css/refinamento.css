@@ -1269,3 +1269,106 @@ main > .home-manuals-section + section {
     transform: none;
   }
 }
+
+/* ---------- R20. "Como trabalhamos" no padrão das seções de cima ----------
+   O título fica centralizado em cima em todas as larguras (antes, a partir
+   de 1280 px, ficava numa coluna à esquerda com espaço vazio embaixo). A
+   partir de 1024 px as três etapas ficam lado a lado, com o número no alto
+   de cada cartão e uma linha ligando um número ao seguinte; abaixo disso
+   continuam uma embaixo da outra. */
+main > .home-manuals-section + section .grid.grid-cols-1.xl\:grid-cols-3 {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2rem;
+}
+
+main > .home-manuals-section + section .grid.grid-cols-1.xl\:grid-cols-3 > div:first-child {
+  text-align: center;
+}
+
+main > .home-manuals-section + section .home-process-title::after {
+  margin-left: auto;
+}
+
+@media (min-width: 1024px) {
+  main > .home-manuals-section + section > .max-w-5xl {
+    max-width: 80rem;
+  }
+
+  .home-processo-etapas {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  .home-processo-etapas > li {
+    padding: 1.5rem;
+  }
+
+  .home-processo-etapas > li::before {
+    top: 1.5rem;
+    left: 1.5rem;
+    z-index: 2;
+  }
+
+  /* Linha horizontal do número desta etapa até o número da seguinte; passa
+     pela borda dos dois cartões e pelo vão entre eles. */
+  .home-processo-etapas > li:not(:last-child)::after {
+    top: calc(1.5rem + 1.0625rem - 1px);
+    bottom: auto;
+    left: calc(1.5rem + 2.125rem);
+    right: calc(-1.5rem - 1.5rem);
+    z-index: 1;
+    width: auto;
+    height: 2px;
+    background: linear-gradient(90deg, #1565c0, rgba(41, 182, 246, 0.55));
+  }
+
+  .home-processo-etapas h3 {
+    margin-top: 3rem;
+    line-height: 1.5rem;
+  }
+}
+
+/* ---------- R21. Linha do rodapé em degradê ----------
+   No lugar do fio de 3 px, uma linha de 4 px em degradê do azul da marca ao
+   azul-claro, que some nas pontas, com um brilho suave embaixo. */
+footer {
+  position: relative;
+  border-top: 0;
+  border-image: none;
+}
+
+footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg,
+    rgba(21, 101, 192, 0) 0%,
+    #1565c0 18%,
+    #29b6f6 50%,
+    #1565c0 82%,
+    rgba(21, 101, 192, 0) 100%);
+  box-shadow: 0 0 18px 1px rgba(41, 182, 246, 0.45);
+  pointer-events: none;
+}
+
+/* ---------- R22. Cards de serviço: folga no Tab ----------
+   As alturas dos cards têm frações de pixel; ao receber o foco pelo Tab,
+   o navegador alinhava a borda de baixo do card 0,55 px além da janela
+   (test_noticias_ordem_tab, 390 px com mouse). Uma folga de 4 px na
+   rolagem resolve. */
+.home-services-grid > a,
+.home-manuals-card {
+  scroll-margin-bottom: 0.25rem;
+}
+/* De 1280 a 1407 px as etapas lado a lado chegavam na coluna dos botões
+   flutuantes (o container de 80rem só ganha margem acima de 1280 px). A
+   grade encolhe dos dois lados o que falta, como o cartão do mapa (R8b):
+   688 px - 50vw de sobreposição, mais 16 px para a barra de rolagem. */
+@media (min-width: 1280px) and (max-width: 1407px) {
+  .home-processo-etapas {
+    margin-inline: max(0px, calc(704px - 50vw));
+  }
+}

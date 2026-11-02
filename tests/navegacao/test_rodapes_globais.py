@@ -78,7 +78,7 @@ def test_footer_contract_is_canonical():
         assert "Navegação" in heading_text, relative_path
         assert "Contato" in heading_text, relative_path
         assert {node.attrs.get("href") for node in links} >= GLOBAL_NAVIGATION, relative_path
-        assert any(node.attrs.get("src", "").endswith("logorc2-white.png") for node in images), relative_path
+        assert any(node.attrs.get("src", "").endswith("logorc2-rodape.png") for node in images), relative_path
         assert any(node.attrs.get("alt") == "Regularize Consultoria" for node in images), relative_path
         assert "99627-5900" in footer_text, relative_path
         assert any(node.attrs.get("href", "").startswith("mailto:") for node in links), relative_path
