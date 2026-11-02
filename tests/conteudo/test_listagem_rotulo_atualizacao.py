@@ -89,7 +89,8 @@ def _data_valida(slug):
 def _cards():
     html = NEWS_INDEX_PATH.read_text(encoding="utf-8")
     cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', html, re.DOTALL)
-    assert len(cards) == 85
+    # 01/11/2026 (reenvio ao AdSense): 85 + 5 cards novos - 6 cards das páginas reunidas.
+    assert len(cards) == 84
     for card in cards:
         slug = re.search(r'href="/noticias/([^"/]+)/"', card).group(1)
         tempos = re.findall(r'<time datetime="([^"]+)"[^>]*>([^<]*)</time>', card)
@@ -114,6 +115,9 @@ def test_card_mostra_a_data_valida_da_materia_sem_prefixo():
             falhas.append((slug, "prefixo no card"))
     assert not falhas, falhas
     # 20/10/2026, 10h12: a matéria do SISPA passa a declarar atualização; o card dela também.
+    # 01/11/2026 (reenvio ao AdSense): saem cinco cards com atualização (CNES 06, 08 e 09/2026 e as duas páginas do
+    # SIFAP de maio; o do CNES 10/2026 não tinha) e entram cinco, das matérias ampliadas que ainda não declaravam
+    # atualização (a do Alivemed já declarava e só trocou a data). As cinco matérias novas não têm atualização.
     assert atualizacoes == 49
 
 
@@ -127,12 +131,18 @@ def test_materias_do_lote_de_09_10_mostram_a_atualizacao():
 
 
 def test_atualizacao_so_com_o_dia_fica_so_com_o_dia_no_card():
-    """CNES 06/2026: o caso do parecer. A regra geral acima decide; aqui fica a prova do resultado."""
+    """CNES 06/2026: o caso do parecer. A regra geral acima decide; aqui fica a prova do resultado.
+
+    Até 31/10/2026 a prova era o próprio card: "18/07/2026", sem hora, entre o card de 24/07/2026 e o de 17/07/2026 às
+    19h00. Em 01/11/2026 (reenvio ao AdSense) a matéria foi reunida em "Prazos de transmissão do CNES em 2026" e o card
+    saiu da listagem; nenhum outro card tem atualização só com o dia. A regra continua provada na matéria, que segue
+    publicada como registro: a data válida é o dia, sem hora, e o texto do card seria só o dia.
+    """
+    assert _data_valida(CNES_06) == ("2026-07-18", True)
+    assert _texto("2026-07-18") == "18/07/2026"
     cards = list(_cards())
-    posicao, (slug, card, (datetime_card, texto), atualizado) = next(
-        (i, item) for i, item in enumerate(cards) if item[0] == CNES_06)
-    assert (datetime_card, texto, atualizado) == ("2026-07-18", "18/07/2026", "2026-07-18")
-    assert "09h00" not in card and "07/07/2026" not in card
-    # Ordem: o dia 18/07/2026 vem depois do card de 24/07/2026 e antes do de 17/07/2026 às 19h00.
-    assert cards[posicao - 1][2][0] == "2026-07-24T15:18:00-03:00"
-    assert cards[posicao + 1][2][0] == "2026-07-17T19:00:00-03:00"
+    assert not [item for item in cards if item[0] == CNES_06]
+    # Nenhum card da listagem mostra hora que a matéria não declara: datetime só com o dia leva texto só com o dia.
+    for slug, card, (datetime_card, texto), atualizado in cards:
+        if "T" not in datetime_card:
+            assert texto == _texto(datetime_card) and "•" not in texto, slug

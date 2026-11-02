@@ -209,7 +209,9 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     # 26/10/2026, 08h30: a matéria do SNCR, atualizada (itens A-1 e M-1), entra no mesmo carimbo do MAPA e do período eleitoral e fica em 3º, logo depois delas; o consolidado de irregulares desce para o 4º.
     # 28/10/2026, 18h50 (hora do commit): a matéria do MAPA 1.617 (Ofício-Circular nº 75/2026) e o consolidado de irregulares (RE nº 4.160, 4.228, 4.231 e 4.232/2026) recebem o mesmo carimbo; o MAPA segue em 1º, o consolidado sobe para o 2º e o período eleitoral e o SNCR descem para o 3º e o 4º.
     # 31/10/2026, 22h10: a matéria do SNCR (prorrogação aprovada na 20ª ROP) sobe para a 1ª posição; o MAPA 1.617, o consolidado de irregulares e o período eleitoral descem uma (até a 4ª).
-    assert cards.index(card) == 0
+    # 01/11/2026 (reenvio ao AdSense): os 11 cards de 01/11 (5 matérias novas e 6 ampliadas) vão ao topo; o SNCR é o
+    # primeiro depois deles, com o carimbo mais recente entre as demais.
+    assert cards.index(card) == 11
     assert "news-card-compact" in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
     # 22/10/2026, 22h40: o card do SNCR, atualizado com os manuais, segue em 2º, logo depois do consolidado de irregulares
@@ -771,7 +773,10 @@ def test_sncr_pages_leave_out_the_items_held_for_another_update():
     comunicado = COMUNICADO_PATH.read_text(encoding="utf-8")
     assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', comunicado) == ["5", "5"]
     assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', NEWS_PATH.read_text(encoding="utf-8")) == ["5", "5"]
-    assert len(list((ROOT / "noticias").glob("*/index.html"))) == 85
+    # 01/11/2026 (reenvio ao AdSense): +5 matérias novas (CNES 2026, SIFAP de maio e três guias); nenhuma do SNCR além
+    # do guia "SNCR e SNGPC", que cita os 16 dígitos e os 20 medicamentos atribuídos à 2ª edição do manual, como o
+    # quadro de 22/10/2026.
+    assert len(list((ROOT / "noticias").glob("*/index.html"))) == 90
 
 
 def test_sncr_22_10_update_attributes_the_manuals_and_keeps_the_change_as_planned():

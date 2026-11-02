@@ -43,18 +43,22 @@ def test_listing_places_the_updated_cosmetics_card_eighth():
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
     # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
-    card = cards[36]
+    # 01/11/2026 (reenvio ao AdSense): os 11 cards de 01/11 (5 matérias novas e 6 ampliadas) vão ao topo e saem os das
+    # 6 páginas reunidas (total 85 + 5 - 6 = 84). Índice novo = anterior + 11 - reunidas que ficavam à frente -
+    # ampliadas que já ficavam à frente: 36 + 11 - 5 - 0 = 42.
+    card = cards[42]
 
-    assert len(cards) == 85
+    assert len(cards) == 84
     assert "/noticias/anvisa-atualiza-listas-substancias-cosmeticos/" in card
     assert f'data-updated="{UPDATED}"' in card
     assert "está encerrada" in card
     assert "recebe contribuições" not in card
     assert "permanece aberta" not in card
-    assert '>Todos</span><span class="text-xs text-slate-400">85<' in html
-    assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in html
+    assert '>Todos</span><span class="text-xs text-slate-400">84<' in html
+    # 01/11/2026: +2 guias da ANVISA (cadastros da drogaria; recolhimentos, suspensões e alertas).
+    assert '>ANVISA</span><span class="text-xs text-slate-400">56<' in html
     assert (
-        '"position":37,"url":"https://www.regularizeconsultorias.com.br'
+        '"position":43,"url":"https://www.regularizeconsultorias.com.br'
         '/noticias/anvisa-atualiza-listas-substancias-cosmeticos/"'
     ) in html
     sitemap = SITEMAP.read_text(encoding="utf-8")

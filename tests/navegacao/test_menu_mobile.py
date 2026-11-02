@@ -757,15 +757,42 @@ def _sitemap_routes():
     return {urlsplit(loc.text.strip()).path for loc in root.findall("s:url/s:loc", namespace)}
 
 
+# 01/11/2026 (reenvio ao AdSense): as seis matérias reunidas em páginas novas continuam publicadas, com o menu, mas com
+# noindex e fora do sitemap. A geometria continua medindo todas as páginas com menu; na comparação com o sitemap, as
+# páginas com noindex ficam de fora e têm de ser exatamente essas seis.
+REUNIDAS = {
+    "/noticias/cnes-prorroga-transmissor-competencia-06-2026/",
+    "/noticias/cnes-competencia-08-2026-prazo-transmissao/",
+    "/noticias/cnes-competencia-09-2026-prazo-transmissao/",
+    "/noticias/cnes-competencia-10-2026-prazo-transmissao/",
+    "/noticias/prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular/",
+    "/noticias/sifap-regularizacao-cadastral-farmacias-notificadas-13-maio/",
+}
+
+
+def _noindex_routes():
+    routes = set()
+    for page, relative in _served_pages():
+        if '<meta name="robots" content="noindex, follow" />' in page.read_text(encoding="utf-8"):
+            routes.add("/" + relative[: -len("index.html")] if relative.endswith("index.html") else "/" + relative)
+    return routes
+
+
 def test_header_routes_match_the_served_sitemap():
-    """As páginas medidas pela geometria são as do sitemap da mesma pasta: uma ausente não some em silêncio."""
+    """As páginas medidas pela geometria são as do sitemap da mesma pasta, mais as reunidas com noindex: uma ausente não
+    some em silêncio."""
     routes = set(_header_routes())
     # A 404.html tem o menu completo, mas é página de erro: noindex e fora do sitemap.
     assert "/404.html" in routes, "404.html sem o menu do site"
     routes.discard("/404.html")
+    noindex = _noindex_routes()
+    assert noindex == REUNIDAS
+    assert noindex <= routes, f"páginas reunidas sem menu: {sorted(noindex - routes)}"
     expected = _sitemap_routes()
-    assert routes == expected, (f"páginas com menu fora do sitemap: {sorted(routes - expected)}; "
-                                f"URLs do sitemap sem página com menu na pasta servida: {sorted(expected - routes)}")
+    assert not noindex & expected, f"páginas com noindex no sitemap: {sorted(noindex & expected)}"
+    indexed = routes - noindex
+    assert indexed == expected, (f"páginas com menu fora do sitemap: {sorted(indexed - expected)}; "
+                                 f"URLs do sitemap sem página com menu na pasta servida: {sorted(expected - indexed)}")
 
 
 @pytest.fixture(scope="module")

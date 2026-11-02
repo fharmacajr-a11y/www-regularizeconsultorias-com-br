@@ -23,7 +23,8 @@ def _cards():
 
 def test_nenhum_titulo_ou_resumo_tem_quebra_incondicional():
     cards = _cards()
-    assert len(cards) == 85
+    # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 cards das páginas reunidas nelas.
+    assert len(cards) == 84
     # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
     assert all("news-card-compact" in card.split(">", 1)[0] for card in cards)
     for card in cards:

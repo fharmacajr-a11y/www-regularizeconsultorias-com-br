@@ -176,11 +176,12 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     assert "a-publicar" not in sitemap
     # O aviso do Comunicado de 06/10/2026 (marco de 23/10) é o único que leva à matéria.
     assert comunicado.count(f'href="/noticias/{SLUG}/"') == 1
-    assert len(cards) == 85
-    assert index.count("data-news-card") == 85
-    assert "85 notícias encontradas" in index
-    assert '>Todos</span><span class="text-xs text-slate-400">85<' in index
-    assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in index
+    # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas; +2 guias da ANVISA.
+    assert len(cards) == 84
+    assert index.count("data-news-card") == 84
+    assert "84 notícias encontradas" in index
+    assert '>Todos</span><span class="text-xs text-slate-400">84<' in index
+    assert '>ANVISA</span><span class="text-xs text-slate-400">56<' in index
     assert '>M.A.P.A</span><span class="text-xs text-slate-400">3<' in index
     assert len(re.findall(r'\bdata-category="mapa"', index)) == 3
 
@@ -192,7 +193,9 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     # 26/10/2026, 08h30: as matérias do MAPA 1.617 e do período eleitoral, atualizadas, sobem para a 1ª e a 2ª posições; as que ficavam acima delas descem duas (até a 6ª) ou uma (da 8ª à 35ª).
     # 28/10/2026, 18h50 (hora do commit): a matéria do MAPA 1.617 (Ofício-Circular nº 75/2026) e o consolidado de irregulares (RE nº 4.160, 4.228, 4.231 e 4.232/2026) recebem o mesmo carimbo; o MAPA segue em 1º, o consolidado sobe para o 2º e o período eleitoral e o SNCR descem para o 3º e o 4º.
     # 31/10/2026, 22h10: a matéria do SNCR (prorrogação aprovada na 20ª ROP) sobe para a 1ª posição; o MAPA 1.617, o consolidado de irregulares e o período eleitoral descem uma (até a 4ª).
-    card = cards[1]
+    # 01/11/2026 (reenvio ao AdSense): os 11 cards de 01/11 (5 matérias novas e 6 ampliadas) vão ao topo; o MAPA 1.617
+    # passa do 2º ao 13º (índice 1 + 11 = 12).
+    card = cards[12]
     opening = card.split(">", 1)[0]
     assert f'href="/noticias/{SLUG}/"' in card
     assert index.count(f'href="/noticias/{SLUG}/"') == 1
@@ -208,14 +211,15 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     assert f'<time datetime="{UPDATED}" class="leading-none">28/10/2026 • 18h50</time>' in card
     # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
     assert all("news-card-compact" in item.split(">", 1)[0] for item in cards)
-    assert "cadastro-anvisa-govbr-transicao-sistemas" in cards[32]
+    # 01/11/2026: 32 + 11 - 5 reunidas à frente = 38 (test_noticia_cadastro_anvisa_govbr.py).
+    assert "cadastro-anvisa-govbr-transicao-sistemas" in cards[38]
 
     collection = next(block for block in _jsonld(index) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
-    assert len(items) == 85
-    assert items[1]["position"] == 2
-    assert items[1]["url"] == PUBLIC_URL
-    assert [item["position"] for item in items] == list(range(1, 86))
+    assert len(items) == 84
+    assert items[12]["position"] == 13
+    assert items[12]["url"] == PUBLIC_URL
+    assert [item["position"] for item in items] == list(range(1, 85))
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
     assert f"<loc>{PUBLIC_URL}</loc>\n    <lastmod>2026-10-28</lastmod>" in sitemap
     # 13/10/2026: a listagem reordenou produtos irregulares, SNCR e DCB. 20/10/2026: reordenou produtos irregulares e SISPA.
@@ -225,8 +229,9 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
         # 26/10/2026: a listagem reordenou os cards do MAPA 1.617 e do período eleitoral, atualizados no mesmo lote.
         # 28/10/2026: a listagem reordenou os cards do MAPA 1.617 e de produtos irregulares, atualizados no mesmo lote.
         # 31/10/2026: a listagem trocou o resumo do card do SNCR e o levou à 1ª posição.
+        # 01/11/2026: a listagem ganhou os cards das cinco matérias novas e trocou os das páginas reunidas.
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-10-31</lastmod>"
+        "    <lastmod>2026-11-01</lastmod>"
     ) in sitemap
 
 

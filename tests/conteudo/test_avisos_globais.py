@@ -23,13 +23,17 @@ CSS_PATHS = (
 CURRENT_STORAGE_VERSION = "2026-10-26-avisos-5"
 AFE_ROUTE = "/noticias/anvisa-edital-6-2026-afe-manipulacao-preparacoes-estereis/"
 CADASTRO_ROUTE = "/noticias/cadastro-anvisa-govbr-transicao-sistemas/"
-CNES_ROUTE = "/noticias/cnes-competencia-09-2026-prazo-transmissao/"
+# 01/11/2026 (reenvio ao AdSense): as páginas das competências 06, 08, 09 e 10/2026 foram reunidas em
+# "Prazos de transmissão do CNES em 2026". O aviso encerrado da 09/2026 e o ativo da 10/2026 apontam para ela e se
+# distinguem pelo texto.
+CNES_PRAZOS_ROUTE = "/noticias/cnes-prazos-transmissao-2026/"
+CNES_ROUTE = CNES_PRAZOS_ROUTE
 PF_ROUTE = "/noticias/produtos-quimicos-controlados-siproquim2-assinador-pf/"
 MAPA_ROUTE = "/noticias/mapa-portaria-1617-2026-aditivos-antimicrobianos-alimentacao-animal/"
 PRODUTOS_ROUTE = "/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
 INSTABILIDADE_ID = "instabilidade-anvisa-2026-10-19"
 ELEITORAL_ROUTE = "/noticias/farmacia-popular-adequacao-materiais-periodo-eleitoral/"
-CNES_10_ROUTE = "/noticias/cnes-competencia-10-2026-prazo-transmissao/"
+CNES_10_ROUTE = CNES_PRAZOS_ROUTE
 REPRESENTATIVE_ROUTES = (
     "/",
     "/farmacia-popular/",
@@ -430,6 +434,7 @@ def test_comunicado_editorial_organization_and_active_notice_content():
         article
         for article in active
         if any(node.tag == "a" and node.attrs.get("href") == CNES_ROUTE for node in article.descendants())
+        and "competência 09/2026" in article.text()
     ]
     cnes_historical = [
         article
@@ -768,7 +773,10 @@ def test_comunicado_useful_cta_computed_states(site_url, browser):
         page.goto(f"{site_url}/comunicado/", wait_until="networkidle")
         useful_cta = page.locator('a[href="/noticias/farmacia-popular-listas-ean-junho-2026/"]')
         # O CTA informativo de referência é o do CNES 10/2026 (o do MAPA saiu com o aviso, em 26/10/2026).
-        informative_cta = page.locator(f'#avisos-lista a.botao--secundario[href="{CNES_10_ROUTE}"]')
+        # Desde 01/11/2026 o aviso encerrado da 09/2026 leva ao mesmo destino; o seletor fica no aviso informativo.
+        informative_cta = page.locator(
+            f'#avisos-lista article[data-status="informativo"] a.botao--secundario[href="{CNES_10_ROUTE}"]'
+        )
 
         def computed_state(locator):
             return locator.evaluate(
@@ -859,7 +867,9 @@ def test_every_public_navbar_has_two_complete_notice_links():
         mobile_classes = mobile_links[0].attrs.get("class", "").split()
         assert "relative" in mobile_classes, relative_path
         assert "gap-2" in mobile_classes, relative_path
-    assert pages_with_navbar == 107  # as 106 páginas do sitemap + 404.html
+    # 106 páginas do sitemap + 404.html. 01/11/2026 (reenvio ao AdSense): +5 matérias novas; as seis reunidas seguem
+    # publicadas (noindex) com a navbar.
+    assert pages_with_navbar == 112
 
 
 def test_tablet_hide_regression_is_absent_and_navbar_rules_remain():

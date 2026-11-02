@@ -117,12 +117,14 @@ try:
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
         sncr, asc = "[data-news-category=sncr]", "[data-news-sort=asc]"
+        # 01/11/2026 (reenvio ao AdSense): SNCR passou de 2 para 3 cards (o guia "SNCR e SNGPC") e a listagem, de 85
+        # para 84 (85 + 5 matérias novas - 6 páginas reunidas).
         if mode == "empilhada":
             context, page, closing = open_page(browser, **TOUCH)
             if tab_to(page, sncr):
                 page.keyboard.press("Enter")
                 page.evaluate(SETTLE)
-                check("teclado: Enter em SNCR", page.evaluate(STATE, sncr), count="2 notícias encontradas", category="sncr")
+                check("teclado: Enter em SNCR", page.evaluate(STATE, sncr), count="3 notícias encontradas", category="sncr")
             closing()
             context.close()
 
@@ -142,7 +144,7 @@ try:
                 button.tap() if pointer == "toque" else button.click()
                 page.evaluate(SETTLE)
                 check(f"{gesture} em SNCR com a faixa no pé da janela", page.evaluate(STATE, sncr), before,
-                      count="2 notícias encontradas", category="sncr", focused=False)
+                      count="3 notícias encontradas", category="sncr", focused=False)
             else:
                 # Janela alta (tablet em retrato): a faixa não chega ao pé da janela e o 1º card já aparece.
                 output["cases"][f"{gesture} em SNCR com a faixa no pé da janela"] = {"antes": before, "depois": "não se aplica"}
@@ -154,7 +156,7 @@ try:
                 page.keyboard.press("Enter")
                 page.evaluate(SETTLE)
                 state = page.evaluate(STATE, asc)
-                check("teclado: Enter em A-Z Mais velha", state, count="85 notícias encontradas")
+                check("teclado: Enter em A-Z Mais velha", state, count="84 notícias encontradas")
             closing()
             context.close()
         else:
@@ -271,7 +273,8 @@ def test_listing_without_javascript_keeps_search_and_strip(base_url):
     phone, desktop = result[390], result[1440]
     for width, state in result.items():
         assert state["search"] and state["strip"] and state["todos"] and state["sort"], (width, state)
-        assert state["cards"] == 85, (width, state["cards"])
+        # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas.
+        assert state["cards"] == 84, (width, state["cards"])
         assert state["overflowX"] <= 0, (width, state["overflowX"])
     assert phone["filtersBeforeList"] and not phone["contact"], phone
     assert desktop["contact"] and not desktop["filtersBeforeList"], desktop
