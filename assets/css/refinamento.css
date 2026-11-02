@@ -1466,3 +1466,71 @@ main > .home-manuals-section + section .grid > div:first-child > p:first-child::
 .home-services-section .home-manuals-eyebrow {
   margin-bottom: 0.75rem;
 }
+
+/* ---------- R24. Sobre: cabeçalhos com selo e painel de números ----------
+   - As três seções ganham o cabeçalho da home: selo com traços, título e
+     traço azul embaixo. Visão, missão e valores passa a ter título
+     visível (antes só para leitor de tela); "Nossa história" fica com o
+     cabeçalho centralizado e o texto continua alinhado à esquerda.
+   - Números: o painel branco vira uma faixa azul-marinho em degradê, com
+     números brancos e rótulos em cinza-claro (7:1 no trecho mais claro). */
+.about-section-header {
+  margin-bottom: 1.5rem;
+}
+
+.about-section-header .home-manuals-eyebrow,
+.about-audience-section .home-manuals-eyebrow {
+  margin-bottom: 0.75rem;
+}
+
+.about-section-header h2 {
+  margin-bottom: 0 !important;
+}
+
+.about-principles-section h2::after,
+.about-history-section .about-section-header h2::after {
+  content: "";
+  display: block;
+  width: 2.5rem;
+  height: 3px;
+  margin: 0.75rem auto 0;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #1565c0, #29b6f6);
+}
+
+@media (min-width: 640px) {
+  .about-section-header {
+    margin-bottom: 2rem;
+  }
+}
+
+/* Até 639 px os cabeçalhos centralizados recuam à direita a faixa da
+   coluna dos botões flutuantes, como o de "Quem atendemos" (sobre.css). */
+@media (max-width: 639px) {
+  .about-section-header {
+    padding-right: var(--sobre-reserva);
+  }
+
+  .about-section-header h2 {
+    padding-right: 0 !important;
+  }
+}
+
+.about-history-section .grid.grid-cols-2 {
+  border: 0;
+  background: linear-gradient(118deg, #10263f 0%, #1a3a5c 55%, #173f6c 100%);
+  box-shadow: 0 18px 36px -22px rgba(6, 16, 30, 0.6);
+}
+
+.about-history-section .grid.grid-cols-2 > div + div,
+.about-history-section .grid.grid-cols-2 > div:nth-child(n + 3) {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.about-history-section .grid > div > p:first-child {
+  color: #fff;
+}
+
+.about-history-section .grid > div > p:last-child {
+  color: #cbd5e1;
+}
