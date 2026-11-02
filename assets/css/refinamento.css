@@ -1330,7 +1330,7 @@ main > .home-manuals-section + section .home-process-title::after {
 
 /* ---------- R21. Linha do rodapé em degradê ----------
    No lugar do fio de 3 px, uma linha de 4 px em degradê do azul da marca ao
-   azul-claro, que some nas pontas, com um brilho suave embaixo. */
+   azul-claro, que some nas pontas (sem brilho, a pedido do Jr). */
 footer {
   position: relative;
   border-top: 0;
@@ -1350,7 +1350,6 @@ footer::before {
     #29b6f6 50%,
     #1565c0 82%,
     rgba(21, 101, 192, 0) 100%);
-  box-shadow: 0 0 18px 1px rgba(41, 182, 246, 0.45);
   pointer-events: none;
 }
 
