@@ -2045,3 +2045,281 @@ body:has(.services-hero-section) main > .institutional-cta-section:last-of-type 
     padding-inline: 1rem;
   }
 }
+
+/* ---------- R29. Equipe no padrão das outras páginas (02/11/2026) ----------
+   - Cabeçalhos com selo e traço azul; espaços no ritmo de R18: seção
+     36/40/48 px, cabeçalho → conteúdo 24/32 px, faixa final 40/44/56 px e
+     topo azul 40/48/64 px.
+   - Cards das pessoas e da organização com o acabamento da Sobre (R13);
+     iniciais e ícones em azul cheio com o desenho branco.
+   - As frentes de cada pessoa viram etiquetas (centralizadas até 639 px,
+     como o nome; à esquerda acima).
+   - Frentes da equipe: atalhos em pílula (44 px de altura) para o serviço
+     em /servicos/. Fundo azul-claro, sem borda: não tem a cara de nenhum
+     dos quatro tipos de botão (test_botoes_padrao).
+   A reserva da coluna dos botões flutuantes continua em
+   pages/equipe-servicos.css; a lista de atalhos segue a mesma conta dos
+   cabeçalhos (--equipe-reserva). */
+.institutional-hero-section.team-hero-section {
+  padding-top: 2.5rem !important;
+  padding-bottom: 2.5rem !important;
+}
+
+main > section:is(.team-overview-section, .team-work-section, .team-fronts-section) {
+  padding-top: 2.25rem !important;
+  padding-bottom: 2.25rem !important;
+}
+
+main > section:is(.team-overview-section, .team-work-section, .team-fronts-section) > div > div:first-child {
+  margin-bottom: 1.5rem !important;
+}
+
+body:has(.team-hero-section) main > .institutional-cta-section:last-of-type {
+  padding-top: 2.5rem !important;
+  padding-bottom: 2.5rem !important;
+}
+
+main > section:is(.team-overview-section, .team-work-section, .team-fronts-section) .home-manuals-eyebrow {
+  margin-bottom: 0.75rem;
+}
+
+main > section:is(.team-overview-section, .team-work-section, .team-fronts-section) > div > div:first-child > h2::after {
+  content: "";
+  display: block;
+  width: 2.5rem;
+  height: 3px;
+  margin: 0.75rem auto 0;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #1565c0, #29b6f6);
+}
+
+.team-person-card,
+.team-work-grid > article {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #e2e8f0 !important;
+  background-color: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -16px rgba(15, 23, 42, 0.18);
+  transition: all 0.25s ease;
+}
+
+.team-person-card::before,
+.team-work-grid > article::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #1a3a5c, #1565c0 55%, #29b6f6);
+}
+
+@media (hover: hover) {
+  .team-person-card:hover,
+  .team-work-grid > article:hover {
+    border-color: rgba(21, 101, 192, 0.3) !important;
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.05), 0 18px 36px -18px rgba(21, 101, 192, 0.35);
+    transform: translateY(-2px);
+  }
+}
+
+.team-person-card > div:first-child > div:first-child,
+.team-work-grid > article > div:first-child > div:first-child {
+  background: linear-gradient(145deg, #1565c0, #1a3a5c);
+  box-shadow: 0 8px 18px -8px rgba(21, 101, 192, 0.6);
+  color: #fff;
+}
+
+.team-person-card > div:first-child h3 {
+  font-size: 1.0625rem;
+}
+
+/* Etiquetas das frentes de cada pessoa. */
+.team-person-card .team-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 0.875rem 0 0;
+  border-top: 1px solid #eef2f7;
+  list-style: none;
+}
+
+.team-person-card .team-card-tags > li {
+  margin: 0 !important;
+  padding: 0.3125rem 0.75rem;
+  border-radius: 999px;
+  background-color: #eef4fb;
+  color: #1e3a5f;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+}
+
+/* Até 639 px a reserva da coluna dos botões flutuantes deixa de ser padding
+   à direita (pages/equipe-servicos.css) e vira margem do card, como em
+   Serviços e na "Nossa história" da Sobre: o padding volta a 1rem dos dois
+   lados e o nome, o ícone e as etiquetas ficam no centro do card. A margem
+   é a faixa menos o que já existe até a borda, a borda e o padding. */
+@media (max-width: 639px) {
+  .team-person-card,
+  .team-work-grid > article {
+    margin-right: max(0px, calc(var(--equipe-faixa) - var(--equipe-folga) - 1px - 1rem));
+    padding-right: 1rem !important;
+  }
+
+  .team-person-card .team-card-tags {
+    justify-content: center;
+  }
+
+  .team-person-card .team-card-tags > li {
+    font-size: 0.78125rem;
+  }
+}
+
+/* Organização do trabalho: ícone de 48 px e o rótulo da lista em caixa alta. */
+@media (min-width: 640px) {
+  .team-work-grid > article > div:first-child > div:first-child {
+    width: 3rem !important;
+    height: 3rem !important;
+    border-radius: 0.75rem;
+  }
+
+  .team-work-grid > article > div:first-child > div:first-child svg {
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+  }
+}
+
+.team-work-grid > article h4 {
+  color: #1565c0;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.12em;
+  line-height: 1rem !important;
+  text-transform: uppercase;
+}
+
+/* Atalhos das frentes. */
+.team-fronts-lista {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.625rem 0.75rem;
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.team-fronts-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.875rem 0.5rem 1.125rem;
+  border-radius: 999px;
+  background-color: #e8f1fb;
+  color: #1a3a5c;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.team-fronts-link > svg {
+  flex: 0 0 auto;
+  width: 1rem;
+  height: 1rem;
+  color: #1565c0;
+  transition: transform 0.2s ease;
+}
+
+@media (hover: hover) {
+  .team-fronts-link:hover {
+    background-color: #d3e5f8;
+    color: #0f2a47;
+    transform: translateY(-1px);
+  }
+
+  .team-fronts-link:hover > svg {
+    transform: translateX(2px);
+  }
+}
+
+.team-fronts-link:focus-visible {
+  outline: 2px solid #1565c0;
+  outline-offset: 2px;
+}
+
+@media (max-width: 639px) {
+  .team-fronts-lista {
+    padding-right: var(--equipe-reserva);
+  }
+
+  .team-fronts-link {
+    font-size: 0.875rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .team-fronts-lista {
+    width: calc(100% - 2 * var(--equipe-reserva));
+  }
+
+  .institutional-hero-section.team-hero-section {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  main > section:is(.team-overview-section, .team-work-section, .team-fronts-section) {
+    padding-top: 2.5rem !important;
+    padding-bottom: 2.5rem !important;
+  }
+
+  main > section:is(.team-overview-section, .team-work-section, .team-fronts-section) > div > div:first-child {
+    margin-bottom: 2rem !important;
+  }
+
+  body:has(.team-hero-section) main > .institutional-cta-section:last-of-type {
+    padding-top: 2.75rem !important;
+    padding-bottom: 2.75rem !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  main > section:is(.team-overview-section, .team-work-section, .team-fronts-section) {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  body:has(.team-hero-section) main > .institutional-cta-section:last-of-type {
+    padding-top: 3.5rem !important;
+    padding-bottom: 3.5rem !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .institutional-hero-section.team-hero-section {
+    padding-top: 4rem !important;
+    padding-bottom: 4rem !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .team-person-card,
+  .team-work-grid > article,
+  .team-fronts-link,
+  .team-fronts-link > svg {
+    transition: none;
+  }
+
+  .team-person-card:hover,
+  .team-work-grid > article:hover,
+  .team-fronts-link:hover,
+  .team-fronts-link:hover > svg {
+    transform: none;
+  }
+}
