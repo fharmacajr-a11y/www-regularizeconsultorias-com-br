@@ -1627,3 +1627,141 @@ body:has(.about-principles-section) {
     padding-bottom: 3rem !important;
   }
 }
+
+/* ---------- R27. Serviços no padrão da home e da Sobre ----------
+   - Cards dos serviços com o acabamento da Sobre (R13): borda, sombra
+     curta, fio azul em degradê no alto, ícone de 48 px em azul cheio com
+     o desenho branco; com mouse, o card sobe 2 px.
+   - Títulos dos cards em 1,125rem (como os da Sobre); antes 1,25rem.
+   - Cabeçalho "O que oferecemos" com selo e traço azul, como os outros.
+   - Espaços no ritmo de R18: seção 36/40/48 px, cabeçalho → cards 24/32
+     px, faixa final 40/44/56 px e topo azul 40/48/64 px. */
+main .services-grid > article {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  background-color: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -16px rgba(15, 23, 42, 0.18);
+  transition: all 0.25s ease;
+}
+
+main .services-grid > article::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #1a3a5c, #1565c0 55%, #29b6f6);
+}
+
+@media (hover: hover) {
+  main .services-grid > article:hover {
+    border-color: rgba(21, 101, 192, 0.3);
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.05), 0 18px 36px -18px rgba(21, 101, 192, 0.35);
+    transform: translateY(-2px);
+  }
+}
+
+main .services-grid > article > div:first-child {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(145deg, #1565c0, #1a3a5c);
+  box-shadow: 0 8px 18px -8px rgba(21, 101, 192, 0.6);
+}
+
+main .services-grid > article > div:first-child svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #fff;
+}
+
+main .services-grid h3 {
+  font-size: 1.125rem;
+  line-height: 1.4;
+}
+
+.services-list-section .home-manuals-eyebrow {
+  margin-bottom: 0.75rem;
+}
+
+.services-list-section > div > div:first-child > h2::after {
+  content: "";
+  display: block;
+  width: 2.5rem;
+  height: 3px;
+  margin: 0.75rem auto 0;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #1565c0, #29b6f6);
+}
+
+main > section.services-list-section {
+  padding-top: 2.25rem !important;
+  padding-bottom: 2.25rem !important;
+}
+
+.services-list-section > div > div:first-child {
+  margin-bottom: 1.5rem !important;
+}
+
+body:has(.services-hero-section) main > .institutional-cta-section:last-of-type {
+  padding-top: 2.5rem !important;
+  padding-bottom: 2.5rem !important;
+}
+
+.institutional-hero-section.services-hero-section {
+  padding-top: 2.5rem !important;
+  padding-bottom: 2.5rem !important;
+}
+
+@media (min-width: 640px) {
+  main > section.services-list-section {
+    padding-top: 2.5rem !important;
+    padding-bottom: 2.5rem !important;
+  }
+
+  .services-list-section > div > div:first-child {
+    margin-bottom: 2rem !important;
+  }
+
+  body:has(.services-hero-section) main > .institutional-cta-section:last-of-type {
+    padding-top: 2.75rem !important;
+    padding-bottom: 2.75rem !important;
+  }
+
+  .institutional-hero-section.services-hero-section {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  main > section.services-list-section {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  body:has(.services-hero-section) main > .institutional-cta-section:last-of-type {
+    padding-top: 3.5rem !important;
+    padding-bottom: 3.5rem !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .institutional-hero-section.services-hero-section {
+    padding-top: 4rem !important;
+    padding-bottom: 4rem !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main .services-grid > article {
+    transition: none;
+  }
+
+  main .services-grid > article:hover {
+    transform: none;
+  }
+}
