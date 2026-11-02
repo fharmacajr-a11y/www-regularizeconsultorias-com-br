@@ -1608,3 +1608,22 @@ body:has(.about-principles-section) {
     padding-inline: var(--sobre-margem-historia);
   }
 }
+
+/* ---------- R26. Topo azul: mesmo espaço na home e na Sobre ----------
+   Revisão geral de 02/11/2026: o herói da home tinha 32 px em cima e
+   embaixo no celular e o da Sobre, 42 px no tablet. Os dois passam a 40 px
+   no celular, 48 px de 640 a 1279 px e 64 px a partir de 1280 px. */
+@media (max-width: 639px) {
+  .home-hero-section {
+    padding-top: 2.5rem !important;
+    padding-bottom: 2.5rem !important;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1279px) {
+  .home-hero-section,
+  .institutional-hero-section.about-hero-section {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+}
