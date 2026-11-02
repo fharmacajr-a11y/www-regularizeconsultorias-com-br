@@ -314,7 +314,9 @@ def test_news_index_itemlist_ordering():
     dispositivos_position = urls.index(DISPOSITIVOS_IRREGULARES_URL)
     assert dispositivos_position == 61
     assert urls[dispositivos_position - 1] == REVISAO_PROPAGANDA_URL
-    assert urls[dispositivos_position + 1] == PARAMOL_URL
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem; a Semaglutida
+    # passa a ser a vizinha de baixo dos dispositivos irregulares.
+    assert urls[dispositivos_position + 1] == SEMAGLUTIDA_URL
     dcb_position = urls.index(DCB_IN462_URL)
     assert dcb_position == 17
     assert urls[dcb_position - 1] == FP_LEMBRETES_WHATSAPP_URL
@@ -323,10 +325,9 @@ def test_news_index_itemlist_ordering():
     # 01/11/2026); depois da DCB vem o lote de 09/10/2026.
     assert urls[14] == eleitoral
     assert urls[dcb_position + 1] == f"https://www.regularizeconsultorias.com.br/noticias/{lote[0]}/"
-    paramol_position = urls.index(PARAMOL_URL)
-    assert paramol_position == 62
-    assert urls[paramol_position - 1] == DISPOSITIVOS_IRREGULARES_URL
-    assert urls[paramol_position + 1] == SEMAGLUTIDA_URL
+    # Até 01/11/2026 o Paramol ficava na 63ª posição, entre os dispositivos irregulares e a Semaglutida.
+    assert PARAMOL_URL not in urls
+    assert urls.index(SEMAGLUTIDA_URL) == 62
     supervisao_position = urls.index(SUPERVISAO_CONTEUDO_URL)
     # 12/10/2026 (R2): o card do CNES 06/2026 passou a mostrar a atualização declarada na matéria (18/07/2026, só o
     # dia) e entrou entre a Retatrutida (24/07/2026) e a Supervisão de conteúdo (17/07/2026). Desde 01/11/2026 ele está

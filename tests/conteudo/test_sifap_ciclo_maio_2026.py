@@ -201,7 +201,8 @@ def test_titulos_carimbo_ordem_e_contagens():
 
     cards = re.findall(r"<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>", index, flags=re.S)
     # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas.
-    assert len(cards) == 84
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert len(cards) == 83
     assert "prazo-sifap-terminou" not in index and "sifap-regularizacao-cadastral" not in index
     # O card da página reunida é o 5º: as quatro matérias novas de 01/11/2026 com carimbo posterior vêm antes.
     card = cards[4]
@@ -214,8 +215,9 @@ def test_titulos_carimbo_ordem_e_contagens():
     assert f'data-title="{TITLE_NOVA}"' in card and 'data-category="farmacia-popular"' in card
 
     items = re.findall(r'\{"@type":"ListItem","position":(\d+),"url":"([^"]+)"\}', index)
-    assert len(items) == 84
-    assert [int(position) for position, _ in items] == list(range(1, 85))
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert len(items) == 83
+    assert [int(position) for position, _ in items] == list(range(1, 84))
     assert items[4][1] == NOVA_URL
     assert PRAZO_URL not in index and REG_URL not in index
 
@@ -379,7 +381,8 @@ def test_suspensao_registra_a_correcao_material_com_datas_e_ordem_coerentes():
 
     cards = _cards(index)
     # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas.
-    assert len(cards) == 84
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert len(cards) == 83
     # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
@@ -399,7 +402,7 @@ def test_suspensao_registra_a_correcao_material_com_datas_e_ordem_coerentes():
     assert "news-card-compact" in cards[36].split(">", 1)[0]
     assert cards == sorted(cards, key=_card_moment, reverse=True)
     items = re.findall(r'\{"@type":"ListItem","position":(\d+),"url":"([^"]+)"\}', index)
-    assert [int(position) for position, _ in items] == list(range(1, 85))
+    assert [int(position) for position, _ in items] == list(range(1, 84))
     assert [url for _, url in items] == _card_hrefs(cards)
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.

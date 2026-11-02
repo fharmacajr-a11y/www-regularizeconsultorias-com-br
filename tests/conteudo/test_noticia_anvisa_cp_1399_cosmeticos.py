@@ -48,15 +48,18 @@ def test_listing_places_the_updated_cosmetics_card_eighth():
     # ampliadas que já ficavam à frente: 36 + 11 - 5 - 0 = 42.
     card = cards[42]
 
-    assert len(cards) == 84
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert len(cards) == 83
     assert "/noticias/anvisa-atualiza-listas-substancias-cosmeticos/" in card
     assert f'data-updated="{UPDATED}"' in card
     assert "está encerrada" in card
     assert "recebe contribuições" not in card
     assert "permanece aberta" not in card
-    assert '>Todos</span><span class="text-xs text-slate-400">84<' in html
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert '>Todos</span><span class="text-xs text-slate-400">83<' in html
     # 01/11/2026: +2 guias da ANVISA (cadastros da drogaria; recolhimentos, suspensões e alertas).
-    assert '>ANVISA</span><span class="text-xs text-slate-400">56<' in html
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert '>ANVISA</span><span class="text-xs text-slate-400">55<' in html
     assert (
         '"position":43,"url":"https://www.regularizeconsultorias.com.br'
         '/noticias/anvisa-atualiza-listas-substancias-cosmeticos/"'

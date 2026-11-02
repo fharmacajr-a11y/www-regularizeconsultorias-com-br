@@ -177,11 +177,12 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     # O aviso do Comunicado de 06/10/2026 (marco de 23/10) é o único que leva à matéria.
     assert comunicado.count(f'href="/noticias/{SLUG}/"') == 1
     # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas; +2 guias da ANVISA.
-    assert len(cards) == 84
-    assert index.count("data-news-card") == 84
-    assert "84 notícias encontradas" in index
-    assert '>Todos</span><span class="text-xs text-slate-400">84<' in index
-    assert '>ANVISA</span><span class="text-xs text-slate-400">56<' in index
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert len(cards) == 83
+    assert index.count("data-news-card") == 83
+    assert "83 notícias encontradas" in index
+    assert '>Todos</span><span class="text-xs text-slate-400">83<' in index
+    assert '>ANVISA</span><span class="text-xs text-slate-400">55<' in index
     assert '>M.A.P.A</span><span class="text-xs text-slate-400">3<' in index
     assert len(re.findall(r'\bdata-category="mapa"', index)) == 3
 
@@ -216,10 +217,11 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
 
     collection = next(block for block in _jsonld(index) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
-    assert len(items) == 84
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert len(items) == 83
     assert items[12]["position"] == 13
     assert items[12]["url"] == PUBLIC_URL
-    assert [item["position"] for item in items] == list(range(1, 85))
+    assert [item["position"] for item in items] == list(range(1, 84))
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
     assert f"<loc>{PUBLIC_URL}</loc>\n    <lastmod>2026-10-28</lastmod>" in sitemap
     # 13/10/2026: a listagem reordenou produtos irregulares, SNCR e DCB. 20/10/2026: reordenou produtos irregulares e SISPA.

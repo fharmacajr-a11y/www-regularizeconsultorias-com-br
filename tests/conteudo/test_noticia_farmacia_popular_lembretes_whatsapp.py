@@ -188,7 +188,8 @@ def test_news_index_card_itemlist_and_counters():
     own = [card for card in cards if f'href="{ROUTE}"' in card]
 
     # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas.
-    assert len(cards) == 84
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert len(cards) == 83
     assert html.count(f'href="{ROUTE}"') == 1
     assert len(own) == 1
     card = own[0]
@@ -215,14 +216,16 @@ def test_news_index_card_itemlist_and_counters():
     # página reunida nem ampliada ficava à frente deste: 5 + 11 = 16.
     assert cards.index(card) == 16
     items = re.findall(r'\{"@type":"ListItem","position":(\d+),"url":"([^"]+)"\}', html)
-    assert [int(p) for p, _ in items] == list(range(1, 85))
+    assert [int(p) for p, _ in items] == list(range(1, 84))
     assert items[16][1] == PUBLIC_URL
     assert html.count(f'"url":"{PUBLIC_URL}"') == 1
-    assert '<span>Todos</span><span class="text-xs text-slate-400">84</span>' in html
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert '<span>Todos</span><span class="text-xs text-slate-400">83</span>' in html
     # 01/11/2026: as duas páginas do SIFAP de maio viraram uma (11 - 2 + 1 = 10).
     assert '<span>FARMÁCIA POPULAR</span><span class="text-xs text-slate-400">10</span>' in html
     assert len([c for c in cards if 'data-category="farmacia-popular"' in c.split(">", 1)[0]]) == 10
-    assert "84 notícias encontradas" in html
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert "83 notícias encontradas" in html
 
 
 def test_comunicado_informative_notice_is_active_first_and_internal():
@@ -260,7 +263,8 @@ def test_sitemap_lists_the_new_url_once_with_current_lastmods():
     sitemap = SITEMAP_PATH.read_text(encoding="utf-8")
 
     # 01/11/2026 (reenvio ao AdSense): +5 matérias novas, -6 páginas reunidas (noindex, fora do sitemap).
-    assert sitemap.count("<loc>") == 105
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert sitemap.count("<loc>") == 104
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
     assert re.search(rf"<loc>{re.escape(PUBLIC_URL)}</loc>\s*<lastmod>2026-10-17</lastmod>", sitemap)
     # 20/10/2026: a listagem reordenou dois cards. 21/10/2026: reordenou o card de produtos irregulares.

@@ -786,7 +786,8 @@ def test_header_routes_match_the_served_sitemap():
     assert "/404.html" in routes, "404.html sem o menu do site"
     routes.discard("/404.html")
     noindex = _noindex_routes()
-    assert noindex == REUNIDAS
+    # 02/11/2026 (decisão do Jr): além das seis reunidas, a notícia do Paramol (lote 114053) ganhou noindex.
+    assert noindex == REUNIDAS | {"/noticias/anvisa-suspende-recolhe-lote-114053-paramol-750-mg/"}
     assert noindex <= routes, f"páginas reunidas sem menu: {sorted(noindex - routes)}"
     expected = _sitemap_routes()
     assert not noindex & expected, f"páginas com noindex no sitemap: {sorted(noindex & expected)}"

@@ -112,8 +112,9 @@ def test_listing_sitemap_and_cards_follow_the_review_timestamps():
     assert "ausência de acesso direto" not in index
     # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas; ANVISA +2 guias; CNES 6 - 4 + 1
     # (as competências 06, 08, 09 e 10/2026 viraram uma página); SNCR +1 guia (SNCR e SNGPC).
-    assert '>Todos</span><span class="text-xs text-slate-400">84<' in index
-    assert '>ANVISA</span><span class="text-xs text-slate-400">56<' in index
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert '>Todos</span><span class="text-xs text-slate-400">83<' in index
+    assert '>ANVISA</span><span class="text-xs text-slate-400">55<' in index
     assert '>CNES</span><span class="text-xs text-slate-400">3<' in index
     assert '>SNCR</span><span class="text-xs text-slate-400">3<' in index
 

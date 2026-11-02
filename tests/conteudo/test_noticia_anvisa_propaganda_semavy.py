@@ -256,7 +256,8 @@ def test_index_card_is_first_informativo_and_counts_are_updated():
     html = _index_html()
     cards = _cards(html)
     assert html.count(f'href="/noticias/{SLUG}/"') == 1
-    assert len(cards) == 84
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert len(cards) == 83
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
     # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
@@ -272,10 +273,12 @@ def test_index_card_is_first_informativo_and_counts_are_updated():
     assert "news-orange-badge" in card and ">Informativo</span>" in card
     assert "Ler notícia" in card
     assert "Atualização" not in card and "Ler atualização" not in card
-    assert "84 notícias encontradas" in html
-    assert '>Todos</span><span class="text-xs text-slate-400">84<' in html
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert "83 notícias encontradas" in html
+    assert '>Todos</span><span class="text-xs text-slate-400">83<' in html
     # 01/11/2026: +2 guias da ANVISA.
-    assert '>ANVISA</span><span class="text-xs text-slate-400">56<' in html
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert '>ANVISA</span><span class="text-xs text-slate-400">55<' in html
 
 
 def test_index_card_is_searchable_by_product_substance_and_resolution():
@@ -296,7 +299,8 @@ def test_index_uses_the_single_card_model_after_new_entry():
         re.search(r'<article class="([^"]*)"', card).group(1)
         for card in _cards(_index_html())
     ]
-    assert len(classes) == 84
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert len(classes) == 83
     assert all("news-card-compact" in value for value in classes)
 
 
@@ -311,7 +315,8 @@ def test_itemlist_keeps_the_semavy_url_once():
     assert urls[SEMAVY_INDEX] == PUBLIC_URL
     assert urls.count(PUBLIC_URL) == 1
     assert [item["position"] for item in items] == list(range(1, len(items) + 1))
-    assert len(items) == 84
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert len(items) == 83
 
 
 def test_sitemap_contains_new_url_with_editorial_lastmod():
