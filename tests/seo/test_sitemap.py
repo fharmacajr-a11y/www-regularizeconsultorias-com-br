@@ -46,6 +46,11 @@ def test_sitemap_is_valid_xml_with_unique_urls():
     for path in public_html_paths():
         parser = _MetadataParser()
         parser.feed(path.read_text(encoding="utf-8"))
+        if path.relative_to(ROOT).as_posix() == "404.html":
+            # Página de erro: noindex, sem canonical e fora do sitemap.
+            assert parser.canonicals == [], "404.html não deve ter canonical"
+            assert any("noindex" in content.casefold() for content in parser.robots), "404.html sem noindex"
+            continue
         assert len(parser.canonicals) == 1, path.relative_to(ROOT)
         public_canonicals.add(parser.canonicals[0])
 
