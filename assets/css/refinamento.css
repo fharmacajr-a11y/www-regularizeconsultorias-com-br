@@ -2154,6 +2154,80 @@ main > section:is(.team-overview-section, .team-work-section, .team-fronts-secti
   line-height: 1.25rem;
 }
 
+/* Três pessoas (02/11/2026: a equipe passou de quatro para três e as frentes
+   de quem saiu foram para o Júnior Costa). O card dele, com mais frentes,
+   ocupa a largura toda a partir de 768 px; os outros dois ficam lado a lado,
+   com a mesma altura. Abaixo disso, um card embaixo do outro. */
+.team-people-layout {
+  align-items: stretch;
+}
+
+@media (min-width: 768px) {
+  .team-person-card--amplo {
+    grid-column: 1 / -1;
+  }
+}
+
+/* As 16 frentes do card largo vêm em quatro grupos, cada um com um rótulo em
+   caixa alta (como "Principais atividades" na organização do trabalho). O
+   traço de cima passa das etiquetas para o conjunto. A partir de 768 px o
+   rótulo fica à esquerda, na altura da primeira fileira de etiquetas. */
+.team-card-grupos {
+  display: grid;
+  gap: 0.875rem;
+  padding-top: 0.875rem;
+  border-top: 1px solid #eef2f7;
+}
+
+.team-person-card .team-card-grupos .team-card-tags {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.team-card-grupo__titulo {
+  margin: 0 0 0.5rem;
+  color: #1565c0;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1rem;
+  text-transform: uppercase;
+}
+
+@media (max-width: 639px) {
+  .team-card-grupo__titulo {
+    text-align: center;
+  }
+
+  /* A função quebra em linhas parecidas, sem uma palavra sozinha embaixo. */
+  .team-person-card > div:first-child p {
+    text-wrap: balance;
+  }
+}
+
+@media (min-width: 768px) {
+  .team-card-grupos {
+    gap: 0.75rem;
+  }
+
+  .team-card-grupo {
+    display: grid;
+    grid-template-columns: 11.5rem minmax(0, 1fr);
+    column-gap: 1rem;
+    align-items: start;
+  }
+
+  .team-card-grupo + .team-card-grupo {
+    padding-top: 0.75rem;
+    border-top: 1px dashed #e2e8f0;
+  }
+
+  .team-card-grupo__titulo {
+    margin: 0;
+    padding-top: 0.4375rem;
+  }
+}
+
 /* Até 639 px a reserva da coluna dos botões flutuantes deixa de ser padding
    à direita (pages/equipe-servicos.css) e vira margem do card, como em
    Serviços e na "Nossa história" da Sobre: o padding volta a 1rem dos dois
