@@ -2330,10 +2330,14 @@ main > section:is(.team-overview-section, .team-work-section, .team-fronts-secti
    test_botoes_padrao exige o mesmo estilo nos botões do mesmo tipo: o azul
    chapado vira o degradê dos ícones dos cards (#1565c0 → #1a3a5c; branco
    com 5,6:1 no trecho mais claro) e a seta para a direita fica num círculo
-   branco translúcido, como a do secundário. Com mouse, o degradê clareia na
-   ponta (#1e6fd0, branco com 4,9:1) e a seta anda (R11). */
+   branco translúcido, como a do secundário. 2ª versão (o Jr achou a 1ª,
+   na diagonal, escura demais): o degradê vai de cima para baixo, na altura
+   do botão (44 px, quase a do ícone de 40 px), e o botão fica com a mesma
+   cor do ícone em vez de escurecer até o azul-marinho na ponta direita.
+   Com mouse, o degradê clareia (#1e6fd0 → #1565c0, branco com 4,9:1) e a
+   seta anda (R11). */
 .botao.botao--principal {
-  background-image: linear-gradient(135deg, #1565c0 0%, #1a3a5c 100%);
+  background-image: linear-gradient(180deg, #1565c0 0%, #1a3a5c 100%);
   /* O degradê vai até a borda transparente (sem isso, a borda de 1px mostra
      o azul chapado em volta do botão). */
   background-origin: border-box;
@@ -2341,7 +2345,7 @@ main > section:is(.team-overview-section, .team-work-section, .team-fronts-secti
 
 @media (hover: hover) {
   .botao.botao--principal:hover {
-    background-image: linear-gradient(135deg, #1e6fd0 0%, #1565c0 50%, #1a3a5c 100%);
+    background-image: linear-gradient(180deg, #1e6fd0 0%, #1565c0 100%);
   }
 }
 

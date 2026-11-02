@@ -2,7 +2,7 @@ import json
 import re
 from datetime import datetime
 from pathlib import Path
-from urllib.parse import parse_qs, unquote, urlsplit
+from urllib.parse import parse_qs, unquote, urlsplit, quote
 
 
 ROOT = Path(__file__).parents[2]
@@ -365,7 +365,12 @@ def test_servicos_sncr_card_describes_the_access_service():
         assert term.casefold() in text.casefold()
 
     assert "Solicitar análise para o SNCR" not in card
-    assert "/whatsapp/" not in card
+    # Desde 02/11/2026 (pedido do Jr) o SNCR tem o mesmo botão dos outros serviços da
+    # lista, com a mensagem padrão; a mensagem antiga, tirada em 23/09, não volta.
+    assert re.findall(r'href="/whatsapp/\?text=([^"]+)"', card) == [
+        quote("Olá! Gostaria de falar sobre o serviço: Implantação e habilitação de acesso ao SNCR.", safe="")
+    ]
+    assert "Falar sobre este serviço" in text
     assert WHATSAPP_SERVICO_TEXT not in unquote(card)
     assert "e-CNPJ" not in card
     assert "Implanta\\u00e7\\u00e3o e habilita\\u00e7\\u00e3o de acesso ao SNCR" in html
