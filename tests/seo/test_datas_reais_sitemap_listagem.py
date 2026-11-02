@@ -89,7 +89,7 @@ def test_lastmod_de_cada_materia_e_o_dia_da_ultima_atualizacao_declarada():
         "sifap-regularizacao-cadastral-farmacias-notificadas-13-maio",
         "anvisa-suspende-recolhe-lote-114053-paramol-750-mg",
     ])
-    # 01/11/2026: a matéria ganhou a seção "Antes de enviar ou renovar" (atualização declarada às 19h00); até 31/10/2026
+    # 01/11/2026: a matéria ganhou a seção "Antes de enviar ou renovar" (atualização declarada às 23h01); até 31/10/2026
     # o lastmod era 2026-04-28, o da publicação.
     assert lastmods[f"{BASE}/noticias/{CADASTRO}/"] == "2026-11-01"
 

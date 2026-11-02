@@ -15,7 +15,8 @@ Regras do lote, pedidas no parecer:
   AdSense e fora do sitemap e da listagem. Não há página nova que a substitua, então não leva o aviso de página reunida;
   nenhuma outra página aponta para ela, e o guia de recolhimentos cita o caso no texto, sem link.
 
-Os carimbos de 01/11/2026 são os da preparação do lote; na publicação, se forem trocados, mudam aqui junto.
+Os carimbos (01/11/2026, das 23h00 às 23h10, um minuto entre cada um, na ordem da listagem) são os da versão final do
+lote, enviada para publicação. Até a revisão de 02/11/2026 eram provisórios (18h55 a 20h00).
 """
 import json
 import re
@@ -43,27 +44,27 @@ REUNIDAS = {
 }
 # slug: (título, tipo do card, categoria, carimbo de publicação, prioridade no sitemap)
 NOVAS = {
-    CNES: ("Prazos de transmissão do CNES em 2026", "atualizacao", "cnes", "2026-11-01T20:00:00-03:00", "0.8"),
+    CNES: ("Prazos de transmissão do CNES em 2026", "atualizacao", "cnes", "2026-11-01T23:10:00-03:00", "0.8"),
     "cadastros-autorizacoes-drogaria-afe-licenca-sanitaria-crf-cnes": (
         "Cadastros e autorizações de uma drogaria: AFE, licença sanitária, CRF e CNES", "orientacao", "anvisa",
-        "2026-11-01T19:50:00-03:00", "0.7"),
+        "2026-11-01T23:09:00-03:00", "0.7"),
     "sncr-e-sngpc-o-que-cada-sistema-controla-na-farmacia": (
         "SNCR e SNGPC: o que cada sistema controla na farmácia", "orientacao", "sncr",
-        "2026-11-01T19:45:00-03:00", "0.7"),
+        "2026-11-01T23:08:00-03:00", "0.7"),
     "recolhimentos-suspensoes-alertas-anvisa-como-a-farmacia-deve-reagir": (
         "Recolhimentos, suspensões e alertas da Anvisa: como a farmácia deve reagir", "orientacao", "anvisa",
-        "2026-11-01T19:40:00-03:00", "0.7"),
+        "2026-11-01T23:07:00-03:00", "0.7"),
     SIFAP: ("SIFAP: o ciclo de regularização cadastral de maio de 2026", "informativo", "farmacia-popular",
-            "2026-11-01T19:30:00-03:00", "0.8"),
+            "2026-11-01T23:06:00-03:00", "0.8"),
 }
 # slug: (datePublished, que não muda; carimbo da ampliação)
 AMPLIADAS = {
-    "anvisa-alerta-soroterapia-promessas-sem-evidencia": ("2026-07-14T10:03:00-03:00", "2026-11-01T19:20:00-03:00"),
-    "anvisa-amplia-painel-medicamentos-pendentes-registro": ("2026-08-11T12:28:00-03:00", "2026-11-01T19:15:00-03:00"),
-    "anvisa-nova-consulta-alertas-sanitarios-substitui-sistec": ("2026-07-06", "2026-11-01T19:10:00-03:00"),
-    "anvisa-recolhimento-suplementos-irregulares-alivemed": ("2026-07-09", "2026-11-01T19:05:00-03:00"),
-    "farmacia-popular-cuidados-cadastro-documentacao": ("2026-04-28T09:00:00-03:00", "2026-11-01T19:00:00-03:00"),
-    "documentos-tecnicos-essenciais-farmacias-drogarias": ("2026-04-28T09:00:00-03:00", "2026-11-01T18:55:00-03:00"),
+    "anvisa-alerta-soroterapia-promessas-sem-evidencia": ("2026-07-14T10:03:00-03:00", "2026-11-01T23:05:00-03:00"),
+    "anvisa-amplia-painel-medicamentos-pendentes-registro": ("2026-08-11T12:28:00-03:00", "2026-11-01T23:04:00-03:00"),
+    "anvisa-nova-consulta-alertas-sanitarios-substitui-sistec": ("2026-07-06", "2026-11-01T23:03:00-03:00"),
+    "anvisa-recolhimento-suplementos-irregulares-alivemed": ("2026-07-09", "2026-11-01T23:02:00-03:00"),
+    "farmacia-popular-cuidados-cadastro-documentacao": ("2026-04-28T09:00:00-03:00", "2026-11-01T23:01:00-03:00"),
+    "documentos-tecnicos-essenciais-farmacias-drogarias": ("2026-04-28T09:00:00-03:00", "2026-11-01T23:00:00-03:00"),
 }
 TIPOS = {
     "atualizacao": (">Atualização</span>", "Ler atualização"),
