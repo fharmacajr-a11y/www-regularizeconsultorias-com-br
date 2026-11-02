@@ -1459,3 +1459,10 @@ main > .home-manuals-section + section .grid > div:first-child > p:first-child::
     padding-top: 0.25rem;
   }
 }
+
+/* Selos de "Por que escolher" e "Nossos serviços" (um <span> antes do
+   título): a mesma distância até o título que o de "Manuais e POPs". */
+.home-about-section .home-manuals-eyebrow,
+.home-services-section .home-manuals-eyebrow {
+  margin-bottom: 0.75rem;
+}
