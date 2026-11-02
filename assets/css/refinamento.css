@@ -1506,13 +1506,23 @@ main > .home-manuals-section + section .grid > div:first-child > p:first-child::
 
 /* Até 639 px os cabeçalhos centralizados recuam à direita a faixa da
    coluna dos botões flutuantes, como o de "Quem atendemos" (sobre.css). */
+/* O título de "Nossa história" tinha recuo à direita só nele (sobre.css,
+   reserva da coluna dos botões flutuantes) e ficava fora do centro do selo.
+   A reserva passa para o cabeçalho inteiro: só à direita até 639 px, dos
+   dois lados acima disso, para o conjunto continuar centralizado. */
+.about-section-header h2 {
+  padding-right: 0 !important;
+}
+
 @media (max-width: 639px) {
   .about-section-header {
     padding-right: var(--sobre-reserva);
   }
+}
 
-  .about-section-header h2 {
-    padding-right: 0 !important;
+@media (min-width: 640px) {
+  .about-section-header {
+    padding-inline: var(--sobre-reserva);
   }
 }
 
