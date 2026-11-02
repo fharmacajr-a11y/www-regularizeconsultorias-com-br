@@ -60,4 +60,5 @@ def test_public_jsonld_is_valid():
                     f"bloco {block_number}: {error}"
                 ) from error
 
-    assert block_count == 185
+    # 01/11/2026 (reenvio ao AdSense): +10 blocos, os dois (NewsArticle e BreadcrumbList) de cada uma das cinco matérias novas.
+    assert block_count == 195

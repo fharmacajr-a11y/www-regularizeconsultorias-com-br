@@ -425,10 +425,13 @@ def test_portaria_article_uses_digits_for_regulatory_quantities():
 
 def test_news_index_has_exactly_one_new_article_and_consistent_counts():
     html = NEWS_INDEX_PATH.read_text(encoding="utf-8")
+    # 01/11/2026 (reenvio ao AdSense): as matérias reunidas em páginas novas seguem publicadas com noindex e não têm card;
+    # toda matéria indexável tem exatamente um.
     article_directories = [
         path
         for path in (ROOT / "noticias").iterdir()
         if path.is_dir() and (path / "index.html").is_file()
+        and 'name="robots" content="noindex' not in (path / "index.html").read_text(encoding="utf-8")
     ]
     category_counts = {}
     for category in re.findall(r'<article\b[^>]*data-news-card[^>]*data-category="([^"]+)"', html):

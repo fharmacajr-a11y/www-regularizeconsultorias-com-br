@@ -179,7 +179,9 @@ def test_news_index_has_one_card_and_one_itemlist_entry():
     assert f'<time datetime="{UPDATED}" class="leading-none">09/10/2026 • 20h25</time>' in own[0]
     assert "o período registrado terminou em 07/10/2026 e consta como encerrado" in own[0]
     assert ">Atualização</span>" in own[0] and "Ler atualização" in own[0]
-    assert len(cards) == 85
+    # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas.
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert len(cards) == 83
 
 
 def test_sitemap_lists_the_new_url_once():

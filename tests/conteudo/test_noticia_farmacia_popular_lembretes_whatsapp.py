@@ -187,7 +187,9 @@ def test_news_index_card_itemlist_and_counters():
     cards = re.findall(r"<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>", html, re.DOTALL)
     own = [card for card in cards if f'href="{ROUTE}"' in card]
 
-    assert len(cards) == 85
+    # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas.
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert len(cards) == 83
     assert html.count(f'href="{ROUTE}"') == 1
     assert len(own) == 1
     card = own[0]
@@ -210,15 +212,20 @@ def test_news_index_card_itemlist_and_counters():
     # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
     # 20/10/2026, 13h00: o card do SNCR, atualizado no lote 2, sobe para a 1ª posição; os que ficavam à frente dele descem uma.
     # 26/10/2026, 08h30: as matérias do MAPA 1.617 e do período eleitoral, atualizadas, sobem para a 1ª e a 2ª posições; as que ficavam acima delas descem duas (até a 6ª) ou uma (da 8ª à 35ª).
-    assert cards.index(card) == 5
+    # 01/11/2026 (reenvio ao AdSense): os 11 cards de 01/11 (5 matérias novas e 6 ampliadas) vão ao topo; nenhuma
+    # página reunida nem ampliada ficava à frente deste: 5 + 11 = 16.
+    assert cards.index(card) == 16
     items = re.findall(r'\{"@type":"ListItem","position":(\d+),"url":"([^"]+)"\}', html)
-    assert [int(p) for p, _ in items] == list(range(1, 86))
-    assert items[5][1] == PUBLIC_URL
+    assert [int(p) for p, _ in items] == list(range(1, 84))
+    assert items[16][1] == PUBLIC_URL
     assert html.count(f'"url":"{PUBLIC_URL}"') == 1
-    assert '<span>Todos</span><span class="text-xs text-slate-400">85</span>' in html
-    assert '<span>FARMÁCIA POPULAR</span><span class="text-xs text-slate-400">11</span>' in html
-    assert len([c for c in cards if 'data-category="farmacia-popular"' in c.split(">", 1)[0]]) == 11
-    assert "85 notícias encontradas" in html
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert '<span>Todos</span><span class="text-xs text-slate-400">83</span>' in html
+    # 01/11/2026: as duas páginas do SIFAP de maio viraram uma (11 - 2 + 1 = 10).
+    assert '<span>FARMÁCIA POPULAR</span><span class="text-xs text-slate-400">10</span>' in html
+    assert len([c for c in cards if 'data-category="farmacia-popular"' in c.split(">", 1)[0]]) == 10
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert "83 notícias encontradas" in html
 
 
 def test_comunicado_informative_notice_is_active_first_and_internal():
@@ -255,7 +262,9 @@ def test_comunicado_informative_notice_is_active_first_and_internal():
 def test_sitemap_lists_the_new_url_once_with_current_lastmods():
     sitemap = SITEMAP_PATH.read_text(encoding="utf-8")
 
-    assert sitemap.count("<loc>") == 106
+    # 01/11/2026 (reenvio ao AdSense): +5 matérias novas, -6 páginas reunidas (noindex, fora do sitemap).
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert sitemap.count("<loc>") == 104
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
     assert re.search(rf"<loc>{re.escape(PUBLIC_URL)}</loc>\s*<lastmod>2026-10-17</lastmod>", sitemap)
     # 20/10/2026: a listagem reordenou dois cards. 21/10/2026: reordenou o card de produtos irregulares.
@@ -263,12 +272,15 @@ def test_sitemap_lists_the_new_url_once_with_current_lastmods():
     # 26/10/2026: a listagem reordenou os cards do MAPA 1.617 e do período eleitoral, atualizados no mesmo lote.
     # 28/10/2026: a listagem reordenou os cards do MAPA 1.617 e de produtos irregulares, atualizados no mesmo lote.
     # 31/10/2026: a listagem trocou o resumo do card do SNCR e o levou à 1ª posição.
-    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-10-31</lastmod>", sitemap)
+    # 01/11/2026: a listagem ganhou os cards das cinco matérias novas e trocou os das páginas reunidas.
+    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-11-01</lastmod>", sitemap)
     # 19/10/2026: o comunicado ganhou o aviso da instabilidade nos sistemas da Anvisa; 20/10/2026: o aviso foi encerrado.
     # 26/10/2026: os avisos do MAPA e do período eleitoral foram encerrados.
     # 28/10/2026: o aviso encerrado do MAPA ganhou a linha de atualização do Ofício-Circular nº 75/2026.
     # 31/10/2026: o aviso do SNCR ganhou a atualização da 20ª ROP; o encerrado do MAPA, a linha do complemento.
+    # 01/11/2026: três avisos trocaram só o destino do link (páginas reunidas); o texto não mudou e o lastmod fica.
     assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/comunicado/</loc>\s*<lastmod>2026-10-31</lastmod>", sitemap)
-    # A URL nova entra logo depois da listagem, como as demais matérias novas.
+    # A URL nova entra logo depois da listagem, como as demais matérias novas. 01/11/2026: as cinco matérias novas
+    # entraram à frente dela, na mesma posição.
     locs = re.findall(r"<loc>([^<]+)</loc>", sitemap)
-    assert locs[locs.index("https://www.regularizeconsultorias.com.br/noticias/") + 1] == PUBLIC_URL
+    assert locs[locs.index("https://www.regularizeconsultorias.com.br/noticias/") + 6] == PUBLIC_URL

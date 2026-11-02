@@ -197,10 +197,12 @@ def test_index_saneantes_in_itemlist_position_16():
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
     # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
-    assert items[40]["url"] == ARTICLE_URL, (
-        f"Posição 41 esperada para {ARTICLE_URL!r}, encontrado {items[40]['url']!r}"
+    # 01/11/2026 (reenvio ao AdSense): os 11 cards de 01/11 (5 matérias novas e 6 ampliadas) vão ao topo e saem os das
+    # páginas reunidas. Índice novo = anterior + 11 - reunidas à frente - ampliadas já à frente: 40 + 11 - 5 - 0 = 46.
+    assert items[46]["url"] == ARTICLE_URL, (
+        f"Posição 47 esperada para {ARTICLE_URL!r}, encontrado {items[46]['url']!r}"
     )
-    assert items[39]["position"] == 40
+    assert items[46]["position"] == 47
 
 
 def test_index_itemlist_positions_are_sequential():
@@ -242,7 +244,9 @@ def test_index_cards_share_the_single_model():
     modelo e a posição não troca o formato (assets/js/main.js não troca mais a classe)."""
     html = _index_html()
     articles = re.findall(r'<article class="([^"]*)"[^>]*data-news-card', html)
-    assert len(articles) == 85
+    # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas.
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert len(articles) == 83
     assert all("news-card-compact" in c for c in articles)
 
 
@@ -258,7 +262,9 @@ def test_index_saneantes_keeps_its_position_and_the_single_model():
         if "anvisa-rdc-1040-in-468-2026-saneantes-regularizacao" in block
     )
     # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
-    assert saneantes_index == 40
+    # 01/11/2026 (reenvio ao AdSense): os 11 cards de 01/11 (5 matérias novas e 6 ampliadas) vão ao topo e saem os das
+    # páginas reunidas. Índice novo = anterior + 11 - reunidas à frente - ampliadas já à frente: 40 + 11 - 5 - 0 = 46.
+    assert saneantes_index == 46
     assert "news-card-compact" in article_blocks[saneantes_index].split(">", 1)[0]
     # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
     assert all("news-card-compact" in block.split(">", 1)[0] for block in article_blocks)

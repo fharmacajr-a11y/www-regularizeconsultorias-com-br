@@ -13,6 +13,10 @@ PREVIOUS_PATH = ROOT / "noticias" / "cnes-competencia-08-2026-prazo-transmissao"
 INDEX_PATH = ROOT / "noticias" / "index.html"
 SITEMAP_PATH = ROOT / "sitemap.xml"
 PUBLIC_URL = f"https://www.regularizeconsultorias.com.br{ROUTE}"
+# 01/11/2026 (reenvio ao AdSense): a matéria foi reunida em "Prazos de transmissão do CNES em 2026". Continua no ar
+# como registro, com noindex, aviso no topo do texto para a página nova, sem anúncio e fora da listagem e do sitemap.
+UNIFIED_ROUTE = "/noticias/cnes-prazos-transmissao-2026/"
+UNIFIED_URL = f"https://www.regularizeconsultorias.com.br{UNIFIED_ROUTE}"
 PUBLISHED = "2026-09-14T13:31:27-03:00"
 # Informe do CNES de 05/10/2026: transmissor da competência 09/2026 prorrogado até 09/10/2026. Em 11/10/2026 o prazo
 # tinha passado e a página de informes do CNES não trazia nova prorrogação: a matéria virou registro histórico (título
@@ -145,13 +149,22 @@ def test_temporary_generic_og_is_used_and_valid():
         image.verify()
 
 
-def test_canonical_adsense_snippet_exactly_once_in_head():
+def test_unified_record_has_noindex_notice_and_no_adsense():
     html = _html()
     head = html.split("</head>", 1)[0]
+    body_html = html[html.index('<section class="article-body">'):]
 
-    assert html.count("adsbygoogle.js") == 1
-    assert head.count(f'<script async src="{ADSENSE_SRC}"\n     crossorigin="anonymous"></script>') == 1
+    # Página noindex fica fora da monetização (test_privacidade.py): sem o script do AdSense.
+    assert "adsbygoogle.js" not in html and ADSENSE_SRC not in html
     assert "<ins" not in html and "data-ad-slot" not in html
+    assert head.count('<meta name="robots" content="noindex, follow" />') == 1
+    assert html.count('name="robots"') == 1
+    # O aviso abre o texto e leva à página nova; o texto histórico vem logo depois, sem mudança.
+    notice = body_html.split("</div>", 1)[0]
+    assert ">Página reunida</p>" in notice
+    assert f'href="{UNIFIED_ROUTE}"' in notice
+    assert "Este texto fica como registro." in notice
+    assert body_html.index("Em informe publicado em 14 de setembro de 2026") > body_html.index(UNIFIED_ROUTE)
 
 
 def test_previous_competence_remains_a_historical_record():
@@ -166,39 +179,27 @@ def test_previous_competence_remains_a_historical_record():
     assert f'href="/noticias/cnes-competencia-08-2026-prazo-transmissao/"' in _html()
 
 
-def test_news_index_has_one_card_and_one_itemlist_entry():
+def test_news_index_swapped_the_card_for_the_unified_page():
     html = INDEX_PATH.read_text(encoding="utf-8")
     cards = re.findall(r"<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>", html, re.DOTALL)
-    own = [card for card in cards if f'href="{ROUTE}"' in card]
-
-    assert html.count(f'href="{ROUTE}"') == 1
-    assert html.count(f'"url":"{PUBLIC_URL}"') == 1
-    assert len(own) == 1
-    assert 'data-category="cnes"' in own[0]
-    assert f'data-updated="{UPDATED}"' in own[0]
-    assert f'<time datetime="{UPDATED}" class="leading-none">11/10/2026 • 06h07</time>' in own[0]
-    # 12/10/2026 (R1): o card mostra só a data e a hora, sem "Atualizado em"; o datetime é o da atualização.
-    assert "Atualizado em" not in own[0]
-    assert f'data-title="{TITLE}"' in own[0] and f">{TITLE}</h2>" in own[0]
-    assert PREVIOUS_TITLE not in html
-    assert "prorrogou até 9 de outubro" in own[0]
-    assert "O prazo está encerrado." in own[0]
-    # Atualização de 11/10/2026, 06h07 (prazo encerrado): o card ficou em 1º pela ordenação.
-    # Em 12/10/2026, 18h08, a retirada do PDF da matéria eleitoral é mais recente e ocupa o 1º lugar.
-    # A posição não troca o formato: todos os cards têm o mesmo modelo.
-    # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
-    # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
-    # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
-    # 26/10/2026, 08h30: as matérias do MAPA 1.617 e do período eleitoral, atualizadas, sobem para a 1ª e a 2ª posições; as que ficavam acima delas descem duas (até a 6ª) ou uma (da 8ª à 35ª).
-    assert cards.index(own[0]) == 8
+    # 01/11/2026: o card desta matéria saiu da listagem e do ItemList; o da página reunida entrou uma única vez.
+    assert f'href="{ROUTE}"' not in html
+    assert f'"url":"{PUBLIC_URL}"' not in html
+    assert TITLE not in html
+    unified = [card for card in cards if f'href="{UNIFIED_ROUTE}"' in card]
+    assert len(unified) == 1
+    assert html.count(f'"url":"{UNIFIED_URL}"') == 1
+    assert 'data-category="cnes"' in unified[0]
     assert all("news-card-compact" in card.split(">", 1)[0] for card in cards)
-    assert ">Atualização</span>" in own[0] and "Ler atualização" in own[0]
-    assert len(cards) == 85
-    assert '<span>CNES</span><span class="text-xs text-slate-400">6</span>' in html
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert len(cards) == 83
+    # Seis cards do CNES até 31/10/2026; as quatro competências (06, 08, 09 e 10/2026) viraram um só.
+    assert '<span>CNES</span><span class="text-xs text-slate-400">3</span>' in html
 
 
-def test_sitemap_lists_the_new_url_once():
+def test_sitemap_dropped_the_url_for_the_unified_page():
     sitemap = SITEMAP_PATH.read_text(encoding="utf-8")
 
-    assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
-    assert f"<loc>{PUBLIC_URL}</loc>\n    <lastmod>2026-10-11</lastmod>" in sitemap
+    # Até 31/10/2026: <loc> desta matéria uma vez, lastmod 2026-10-11. Desde 01/11/2026, noindex e fora do sitemap.
+    assert f"<loc>{PUBLIC_URL}</loc>" not in sitemap
+    assert sitemap.count(f"<loc>{UNIFIED_URL}</loc>") == 1

@@ -20,6 +20,11 @@ INDEX_PATH = ROOT / "noticias" / "index.html"
 COMUNICADO_PATH = ROOT / "comunicado" / "index.html"
 SITEMAP_PATH = ROOT / "sitemap.xml"
 PUBLIC_URL = f"https://www.regularizeconsultorias.com.br{ROUTE}"
+# 01/11/2026 (reenvio ao AdSense): a matéria foi reunida em "Prazos de transmissão do CNES em 2026". Continua no ar
+# como registro, com noindex, aviso no topo do texto para a página nova, sem anúncio e fora da listagem e do sitemap.
+# O aviso ativo de Comunicados passou a apontar para a página nova.
+UNIFIED_ROUTE = "/noticias/cnes-prazos-transmissao-2026/"
+UNIFIED_URL = f"https://www.regularizeconsultorias.com.br{UNIFIED_ROUTE}"
 PUBLISHED = "2026-10-16T20:06:35-03:00"
 NOTICE_AT = "2026-10-16T20:06:00-03:00"
 TITLE = "CNES abre competência 10/2026 com envio até 9 de novembro"
@@ -121,7 +126,8 @@ def test_only_internal_links_in_the_editorial_text():
     start = html.index('<section class="article-body">')
     body = html[start:html.index("</section>", start)]
     hrefs = re.findall(r'href="([^"]+)"', body)
-    assert hrefs == ["/noticias/cnes-continua-obrigatorio-sncr-afe-farmacias/"]
+    # 01/11/2026: o aviso de página reunida abre o texto com o link interno para a página nova.
+    assert hrefs == [UNIFIED_ROUTE, "/noticias/cnes-continua-obrigatorio-sncr-afe-farmacias/"]
 
 
 def test_related_news_keep_previous_competences():
@@ -133,7 +139,7 @@ def test_related_news_keep_previous_competences():
     assert "CNES abriu competência 08/2026 com transmissão informada até 8 de setembro" in related
 
 
-def test_temporary_generic_og_and_adsense_once():
+def test_temporary_generic_og_noindex_and_no_adsense():
     html = _html()
     head = html.split("</head>", 1)[0]
 
@@ -142,46 +148,47 @@ def test_temporary_generic_og_and_adsense_once():
     assert _news_article(html)[0]["image"] == GENERIC_OG_URL
     with Image.open(GENERIC_OG_PATH) as image:
         assert image.format == "JPEG" and image.size == (1200, 630)
-    assert html.count("adsbygoogle.js") == 1
-    assert head.count(f'<script async src="{ADSENSE_SRC}"\n     crossorigin="anonymous"></script>') == 1
+    # Página noindex fica fora da monetização (test_privacidade.py): sem o script do AdSense.
+    assert "adsbygoogle.js" not in html and ADSENSE_SRC not in html
     assert "<ins" not in html
+    assert head.count('<meta name="robots" content="noindex, follow" />') == 1
+    notice = html[html.index('<section class="article-body">'):].split("</div>", 1)[0]
+    assert ">Página reunida</p>" in notice and f'href="{UNIFIED_ROUTE}"' in notice
 
 
-def test_news_index_card_itemlist_and_counters():
+def test_news_index_swapped_the_card_for_the_unified_page():
     html = INDEX_PATH.read_text(encoding="utf-8")
     cards = re.findall(r"<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>", html, re.DOTALL)
-    own = [card for card in cards if f'href="{ROUTE}"' in card]
 
-    assert len(cards) == 85
-    assert html.count(f'href="{ROUTE}"') == 1
-    assert len(own) == 1
-    card = own[0]
-    assert 'data-category="cnes"' in card
-    assert "data-updated" not in card.split(">", 1)[0]
-    assert f'data-title="{TITLE}"' in card and f">{TITLE}</h2>" in card
-    assert f'data-summary="{DESCRIPTION}"' in card
-    assert f'<time datetime="{PUBLISHED}" class="leading-none">16/10/2026 • 20h06</time>' in card
-    assert ">Atualização</span>" in card and "Ler atualização" in card
-    assert "news-amber-card" in card and "news-card-compact" in card.split(">", 1)[0]
-    # A posição vem da data. 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
-    # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
-    # 20/10/2026, 13h00: o card do SNCR, atualizado no lote 2, sobe para a 1ª posição; os que ficavam à frente dele descem uma.
-    # 26/10/2026, 08h30: as matérias do MAPA 1.617 e do período eleitoral, atualizadas, sobem para a 1ª e a 2ª posições; as que ficavam acima delas descem duas (até a 6ª) ou uma (da 8ª à 35ª).
-    assert cards.index(card) == 6
+    # Até 31/10/2026 o card desta matéria era o 7º (índice 6). Desde 01/11/2026 ele e o item do ItemList saíram; o card
+    # da página reunida entrou uma única vez, com a categoria CNES.
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert len(cards) == 83
+    assert f'href="{ROUTE}"' not in html
+    assert f'"url":"{PUBLIC_URL}"' not in html
+    assert f'data-title="{TITLE}"' not in html
+    unified = [card for card in cards if f'href="{UNIFIED_ROUTE}"' in card]
+    assert len(unified) == 1
+    assert 'data-category="cnes"' in unified[0]
+    assert ">Atualização</span>" in unified[0] and "Ler atualização" in unified[0]
+    assert "news-amber-card" in unified[0] and "news-card-compact" in unified[0].split(">", 1)[0]
     items = re.findall(r'\{"@type":"ListItem","position":(\d+),"url":"([^"]+)"\}', html)
-    assert [int(p) for p, _ in items] == list(range(1, 86))
-    assert items[6][1] == PUBLIC_URL
-    assert html.count(f'"url":"{PUBLIC_URL}"') == 1
-    assert '<span>Todos</span><span class="text-xs text-slate-400">85</span>' in html
-    assert '<span>CNES</span><span class="text-xs text-slate-400">6</span>' in html
-    assert "85 notícias encontradas" in html
+    assert [int(p) for p, _ in items] == list(range(1, 84))
+    assert [url for _, url in items].count(UNIFIED_URL) == 1
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert '<span>Todos</span><span class="text-xs text-slate-400">83</span>' in html
+    assert '<span>CNES</span><span class="text-xs text-slate-400">3</span>' in html
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert "83 notícias encontradas" in html
 
 
 def test_comunicado_informative_notice_is_active_and_second():
     html = COMUNICADO_PATH.read_text(encoding="utf-8")
     lista = html[html.index('id="avisos-lista"'):html.index("Histórico / encerrados")]
     articles = re.findall(r"<article\b[^>]*>.*?</article>", lista, re.DOTALL)
-    own = [a for a in articles if f'href="{ROUTE}"' in a]
+    # 01/11/2026: o aviso ativo leva à página reunida; o texto do aviso não mudou.
+    assert not [a for a in articles if f'href="{ROUTE}"' in a]
+    own = [a for a in articles if f'href="{UNIFIED_ROUTE}"' in a]
 
     # 17/10/2026, 09h50: o aviso do Farmácia Popular sobre lembretes é o ativo mais recente; o do CNES passa ao 2º.
     # 19/10/2026, 15h40: o aviso da instabilidade nos sistemas da Anvisa entra em 1º; o do CNES passa ao 3º.
@@ -201,20 +208,19 @@ def test_comunicado_informative_notice_is_active_and_second():
     assert "16/10/2026 a 09/11/2026" in text
     assert "O informe não indica horário de encerramento." in text
     assert "Leia a notícia sobre a competência 10/2026" in text
-    assert re.findall(r'href="([^"]+)"', notice) == [ROUTE]
+    assert re.findall(r'href="([^"]+)"', notice) == [UNIFIED_ROUTE]
     assert "toda farmácia" not in text.casefold() and "prorrog" not in text.casefold()
 
 
-def test_sitemap_lists_the_new_url_once():
+def test_sitemap_dropped_the_url_for_the_unified_page():
     sitemap = SITEMAP_PATH.read_text(encoding="utf-8")
 
-    assert sitemap.count("<loc>") == 106
-    assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
-    assert re.search(rf"<loc>{re.escape(PUBLIC_URL)}</loc>\s*<lastmod>2026-10-16</lastmod>", sitemap)
-    # 17/10/2026: a listagem ganhou o card do esclarecimento do Farmácia Popular. 20/10/2026: reordenou dois cards.
-    # 21/10/2026: reordenou o card de produtos irregulares.
-    # 22/10/2026: a listagem reordenou os cards de produtos irregulares e do SNCR, atualizados no mesmo lote.
-    # 26/10/2026: a listagem reordenou os cards do MAPA 1.617 e do período eleitoral, atualizados no mesmo lote.
-    # 28/10/2026: a listagem reordenou os cards do MAPA 1.617 e de produtos irregulares, atualizados no mesmo lote.
+    # Até 31/10/2026: 106 URLs, esta uma vez, lastmod 2026-10-16. Desde 01/11/2026, noindex e fora do sitemap.
+    # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
+    assert sitemap.count("<loc>") == 104
+    assert f"<loc>{PUBLIC_URL}</loc>" not in sitemap
+    assert sitemap.count(f"<loc>{UNIFIED_URL}</loc>") == 1
+    assert re.search(rf"<loc>{re.escape(UNIFIED_URL)}</loc>\s*<lastmod>2026-11-01</lastmod>", sitemap)
     # 31/10/2026: a listagem trocou o resumo do card do SNCR e o levou à 1ª posição.
-    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-10-31</lastmod>", sitemap)
+    # 01/11/2026: a listagem ganhou os cards das cinco matérias novas e trocou os das páginas reunidas.
+    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-11-01</lastmod>", sitemap)
