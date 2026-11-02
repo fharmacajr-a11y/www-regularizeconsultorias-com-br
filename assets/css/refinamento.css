@@ -1544,3 +1544,67 @@ main > .home-manuals-section + section .grid > div:first-child > p:first-child::
 .about-history-section .grid > div > p:last-child {
   color: #cbd5e1;
 }
+
+/* ---------- R25. Sobre: "Nossa história" num card ----------
+   O texto fica num card branco no padrão dos outros (borda, sombra curta
+   e fio azul no alto), e os destaques em negrito ficam mais leves (peso
+   600, azul-marinho). A reserva da coluna dos botões flutuantes, que era
+   padding à direita do texto (sobre.css), vira margem do card: só à
+   direita até 639 px e dos dois lados acima disso, igual na faixa de
+   números logo abaixo, para card, números e cabeçalho terem o mesmo
+   centro. A margem é a faixa menos o que já existe até a borda, a borda
+   do card e o padding dos números (o menor dos dois), nunca negativa. */
+body:has(.about-principles-section) {
+  --sobre-margem-historia: max(0px, calc(var(--sobre-faixa) - var(--sobre-folga) - 1px - var(--sobre-pad-numeros)));
+}
+
+.about-history-section .space-y-5 {
+  position: relative;
+  overflow: hidden;
+  margin-right: var(--sobre-margem-historia);
+  padding: 1.25rem !important;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  background-color: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -16px rgba(15, 23, 42, 0.18);
+}
+
+.about-history-section .space-y-5::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #1a3a5c, #1565c0 55%, #29b6f6);
+}
+
+.about-history-section .space-y-5 strong {
+  color: #1a3a5c !important;
+  font-weight: 600;
+}
+
+.about-history-section .grid.grid-cols-2 {
+  margin-right: var(--sobre-margem-historia) !important;
+}
+
+@media (max-width: 639px) {
+  .about-history-section .about-section-header {
+    padding-right: var(--sobre-margem-historia);
+  }
+}
+
+@media (min-width: 640px) {
+  .about-history-section .space-y-5 {
+    margin-left: var(--sobre-margem-historia);
+    padding: 2rem 2.25rem !important;
+  }
+
+  .about-history-section .grid.grid-cols-2 {
+    margin-left: var(--sobre-margem-historia) !important;
+  }
+
+  .about-history-section .about-section-header {
+    padding-inline: var(--sobre-margem-historia);
+  }
+}
