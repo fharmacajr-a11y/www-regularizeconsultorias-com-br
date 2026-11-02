@@ -94,9 +94,11 @@ def test_listing_sitemap_and_cards_follow_the_review_timestamps():
         # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
         # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
         # 26/10/2026, 08h30: as matérias do MAPA 1.617 e do período eleitoral, atualizadas, sobem para a 1ª e a 2ª posições; as que ficavam acima delas descem duas (até a 6ª) ou uma (da 8ª à 35ª).
-        ("anvisa-atualiza-acesso-sncr-afe-farmacias-privadas", AFE_UPDATED, "07/10/2026 • 09h08", 31, True, "2026-10-07"),
-        ("nova-regra-anvisa-cnes-receitas-farmacias", CNES_UPDATED, "06/10/2026 • 22h09", 33, True, "2026-10-06"),
-        ("canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao", GLP1_UPDATED, "30/09/2026 • 09h30", 37, True, "2026-09-30"),
+        # 01/11/2026 (reenvio ao AdSense): os 11 cards de 01/11 (5 matérias novas e 6 ampliadas) vão ao topo e saem os
+        # das páginas reunidas; as 5 que ficavam à frente destes três saem: posição + 11 - 5.
+        ("anvisa-atualiza-acesso-sncr-afe-farmacias-privadas", AFE_UPDATED, "07/10/2026 • 09h08", 37, True, "2026-10-07"),
+        ("nova-regra-anvisa-cnes-receitas-farmacias", CNES_UPDATED, "06/10/2026 • 22h09", 39, True, "2026-10-06"),
+        ("canetas-emagrecedoras-glp1-anvisa-fiscalizacao-manipulacao", GLP1_UPDATED, "30/09/2026 • 09h30", 43, True, "2026-09-30"),
     )
     for slug, updated, label, position, compact, lastmod in expected:
         card = _card(index, slug)
@@ -108,10 +110,12 @@ def test_listing_sitemap_and_cards_follow_the_review_timestamps():
         assert f"<loc>https://www.regularizeconsultorias.com.br/noticias/{slug}/</loc>\n    <lastmod>{lastmod}</lastmod>" in sitemap
 
     assert "ausência de acesso direto" not in index
-    assert '>Todos</span><span class="text-xs text-slate-400">85<' in index
-    assert '>ANVISA</span><span class="text-xs text-slate-400">54<' in index
-    assert '>CNES</span><span class="text-xs text-slate-400">6<' in index
-    assert '>SNCR</span><span class="text-xs text-slate-400">2<' in index
+    # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas; ANVISA +2 guias; CNES 6 - 4 + 1
+    # (as competências 06, 08, 09 e 10/2026 viraram uma página); SNCR +1 guia (SNCR e SNGPC).
+    assert '>Todos</span><span class="text-xs text-slate-400">84<' in index
+    assert '>ANVISA</span><span class="text-xs text-slate-400">56<' in index
+    assert '>CNES</span><span class="text-xs text-slate-400">3<' in index
+    assert '>SNCR</span><span class="text-xs text-slate-400">3<' in index
 
 
 def _plain_body(path):

@@ -61,10 +61,18 @@ def _cards():
 def test_lastmod_de_cada_materia_e_o_dia_da_ultima_atualizacao_declarada():
     lastmods = _lastmods()
     paginas = sorted(p for p in (ROOT / "noticias").glob("*/index.html") if "a-publicar" not in p.parts)
-    assert len(paginas) == 85
+    # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas. As seis reunidas nelas continuam publicadas com noindex e
+    # ficam fora do sitemap: para elas, a regra é não ter <loc>; para as outras 84, o lastmod segue a data declarada.
+    assert len(paginas) == 90
     falhas = []
+    reunidas = []
     for pagina in paginas:
         html = pagina.read_text(encoding="utf-8")
+        if '<meta name="robots" content="noindex, follow" />' in html:
+            reunidas.append(pagina.parent.name)
+            if f"{BASE}/noticias/{pagina.parent.name}/" in lastmods:
+                falhas.append((pagina.parent.name, "noindex no sitemap", None))
+            continue
         published = re.search(r'"datePublished"\s*:\s*"([^"]+)"', html).group(1)
         modified = re.search(r'"dateModified"\s*:\s*"([^"]+)"', html)
         modified = modified.group(1) if modified else published
@@ -73,12 +81,16 @@ def test_lastmod_de_cada_materia_e_o_dia_da_ultima_atualizacao_declarada():
         if lastmods.get(url) != _dt(reference).date().isoformat():
             falhas.append((pagina.parent.name, lastmods.get(url), reference))
     assert falhas == []
-    assert lastmods[f"{BASE}/noticias/{CADASTRO}/"] == "2026-04-28"
+    assert len(reunidas) == 6
+    # 01/11/2026: a matéria ganhou a seção "Antes de enviar ou renovar" (atualização declarada às 19h00); até 31/10/2026
+    # o lastmod era 2026-04-28, o da publicação.
+    assert lastmods[f"{BASE}/noticias/{CADASTRO}/"] == "2026-11-01"
 
 
 def test_card_da_now_foods_mostra_a_atualizacao_real_sem_mudar_de_posicao():
     cards = _cards()
-    assert len(cards) == 85
+    # 01/11/2026 (reenvio ao AdSense): 85 + 5 cards novos - 6 cards das páginas reunidas.
+    assert len(cards) == 84
     own = [card for card in cards if f'href="/noticias/{NOW_FOODS}/"' in card]
     assert len(own) == 1
     card = own[0]
@@ -98,7 +110,9 @@ def test_card_da_now_foods_mostra_a_atualizacao_real_sem_mudar_de_posicao():
     after = after.group(1) if after else re.search(r'<time datetime="([^"]+)"', cards[position + 1]).group(1)
     assert _dt(before).date().isoformat() == "2026-06-02"
     assert _dt(after).date().isoformat() == "2026-04-28"
-    assert position == 81
+    # 01/11/2026 (reenvio ao AdSense): saem 6 cards à frente (as páginas reunidas), entram 5 à frente (as matérias novas)
+    # e 2 que ficavam atrás passam à frente (as matérias de 28/04/2026 ampliadas em 01/11/2026): 81 - 6 + 5 + 2 = 82.
+    assert position == 82
 
 
 def test_lastmod_das_paginas_institucionais_segue_a_ultima_mudanca_real_do_texto():

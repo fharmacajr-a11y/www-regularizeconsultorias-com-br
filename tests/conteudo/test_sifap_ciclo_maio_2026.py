@@ -2,6 +2,11 @@
 
 As mutações usam cópias em memória. Quem rejeita o erro é a mesma função
 ``findings`` que valida as páginas publicadas.
+
+01/11/2026 (reenvio ao AdSense): as duas páginas do ciclo de maio foram reunidas em
+"SIFAP: o ciclo de regularização cadastral de maio de 2026". As antigas continuam no ar como registro, com noindex,
+aviso no topo do texto para a página nova, sem anúncio e fora da listagem e do sitemap. As guardas valem para as
+três páginas, para o card novo e para o registro do Comunicado.
 """
 import re
 from datetime import datetime
@@ -12,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 PRAZO = ROOT / "noticias/prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular/index.html"
 REG = ROOT / "noticias/sifap-regularizacao-cadastral-farmacias-notificadas-13-maio/index.html"
+NOVA = ROOT / "noticias/sifap-ciclo-regularizacao-cadastral-maio-2026/index.html"
 SUSP = ROOT / "noticias/farmacia-popular-suspensao-temporaria-recadastramento-sifap/index.html"
 CUIDADOS = ROOT / "noticias/farmacia-popular-cuidados-cadastro-documentacao/index.html"
 INDEX = ROOT / "noticias/index.html"
@@ -22,6 +28,10 @@ TITLE_REG = "SIFAP: regularização, maio/2026"
 TITLE_PRAZO = "SIFAP: pendências, maio/2026"
 PRAZO_URL = "https://www.regularizeconsultorias.com.br/noticias/prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular/"
 REG_URL = "https://www.regularizeconsultorias.com.br/noticias/sifap-regularizacao-cadastral-farmacias-notificadas-13-maio/"
+TITLE_NOVA = "SIFAP: o ciclo de regularização cadastral de maio de 2026"
+NOVA_ROUTE = "/noticias/sifap-ciclo-regularizacao-cadastral-maio-2026/"
+NOVA_URL = f"https://www.regularizeconsultorias.com.br{NOVA_ROUTE}"
+NOVA_PUBLISHED = "2026-11-01T19:30:00-03:00"
 
 MARKERS = ("não se confunde", "não restaura")
 BAD_RTA = ("desbloqueio", "aprovação", "liberação", "libera", "garante")
@@ -106,16 +116,17 @@ def _regions():
     prazo = PRAZO.read_text(encoding="utf-8")
     reg = REG.read_text(encoding="utf-8")
     comunicado = COM.read_text(encoding="utf-8")
+    nova = NOVA.read_text(encoding="utf-8")
     index = INDEX.read_text(encoding="utf-8")
     cards = re.findall(r"<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>", index, flags=re.S)
-    prazo_card = next(card for card in cards if "prazo-sifap-terminou" in card)
-    reg_card = next(card for card in cards if "sifap-regularizacao-cadastral" in card)
+    # Até 31/10/2026 havia um card para cada página antiga; desde 01/11/2026, um só, o da página reunida.
+    nova_card = next(card for card in cards if f'href="{NOVA_ROUTE}"' in card)
     return {
         "prazo": main_html(prazo),
         "regularizacao": main_html(reg),
+        "nova": main_html(nova),
         "historico": historico_html(comunicado),
-        "card-prazo": prazo_card,
-        "card-regularizacao": reg_card,
+        "card-nova": nova_card,
     }
 
 
@@ -126,7 +137,7 @@ def test_paginas_e_registro_nao_tem_tutorial_nem_prazo_sem_prova():
 
 def test_distincoes_obrigatorias_e_servico_privado():
     regions = _regions()
-    for name in ("prazo", "regularizacao", "historico"):
+    for name in ("prazo", "regularizacao", "nova", "historico"):
         text = plain(regions[name])
         assert "maio de 2026" in text, name
         assert "não se confunde" in text, name
@@ -137,7 +148,7 @@ def test_distincoes_obrigatorias_e_servico_privado():
         assert "honorários" in text, name
         assert "golpe" in text, name
         assert "isoladamente, não comprova aprovação, desbloqueio" in text or "não comprova aprovação, desbloqueio" in text, name
-    for name in ("prazo", "regularizacao"):
+    for name in ("prazo", "regularizacao", "nova"):
         assert "executa os serviços de regularização contratados" in plain(regions[name])
         assert 'href="/contato/"' in regions[name]
         assert 'href="/servicos/"' in regions[name]
@@ -153,6 +164,7 @@ def test_distincoes_obrigatorias_e_servico_privado():
 def test_titulos_carimbo_ordem_e_contagens():
     prazo = PRAZO.read_text(encoding="utf-8")
     reg = REG.read_text(encoding="utf-8")
+    nova = NOVA.read_text(encoding="utf-8")
     index = INDEX.read_text(encoding="utf-8")
     comunicado = COM.read_text(encoding="utf-8")
     sitemap = SITEMAP.read_text(encoding="utf-8")
@@ -167,38 +179,52 @@ def test_titulos_carimbo_ordem_e_contagens():
     assert f'"dateModified":"{stamp}"' in reg
     assert '"datePublished":"2026-05-18T09:00:00-03:00"' in prazo
     assert '"datePublished":"2026-05-10T09:00:00-03:00"' in reg
-    day = stamp[:10]
-    assert f"<loc>{PRAZO_URL}</loc>\n    <lastmod>{day}</lastmod>" in sitemap
-    assert f"<loc>{REG_URL}</loc>\n    <lastmod>{day}</lastmod>" in sitemap
+    # As antigas: registro com noindex e aviso para a página nova, sem anúncio, fora do sitemap. O aviso de navegação
+    # não muda as datas das matérias.
+    for old in (prazo, reg):
+        head = old.split("</head>", 1)[0]
+        assert head.count('<meta name="robots" content="noindex, follow" />') == 1
+        assert "adsbygoogle" not in old
+        notice = old[old.index('<section class="article-body">'):].split("</div>", 1)[0]
+        assert ">Página reunida</p>" in notice and f'href="{NOVA_ROUTE}"' in notice
+    assert f"<loc>{PRAZO_URL}</loc>" not in sitemap
+    assert f"<loc>{REG_URL}</loc>" not in sitemap
+    # A nova: indexável, com anúncio, publicada em 01/11/2026 e sem atualização.
+    assert f"<title>{TITLE_NOVA} | Regularize Consultoria</title>" in nova
+    assert nova.count("<h1") == 1 and f">{TITLE_NOVA}</h1>" in nova
+    assert 'name="robots"' not in nova
+    assert nova.count("adsbygoogle.js") == 1
+    assert f'"datePublished":"{NOVA_PUBLISHED}"' in nova and f'"dateModified":"{NOVA_PUBLISHED}"' in nova
+    assert "Atualizado em" not in nova
+    assert sitemap.count(f"<loc>{NOVA_URL}</loc>") == 1
+    assert f"<loc>{NOVA_URL}</loc>\n    <lastmod>2026-11-01</lastmod>" in sitemap
 
     cards = re.findall(r"<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>", index, flags=re.S)
-    assert len(cards) == 85
-    # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
-    # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
-    # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
-    # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
-    # 26/10/2026, 08h30: as matérias do MAPA 1.617 e do período eleitoral, atualizadas, sobem para a 1ª e a 2ª posições; as que ficavam acima delas descem duas (até a 6ª) ou uma (da 8ª à 35ª).
-    assert "prazo-sifap-terminou" in cards[29]
-    assert "sifap-regularizacao-cadastral" in cards[30]
+    # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas.
+    assert len(cards) == 84
+    assert "prazo-sifap-terminou" not in index and "sifap-regularizacao-cadastral" not in index
+    # O card da página reunida é o 5º: as quatro matérias novas de 01/11/2026 com carimbo posterior vêm antes.
+    card = cards[4]
+    assert f'href="{NOVA_ROUTE}"' in card and index.count(f'href="{NOVA_ROUTE}"') == 1
     # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
-    assert all("news-card-compact" in card.split(">", 1)[0] for card in cards)
-    assert f'data-updated="{stamp}"' in cards[29]
-    assert f'data-updated="{stamp}"' in cards[30]
-    assert "Ler atualização" in cards[29] and "Ler atualização" in cards[30]
-    assert TITLE_PRAZO in cards[29] and TITLE_REG in cards[30]
+    assert all("news-card-compact" in item.split(">", 1)[0] for item in cards)
+    assert "data-updated" not in card.split(">", 1)[0]
+    assert f'<time datetime="{NOVA_PUBLISHED}" class="leading-none">01/11/2026 • 19h30</time>' in card
+    assert "Ler notícia" in card and ">Informativo</span>" in card
+    assert f'data-title="{TITLE_NOVA}"' in card and 'data-category="farmacia-popular"' in card
 
     items = re.findall(r'\{"@type":"ListItem","position":(\d+),"url":"([^"]+)"\}', index)
-    assert len(items) == 85
-    assert [int(position) for position, _ in items] == list(range(1, 86))
-    # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
-    # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
-    # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
-    assert items[29][1] == PRAZO_URL
-    assert items[30][1] == REG_URL
+    assert len(items) == 84
+    assert [int(position) for position, _ in items] == list(range(1, 85))
+    assert items[4][1] == NOVA_URL
+    assert PRAZO_URL not in index and REG_URL not in index
 
     historico = historico_html(comunicado)
     assert 'datetime="2026-10-07T10:53:00-03:00"' in historico
     assert "ciclo de regularização cadastral de maio de 2026" in historico
+    # 01/11/2026: o botão "Ler o registro das pendências" leva à página reunida; o rótulo não mudou. "Ver registro do
+    # ciclo" é o botão que abre o registro na própria página.
+    assert re.findall(r'href="(/noticias/[^"]+/)"', historico) == [NOVA_ROUTE]
     statuses = re.findall(r'<article\b[^>]*\bdata-status="([^"]+)"', comunicado)
     # 09/10/2026: o aviso do Edital 6/2026 passou ao histórico (7 ativos, 8 no histórico).
     # 11/10/2026: o aviso do CNES 09/2026 passou ao histórico (6 ativos, 9 no histórico).
@@ -211,7 +237,8 @@ def test_titulos_carimbo_ordem_e_contagens():
     assert len([status for status in statuses if status != "resolved"]) == 5
     assert statuses.count("resolved") == 13
     assert ">5</span>" in prazo
-    assert len(list((ROOT / "noticias").glob("*/index.html"))) == 85
+    # 01/11/2026: +5 matérias novas; as reunidas continuam publicadas.
+    assert len(list((ROOT / "noticias").glob("*/index.html"))) == 90
 
 
 SUSP_URL = "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-suspensao-temporaria-recadastramento-sifap/"
@@ -346,36 +373,44 @@ def test_suspensao_registra_a_correcao_material_com_datas_e_ordem_coerentes():
     assert f'<time datetime="{stamp}">{day}</time> às {hour}' in suspensao
     assert "executa os serviços de regularização contratados" in suspensao
     assert "orientar os próximos passos" not in suspensao
-    assert TITLE_PRAZO in suspensao
+    # 01/11/2026: a notícia relacionada passou a ser a página reunida (só o bloco de relacionadas mudou; a data fica).
+    assert TITLE_NOVA in suspensao and f'href="{NOVA_ROUTE}"' in suspensao
+    assert TITLE_PRAZO not in suspensao and PRAZO_URL.split(".br", 1)[1] not in suspensao
 
     cards = _cards(index)
-    assert len(cards) == 85
+    # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas.
+    assert len(cards) == 84
     # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
     # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
-    assert SUSP_URL.endswith(re.search(r'href="(/noticias/[^"]+/)"', cards[28]).group(1))
-    assert f'data-updated="{stamp}"' in cards[28]
-    assert f'<time datetime="{stamp}" class="leading-none">{day} • {hour}</time>' in cards[28]
-    assert SUMMARY_SUSP in cards[28]
-    assert f'data-title="{CARD_TITLE_SUSP}"' in cards[28]
-    assert f">{CARD_TITLE_SUSP}</h2>" in cards[28]
-    assert "<br" not in re.search(r"<h2\b[^>]*>.*?</h2>", cards[28], re.S).group(0).casefold()
-    assert HEADLINE_SUSP not in cards[28]
-    assert "prazo aberto" not in cards[28].casefold()
-    assert "news-card-compact" in cards[28].split(">", 1)[0]
+    # 01/11/2026 (reenvio ao AdSense): os 11 cards de 01/11 (5 matérias novas e 6 ampliadas) vão ao topo e saem os das
+    # páginas reunidas. Índice novo = anterior + 11 - reunidas à frente (CNES 08, 09 e 10/2026) - ampliadas já à
+    # frente: 28 + 11 - 3 - 0 = 36.
+    assert SUSP_URL.endswith(re.search(r'href="(/noticias/[^"]+/)"', cards[36]).group(1))
+    assert f'data-updated="{stamp}"' in cards[36]
+    assert f'<time datetime="{stamp}" class="leading-none">{day} • {hour}</time>' in cards[36]
+    assert SUMMARY_SUSP in cards[36]
+    assert f'data-title="{CARD_TITLE_SUSP}"' in cards[36]
+    assert f">{CARD_TITLE_SUSP}</h2>" in cards[36]
+    assert "<br" not in re.search(r"<h2\b[^>]*>.*?</h2>", cards[36], re.S).group(0).casefold()
+    assert HEADLINE_SUSP not in cards[36]
+    assert "prazo aberto" not in cards[36].casefold()
+    assert "news-card-compact" in cards[36].split(">", 1)[0]
     assert cards == sorted(cards, key=_card_moment, reverse=True)
     items = re.findall(r'\{"@type":"ListItem","position":(\d+),"url":"([^"]+)"\}', index)
-    assert [int(position) for position, _ in items] == list(range(1, 86))
+    assert [int(position) for position, _ in items] == list(range(1, 85))
     assert [url for _, url in items] == _card_hrefs(cards)
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
     # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
-    assert items[28][1] == SUSP_URL
+    assert items[36][1] == SUSP_URL
     assert f"<loc>{SUSP_URL}</loc>\n    <lastmod>{stamp[:10]}</lastmod>" in sitemap
 
     cuidados = CUIDADOS.read_text(encoding="utf-8")
-    assert TITLE_PRAZO in cuidados
+    # 01/11/2026: a notícia relacionada passou a ser a página reunida.
+    assert TITLE_NOVA in cuidados and f'href="{NOVA_ROUTE}"' in cuidados
+    assert TITLE_PRAZO not in cuidados
     assert "veja como acompanhar" not in cuidados
     assert stamp not in cuidados
 

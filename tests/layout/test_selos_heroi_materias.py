@@ -113,7 +113,8 @@ def selos():
 
 
 def test_todas_as_materias_medidas_com_e_sem_barra(selos):
-    assert len(MATERIAS) == 85
+    # 01/11/2026 (reenvio ao AdSense): +5 matérias novas; as seis reunidas seguem publicadas (noindex) e são medidas.
+    assert len(MATERIAS) == 90
     assert len(selos) == 2 * len(MATERIAS)
     for r in selos:
         assert r["medida"] and len(r["medida"]["selos"]) >= 2, r["pagina"]

@@ -18,6 +18,15 @@ PORTARIA_NEWS_URL = "https://www.regularizeconsultorias.com.br/noticias/farmacia
 POPS_DROGARIA_URL = "https://www.regularizeconsultorias.com.br/manuais-e-pops/pops-drogaria/"
 NAMESPACE = "http://www.sitemaps.org/schemas/sitemap/0.9"
 NS = {"s": NAMESPACE}
+# Páginas reunidas em matérias novas em 01/11/2026 (reenvio ao AdSense): continuam no ar com noindex, fora do sitemap.
+REUNIDAS = {
+    "cnes-prorroga-transmissor-competencia-06-2026",
+    "cnes-competencia-08-2026-prazo-transmissao",
+    "cnes-competencia-09-2026-prazo-transmissao",
+    "cnes-competencia-10-2026-prazo-transmissao",
+    "prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular",
+    "sifap-regularizacao-cadastral-farmacias-notificadas-13-maio",
+}
 
 
 def _url_elements():
@@ -43,6 +52,7 @@ def test_sitemap_is_valid_xml_with_unique_urls():
     root, urls = _url_elements()
     locations = [url.findtext("s:loc", namespaces=NS) for url in urls]
     public_canonicals = set()
+    noindex_canonicals = set()
     for path in public_html_paths():
         parser = _MetadataParser()
         parser.feed(path.read_text(encoding="utf-8"))
@@ -52,13 +62,22 @@ def test_sitemap_is_valid_xml_with_unique_urls():
             assert any("noindex" in content.casefold() for content in parser.robots), "404.html sem noindex"
             continue
         assert len(parser.canonicals) == 1, path.relative_to(ROOT)
-        public_canonicals.add(parser.canonicals[0])
+        if any("noindex" in content.casefold() for content in parser.robots):
+            noindex_canonicals.add(parser.canonicals[0])
+        else:
+            public_canonicals.add(parser.canonicals[0])
 
     assert root.tag == f"{{{NAMESPACE}}}urlset"
     assert all(location and location.strip() for location in locations)
-    assert len(locations) == 106
+    # 01/11/2026 (reenvio ao AdSense): +5 matérias novas e -6 páginas reunidas nelas. As reunidas continuam publicadas,
+    # com noindex e aviso para a página nova, e saem do sitemap; toda outra página pública continua nele.
+    assert len(locations) == 105
     assert len(locations) == len(set(locations))
     assert set(locations) == public_canonicals
+    assert noindex_canonicals == {
+        f"https://www.regularizeconsultorias.com.br/noticias/{slug}/" for slug in REUNIDAS
+    }
+    assert not noindex_canonicals & set(locations)
 
 
 def test_sitemap_urls_and_metadata_follow_the_protocol():
@@ -142,7 +161,9 @@ def test_portaria_news_news_index_and_comunicado_have_expected_sitemap_metadata(
     # 26/10/2026: a listagem reordenou os cards do MAPA 1.617 e do período eleitoral, atualizados no mesmo lote.
     # 28/10/2026: a listagem reordenou os cards do MAPA 1.617 e de produtos irregulares, atualizados no mesmo lote.
     # 31/10/2026: a listagem trocou o resumo do card do SNCR e o levou à 1ª posição.
-    assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-31"
+    # 01/11/2026 (reenvio ao AdSense): a listagem ganhou os cards das cinco matérias novas, trocou os das páginas
+    # reunidas e reordenou os seis cards de matérias ampliadas.
+    assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-11-01"
     # 17/10/2026, 09h50: Comunicados ganhou o aviso informativo do Farmácia Popular.
     # 19/10/2026, 15h40: Comunicados ganhou o aviso informativo da instabilidade nos sistemas da Anvisa.
     # 20/10/2026: o aviso da instabilidade na Anvisa passou ao histórico.
