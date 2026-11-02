@@ -31,7 +31,7 @@ REG_URL = "https://www.regularizeconsultorias.com.br/noticias/sifap-regularizaca
 TITLE_NOVA = "SIFAP: o ciclo de regularização cadastral de maio de 2026"
 NOVA_ROUTE = "/noticias/sifap-ciclo-regularizacao-cadastral-maio-2026/"
 NOVA_URL = f"https://www.regularizeconsultorias.com.br{NOVA_ROUTE}"
-NOVA_PUBLISHED = "2026-11-01T19:30:00-03:00"
+NOVA_PUBLISHED = "2026-11-01T23:06:00-03:00"
 
 MARKERS = ("não se confunde", "não restaura")
 BAD_RTA = ("desbloqueio", "aprovação", "liberação", "libera", "garante")
@@ -210,7 +210,7 @@ def test_titulos_carimbo_ordem_e_contagens():
     # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
     assert all("news-card-compact" in item.split(">", 1)[0] for item in cards)
     assert "data-updated" not in card.split(">", 1)[0]
-    assert f'<time datetime="{NOVA_PUBLISHED}" class="leading-none">01/11/2026 • 19h30</time>' in card
+    assert f'<time datetime="{NOVA_PUBLISHED}" class="leading-none">01/11/2026 • 23h06</time>' in card
     assert "Ler notícia" in card and ">Informativo</span>" in card
     assert f'data-title="{TITLE_NOVA}"' in card and 'data-category="farmacia-popular"' in card
 

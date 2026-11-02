@@ -191,7 +191,7 @@ def test_news_index_itemlist_ordering():
 
     assert items, "ItemList is empty"
     urls = [item.get("url") for item in items]
-    # 01/11/2026 (reenvio ao AdSense): as cinco matérias novas (20h00 a 19h30) e as seis ampliadas (19h20 a 18h55)
+    # 01/11/2026 (reenvio ao AdSense): as cinco matérias novas (23h10 a 23h06) e as seis ampliadas (23h05 a 23h00)
     # abrem a lista, na ordem dos carimbos. Saem os cards das seis páginas reunidas (CNES 06, 08, 09 e 10/2026 e as
     # duas do SIFAP de maio), que seguem publicadas com noindex. As posições abaixo de 11 são as de 31/10/2026 + 11,
     # menos as páginas reunidas e as ampliadas que ficavam à frente de cada uma.
