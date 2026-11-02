@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="/assets/css/components.css?v=20261023-botoes-1">
   <link rel="stylesheet" href="/assets/css/pages/equipe-servicos.css?v=20261023-botoes-1">
   <link rel="stylesheet" href="/assets/css/botoes.css?v=20261023-botoes-1">
-  <link rel="stylesheet" href="/assets/css/refinamento.css?v=20261102-refinamento-19">
+  <link rel="stylesheet" href="/assets/css/refinamento.css?v=20261102-servicos-lista-2">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -182,407 +182,264 @@
           <span class="home-manuals-eyebrow">Áreas de atuação</span>
           <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-3">O que oferecemos</h2>
           <p class="text-slate-500 max-w-xl mx-auto">
-            Conheça cada frente de trabalho e o que está incluído no acompanhamento.
+            Abra um serviço para ver o que está incluído e falar com a gente sobre ele.
           </p>
         </div>
 
-        <!-- Grid 2 colunas em tablet, 3 em desktop -->
-        <div class="services-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+        <!-- Serviços por área: cada serviço abre e fecha -->
+        <div class="servicos-areas">
 
-          <!-- 1. AFE e AE -->
-          <article class="p-5 sm:p-6 lg:p-8 rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-xl transition-all duration-300 group">
-            <div class="w-14 h-14 mb-4 sm:mb-6 mx-auto sm:mx-0 rounded-2xl bg-brand/10 flex items-center justify-center group-hover:bg-brand transition-colors duration-300">
-              <svg class="w-7 h-7 text-brand group-hover:text-white transition-colors duration-300"
-                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M7 3.75h7.25L18 7.5v12.75H7V3.75z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M14.25 3.75V7.5H18M9.25 13l2 2 4-4"/>
-              </svg>
+          <section class="servicos-area" aria-labelledby="servicos-area-anvisa">
+            <div class="servicos-area__cabecalho">
+              <h3 id="servicos-area-anvisa" class="servicos-area__titulo">ANVISA</h3>
+              <p class="servicos-area__resumo">Autorizações de funcionamento, dados cadastrais e acesso aos sistemas da Agência.</p>
             </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3 text-center sm:text-left">AFE e AE junto à ANVISA</h3>
-            <p class="text-slate-500 text-sm leading-relaxed mb-4 text-center sm:text-left">
-              Autorização de Funcionamento (AFE) e Autorização Especial (AE) para estabelecimentos
-              farmacêuticos sujeitos à vigilância sanitária federal.
-            </p>
-            <ul class="space-y-1.5 text-sm text-slate-500">
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Drogarias e farmácias, com ou sem manipulação
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Distribuidoras, indústrias e transportadoras
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Empresas em portos, aeroportos e fronteiras
-              </li>
-            </ul>
-          </article>
+            <div class="servicos-area__lista">
+              <article id="servico-afe-ae" class="servico">
+                <details class="servico__detalhes" name="servicos">
+                  <summary class="servico__resumo">
+                    <span class="servico__icone"><svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 3.75h7.25L18 7.5v12.75H7V3.75z"/> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.25 3.75V7.5H18M9.25 13l2 2 4-4"/> </svg></span>
+                    <span class="servico__titulo">AFE e AE junto à ANVISA</span>
+                    <span class="servico__seta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg></span>
+                  </summary>
+                  <div class="servico__corpo">
+                  <p>Autorização de Funcionamento (AFE) e Autorização Especial (AE) para estabelecimentos farmacêuticos sujeitos à vigilância sanitária federal.</p>
+                  <ul class="servico__itens">
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Drogarias e farmácias, com ou sem manipulação</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Distribuidoras, indústrias e transportadoras</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Empresas em portos, aeroportos e fronteiras</li>
+                  </ul>
+                  <a href="/whatsapp/?text=Ol%C3%A1%21%20Gostaria%20de%20falar%20sobre%20o%20servi%C3%A7o%3A%20AFE%20e%20AE%20junto%20%C3%A0%20ANVISA." target="_blank" rel="noopener noreferrer" class="botao botao--secundario servico__contato">Falar sobre este serviço <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a>
+                  </div>
+                </details>
+              </article>
+              <article id="servico-alteracoes-anvisa" class="servico">
+                <details class="servico__detalhes" name="servicos">
+                  <summary class="servico__resumo">
+                    <span class="servico__icone"><svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 4h6l1 2h2a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h2l1-2z"/> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h4m-4 4h3m4.5-5.5l2 2L14 17h-2v-2l4.5-4.5z"/> </svg></span>
+                    <span class="servico__titulo">Alterações cadastrais na ANVISA</span>
+                    <span class="servico__seta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg></span>
+                  </summary>
+                  <div class="servico__corpo">
+                  <p>Manutenção e atualização dos dados cadastrais da empresa no sistema da ANVISA.</p>
+                  <ul class="servico__itens">
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Porte, endereço, razão social, responsável técnico e legal</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>SNGPC: regularização de acesso e associação do RT</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Recurso de indeferimentos</li>
+                  </ul>
+                  <a href="/whatsapp/?text=Ol%C3%A1%21%20Gostaria%20de%20falar%20sobre%20o%20servi%C3%A7o%3A%20Altera%C3%A7%C3%B5es%20cadastrais%20na%20ANVISA." target="_blank" rel="noopener noreferrer" class="botao botao--secundario servico__contato">Falar sobre este serviço <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a>
+                  </div>
+                </details>
+              </article>
+              <article id="servico-sncr" class="servico">
+                <details class="servico__detalhes" name="servicos">
+                  <summary class="servico__resumo">
+                    <span class="servico__icone"><svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 3.75h7.25L18 7.5v12.75H7V3.75z"/> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.25 3.75V7.5H18"/> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.25 11h4.5m-4.5 3h3.25"/> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13.25l2.75 1.1v1.9c0 1.55-1.15 3.05-2.75 3.75-1.6-.7-2.75-2.2-2.75-3.75v-1.9L15 13.25z"/> </svg></span>
+                    <span class="servico__titulo">Implantação e habilitação de acesso ao SNCR</span>
+                    <span class="servico__seta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg></span>
+                  </summary>
+                  <div class="servico__corpo">
+                  <p>A Regularize realiza a preparação cadastral de farmácias e drogarias para o SNCR, com análise da situação do estabelecimento, organização dos vínculos e acompanhamento da habilitação dos usuários. No Cadastro Anvisa, a atribuição dos perfis cabe ao Responsável Legal ou ao Gestor de Cadastro da empresa. A Regularize não concede acesso ao sistema da Anvisa.</p>
+                  <ul class="servico__itens">
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Análise cadastral e conferência da situação do estabelecimento</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Análise dos responsáveis e vínculos necessários ao acesso</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Orientação sobre Cadastro Anvisa, usuários e perfis</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Acompanhamento da habilitação dos usuários e conferência final da preparação para o uso do sistema</li>
+                  </ul>
+                  </div>
+                </details>
+              </article>
+            </div>
+          </section>
 
-          <!-- 2. Alterações Cadastrais ANVISA -->
-          <article class="p-5 sm:p-6 lg:p-8 rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-xl transition-all duration-300 group">
-            <div class="w-14 h-14 mb-4 sm:mb-6 mx-auto sm:mx-0 rounded-2xl bg-brand/10 flex items-center justify-center group-hover:bg-brand transition-colors duration-300">
-              <svg class="w-7 h-7 text-brand group-hover:text-white transition-colors duration-300"
-                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 4h6l1 2h2a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h2l1-2z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 12h4m-4 4h3m4.5-5.5l2 2L14 17h-2v-2l4.5-4.5z"/>
-              </svg>
+          <section class="servicos-area" aria-labelledby="servicos-area-farmacia-popular">
+            <div class="servicos-area__cabecalho">
+              <h3 id="servicos-area-farmacia-popular" class="servicos-area__titulo">Farmácia Popular e PBMs</h3>
+              <p class="servicos-area__resumo">Entrada e permanência da farmácia nos programas de acesso a medicamentos.</p>
             </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3 text-center sm:text-left">Alterações cadastrais na ANVISA</h3>
-            <p class="text-slate-500 text-sm leading-relaxed mb-4 text-center sm:text-left">
-              Manutenção e atualização dos dados cadastrais da empresa no sistema da ANVISA.
-            </p>
-            <ul class="space-y-1.5 text-sm text-slate-500">
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Porte, endereço, razão social, responsável técnico e legal
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                SNGPC: regularização de acesso e associação do RT
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Recurso de indeferimentos
-              </li>
-            </ul>
-          </article>
+            <div class="servicos-area__lista">
+              <article id="servico-credenciamento-farmacia-popular" class="servico">
+                <details class="servico__detalhes" name="servicos">
+                  <summary class="servico__resumo">
+                    <span class="servico__icone"><svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 20V6a2 2 0 012-2h10a2 2 0 012 2v14M3 20h18"/> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10h6m-3-3v6M9 20v-4h6v4"/> </svg></span>
+                    <span class="servico__titulo">Credenciamento no Farmácia Popular</span>
+                    <span class="servico__seta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg></span>
+                  </summary>
+                  <div class="servico__corpo">
+                  <p>Do pedido inicial à aprovação do credenciamento no Programa Farmácia Popular do Governo Federal.</p>
+                  <ul class="servico__itens">
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Novas adesões em cidades habilitadas pelo programa</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Renovação da participação no programa</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Acompanhamento do início ao credenciamento aprovado</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Auditorias e justificativas em bloqueios do programa</li>
+                  </ul>
+                  <a href="/whatsapp/?text=Ol%C3%A1%21%20Gostaria%20de%20falar%20sobre%20o%20servi%C3%A7o%3A%20Credenciamento%20no%20Farm%C3%A1cia%20Popular." target="_blank" rel="noopener noreferrer" class="botao botao--secundario servico__contato">Falar sobre este serviço <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a>
+                  </div>
+                </details>
+              </article>
+              <article id="servico-alteracoes-farmacia-popular" class="servico">
+                <details class="servico__detalhes" name="servicos">
+                  <summary class="servico__resumo">
+                    <span class="servico__icone"><svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h3m-3 4h2m4.5-3.5l1 1-3.5 3.5H13v-2l3.5-3.5z"/> </svg></span>
+                    <span class="servico__titulo">Alterações cadastrais no Farmácia Popular</span>
+                    <span class="servico__seta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg></span>
+                  </summary>
+                  <div class="servico__corpo">
+                  <p>Atualização e manutenção dos dados cadastrais junto ao Programa Farmácia Popular do Ministério da Saúde.</p>
+                  <ul class="servico__itens">
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Endereço, responsável técnico e legal</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Demais atualizações cadastrais necessárias</li>
+                  </ul>
+                  <a href="/whatsapp/?text=Ol%C3%A1%21%20Gostaria%20de%20falar%20sobre%20o%20servi%C3%A7o%3A%20Altera%C3%A7%C3%B5es%20cadastrais%20no%20Farm%C3%A1cia%20Popular." target="_blank" rel="noopener noreferrer" class="botao botao--secundario servico__contato">Falar sobre este serviço <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a>
+                  </div>
+                </details>
+              </article>
+              <article id="servico-pbms" class="servico">
+                <details class="servico__detalhes" name="servicos">
+                  <summary class="servico__resumo">
+                    <span class="servico__icone"><svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <circle cx="7" cy="7.5" r="2.25" stroke-width="2"/> <circle cx="17" cy="7.5" r="2.25" stroke-width="2"/> <circle cx="12" cy="16.5" r="2.25" stroke-width="2"/> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.1 8.6l1.8 5.1m4.9-5.1l-1.8 5.1M9.3 7.5h5.4"/> </svg></span>
+                    <span class="servico__titulo">PBMs</span>
+                    <span class="servico__seta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg></span>
+                  </summary>
+                  <div class="servico__corpo">
+                  <p>Credenciamento da farmácia em Programas de Benefícios a Medicamentos (PBMs), como:</p>
+                  <ul class="servico__itens">
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Portal da Drogaria</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>ePharma</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Funcional Card</li>
+                  </ul>
+                  <a href="/whatsapp/?text=Ol%C3%A1%21%20Gostaria%20de%20falar%20sobre%20o%20servi%C3%A7o%3A%20PBMs." target="_blank" rel="noopener noreferrer" class="botao botao--secundario servico__contato">Falar sobre este serviço <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a>
+                  </div>
+                </details>
+              </article>
+            </div>
+          </section>
 
-          <!-- 3. Farmácia Popular - Credenciamento -->
-          <article class="p-5 sm:p-6 lg:p-8 rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-xl transition-all duration-300 group">
-            <div class="w-14 h-14 mb-4 sm:mb-6 mx-auto sm:mx-0 rounded-2xl bg-brand/10 flex items-center justify-center group-hover:bg-brand transition-colors duration-300">
-              <svg class="w-7 h-7 text-brand group-hover:text-white transition-colors duration-300"
-                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M5 20V6a2 2 0 012-2h10a2 2 0 012 2v14M3 20h18"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 10h6m-3-3v6M9 20v-4h6v4"/>
-              </svg>
+          <section class="servicos-area" aria-labelledby="servicos-area-vigilancia">
+            <div class="servicos-area__cabecalho">
+              <h3 id="servicos-area-vigilancia" class="servicos-area__titulo">Vigilância Sanitária, CNES e documentação</h3>
+              <p class="servicos-area__resumo">Licença para funcionar, cadastro no CNES e os documentos técnicos exigidos na fiscalização.</p>
             </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3 text-center sm:text-left">Credenciamento no Farmácia Popular</h3>
-            <p class="text-slate-500 text-sm leading-relaxed mb-4 text-center sm:text-left">
-              Do pedido inicial à aprovação do credenciamento no Programa Farmácia Popular do Governo Federal.
-            </p>
-            <ul class="space-y-1.5 text-sm text-slate-500">
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Novas adesões em cidades habilitadas pelo programa
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Renovação da participação no programa
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Acompanhamento do início ao credenciamento aprovado
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Auditorias e justificativas em bloqueios do programa
-              </li>
-            </ul>
-          </article>
+            <div class="servicos-area__lista">
+              <article id="servico-licenca-sanitaria" class="servico">
+                <details class="servico__detalhes" name="servicos">
+                  <summary class="servico__resumo">
+                    <span class="servico__icone"><svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4h10a2 2 0 012 2v11a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z"/> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8h6M9 11h4"/> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14.5l2.75 1.1v1.75c0 1.45-1.15 2.8-2.75 3.4-1.6-.6-2.75-1.95-2.75-3.4V15.6L12 14.5z"/> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.9 19.6l-1.15 1.65m5.35-1.65l1.15 1.65"/> </svg></span>
+                    <span class="servico__titulo">Licença sanitária / alvará sanitário</span>
+                    <span class="servico__seta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg></span>
+                  </summary>
+                  <div class="servico__corpo">
+                  <p>Assessoria junto à Vigilância Sanitária municipal ou estadual, com apoio documental do pedido à emissão da licença.</p>
+                  <ul class="servico__itens">
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Licença sanitária inicial e renovação</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Alterações cadastrais</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Acompanhamento das exigências da Vigilância Sanitária</li>
+                  </ul>
+                  <a href="/whatsapp/?text=Ol%C3%A1%21%20Gostaria%20de%20falar%20sobre%20o%20servi%C3%A7o%3A%20Licen%C3%A7a%20sanit%C3%A1ria%20%2F%20alvar%C3%A1%20sanit%C3%A1rio." target="_blank" rel="noopener noreferrer" class="botao botao--secundario servico__contato">Falar sobre este serviço <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a>
+                  </div>
+                </details>
+              </article>
+              <article id="servico-cnes" class="servico">
+                <details class="servico__detalhes" name="servicos">
+                  <summary class="servico__resumo">
+                    <span class="servico__icone"><svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21h18M3 21V9l9-6 9 6v12"/> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 21v-6h6v6"/> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 7v4m-2-2h4"/> </svg></span>
+                    <span class="servico__titulo">CNES — Cadastro Nacional de Estabelecimentos de Saúde</span>
+                    <span class="servico__seta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg></span>
+                  </summary>
+                  <div class="servico__corpo">
+                  <p>Apoio na orientação, conferência e organização cadastral relacionada ao CNES para farmácias, drogarias e estabelecimentos de saúde, conforme exigências aplicáveis.</p>
+                  <ul class="servico__itens">
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Orientação para cadastro e atualização cadastral</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Apoio para farmácias com serviços clínicos, vacinação ou testes</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Conferência da coerência entre o CNES e outros cadastros do estabelecimento, como Farmácia Popular e licenças locais, quando aplicável</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Acompanhamento no fluxo municipal ou estadual, conforme o caso</li>
+                  </ul>
+                  <a href="/whatsapp/?text=Ol%C3%A1%21%20Gostaria%20de%20falar%20sobre%20o%20servi%C3%A7o%3A%20CNES%20%E2%80%94%20Cadastro%20Nacional%20de%20Estabelecimentos%20de%20Sa%C3%BAde." target="_blank" rel="noopener noreferrer" class="botao botao--secundario servico__contato">Falar sobre este serviço <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a>
+                  </div>
+                </details>
+              </article>
+              <article id="servico-documentacao-tecnica" class="servico">
+                <details class="servico__detalhes" name="servicos">
+                  <summary class="servico__resumo">
+                    <span class="servico__icone"><svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 4h6l1 2h2v15H6V6h2l1-2z"/> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 11h6M9 15h6M9 19h3"/> </svg></span>
+                    <span class="servico__titulo">Documentação técnica</span>
+                    <span class="servico__seta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg></span>
+                  </summary>
+                  <div class="servico__corpo">
+                  <p>Elaboração dos documentos técnicos exigidos pela vigilância sanitária para o funcionamento regular do estabelecimento.</p>
+                  <ul class="servico__itens">
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>PGRSS — Gerenciamento de Resíduos de Serviços de Saúde</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Manuais de Boas Práticas</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>POPs — Procedimentos Operacionais Padrão</li>
+                  </ul>
+                  <a href="/whatsapp/?text=Ol%C3%A1%21%20Gostaria%20de%20falar%20sobre%20o%20servi%C3%A7o%3A%20Documenta%C3%A7%C3%A3o%20t%C3%A9cnica." target="_blank" rel="noopener noreferrer" class="botao botao--secundario servico__contato">Falar sobre este serviço <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a>
+                  </div>
+                </details>
+              </article>
+            </div>
+          </section>
 
-          <!-- 4. Farmácia Popular - Alterações -->
-          <article class="p-5 sm:p-6 lg:p-8 rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-xl transition-all duration-300 group">
-            <div class="w-14 h-14 mb-4 sm:mb-6 mx-auto sm:mx-0 rounded-2xl bg-brand/10 flex items-center justify-center group-hover:bg-brand transition-colors duration-300">
-              <svg class="w-7 h-7 text-brand group-hover:text-white transition-colors duration-300"
-                   fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 12h3m-3 4h2m4.5-3.5l1 1-3.5 3.5H13v-2l3.5-3.5z"/>
-              </svg>
+          <section class="servicos-area" aria-labelledby="servicos-area-conselho-e-orgaos">
+            <div class="servicos-area__cabecalho">
+              <h3 id="servicos-area-conselho-e-orgaos" class="servicos-area__titulo">CRF, MAPA e Polícia Federal</h3>
+              <p class="servicos-area__resumo">Regularidade junto ao conselho profissional e aos órgãos que fiscalizam atividades específicas.</p>
             </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3 text-center sm:text-left">Alterações cadastrais no Farmácia Popular</h3>
-            <p class="text-slate-500 text-sm leading-relaxed mb-4 text-center sm:text-left">
-              Atualização e manutenção dos dados cadastrais junto ao Programa Farmácia
-              Popular do Ministério da Saúde.
-            </p>
-            <ul class="space-y-1.5 text-sm text-slate-500">
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Endereço, responsável técnico e legal
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Demais atualizações cadastrais necessárias
-              </li>
-            </ul>
-          </article>
-
-          <!-- 5. CNES -->
-          <article class="p-5 sm:p-6 lg:p-8 rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-xl transition-all duration-300 group">
-            <div class="w-14 h-14 mb-4 sm:mb-6 mx-auto sm:mx-0 rounded-2xl bg-brand/10 flex items-center justify-center group-hover:bg-brand transition-colors duration-300">
-              <svg class="w-7 h-7 text-brand group-hover:text-white transition-colors duration-300"
-                   fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M3 21h18M3 21V9l9-6 9 6v12"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 21v-6h6v6"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M12 7v4m-2-2h4"/>
-              </svg>
+            <div class="servicos-area__lista">
+              <article id="servico-crf" class="servico">
+                <details class="servico__detalhes" name="servicos">
+                  <summary class="servico__resumo">
+                    <span class="servico__icone"><svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 4h12v13H6V4zM9 8h6M9 12h3"/> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 13.5l1.5 1.5 3-3M9 17l-1 4 4-2 4 2-1-4"/> </svg></span>
+                    <span class="servico__titulo">Regularidade junto ao CRF</span>
+                    <span class="servico__seta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg></span>
+                  </summary>
+                  <div class="servico__corpo">
+                  <p>Assessoria junto ao Conselho Regional de Farmácia para manter o estabelecimento em situação regular.</p>
+                  <ul class="servico__itens">
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Obtenção e renovação da Certidão de Regularidade</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Regularização cadastral junto ao CRF</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Apoio em responsabilidade técnica</li>
+                  </ul>
+                  <a href="/whatsapp/?text=Ol%C3%A1%21%20Gostaria%20de%20falar%20sobre%20o%20servi%C3%A7o%3A%20Regularidade%20junto%20ao%20CRF." target="_blank" rel="noopener noreferrer" class="botao botao--secundario servico__contato">Falar sobre este serviço <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a>
+                  </div>
+                </details>
+              </article>
+              <article id="servico-mapa" class="servico">
+                <details class="servico__detalhes" name="servicos">
+                  <summary class="servico__resumo">
+                    <span class="servico__icone"><svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 20c8 0 14-6 14-14V4h-2C9 4 5 8 5 16v4z"/> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 20c0-6 4-10 10-10M14 17l2 2 4-4"/> </svg></span>
+                    <span class="servico__titulo">Regularização e cadastro no MAPA</span>
+                    <span class="servico__seta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg></span>
+                  </summary>
+                  <div class="servico__corpo">
+                  <p>Assessoria junto ao Ministério da Agricultura e Pecuária, com organização documental conforme a atividade regulada.</p>
+                  <ul class="servico__itens">
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Cadastro e registro de estabelecimentos</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Alterações cadastrais e atualização de dados</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Acompanhamento de processos no SIPEAGRO</li>
+                  </ul>
+                  <a href="/whatsapp/?text=Ol%C3%A1%21%20Gostaria%20de%20falar%20sobre%20o%20servi%C3%A7o%3A%20Regulariza%C3%A7%C3%A3o%20e%20cadastro%20no%20MAPA." target="_blank" rel="noopener noreferrer" class="botao botao--secundario servico__contato">Falar sobre este serviço <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a>
+                  </div>
+                </details>
+              </article>
+              <article id="servico-policia-federal" class="servico">
+                <details class="servico__detalhes" name="servicos">
+                  <summary class="servico__resumo">
+                    <span class="servico__icone"><svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3l8 3.5v5.5c0 4.5-3.3 8.7-8 10.5-4.7-1.8-8-6-8-10.5V6.5L12 3z"/> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/> </svg></span>
+                    <span class="servico__titulo">Polícia Federal para produtos controlados</span>
+                    <span class="servico__seta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg></span>
+                  </summary>
+                  <div class="servico__corpo">
+                  <p>Obtenção e renovação das licenças da Polícia Federal para indústrias químicas e farmácias de manipulação que trabalham com produtos químicos controlados.</p>
+                  <ul class="servico__itens">
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>CRC — Certificado de Registro Cadastral</li>
+                    <li><svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>CLF — Certificado de Licença de Funcionamento</li>
+                  </ul>
+                  <a href="/whatsapp/?text=Ol%C3%A1%21%20Gostaria%20de%20falar%20sobre%20o%20servi%C3%A7o%3A%20Pol%C3%ADcia%20Federal%20para%20produtos%20controlados." target="_blank" rel="noopener noreferrer" class="botao botao--secundario servico__contato">Falar sobre este serviço <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a>
+                  </div>
+                </details>
+              </article>
             </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3 text-center sm:text-left">CNES — Cadastro Nacional de Estabelecimentos de Saúde</h3>
-            <p class="text-slate-500 text-sm leading-relaxed mb-4 text-center sm:text-left">
-              Apoio na orientação, conferência e organização cadastral relacionada ao CNES para farmácias, drogarias e estabelecimentos de saúde, conforme exigências aplicáveis.
-            </p>
-            <ul class="space-y-1.5 text-sm text-slate-500">
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Orientação para cadastro e atualização cadastral
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Apoio para farmácias com serviços clínicos, vacinação ou testes
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Conferência da coerência entre o CNES e outros cadastros do estabelecimento, como Farmácia Popular e licenças locais, quando aplicável
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Acompanhamento no fluxo municipal ou estadual, conforme o caso
-              </li>
-            </ul>
-          </article>
-
-          <!-- 6. Documentação Técnica -->
-          <article class="p-5 sm:p-6 lg:p-8 rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-xl transition-all duration-300 group">
-            <div class="w-14 h-14 mb-4 sm:mb-6 mx-auto sm:mx-0 rounded-2xl bg-brand/10 flex items-center justify-center group-hover:bg-brand transition-colors duration-300">
-              <svg class="w-7 h-7 text-brand group-hover:text-white transition-colors duration-300"
-                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 4h6l1 2h2v15H6V6h2l1-2z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 11h6M9 15h6M9 19h3"/>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3 text-center sm:text-left">Documentação técnica</h3>
-            <p class="text-slate-500 text-sm leading-relaxed mb-4 text-center sm:text-left">
-              Elaboração dos documentos técnicos exigidos pela vigilância sanitária para o
-              funcionamento regular do estabelecimento.
-            </p>
-            <ul class="space-y-1.5 text-sm text-slate-500">
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                PGRSS — Gerenciamento de Resíduos de Serviços de Saúde
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Manuais de Boas Práticas
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                POPs — Procedimentos Operacionais Padrão
-              </li>
-            </ul>
-          </article>
-
-          <!-- 6. PBMs -->
-          <article class="p-5 sm:p-6 lg:p-8 rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-xl transition-all duration-300 group">
-            <div class="w-14 h-14 mb-4 sm:mb-6 mx-auto sm:mx-0 rounded-2xl bg-brand/10 flex items-center justify-center group-hover:bg-brand transition-colors duration-300">
-              <svg class="w-7 h-7 text-brand group-hover:text-white transition-colors duration-300"
-                   fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="7" cy="7.5" r="2.25" stroke-width="2"/>
-                <circle cx="17" cy="7.5" r="2.25" stroke-width="2"/>
-                <circle cx="12" cy="16.5" r="2.25" stroke-width="2"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9.1 8.6l1.8 5.1m4.9-5.1l-1.8 5.1M9.3 7.5h5.4"/>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3 text-center sm:text-left">PBMs</h3>
-            <p class="text-slate-500 text-sm leading-relaxed mb-4 text-center sm:text-left">
-              Credenciamento da farmácia em Programas de Benefícios a Medicamentos (PBMs), como:
-            </p>
-            <ul class="space-y-1.5 text-sm text-slate-500">
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Portal da Drogaria
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                ePharma
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Funcional Card
-              </li>
-            </ul>
-          </article>
-
-          <!-- Polícia Federal -->
-          <article class="p-5 sm:p-6 lg:p-8 rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-xl transition-all duration-300 group">
-            <div class="w-14 h-14 mb-4 sm:mb-6 mx-auto sm:mx-0 rounded-2xl bg-brand/10 flex items-center justify-center group-hover:bg-brand transition-colors duration-300">
-              <svg class="w-7 h-7 text-brand group-hover:text-white transition-colors duration-300"
-                   fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M12 3l8 3.5v5.5c0 4.5-3.3 8.7-8 10.5-4.7-1.8-8-6-8-10.5V6.5L12 3z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 12l2 2 4-4"/>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3 text-center sm:text-left">Polícia Federal para produtos controlados</h3>
-            <p class="text-slate-500 text-sm leading-relaxed mb-4 text-center sm:text-left">
-              Obtenção e renovação das licenças da Polícia Federal para indústrias químicas e
-              farmácias de manipulação que trabalham com produtos químicos controlados.
-            </p>
-            <ul class="space-y-1.5 text-sm text-slate-500">
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                CRC — Certificado de Registro Cadastral
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                CLF — Certificado de Licença de Funcionamento
-              </li>
-            </ul>
-          </article>
-
-          <!-- 7. Regularidade junto ao CRF -->
-          <article class="p-5 sm:p-6 lg:p-8 rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-xl transition-all duration-300 group">
-            <div class="w-14 h-14 mb-4 sm:mb-6 mx-auto sm:mx-0 rounded-2xl bg-brand/10 flex items-center justify-center group-hover:bg-brand transition-colors duration-300">
-              <svg class="w-7 h-7 text-brand group-hover:text-white transition-colors duration-300"
-                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M6 4h12v13H6V4zM9 8h6M9 12h3"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M14 13.5l1.5 1.5 3-3M9 17l-1 4 4-2 4 2-1-4"/>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3 text-center sm:text-left">Regularidade junto ao CRF</h3>
-            <p class="text-slate-500 text-sm leading-relaxed mb-4 text-center sm:text-left">
-              Assessoria junto ao Conselho Regional de Farmácia para manter o estabelecimento em situação regular.
-            </p>
-            <ul class="space-y-1.5 text-sm text-slate-500">
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Obtenção e renovação da Certidão de Regularidade
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Regularização cadastral junto ao CRF
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Apoio em responsabilidade técnica
-              </li>
-            </ul>
-          </article>
-
-          <!-- 8. Regularização e cadastro no MAPA -->
-          <article class="p-5 sm:p-6 lg:p-8 rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-xl transition-all duration-300 group">
-            <div class="w-14 h-14 mb-4 sm:mb-6 mx-auto sm:mx-0 rounded-2xl bg-brand/10 flex items-center justify-center group-hover:bg-brand transition-colors duration-300">
-              <svg class="w-7 h-7 text-brand group-hover:text-white transition-colors duration-300"
-                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M5 20c8 0 14-6 14-14V4h-2C9 4 5 8 5 16v4z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M5 20c0-6 4-10 10-10M14 17l2 2 4-4"/>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3 text-center sm:text-left">Regularização e cadastro no MAPA</h3>
-            <p class="text-slate-500 text-sm leading-relaxed mb-4 text-center sm:text-left">
-              Assessoria junto ao Ministério da Agricultura e Pecuária, com organização documental conforme a atividade regulada.
-            </p>
-            <ul class="space-y-1.5 text-sm text-slate-500">
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Cadastro e registro de estabelecimentos
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Alterações cadastrais e atualização de dados
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Acompanhamento de processos no SIPEAGRO
-              </li>
-            </ul>
-          </article>
-
-          <!-- 10. SNCR da ANVISA -->
-          <article id="servico-sncr" class="p-5 sm:p-6 lg:p-8 rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-xl transition-all duration-300 group">
-            <div class="w-14 h-14 mb-4 sm:mb-6 mx-auto sm:mx-0 rounded-2xl bg-brand/10 flex items-center justify-center group-hover:bg-brand transition-colors duration-300">
-              <svg class="w-7 h-7 text-brand group-hover:text-white transition-colors duration-300"
-                   fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M7 3.75h7.25L18 7.5v12.75H7V3.75z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M14.25 3.75V7.5H18"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9.25 11h4.5m-4.5 3h3.25"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M15 13.25l2.75 1.1v1.9c0 1.55-1.15 3.05-2.75 3.75-1.6-.7-2.75-2.2-2.75-3.75v-1.9L15 13.25z"/>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3 text-center sm:text-left">Implantação e habilitação de acesso ao SNCR</h3>
-            <p class="text-slate-500 text-sm leading-relaxed mb-4 text-center sm:text-left">
-              A Regularize realiza a preparação cadastral de farmácias e drogarias para o SNCR, com
-              análise da situação do estabelecimento, organização dos vínculos e acompanhamento da
-              habilitação dos usuários. No Cadastro Anvisa, a atribuição dos perfis cabe ao
-              Responsável Legal ou ao Gestor de Cadastro da empresa. A Regularize não concede acesso
-              ao sistema da Anvisa.
-            </p>
-            <ul class="space-y-1.5 text-sm text-slate-500">
-              <li class="flex items-start gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Análise cadastral e conferência da situação do estabelecimento
-              </li>
-              <li class="flex items-start gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Análise dos responsáveis e vínculos necessários ao acesso
-              </li>
-              <li class="flex items-start gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Orientação sobre Cadastro Anvisa, usuários e perfis
-              </li>
-              <li class="flex items-start gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Acompanhamento da habilitação dos usuários e conferência final da preparação para o uso do sistema
-              </li>
-            </ul>
-          </article>
-
-          <!-- 9. Licença Sanitária / Alvará Sanitário -->
-          <article class="p-5 sm:p-6 lg:p-8 rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-xl transition-all duration-300 group">
-            <div class="w-14 h-14 mb-4 sm:mb-6 mx-auto sm:mx-0 rounded-2xl bg-brand/10 flex items-center justify-center group-hover:bg-brand transition-colors duration-300">
-              <svg class="w-7 h-7 text-brand group-hover:text-white transition-colors duration-300"
-                   fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M7 4h10a2 2 0 012 2v11a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 8h6M9 11h4"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M12 14.5l2.75 1.1v1.75c0 1.45-1.15 2.8-2.75 3.4-1.6-.6-2.75-1.95-2.75-3.4V15.6L12 14.5z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9.9 19.6l-1.15 1.65m5.35-1.65l1.15 1.65"/>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3 text-center sm:text-left">Licença sanitária / alvará sanitário</h3>
-            <p class="text-slate-500 text-sm leading-relaxed mb-4 text-center sm:text-left">
-              Assessoria junto à Vigilância Sanitária municipal ou estadual, com apoio documental do pedido à emissão da licença.
-            </p>
-            <ul class="space-y-1.5 text-sm text-slate-500">
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Licença sanitária inicial e renovação
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Alterações cadastrais
-              </li>
-              <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Acompanhamento das exigências da Vigilância Sanitária
-              </li>
-            </ul>
-          </article>
+          </section>
 
         </div>
       </div>
@@ -725,6 +582,7 @@
 
   </div>
 
+  <script src="/assets/js/pages/servicos.js?v=20261102-servicos-1" defer></script>
   <script src="/assets/js/main.min.js?v=20261026-avisos-1"></script>
 </body>
 </html>
