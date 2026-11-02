@@ -2323,3 +2323,42 @@ main > section:is(.team-overview-section, .team-work-section, .team-fronts-secti
     transform: none;
   }
 }
+
+/* ---------- R30. Botão azul (principal) em degradê (02/11/2026) ----------
+   Pedido do Jr sobre o "Falar sobre este serviço", que passa de secundário
+   (branco) a principal (azul). O tipo inteiro muda, porque
+   test_botoes_padrao exige o mesmo estilo nos botões do mesmo tipo: o azul
+   chapado vira o degradê dos ícones dos cards (#1565c0 → #1a3a5c; branco
+   com 5,6:1 no trecho mais claro) e a seta para a direita fica num círculo
+   branco translúcido, como a do secundário. Com mouse, o degradê clareia na
+   ponta (#1e6fd0, branco com 4,9:1) e a seta anda (R11). */
+.botao.botao--principal {
+  background-image: linear-gradient(135deg, #1565c0 0%, #1a3a5c 100%);
+  /* O degradê vai até a borda transparente (sem isso, a borda de 1px mostra
+     o azul chapado em volta do botão). */
+  background-origin: border-box;
+}
+
+@media (hover: hover) {
+  .botao.botao--principal:hover {
+    background-image: linear-gradient(135deg, #1e6fd0 0%, #1565c0 50%, #1a3a5c 100%);
+  }
+}
+
+.botao.botao--principal > svg:has(path[d="M9 5l7 7-7 7"]) {
+  box-sizing: content-box;
+  flex: 0 0 auto;
+  width: 0.75rem;
+  height: 0.75rem;
+  padding: 0.25rem;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+@media (hover: hover) {
+  .botao.botao--principal:hover > svg:has(path[d="M9 5l7 7-7 7"]) {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+}
