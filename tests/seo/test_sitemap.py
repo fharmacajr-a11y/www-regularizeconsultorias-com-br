@@ -166,14 +166,17 @@ def test_portaria_news_news_index_and_comunicado_have_expected_sitemap_metadata(
     # 31/10/2026: a listagem trocou o resumo do card do SNCR e o levou à 1ª posição.
     # 01/11/2026 (reenvio ao AdSense): a listagem ganhou os cards das cinco matérias novas, trocou os das páginas
     # reunidas e reordenou os seis cards de matérias ampliadas.
-    assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-11-01"
+    # 03/11/2026: a listagem trocou os resumos dos cards do SNCR e de produtos irregulares e levou esses dois e o do
+    # guia SNCR × SNGPC ao topo.
+    assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-11-03"
     # 17/10/2026, 09h50: Comunicados ganhou o aviso informativo do Farmácia Popular.
     # 19/10/2026, 15h40: Comunicados ganhou o aviso informativo da instabilidade nos sistemas da Anvisa.
     # 20/10/2026: o aviso da instabilidade na Anvisa passou ao histórico.
     # 26/10/2026: os avisos do MAPA (marco de 23/10) e do período eleitoral do Farmácia Popular passaram ao histórico.
     # 28/10/2026: o aviso encerrado do MAPA ganhou a linha de atualização do Ofício-Circular nº 75/2026.
     # 31/10/2026: o aviso do SNCR ganhou a atualização da 20ª ROP; o encerrado do MAPA, a linha do complemento.
-    assert by_location[COMUNICADO_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-31"
+    # 03/11/2026: o aviso do SNCR ganhou a atualização da RDC nº 1.046/2026.
+    assert by_location[COMUNICADO_URL].findtext("s:lastmod", namespaces=NS) == "2026-11-03"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:lastmod", namespaces=NS) == "2026-10-09"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:changefreq", namespaces=NS) == "monthly"
     assert by_location[PORTARIA_NEWS_URL].findtext("s:priority", namespaces=NS) == "0.8"

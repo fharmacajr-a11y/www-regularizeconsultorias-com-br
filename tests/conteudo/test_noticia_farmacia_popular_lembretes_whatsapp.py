@@ -273,13 +273,16 @@ def test_sitemap_lists_the_new_url_once_with_current_lastmods():
     # 28/10/2026: a listagem reordenou os cards do MAPA 1.617 e de produtos irregulares, atualizados no mesmo lote.
     # 31/10/2026: a listagem trocou o resumo do card do SNCR e o levou à 1ª posição.
     # 01/11/2026: a listagem ganhou os cards das cinco matérias novas e trocou os das páginas reunidas.
-    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-11-01</lastmod>", sitemap)
+    # 03/11/2026: a listagem trocou os resumos dos cards do SNCR e de produtos irregulares e levou esses dois e o do guia
+    # SNCR × SNGPC ao topo.
+    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-11-03</lastmod>", sitemap)
     # 19/10/2026: o comunicado ganhou o aviso da instabilidade nos sistemas da Anvisa; 20/10/2026: o aviso foi encerrado.
     # 26/10/2026: os avisos do MAPA e do período eleitoral foram encerrados.
     # 28/10/2026: o aviso encerrado do MAPA ganhou a linha de atualização do Ofício-Circular nº 75/2026.
     # 31/10/2026: o aviso do SNCR ganhou a atualização da 20ª ROP; o encerrado do MAPA, a linha do complemento.
     # 01/11/2026: três avisos trocaram só o destino do link (páginas reunidas); o texto não mudou e o lastmod fica.
-    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/comunicado/</loc>\s*<lastmod>2026-10-31</lastmod>", sitemap)
+    # 03/11/2026: o aviso do SNCR ganhou a atualização da RDC nº 1.046/2026.
+    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/comunicado/</loc>\s*<lastmod>2026-11-03</lastmod>", sitemap)
     # A URL nova entra logo depois da listagem, como as demais matérias novas. 01/11/2026: as cinco matérias novas
     # entraram à frente dela, na mesma posição.
     locs = re.findall(r"<loc>([^<]+)</loc>", sitemap)

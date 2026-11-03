@@ -21,7 +21,9 @@ PRODUTOS_IRREGULARES_URL = "https://www.regularizeconsultorias.com.br/noticias/a
 # 22/10/2026, 22h40 (hora do commit): RE nº 4.143, 4.147 e 4.150/2026; o SNCR recebeu o mesmo carimbo no mesmo lote.
 # 28/10/2026, 18h50 (hora do commit): RE nº 4.160, 4.228, 4.231 e 4.232/2026; a matéria do
 # MAPA 1.617 recebeu o mesmo carimbo no mesmo lote.
-PRODUTOS_IRREGULARES_UPDATED = "2026-10-28T18:50:00-03:00"
+# 03/11/2026, 12h00 (hora do commit): RE nº 4.246/2026 e retificação da RE nº 3.480/2026; a matéria do SNCR e o guia
+# SNCR × SNGPC (RDC nº 1.046/2026) receberam o mesmo carimbo no mesmo lote.
+PRODUTOS_IRREGULARES_UPDATED = "2026-11-03T12:00:00-03:00"
 # Notícia do SISPA, atualizada em 20/10/2026 às 10h12 (Comunicado nº 1/2026 da CGAA/DSV/SDA/MAPA).
 SISPA_URL = "https://www.regularizeconsultorias.com.br/noticias/mapa-sispa-registro-agrotoxicos/"
 SISPA_UPDATED = "2026-10-20T10:12:00-03:00"
@@ -195,10 +197,18 @@ def test_news_index_itemlist_ordering():
     # abrem a lista, na ordem dos carimbos. Saem os cards das seis páginas reunidas (CNES 06, 08, 09 e 10/2026 e as
     # duas do SIFAP de maio), que seguem publicadas com noindex. As posições abaixo de 11 são as de 31/10/2026 + 11,
     # menos as páginas reunidas e as ampliadas que ficavam à frente de cada uma.
+    # 03/11/2026, 12h00 (hora do commit): a matéria do SNCR (RDC nº 1.046/2026), o guia SNCR × SNGPC e o consolidado
+    # de irregulares (RE nº 4.246/2026), no mesmo carimbo, abrem a lista nessa ordem; as outras dez de 01/11/2026
+    # descem para as posições 4 a 13 (as duas que ficavam à frente do guia descem três; as demais, duas).
+    atualizadas_03_11 = [
+        "rdc-1000-2025-anvisa-prorroga-prazo-sncr",
+        "sncr-e-sngpc-o-que-cada-sistema-controla-na-farmacia",
+        "anvisa-suspende-medicamento-proibe-produtos-irregulares",
+    ]
+    assert urls[:3] == [f"https://www.regularizeconsultorias.com.br/noticias/{slug}/" for slug in atualizadas_03_11]
     novas_e_ampliadas = [
         "cnes-prazos-transmissao-2026",
         "cadastros-autorizacoes-drogaria-afe-licenca-sanitaria-crf-cnes",
-        "sncr-e-sngpc-o-que-cada-sistema-controla-na-farmacia",
         "recolhimentos-suspensoes-alertas-anvisa-como-a-farmacia-deve-reagir",
         "sifap-ciclo-regularizacao-cadastral-maio-2026",
         "anvisa-alerta-soroterapia-promessas-sem-evidencia",
@@ -208,7 +218,7 @@ def test_news_index_itemlist_ordering():
         "farmacia-popular-cuidados-cadastro-documentacao",
         "documentos-tecnicos-essenciais-farmacias-drogarias",
     ]
-    assert urls[:11] == [f"https://www.regularizeconsultorias.com.br/noticias/{slug}/" for slug in novas_e_ampliadas]
+    assert urls[3:13] == [f"https://www.regularizeconsultorias.com.br/noticias/{slug}/" for slug in novas_e_ampliadas]
     cnes_08_url = "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
     sifap_prazo_url = "https://www.regularizeconsultorias.com.br/noticias/prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular/"
     sifap_regularizacao_url = "https://www.regularizeconsultorias.com.br/noticias/sifap-regularizacao-cadastral-farmacias-notificadas-13-maio/"
@@ -220,9 +230,11 @@ def test_news_index_itemlist_ordering():
     # 28/10/2026, 18h50 (hora do commit): a matéria do MAPA 1.617 (Ofício-Circular nº 75/2026) e o consolidado de irregulares (RE nº 4.160, 4.228, 4.231 e 4.232/2026) recebem o mesmo carimbo; o MAPA segue em 1º, o consolidado sobe para o 2º e o período eleitoral e o SNCR descem para o 3º e o 4º.
     # 31/10/2026, 22h10: a matéria do SNCR (prorrogação aprovada na 20ª ROP) sobe para a 1ª posição; o MAPA 1.617, o consolidado de irregulares e o período eleitoral descem uma (até a 4ª).
     # 01/11/2026: os quatro descem 11 (do 12º ao 15º).
-    assert urls[11] == SNCR_WEBINAR_URL
+    # 03/11/2026, 12h00: o SNCR e produtos irregulares sobem para o 1º e o 3º; o MAPA 1.617 desce para o 14º e o
+    # período eleitoral fica no 15º.
+    assert urls[0] == SNCR_WEBINAR_URL
     # 21/10/2026, 17h45: produtos irregulares (RE nº 4.140/2026 e correção da RE nº 3.159/2026) voltam à 1ª posição.
-    assert urls[13] == PRODUTOS_IRREGULARES_URL
+    assert urls[2] == PRODUTOS_IRREGULARES_URL
     # SISPA (Comunicado nº 1/2026) segue logo depois.
     assert urls[15] == SISPA_URL
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entrou na 1ª posição da listagem.
@@ -275,7 +287,8 @@ def test_news_index_itemlist_ordering():
     assert urls.count(PRODUTOS_IRREGULARES_URL) == 1
     assert urls.count(SISPA_URL) == 1
     mapa_portaria_1617 = "https://www.regularizeconsultorias.com.br/noticias/mapa-portaria-1617-2026-aditivos-antimicrobianos-alimentacao-animal/"
-    assert urls[12] == mapa_portaria_1617
+    # 03/11/2026, 12h00: o MAPA 1.617 desce do 13º para o 14º, abaixo das três matérias do carimbo de 03/11/2026.
+    assert urls[13] == mapa_portaria_1617
     assert urls.count(mapa_portaria_1617) == 1
     assert urls[42] == COSMETICOS_URL
     assert urls.count(COSMETICOS_URL) == 1

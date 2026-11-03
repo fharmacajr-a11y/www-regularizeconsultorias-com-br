@@ -205,7 +205,9 @@ def test_titulos_carimbo_ordem_e_contagens():
     assert len(cards) == 83
     assert "prazo-sifap-terminou" not in index and "sifap-regularizacao-cadastral" not in index
     # O card da página reunida é o 5º: as quatro matérias novas de 01/11/2026 com carimbo posterior vêm antes.
-    card = cards[4]
+    # 03/11/2026, 12h00: passa ao 7º; à frente dele, as três matérias do carimbo de 03/11/2026 (SNCR, guia SNCR × SNGPC,
+    # que era uma das quatro, e produtos irregulares) e as outras três novas de 01/11/2026.
+    card = cards[6]
     assert f'href="{NOVA_ROUTE}"' in card and index.count(f'href="{NOVA_ROUTE}"') == 1
     # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
     assert all("news-card-compact" in item.split(">", 1)[0] for item in cards)
@@ -218,7 +220,7 @@ def test_titulos_carimbo_ordem_e_contagens():
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
     assert len(items) == 83
     assert [int(position) for position, _ in items] == list(range(1, 84))
-    assert items[4][1] == NOVA_URL
+    assert items[6][1] == NOVA_URL
     assert PRAZO_URL not in index and REG_URL not in index
 
     historico = historico_html(comunicado)

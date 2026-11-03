@@ -66,6 +66,16 @@ AMPLIADAS = {
     "farmacia-popular-cuidados-cadastro-documentacao": ("2026-04-28T09:00:00-03:00", "2026-11-01T23:01:00-03:00"),
     "documentos-tecnicos-essenciais-farmacias-drogarias": ("2026-04-28T09:00:00-03:00", "2026-11-01T23:00:00-03:00"),
 }
+# 03/11/2026, 12h00 (hora do commit): o guia SNCR × SNGPC passa a declarar a atualização da RDC nº 1.046/2026
+# (dateModified, "Atualizado em", data-updated no card e lastmod). Com a matéria do SNCR e o consolidado de irregulares,
+# no mesmo carimbo, ele abre a listagem; as outras matérias do lote seguem na ordem dos carimbos de 01/11/2026.
+ATUALIZADAS_03_11 = {"sncr-e-sngpc-o-que-cada-sistema-controla-na-farmacia": "2026-11-03T12:00:00-03:00"}
+TOPO_03_11 = (
+    "rdc-1000-2025-anvisa-prorroga-prazo-sncr",
+    "sncr-e-sngpc-o-que-cada-sistema-controla-na-farmacia",
+    "anvisa-suspende-medicamento-proibe-produtos-irregulares",
+)
+ORDEM = [*TOPO_03_11, *(slug for slug in (*NOVAS, *AMPLIADAS) if slug not in TOPO_03_11)]
 TIPOS = {
     "atualizacao": (">Atualização</span>", "Ler atualização"),
     "informativo": (">Informativo</span>", "Ler notícia"),
@@ -237,7 +247,9 @@ def test_materias_novas_tem_identidade_card_itemlist_sitemap_e_anuncio():
     index, cards, slugs = _cards()
     sitemap, sitemap_text = _sitemap()
     itemlist = _itemlist(index)
-    for posicao, (slug, (titulo, tipo, categoria, carimbo, prioridade)) in enumerate(NOVAS.items()):
+    for slug, (titulo, tipo, categoria, carimbo, prioridade) in NOVAS.items():
+        posicao = ORDEM.index(slug)
+        atualizado = ATUALIZADAS_03_11.get(slug, carimbo)
         html = _html(slug)
         head = html.split("</head>", 1)[0]
         url = f"{BASE}/noticias/{slug}/"
@@ -249,22 +261,32 @@ def test_materias_novas_tem_identidade_card_itemlist_sitemap_e_anuncio():
         assert 'name="robots"' not in html, slug
         assert head.count(ADSENSE_TAG) == 1 and html.count("adsbygoogle.js") == 1, slug
         assert (news["headline"], news["url"]) == (titulo, url), slug
-        assert news["datePublished"] == news["dateModified"] == carimbo, slug
+        assert (news["datePublished"], news["dateModified"]) == (carimbo, atualizado), slug
         assert _meta_property(head, "article:published_time") == carimbo, slug
-        assert _meta_property(head, "article:modified_time") == carimbo, slug
-        assert "Atualizado em" not in html, slug
+        assert _meta_property(head, "article:modified_time") == atualizado, slug
+        if slug in ATUALIZADAS_03_11:
+            assert (f'Atualizado em:</span> <time datetime="{atualizado}">{atualizado[8:10]}/{atualizado[5:7]}/'
+                    f'{atualizado[:4]}</time> às {atualizado[11:13]}h{atualizado[14:16]}') in html, slug
+        else:
+            assert "Atualizado em" not in html, slug
         badge = {"atualizacao": "Atualização", "informativo": "Informativo", "orientacao": "Orientação"}[tipo]
         assert f'article-badge-{tipo} inline-flex items-center rounded-full px-2.5 py-1 whitespace-nowrap">{badge}</span>' in html, slug
         # Card: as cinco abrem a listagem, na ordem dos carimbos, com o tipo e a categoria da matéria.
+        # 03/11/2026: a ordem é a de ORDEM; o card do guia SNCR × SNGPC leva data-updated e mostra a atualização.
         assert slugs.index(slug) == posicao and slugs.count(slug) == 1, slug
         card = cards[posicao]
         opening = card.split(">", 1)[0]
-        assert f'data-category="{categoria}"' in opening and "data-updated" not in opening, slug
+        assert f'data-category="{categoria}"' in opening, slug
+        if slug in ATUALIZADAS_03_11:
+            assert f'data-updated="{atualizado}"' in opening, slug
+        else:
+            assert "data-updated" not in opening, slug
         assert f'data-title="{titulo}"' in opening and f">{titulo}</h2>" in card, slug
-        assert f'<time datetime="{carimbo}" class="leading-none">01/11/2026 • {carimbo[11:13]}h{carimbo[14:16]}</time>' in card, slug
+        assert (f'<time datetime="{atualizado}" class="leading-none">{atualizado[8:10]}/{atualizado[5:7]}/{atualizado[:4]} • '
+                f'{atualizado[11:13]}h{atualizado[14:16]}</time>') in card, slug
         assert all(marca in card for marca in TIPOS[tipo]), slug
         assert itemlist[posicao] == url and itemlist.count(url) == 1, slug
-        assert sitemap[url] == ("2026-11-01", prioridade), slug
+        assert sitemap[url] == (atualizado[:10], prioridade), slug
         assert sitemap_text.count(f"<loc>{url}</loc>") == 1, slug
         # Texto próprio acima de 500 palavras, só com links internos.
         body = _body_html(html)
@@ -276,7 +298,8 @@ def test_materias_novas_tem_identidade_card_itemlist_sitemap_e_anuncio():
 def test_materias_ampliadas_passam_de_500_palavras_e_declaram_a_atualizacao():
     index, cards, slugs = _cards()
     sitemap, _ = _sitemap()
-    for posicao, (slug, (publicado, carimbo)) in enumerate(AMPLIADAS.items(), start=len(NOVAS)):
+    for slug, (publicado, carimbo) in AMPLIADAS.items():
+        posicao = ORDEM.index(slug)
         html = _html(slug)
         news = _news_article(html)
         assert news["datePublished"] == publicado, slug
@@ -287,7 +310,7 @@ def test_materias_ampliadas_passam_de_500_palavras_e_declaram_a_atualizacao():
         assert f'Atualizado em:</span> <time datetime="{carimbo}">01/11/2026</time> às {carimbo[11:13]}h{carimbo[14:16]}' in html, slug
         assert _words(_body_text(html)) > 500, slug
         assert all(href.startswith("/") for href in re.findall(r'href="([^"]+)"', _body_html(html))), slug
-        # Card logo depois das matérias novas, com a atualização como data válida.
+        # Card logo depois das matérias novas, com a atualização como data válida (desde 03/11/2026, na posição de ORDEM).
         assert slugs.index(slug) == posicao, slug
         assert f'data-updated="{carimbo}"' in cards[posicao].split(">", 1)[0], slug
         assert sitemap[f"{BASE}/noticias/{slug}/"][0] == "2026-11-01", slug
@@ -305,9 +328,12 @@ def test_listagem_contadores_e_lastmod():
     assert contadores["CNES"] == "3"
     assert contadores["SNCR"] == "3"
     assert contadores["FARMÁCIA POPULAR"] == "10"
-    assert sitemap[f"{BASE}/noticias/"][0] == "2026-11-01"
+    # 03/11/2026: a listagem trocou os resumos dos cards do SNCR e de produtos irregulares e levou esses dois e o do guia
+    # SNCR × SNGPC ao topo.
+    assert sitemap[f"{BASE}/noticias/"][0] == "2026-11-03"
     # Comunicados: três avisos trocaram só o destino do link; o texto e o lastmod ficam.
-    assert sitemap[f"{BASE}/comunicado/"][0] == "2026-10-31"
+    # 03/11/2026: o aviso do SNCR ganhou a atualização da RDC nº 1.046/2026.
+    assert sitemap[f"{BASE}/comunicado/"][0] == "2026-11-03"
 
 
 def test_cnes_tabela_por_competencia_e_prorrogacoes_atribuidas():
@@ -364,4 +390,7 @@ def test_guia_sncr_atribui_numeracao_e_prorrogacao_as_fontes():
             assert "manual do sncr" in low or "o mesmo manual" in low or "limite técnico" in low, frase
         if "03/03/2027" in low:
             assert "anvisa" in low or "dou" in low or "diário oficial" in low, frase
-    assert "não havia sido publicada" in texto or "ainda não foi publicada" in texto
+    # 03/11/2026: a prorrogação saiu no DOU como RDC nº 1.046/2026; o guia deixa de dizer que ela não havia sido publicada.
+    assert ("a RDC nº 1.046, de 29/10/2026, publicada no Diário Oficial da União de 03/11/2026, edição 206, Seção 1, "
+            "página 244, deu nova redação ao art. 18 da RDC nº 1.000/2025") in texto
+    assert "não havia sido publicada" not in texto and "ainda não foi publicada" not in texto

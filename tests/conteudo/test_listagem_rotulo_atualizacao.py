@@ -119,7 +119,8 @@ def test_card_mostra_a_data_valida_da_materia_sem_prefixo():
     # 01/11/2026 (reenvio ao AdSense): saem cinco cards com atualização (CNES 06, 08 e 09/2026 e as duas páginas do
     # SIFAP de maio; o do CNES 10/2026 não tinha) e entram cinco, das matérias ampliadas que ainda não declaravam
     # atualização (a do Alivemed já declarava e só trocou a data). As cinco matérias novas não têm atualização.
-    assert atualizacoes == 49
+    # 03/11/2026, 12h00: o guia SNCR × SNGPC, uma das cinco novas, passa a declarar a atualização da RDC nº 1.046/2026.
+    assert atualizacoes == 50
 
 
 def test_materias_do_lote_de_09_10_mostram_a_atualizacao():

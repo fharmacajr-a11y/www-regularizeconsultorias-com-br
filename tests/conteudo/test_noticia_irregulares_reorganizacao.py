@@ -105,8 +105,9 @@ def test_ids_meses_busca_e_links_internos():
     assert set(re.findall(r'\bid="([^"]+)"', old)) <= new_ids
     assert "correcao-re-3159-2026" in new_ids
 
-    assert re.search(r'<details class="irregulares-mes" id="mes-outubro-2026" open>', new)
-    for month in ("mes-setembro-2026", "mes-agosto-2026", "mes-julho-2026"):
+    # 03/11/2026: mês novo (CLAUDE.md). Novembro abre; outubro fecha, como os anteriores.
+    assert re.search(r'<details class="irregulares-mes" id="mes-novembro-2026" open>', new)
+    for month in ("mes-outubro-2026", "mes-setembro-2026", "mes-agosto-2026", "mes-julho-2026"):
         tag = re.search(rf'<details class="irregulares-mes" id="{month}"[^>]*>', new).group(0)
         assert "open" not in tag, month
     assert 'id="irregulares-busca-form" hidden' in new
@@ -123,8 +124,9 @@ def test_ids_meses_busca_e_links_internos():
         assert heading in new
     # 22/10/2026, 22h40 (hora do commit): lote das RE nº 4.143, 4.147 e 4.150/2026.
     # 28/10/2026, 18h50 (hora do commit): lote das RE nº 4.160, 4.228, 4.231 e 4.232/2026.
-    assert 'datetime="2026-10-28T18:50:00-03:00"' in new
-    assert "28/10/2026" in new and "18h50" in new
+    # 03/11/2026, 12h00 (hora do commit): RE nº 4.246/2026 e retificação da RE nº 3.480/2026.
+    assert 'datetime="2026-11-03T12:00:00-03:00"' in new
+    assert "03/11/2026" in new and "12h00" in new
 
 
 def _posicao(page, element_id):
@@ -254,14 +256,15 @@ def test_cada_re_fica_num_item_recolhido_com_resumo_e_os_detalhes_comecam_fechad
     new = _new_html()
     itens = _itens(new)
     # 45 da v2 + RE nº 4.143, 4.147 e 4.150/2026 (22/10/2026) + RE nº 4.160 (26/10/2026), 4.228, 4.231 e 4.232/2026
-    # (28/10/2026).
-    assert len(itens) == 52
+    # (28/10/2026) + RE nº 4.246/2026 (03/11/2026).
+    assert len(itens) == 53
     for item_id, resumo, _ in itens:
         assert RESUMO.match(resumo), (item_id, resumo)
-    # Nenhum item, nem o bloco de detalhes de cada mês, vem aberto: em outubro, só a tabela aparece.
+    # Nenhum item, nem o bloco de detalhes de cada mês, vem aberto: no mês aberto (novembro, desde 03/11/2026), só a
+    # tabela aparece.
     assert re.findall(r'<details class="irregulares-re"[^>]*\bopen\b', new) == []
     detalhes = re.findall(r'<details class="irregulares-detalhes" id="([^"]+)"([^>]*)>', new)
-    assert [d for d, _ in detalhes] == ["detalhes-outubro-2026", "detalhes-setembro-2026",
+    assert [d for d, _ in detalhes] == ["detalhes-novembro-2026", "detalhes-outubro-2026", "detalhes-setembro-2026",
                                         "detalhes-agosto-2026", "detalhes-julho-2026"]
     assert all("open" not in attrs for _, attrs in detalhes)
     # A correção da RE nº 3.159/2026 é um item próprio e mantém o id.
@@ -300,7 +303,7 @@ def test_cada_linha_da_tabela_leva_ao_item_da_sua_re_e_data():
             resumo_de_id[alvo] = resumo
     total = {}
     insubsistentes = []
-    for month in ("mes-outubro-2026", "mes-setembro-2026", "mes-agosto-2026", "mes-julho-2026"):
+    for month in ("mes-novembro-2026", "mes-outubro-2026", "mes-setembro-2026", "mes-agosto-2026", "mes-julho-2026"):
         mes = _mes(new, month)
         tabela = mes[:mes.index('<details class="irregulares-detalhes"')]
         total[month] = 0
@@ -325,7 +328,9 @@ def test_cada_linha_da_tabela_leva_ao_item_da_sua_re_e_data():
                 else:
                     assert celula_re == "Sem número de RE", (alvo, celula_re)
     # 28/10/2026: seis linhas novas em outubro (RE nº 4.160, 4.228, os três lotes da RE nº 4.231 e a RE nº 4.232).
-    assert total == {"mes-outubro-2026": 56, "mes-setembro-2026": 33, "mes-agosto-2026": 7, "mes-julho-2026": 12}
+    # 03/11/2026: uma linha em novembro (RE nº 4.246/2026); a retificação da RE nº 3.480/2026 fica na linha de setembro.
+    assert total == {"mes-novembro-2026": 1, "mes-outubro-2026": 56, "mes-setembro-2026": 33, "mes-agosto-2026": 7,
+                     "mes-julho-2026": 12}
     assert insubsistentes == ["Fluído Flesh Air Frionel", "Ecotec-Pro e Ecotec", "Bardahl Flush Promax", "Air Repair Pescan"]
 
 
@@ -341,6 +346,9 @@ def test_clique_na_linha_abre_o_item_certo_e_mostra_abaixo_do_cabecalho(origem):
             page = context.new_page()
             page.goto(origem, wait_until="load")
             page.evaluate("document.fonts.ready.then(() => true)")
+            # Desde 03/11/2026 outubro começa fechado (novembro é o mês aberto): o leitor abre o mês pelo resumo.
+            page.locator("#mes-outubro-2026 > summary").click()
+            page.wait_for_function("() => document.getElementById('mes-outubro-2026').open")
             # Clique fora do link (na coluna da medida): a linha inteira leva ao detalhe.
             page.locator('.irregulares-tabela tr[data-alvo="irregulares-item-57"] td[data-label="Medida"]').click()
             page.wait_for_function(
@@ -389,11 +397,13 @@ def test_busca_por_lote_que_so_esta_no_detalhe_abre_o_mes_e_o_item(origem):
         assert estado["abertos"] == ["re-3547-2026"]
         assert estado["visiveis"] == ["irregulares-item-33"]
         assert estado["status"] == "1 medidas encontradas."
-        # Limpar a busca volta ao estado inicial: outubro aberto, só com a tabela; todos os itens fechados.
+        # Limpar a busca volta ao estado inicial: o mês atual aberto (novembro, desde 03/11/2026), só com a tabela;
+        # todos os itens fechados.
         page.fill("#irregulares-busca", "")
         page.wait_for_function("() => !document.getElementById('re-3547-2026').open")
         assert page.evaluate("() => document.querySelectorAll('.irregulares-re[open], .irregulares-detalhes[open]').length") == 0
-        assert page.evaluate("() => document.getElementById('mes-outubro-2026').open") is True
+        assert page.evaluate("() => document.getElementById('mes-novembro-2026').open") is True
+        assert page.evaluate("() => document.getElementById('mes-outubro-2026').open") is False
         assert page.evaluate("() => document.getElementById('mes-setembro-2026').open") is False
         context.close()
         browser.close()
@@ -454,14 +464,33 @@ def test_pagina_como_o_leitor_encontra_tem_tabela_compacta_e_parte_fixa_estavel(
                     };
                 }"""
             )
+            # Desde 03/11/2026 o mês aberto é novembro, com uma linha. As linhas de outubro (56) continuam medidas com o
+            # mês aberto pelo leitor, para manter os limites de 3 linhas por cartão (390 px) e 2 por linha (1280 px).
+            page.locator("#mes-outubro-2026 > summary").click()
+            page.wait_for_function("() => document.getElementById('mes-outubro-2026').open")
+            resultados[largura]["linhas"] += page.evaluate(
+                """() => {
+                    const linhas = (el) => {
+                        const s = getComputedStyle(el);
+                        const altura = el.getBoundingClientRect().height - parseFloat(s.paddingTop) - parseFloat(s.paddingBottom);
+                        return Math.round(altura / parseFloat(s.lineHeight));
+                    };
+                    return [...document.querySelectorAll('#mes-outubro-2026 tbody tr[data-alvo]')].map((tr) => {
+                        const tds = [...tr.querySelectorAll('td')];
+                        const cartao = linhas(tds[0]) + linhas(tds[1]) + Math.max(linhas(tds[2]), linhas(tds[3]));
+                        return {alvo: tr.getAttribute('data-alvo'), cartao, linha: Math.max(...tds.map(linhas))};
+                    });
+                }"""
+            )
             context.close()
         browser.close()
 
     for largura, r in resultados.items():
         # Só o mês atual aberto, e todos os detalhes (bloco do mês e itens de RE) fechados.
-        assert r["abertos"] == ["mes-outubro-2026"], (largura, r["abertos"])
+        assert r["abertos"] == ["mes-novembro-2026"], (largura, r["abertos"])
         assert r["itensAbertos"] == 0, largura
-        assert len(r["linhas"]) >= 50, largura
+        # 1 linha de novembro + 56 de outubro (medidas com outubro aberto).
+        assert len(r["linhas"]) >= 57, largura
         parte_fixa = r["total"] - r["tabela"]
         assert parte_fixa <= PARTE_FIXA_BASE[largura] * 1.10, (largura, round(parte_fixa), PARTE_FIXA_BASE[largura])
     # Em 390 px, nenhum cartão passa de 3 linhas de texto (RE; produto ou empresa; medida e situação).

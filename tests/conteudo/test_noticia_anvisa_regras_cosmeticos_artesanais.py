@@ -248,14 +248,16 @@ def test_sitemap_adds_only_the_new_url_and_the_listing_lastmod():
         # 28/10/2026: a listagem reordenou os cards do MAPA 1.617 e de produtos irregulares, atualizados no mesmo lote.
         # 31/10/2026: a listagem trocou o resumo do card do SNCR e o levou à 1ª posição.
         # 01/11/2026: a listagem ganhou os cards das cinco matérias novas e trocou os das páginas reunidas.
+        # 03/11/2026: a listagem trocou os resumos dos cards do SNCR e de produtos irregulares e levou esses dois e o
+        # do guia SNCR × SNGPC ao topo.
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-11-01</lastmod>"
+        "    <lastmod>2026-11-03</lastmod>"
     ) in sitemap
     assert (
         # 22/10/2026: a matéria do SNCR recebeu o quadro dos manuais. 26/10/2026: itens A-1 e M-1.
-        # 31/10/2026: prorrogação aprovada na 20ª ROP.
+        # 31/10/2026: prorrogação aprovada na 20ª ROP. 03/11/2026: RDC nº 1.046/2026.
         "<loc>https://www.regularizeconsultorias.com.br/noticias/rdc-1000-2025-anvisa-prorroga-prazo-sncr/</loc>\n"
-        "    <lastmod>2026-10-31</lastmod>"
+        "    <lastmod>2026-11-03</lastmod>"
     ) in sitemap
     import xml.etree.ElementTree as ET
 

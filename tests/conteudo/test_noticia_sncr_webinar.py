@@ -19,7 +19,12 @@ PUBLISHED = "2026-05-28T20:36:00-03:00"
 # 22/10/2026, 22h40 (hora do commit): quadro dos manuais do SNCR (farmácias, 2ª edição; Vigilâncias Sanitárias, 8ª edição).
 # 26/10/2026, 08h30 (a mesma hora do MAPA e do período eleitoral): itens A-1 e M-1 do CONSOLIDADO de 23/10.
 # 31/10/2026, 22h10: quadro da prorrogação aprovada na 20ª ROP de 29/10/2026 (consolidado de 30/10).
-UPDATED = "2026-10-31T22:10:00-03:00"
+# 03/11/2026, 12h00 (hora do commit): quadro da RDC nº 1.046/2026, publicada no DOU de 03/11/2026 (consolidado de 03/11).
+UPDATED = "2026-11-03T12:00:00-03:00"
+UPDATE_03_11_ID = "sncr-atualizacao-03-novembro-title"
+DOU_1046_URL = (
+    "https://www.in.gov.br/web/dou/-/resolucao-da-diretoria-colegiada-anvisa-n-1.046-de-29-de-outubro-de-2026-741186261"
+)
 UPDATE_31_10_ID = "sncr-atualizacao-31-outubro-title"
 ROP_NEWS_URL = (
     "https://www.gov.br/anvisa/pt-br/assuntos/noticias-anvisa/2026/20a-reuniao-ordinaria-publica-da-anvisa-"
@@ -108,15 +113,17 @@ def test_sncr_news_keeps_publication_and_updates_the_september_stage():
     assert f'<meta property="article:published_time" content="{PUBLISHED}" />' in html
     assert f'<meta property="article:modified_time" content="{UPDATED}" />' in html
     assert f'<time datetime="{PUBLISHED}">28/05/2026</time> às 20h36' in html
-    assert f'<time datetime="{UPDATED}">31/10/2026</time> às 22h10' in html
+    assert f'<time datetime="{UPDATED}">03/11/2026</time> às 12h00' in html
     assert_profiles_separated(html)
     assert f'<link rel="canonical" href="{URL}" />' in html
     assert html.count(ADSENSE_SCRIPT_MARKER) == 1
     # 31/10/2026: o quadro da prorrogação aprovada na 20ª ROP fica no topo do corpo, acima do de 22/10/2026 (manuais).
+    # 03/11/2026: o quadro da RDC nº 1.046/2026 passa ao topo do corpo, acima do de 31/10/2026.
     # Quadro de 22/10/2026 (manuais) acima do de 20/10/2026 (lote 2), que fica acima do quadro da etapa de setembro.
-    assert html.count("data-news-update-callout") - html.count("[data-news-update-callout]") == 4
+    assert html.count("data-news-update-callout") - html.count("[data-news-update-callout]") == 5
     body_start = html.index('<section class="article-body">')
-    assert html.index("<aside", body_start) == html.index(f'<aside data-news-update-callout aria-labelledby="{UPDATE_31_10_ID}"')
+    assert html.index("<aside", body_start) == html.index(f'<aside data-news-update-callout aria-labelledby="{UPDATE_03_11_ID}"')
+    assert html.index(f'aria-labelledby="{UPDATE_03_11_ID}"') < html.index(f'aria-labelledby="{UPDATE_31_10_ID}"')
     assert html.index(f'aria-labelledby="{UPDATE_31_10_ID}"') < html.index(f'aria-labelledby="{UPDATE_22_10_ID}"')
     assert html.index(f'aria-labelledby="{UPDATE_22_10_ID}"') < html.index(f'aria-labelledby="{UPDATE_20_10_ID}"')
     assert html.index(f'aria-labelledby="{UPDATE_20_10_ID}"') < html.index(f'aria-labelledby="{STAGE_UPDATE_ID}"')
@@ -167,7 +174,8 @@ def test_sncr_news_explains_the_stage_without_false_claims():
         # 31/10/2026: o par "até 29/10 / a partir de 30/10" passou a ser atribuído à notícia da Anvisa de 21/09/2026.
         "notícia da Anvisa de 21/09/2026",
         "SNCR-Farmácia",
-        "Nenhum dos dois pares é tratado aqui como prazo único confirmado",
+        # 03/11/2026: a seção da divergência passou a registrar o histórico anterior à RDC nº 1.046/2026 ("foi tratado").
+        "Nenhum dos dois pares foi tratado aqui como prazo único confirmado",
         "não impõe a cada farmácia desenvolver API",
         "não perde a validade",
     ):
@@ -211,16 +219,19 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     # 31/10/2026, 22h10: a matéria do SNCR (prorrogação aprovada na 20ª ROP) sobe para a 1ª posição; o MAPA 1.617, o consolidado de irregulares e o período eleitoral descem uma (até a 4ª).
     # 01/11/2026 (reenvio ao AdSense): os 11 cards de 01/11 (5 matérias novas e 6 ampliadas) vão ao topo; o SNCR é o
     # primeiro depois deles, com o carimbo mais recente entre as demais.
-    assert cards.index(card) == 11
+    # 03/11/2026, 12h00: a matéria do SNCR (RDC nº 1.046/2026) volta à 1ª posição, com o guia SNCR × SNGPC e o
+    # consolidado de irregulares logo depois, no mesmo carimbo.
+    assert cards.index(card) == 0
     assert "news-card-compact" in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
     # 22/10/2026, 22h40: o card do SNCR, atualizado com os manuais, segue em 2º, logo depois do consolidado de irregulares
     # (4º desde 26/10/2026).
-    assert f'<time datetime="{UPDATED}" class="leading-none">31/10/2026 • 22h10</time>' in card
+    assert f'<time datetime="{UPDATED}" class="leading-none">03/11/2026 • 12h00</time>' in card
     # 31/10/2026: o resumo do card (data-summary e texto visível) passa a ser o da prorrogação aprovada na 20ª ROP,
     # sem número de ato, sem "em vigor" e sem estender às Notificações de Receita ou ao SNGPC.
-    summary = ("Em 29/10/2026, a Anvisa informou a aprovação da prorrogação, até 03/03/2027, da transição de RCE e RET "
-               "eletrônicas no SNCR; a alteração da RDC nº 1.000/2025 ainda não foi publicada no DOU.")
+    # 03/11/2026: o resumo passa a ser o da RDC nº 1.046/2026 publicada, ainda restrito à RCE e à RET eletrônicas.
+    summary = ("A RDC nº 1.046/2026, publicada no DOU de 03/11/2026, permite emitir RCE e RET eletrônicas sem a numeração "
+               "do SNCR até 03/03/2027; a partir de 04/03/2027, a numeração passa a ser obrigatória.")
     assert f'data-summary="{summary}"' in card.split(">", 1)[0]
     assert f'<p class="text-slate-500 text-sm leading-relaxed mb-4">{summary}</p>' in card
     assert TITLE in card
@@ -289,22 +300,29 @@ def test_comunicado_keeps_one_sncr_card_and_five_active_notices():
     assert "não se estendem a outros receituários" not in _text(NEWS_PATH.read_text(encoding="utf-8"))
     # 31/10/2026: o card ganha, no 1º parágrafo, a atualização da prorrogação aprovada na 20ª ROP, com link para a
     # notícia oficial da Anvisa; a frase do prazo de 29/10/2026 vai para o passado.
-    update = next(item for item in paragraphs if item.startswith("Atualização em 31/10/2026"))
+    # 03/11/2026: o 1º parágrafo passa a ser o da RDC nº 1.046/2026 publicada no DOU, com link para o texto no DOU; a
+    # frase de que a resolução não havia sido publicada sai.
+    update = next(item for item in paragraphs if item.startswith("Atualização em 03/11/2026"))
     assert paragraphs.index(update) == 0
     for term in (
-        "em 29/10/2026, a Anvisa informou que a Diretoria Colegiada aprovou a prorrogação, até 03/03/2027",
+        "a Resolução da Diretoria Colegiada (RDC) nº 1.046, de 29/10/2026, foi publicada no Diário Oficial da União de "
+        "03/11/2026, edição 206, Seção 1, página 244, e entrou em vigor na data da publicação",
+        "Ela dá nova redação ao art. 18 da RDC nº 1.000/2025",
         "Receitas de Controle Especial (RCE)",
         "Receitas Sujeitas à Retenção (RET)",
-        "por meio de alteração da RDC nº 1.000/2025",
-        "Até 31/10/2026, a resolução não havia sido publicada no Diário Oficial da União",
-        "o número do ato e a data de vigência dependem dessa publicação",
+        "podem ser emitidas eletronicamente sem a numeração do SNCR até 03/03/2027",
+        "durante o respectivo prazo de validade",
+        "A partir de 04/03/2027, a RCE e a RET eletrônicas devem conter a numeração do SNCR",
+        "na 20ª Reunião Ordinária Pública",
         "notícia da Anvisa",
+        "texto da RDC nº 1.046/2026 no DOU",
     ):
         assert term in update, term
-    for claim in ("em vigor", "Notificações de Receita", "SNGPC"):
+    for claim in ("Notificações de Receita", "SNGPC", "não havia sido publicada", "dependem dessa publicação",
+                  "adiad", "retroativ", "02/11/2026"):
         assert claim not in update, claim
     assert "ainda podiam ser emitidos" in limit and "ainda podem" not in card_text
-    assert re.findall(r'href="([^"]+)"', sncr_cards[0]) == [ROP_NEWS_URL, ROUTE]
+    assert re.findall(r'href="([^"]+)"', sncr_cards[0]) == [ROP_NEWS_URL, DOU_1046_URL, ROUTE]
     assert "em operação desde" not in card_text
     assert "como preparar o estabelecimento" not in card_text
     # 16/10/2026, 20h06: o aviso do CNES 10/2026 é o 1º ativo; o do SNCR passa ao 2º.
@@ -312,8 +330,9 @@ def test_comunicado_keeps_one_sncr_card_and_five_active_notices():
     # 19/10/2026, 15h40: o aviso da instabilidade nos sistemas da Anvisa é o 1º ativo; o do SNCR passa ao 4º.
     # 20/10/2026: o aviso da instabilidade passa ao histórico; o do SNCR volta ao 3º.
     # 31/10/2026, 22h10: o aviso do SNCR, atualizado, passa ao 1º lugar entre os ativos (ordem de data-effective-at).
-    assert f'data-updated-at="31/10/2026 às 22h10" data-effective-at="{UPDATED}"' in sncr_cards[0].split(">", 1)[0]
-    assert f'<time datetime="{UPDATED}">31/10/2026 • 22h10</time>' in sncr_cards[0]
+    # 03/11/2026, 12h00: segue em 1º com a RDC nº 1.046/2026.
+    assert f'data-updated-at="03/11/2026 às 12h00" data-effective-at="{UPDATED}"' in sncr_cards[0].split(">", 1)[0]
+    assert f'<time datetime="{UPDATED}">03/11/2026 • 12h00</time>' in sncr_cards[0]
     assert active[0] is sncr_cards[0]
 
 
@@ -321,8 +340,8 @@ def test_sncr_news_has_current_sitemap_lastmod():
     sitemap = SITEMAP_PATH.read_text(encoding="utf-8")
 
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
-    # 26/10/2026: itens A-1 e M-1. 31/10/2026: prorrogação aprovada na 20ª ROP.
-    assert f"<loc>{URL}</loc>\n    <lastmod>2026-10-31</lastmod>" in sitemap
+    # 26/10/2026: itens A-1 e M-1. 31/10/2026: prorrogação aprovada na 20ª ROP. 03/11/2026: RDC nº 1.046/2026.
+    assert f"<loc>{URL}</loc>\n    <lastmod>2026-11-03</lastmod>" in sitemap
     assert (
         "<loc>https://www.regularizeconsultorias.com.br/servicos/</loc>\n"
         "    <lastmod>2026-10-09</lastmod>"
@@ -381,7 +400,7 @@ def test_sncr_news_stays_informative_without_tutorial_or_universal_deadline():
     # Corpo editorial sem links nem encaminhamento para fontes, manuais, sistemas ou modelos.
     assert "href=" not in body_html
     for term in (
-        "Nenhum dos dois pares é tratado aqui como prazo único confirmado",
+        "Nenhum dos dois pares foi tratado aqui como prazo único confirmado",
         "não perde a validade",
         "disponibilização do registro de utilização",
         "não impõe a cada farmácia desenvolver API",
@@ -515,7 +534,9 @@ def assert_october_notices_scoped(html):
 
 
 def assert_art18_relative(html):
-    text = _one_paragraph(_article_body(html), "art. 18")
+    # 03/11/2026: o art. 18 aparece também no quadro e na ressalva da RDC nº 1.046/2026; o marco relativo fica no
+    # parágrafo da redação original.
+    text = _one_paragraph(_article_body(html), "Na redação original, o art. 18")
     if "após o início da disponibilização do registro de utilização" not in text or re.search(r"\d{2}/10/2026", text):
         raise AssertionError("art18-marco-relativo: " + text)
 
@@ -615,11 +636,13 @@ def _invert_afe_cnes(html):
 
 
 def _shift_art18(html):
-    return html.replace(
-        "após o início da disponibilização do registro de utilização",
-        "após 29/10/2026",
-        1,
+    # 03/11/2026: a mutação atinge o parágrafo da redação original, e não o quadro da RDC nº 1.046/2026, que vem antes.
+    body = _article_body(html)
+    original = next(
+        paragraph for paragraph in _paragraphs(body) if "Na redação original, o art. 18" in _plain(paragraph)
     )
+    shifted = original.replace("após o início da disponibilização do registro de utilização", "após 29/10/2026", 1)
+    return html.replace(original, shifted, 1)
 
 
 MUTATION_CASES = (
@@ -827,3 +850,63 @@ def test_sncr_22_10_update_attributes_the_manuals_and_keeps_the_change_as_planne
     assert "<a " not in callout and "href=" not in callout and "http" not in callout
     # O quadro de 22/10/2026 fica acima do de 20/10/2026.
     assert html.index(f'aria-labelledby="{UPDATE_22_10_ID}"') < html.index(f'aria-labelledby="{UPDATE_20_10_ID}"')
+
+
+def test_sncr_update_of_03_november_follows_the_rdc_1046_text():
+    # 03/11/2026 (consolidado de 03/11, item A1): a RDC nº 1.046, de 29/10/2026, publicada no DOU de 03/11/2026,
+    # edição 206, Seção 1, página 244, dá nova redação ao art. 18 da RDC nº 1.000/2025 e entra em vigor na publicação.
+    html = NEWS_PATH.read_text(encoding="utf-8")
+    callout = _callout(html, UPDATE_03_11_ID)
+    text = _text(callout)
+    items = [_plain(item) for item in re.findall(r"<li>(.*?)</li>", callout, re.DOTALL)]
+
+    assert "ATUALIZAÇÃO" in text
+    assert f'<h2 id="{UPDATE_03_11_ID}" class="article-spacing-flush-top">Atualização em 03/11/2026</h2>' in callout
+    for term in (
+        "A Resolução da Diretoria Colegiada (RDC) nº 1.046, de 29/10/2026, publicada no Diário Oficial da União de "
+        "03/11/2026, edição 206, Seção 1, página 244, deu nova redação ao art. 18 da RDC nº 1.000/2025",
+        "Conforme o seu art. 2º, a resolução entrou em vigor na data da publicação",
+        "A nova redação substitui a anterior",
+        "O texto trata da RCE e da RET eletrônicas",
+    ):
+        assert term in text, term
+    # A ordem do art. 18 na nova redação: emissão até 03/03/2027, aceitação na validade e numeração obrigatória depois.
+    assert [item.split(":", 1)[0] for item in items] == ["Até 03/03/2027", "Aceitação", "A partir de 04/03/2027"]
+    assert "Receitas de Controle Especial (RCE) e as Receitas Sujeitas à Retenção (RET) podem ser emitidas " \
+           "eletronicamente sem a numeração do SNCR" in items[0]
+    for term in ("estabelecimentos dispensadores", "durante o respectivo prazo de validade",
+                 "Portaria SVS/MS nº 344/1998 e a RDC nº 471/2021"):
+        assert term in items[1], term
+    assert "devem conter, obrigatoriamente, a numeração fornecida pelo SNCR" in items[2]
+    # Consolidado de 03/11 (NÃO FAZER): nada de Notificações de Receita, papel ou SNGPC; nada de SNCR adiado por
+    # inteiro, de numeração extinta, de retroatividade ou do intervalo de 30/10 a 02/11; nada de informes, Perguntas e
+    # Respostas ou consulta pública atualizados.
+    folded = text.casefold()
+    for claim in (
+        "notificaç", "papel", "sngpc", "adiad", "deixou de existir", "deixa de existir", "retroativ",
+        "30/10/2026", "02/11/2026", "perguntas e respostas", "informe", "consulta pública",
+    ):
+        assert claim not in folded, claim
+    assert "<a " not in callout and "href=" not in callout and "http" not in callout
+
+    # O quadro de 31/10/2026 registra a publicação e deixa de dizer que a resolução não havia sido publicada.
+    update_31 = _text(_callout(html, UPDATE_31_10_ID))
+    assert ("A alteração foi publicada no Diário Oficial da União de 03/11/2026 como RDC nº 1.046/2026, descrita na "
+            "atualização acima") in update_31
+    for claim in ("não havia sido publicada", "dependem dessa publicação"):
+        assert claim not in update_31, claim
+
+    # Item B3: a integração ao SNCR vem do art. 4º; a ressalva da transição fala só de numeração, não de integração.
+    body_html = _article_body(html)
+    body = _plain(body_html)
+    assert ("Quando a prescrição é eletrônica, o art. 4º da RDC nº 1.000/2025 exige que ela seja gerada em serviço de "
+            "prescrição integrado ao SNCR") in body
+    caveat = _one_paragraph(body_html, "ressalva de transição")
+    for term in ("pela nova redação do art. 18, dada pela RDC nº 1.046/2026",
+                 "sem a numeração do SNCR até 03/03/2027", "a partir de 04/03/2027"):
+        assert term in caveat, term
+    assert "sem integração" not in caveat
+    # A seção da divergência e o art. 18 original ficam como histórico.
+    assert "Esta seção registra o histórico anterior à RDC nº 1.046/2026" in body
+    original = _one_paragraph(body_html, "Na redação original, o art. 18")
+    assert original.endswith("Essa redação foi substituída pela da RDC nº 1.046/2026.")

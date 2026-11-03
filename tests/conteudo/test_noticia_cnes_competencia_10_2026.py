@@ -223,4 +223,6 @@ def test_sitemap_dropped_the_url_for_the_unified_page():
     assert re.search(rf"<loc>{re.escape(UNIFIED_URL)}</loc>\s*<lastmod>2026-11-01</lastmod>", sitemap)
     # 31/10/2026: a listagem trocou o resumo do card do SNCR e o levou à 1ª posição.
     # 01/11/2026: a listagem ganhou os cards das cinco matérias novas e trocou os das páginas reunidas.
-    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-11-01</lastmod>", sitemap)
+    # 03/11/2026: a listagem trocou os resumos dos cards do SNCR e de produtos irregulares e levou esses dois e o do guia
+    # SNCR × SNGPC ao topo.
+    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-11-03</lastmod>", sitemap)

@@ -196,7 +196,9 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     # 31/10/2026, 22h10: a matéria do SNCR (prorrogação aprovada na 20ª ROP) sobe para a 1ª posição; o MAPA 1.617, o consolidado de irregulares e o período eleitoral descem uma (até a 4ª).
     # 01/11/2026 (reenvio ao AdSense): os 11 cards de 01/11 (5 matérias novas e 6 ampliadas) vão ao topo; o MAPA 1.617
     # passa do 2º ao 13º (índice 1 + 11 = 12).
-    card = cards[12]
+    # 03/11/2026, 12h00: a matéria do SNCR, o guia SNCR × SNGPC e o consolidado de irregulares, no mesmo carimbo, vão
+    # ao topo; o MAPA 1.617 passa do 13º ao 14º (o SNCR já estava à frente dele).
+    card = cards[13]
     opening = card.split(">", 1)[0]
     assert f'href="/noticias/{SLUG}/"' in card
     assert index.count(f'href="/noticias/{SLUG}/"') == 1
@@ -219,8 +221,8 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     items = collection["mainEntity"]["itemListElement"]
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
     assert len(items) == 83
-    assert items[12]["position"] == 13
-    assert items[12]["url"] == PUBLIC_URL
+    assert items[13]["position"] == 14
+    assert items[13]["url"] == PUBLIC_URL
     assert [item["position"] for item in items] == list(range(1, 84))
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
     assert f"<loc>{PUBLIC_URL}</loc>\n    <lastmod>2026-10-28</lastmod>" in sitemap
@@ -232,8 +234,10 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
         # 28/10/2026: a listagem reordenou os cards do MAPA 1.617 e de produtos irregulares, atualizados no mesmo lote.
         # 31/10/2026: a listagem trocou o resumo do card do SNCR e o levou à 1ª posição.
         # 01/11/2026: a listagem ganhou os cards das cinco matérias novas e trocou os das páginas reunidas.
+        # 03/11/2026: a listagem trocou os resumos dos cards do SNCR e de produtos irregulares e levou esses dois e o
+        # do guia SNCR × SNGPC ao topo.
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-11-01</lastmod>"
+        "    <lastmod>2026-11-03</lastmod>"
     ) in sitemap
 
 

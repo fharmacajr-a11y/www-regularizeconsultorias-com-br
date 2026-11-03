@@ -156,6 +156,13 @@ try:
                 aberto = page.evaluate(COLETA, {"seletor": ".manuals-filter-dropdown-panel a"})
                 dados["controles"] += [c for c in aberto["controles"] if c["origem"] == "controle"]
                 page.evaluate("() => document.querySelectorAll('.manuals-filter-dropdown').forEach(d => d.open = false)")
+            # 03/11/2026: na listagem de notícias, os botões dos cards que aparecem depois de "Carregar mais" também
+            # entram na conferência dos cards. Com o carimbo de 03/11/2026, o primeiro "Ler notícia" passou a ser o 7º
+            # card, fora dos 5 que a listagem mostra de início.
+            if page.locator("#btn-carregar-mais").count() and page.locator("#btn-carregar-mais").is_visible():
+                page.evaluate("() => document.getElementById('btn-carregar-mais').click()")
+                page.evaluate(FRAMES)
+                dados["cards"] += page.evaluate(COLETA, {"seletor": ".botao-card"})["cards"]
             # Em 390 px, com o menu do celular aberto, os destinos dele.
             if width < 768 and page.locator("#menu-toggle").is_visible():
                 page.click("#menu-toggle")
