@@ -355,10 +355,11 @@ def test_comunicado_mapa_card_stays_closed_with_the_oficio_75_in_its_history():
                        'rounded-2xl border border-slate-300 bg-slate-50 p-5 shadow-sm md:p-6"')
     assert ">ENCERRADO</span>" in card
     assert '<time datetime="2026-10-26T08:30:00-03:00">26/10/2026 • 08h30</time>' in card
-    # O contador AVISOS não muda: cinco avisos ativos, treze no histórico.
+    # O contador AVISOS não muda com este card: treze no histórico. 03/11/2026: o aviso do Webservice do SNGPC leva
+    # os ativos a seis.
     assert len(re.findall(r'data-status="resolved"', html)) == 13
-    assert len(re.findall(r'<article\b[^>]*data-status="(?!resolved)[^"]+"', html)) == 5
-    assert html.count('text-xs font-bold flex items-center justify-center shadow border border-red-200">5</span>') == 2
+    assert len(re.findall(r'<article\b[^>]*data-status="(?!resolved)[^"]+"', html)) == 6
+    assert html.count('text-xs font-bold flex items-center justify-center shadow border border-red-200">6</span>') == 2
 
     # Texto final: o recolhimento até 21/01/2027 é o do OC 29; o OC 75 não aparece fora do histórico.
     history_start = card.index('<div id="aviso-historico-mapa-portaria-1617"')

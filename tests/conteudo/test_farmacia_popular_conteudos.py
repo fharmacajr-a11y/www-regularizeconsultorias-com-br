@@ -200,4 +200,5 @@ def test_script_da_consulta_tem_cache_busting_alinhado_ao_dataset():
     assert "?v=" in src, "script da consulta deve ter cache-busting"
 
     # O bump não pode ter afetado o versionamento global resolvido antes.
-    assert '/assets/js/main.min.js?v=20261026-avisos-1' in HTML
+    # 03/11/2026: a versão global passou a 20261103-avisos-1 (aviso do Webservice do SNGPC; AVISOS 6).
+    assert '/assets/js/main.min.js?v=20261103-avisos-1' in HTML

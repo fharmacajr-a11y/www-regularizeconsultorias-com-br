@@ -123,7 +123,8 @@ def test_pops_drogaria_segue_o_padrao_das_paginas_internas():
         f"Layout antigo ainda presente em {relative}"
     )
 
-    assert "/assets/js/main.min.js?v=20261026-avisos-1" in parser.scripts
+    # 03/11/2026: versão global 20261103-avisos-1 (AVISOS 6).
+    assert "/assets/js/main.min.js?v=20261103-avisos-1" in parser.scripts
 
     hero_image = "/assets/img/manuais-e-pops/internas/manual-drogarias-interna.webp"
     assert hero_image in parser.images

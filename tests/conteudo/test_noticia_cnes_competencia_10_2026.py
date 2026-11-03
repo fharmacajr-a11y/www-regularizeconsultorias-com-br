@@ -194,7 +194,8 @@ def test_comunicado_informative_notice_is_active_and_second():
     # 19/10/2026, 15h40: o aviso da instabilidade nos sistemas da Anvisa entra em 1º; o do CNES passa ao 3º.
     # 20/10/2026: o aviso da instabilidade passa ao histórico; o do CNES volta ao 2º.
     # 31/10/2026, 22h10: o aviso do SNCR, atualizado, passa ao 1º lugar; o do CNES vai ao 3º.
-    assert len(own) == 1 and articles.index(own[0]) == 2
+    # 03/11/2026, 12h03: o aviso do Webservice do SNGPC entra em 1º; o do CNES vai ao 4º.
+    assert len(own) == 1 and articles.index(own[0]) == 3
     notice = own[0]
     opening = notice.split(">", 1)[0]
     text = _text(notice)

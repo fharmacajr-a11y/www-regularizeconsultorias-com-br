@@ -239,7 +239,7 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
         assert claim not in card, claim
 
 
-def test_comunicado_keeps_one_sncr_card_and_five_active_notices():
+def test_comunicado_keeps_one_sncr_card_and_six_active_notices():
     html = COMUNICADO_PATH.read_text(encoding="utf-8")
     active = _active_notices(html)
     sncr_cards = [article for article in active if 'data-category="sncr"' in article]
@@ -252,8 +252,9 @@ def test_comunicado_keeps_one_sncr_card_and_five_active_notices():
     # 19/10/2026, 15h40: aviso informativo sobre a instabilidade nos sistemas da Anvisa (8 ativos).
     # 20/10/2026: o aviso da instabilidade na Anvisa passou ao histórico (7 ativos).
     # 26/10/2026: os avisos do MAPA e do período eleitoral do Farmácia Popular passaram ao histórico (5 ativos).
-    assert len(active) == 5
-    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', html) == ["5", "5"]
+    # 03/11/2026, 12h03: aviso informativo do Webservice do SNGPC (6 ativos).
+    assert len(active) == 6
+    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', html) == ["6", "6"]
     assert len(sncr_cards) == 1
     card_text = _text(sncr_cards[0])
     paragraphs = [_text(item) for item in re.findall(r"<p>(.*?)</p>", sncr_cards[0], re.DOTALL)]
@@ -333,7 +334,8 @@ def test_comunicado_keeps_one_sncr_card_and_five_active_notices():
     # 03/11/2026, 12h00: segue em 1º com a RDC nº 1.046/2026.
     assert f'data-updated-at="03/11/2026 às 12h00" data-effective-at="{UPDATED}"' in sncr_cards[0].split(">", 1)[0]
     assert f'<time datetime="{UPDATED}">03/11/2026 • 12h00</time>' in sncr_cards[0]
-    assert active[0] is sncr_cards[0]
+    # 03/11/2026, 12h03: o aviso do Webservice do SNGPC, mais recente, passa ao 1º; o do SNCR fica em 2º.
+    assert active[1] is sncr_cards[0]
 
 
 def test_sncr_news_has_current_sitemap_lastmod():
@@ -794,8 +796,9 @@ def test_sncr_pages_leave_out_the_items_held_for_another_update():
     # encerramento do aviso da instabilidade na Anvisa, e a 5 em 26/10/2026 com o encerramento dos avisos do MAPA e do
     # período eleitoral.
     comunicado = COMUNICADO_PATH.read_text(encoding="utf-8")
-    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', comunicado) == ["5", "5"]
-    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', NEWS_PATH.read_text(encoding="utf-8")) == ["5", "5"]
+    # 03/11/2026: 6, com o aviso do Webservice do SNGPC.
+    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', comunicado) == ["6", "6"]
+    assert re.findall(r'class="aviso-badge[^"]*">(\d+)</span>', NEWS_PATH.read_text(encoding="utf-8")) == ["6", "6"]
     # 01/11/2026 (reenvio ao AdSense): +5 matérias novas (CNES 2026, SIFAP de maio e três guias); nenhuma do SNCR além
     # do guia "SNCR e SNGPC", que cita os 16 dígitos e os 20 medicamentos atribuídos à 2ª edição do manual, como o
     # quadro de 22/10/2026.

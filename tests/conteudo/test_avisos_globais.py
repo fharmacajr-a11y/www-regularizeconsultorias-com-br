@@ -20,7 +20,8 @@ CSS_PATHS = (
     ROOT / "assets/css/custom.css",
     ROOT / "assets/css/custom.min.css",
 )
-CURRENT_STORAGE_VERSION = "2026-10-26-avisos-5"
+# 03/11/2026: o aviso informativo do Webservice do SNGPC leva o contador a 6.
+CURRENT_STORAGE_VERSION = "2026-11-03-avisos-6"
 AFE_ROUTE = "/noticias/anvisa-edital-6-2026-afe-manipulacao-preparacoes-estereis/"
 CADASTRO_ROUTE = "/noticias/cadastro-anvisa-govbr-transicao-sistemas/"
 # 01/11/2026 (reenvio ao AdSense): as páginas das competências 06, 08, 09 e 10/2026 foram reunidas em
@@ -32,6 +33,13 @@ PF_ROUTE = "/noticias/produtos-quimicos-controlados-siproquim2-assinador-pf/"
 MAPA_ROUTE = "/noticias/mapa-portaria-1617-2026-aditivos-antimicrobianos-alimentacao-animal/"
 PRODUTOS_ROUTE = "/noticias/anvisa-suspende-medicamento-proibe-produtos-irregulares/"
 INSTABILIDADE_ID = "instabilidade-anvisa-2026-10-19"
+# 03/11/2026, 12h03 (hora do commit): aviso informativo do Webservice do SNGPC (nota da Anvisa de 29/10/2026).
+SNGPC_WEBSERVICE_ID = "webservice-sngpc-2026-10-29"
+SNGPC_WEBSERVICE_AT = "2026-11-03T12:03:00-03:00"
+SNGPC_WEBSERVICE_NOTE = (
+    "https://www.gov.br/anvisa/pt-br/assuntos/noticias-anvisa/2026/webservice-do-sistema-nacional-de-gerenciamento-"
+    "de-produtos-controlados-esta-temporariamente-indisponivel"
+)
 ELEITORAL_ROUTE = "/noticias/farmacia-popular-adequacao-materiais-periodo-eleitoral/"
 CNES_10_ROUTE = CNES_PRAZOS_ROUTE
 REPRESENTATIVE_ROUTES = (
@@ -172,7 +180,7 @@ def _badge_texts(page):
     return page.locator(".aviso-badge").all_text_contents()
 
 
-def test_comunicado_has_five_active_notices_thirteen_historical_and_two_static_badges():
+def test_comunicado_has_six_active_notices_thirteen_historical_and_two_static_badges():
     root = _parse_html(COMUNICADO_PATH)
     notice_lists = [node for node in root.descendants() if node.attrs.get("id") == "avisos-lista"]
     assert len(notice_lists) == 1
@@ -186,6 +194,7 @@ def test_comunicado_has_five_active_notices_thirteen_historical_and_two_static_b
     active = [article for article in articles if article not in inactive]
     badges = [node for node in root.descendants() if node.has_class("aviso-badge")]
 
+    # 03/11/2026, 12h03: aviso informativo do Webservice do SNGPC (6 ativos, 13 no histórico).
     # 26/10/2026: os avisos do marco de 23/10 do MAPA e do período eleitoral do Farmácia Popular passaram ao histórico
     # (5 ativos, 13 no histórico).
     # 20/10/2026: o aviso da instabilidade na consulta de empresas da Anvisa passou ao histórico (7 ativos, 11 no histórico).
@@ -194,12 +203,12 @@ def test_comunicado_has_five_active_notices_thirteen_historical_and_two_static_b
     # 16/10/2026, 20h06: aviso informativo do CNES 10/2026 (6 ativos, 10 no histórico).
     # 16/10/2026: o aviso dos mapas de setembro da PF passou ao histórico (5 ativos, 10 no histórico).
     # Antes, em 11/10/2026, o aviso do CNES 09/2026 já tinha passado (6 ativos, 9 no histórico).
-    assert len(articles) == 18
-    assert len(active) == 5
+    assert len(articles) == 19
+    assert len(active) == 6
     assert Counter(article.attrs.get("data-status", "").casefold() for article in inactive) == {"resolved": 13}
     assert all("data-placeholder" not in article.attrs for article in articles)
     assert len(badges) == 2
-    assert [badge.text() for badge in badges] == ["5", "5"]
+    assert [badge.text() for badge in badges] == ["6", "6"]
 
 
 def test_comunicado_instabilidade_anvisa_is_historical_with_direct_anchor():
@@ -442,9 +451,10 @@ def test_comunicado_editorial_organization_and_active_notice_content():
         if any(node.tag == "a" and node.attrs.get("href") == CNES_ROUTE for node in article.descendants())
     ]
 
-    assert len(active) == 5
+    # 03/11/2026: aviso informativo do Webservice do SNGPC (6 ativos).
+    assert len(active) == 6
     assert len(historical) == 13
-    assert len(articles) == 18
+    assert len(articles) == 19
     # Edital 6/2026: a ficha do AnvisaLegis apresenta o chamamento como encerrado (consulta de 09/10/2026).
     assert not afe_active
     assert len(afe_historical) == 1
@@ -650,7 +660,9 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     # 16/10/2026, 20h06: o aviso do CNES 10/2026 é o ativo mais recente; os demais descem uma posição.
     # 31/10/2026, 22h10: o aviso do SNCR, atualizado (prorrogação aprovada na 20ª ROP), passa ao 1º lugar; os dois que
     # ficavam à frente dele descem uma posição.
+    # 03/11/2026, 12h03: o aviso do Webservice do SNGPC é o ativo mais recente; os demais descem uma posição.
     assert titles == [
+        "SNGPC: Anvisa informa indisponibilidade temporária do Webservice",
         "SNCR: cronograma anunciado e nota da API",
         "Farmácia Popular: confira a origem de mensagens pelo WhatsApp",
         "CNES: envio da competência 10/2026 aberto até 9 de novembro",
@@ -665,11 +677,12 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
 
     # O CTA informativo de referência passa a ser o do CNES 10/2026 (o do MAPA saiu com o aviso, em 26/10/2026; antes, o da
     # Polícia Federal, em 16/10/2026).
-    useful_badge = next(node for node in active[4].descendants() if node.tag == "span" and node.text() == "ÚTIL")
-    useful_cta = next(node for node in active[4].descendants() if node.tag == "a" and "Conferir orientações" in node.text())
-    informative_cta = next(node for node in active[2].descendants() if node.tag == "a" and "Leia a notícia sobre a competência 10/2026" in node.text())
+    # 03/11/2026: com o aviso do SNGPC no topo, o ÚTIL passa ao 6º e o do CNES 10/2026 ao 4º.
+    useful_badge = next(node for node in active[5].descendants() if node.tag == "span" and node.text() == "ÚTIL")
+    useful_cta = next(node for node in active[5].descendants() if node.tag == "a" and "Conferir orientações" in node.text())
+    informative_cta = next(node for node in active[3].descendants() if node.tag == "a" and "Leia a notícia sobre a competência 10/2026" in node.text())
     assert {"border-emerald-200", "bg-emerald-50", "text-emerald-700"} <= set(useful_badge.attrs["class"].split())
-    assert {"border-emerald-200", "bg-emerald-50"} <= set(active[4].attrs["class"].split())
+    assert {"border-emerald-200", "bg-emerald-50"} <= set(active[5].attrs["class"].split())
     # Desde 23/10/2026 os botões dos avisos são o secundário do site (assets/css/botoes.css), iguais nos
     # quatro tipos: a cor do tipo fica no card e no selo, não no botão.
     assert useful_cta.attrs["class"].split() == informative_cta.attrs["class"].split() == ["botao", "botao--secundario"]
@@ -833,8 +846,9 @@ def test_comunicado_useful_cta_computed_states(site_url, browser):
 
 
 def test_javascript_constants_and_files_are_exactly_equivalent():
-    expected_fallback = re.compile(r"^\s*var AVISOS_FALLBACK_COUNT = 5;$", re.MULTILINE)
-    expected_version = re.compile(r"^\s*var AVISOS_STORAGE_VERSION = '2026-10-26-avisos-5';$", re.MULTILINE)
+    # 03/11/2026: 6 avisos ativos (Webservice do SNGPC).
+    expected_fallback = re.compile(r"^\s*var AVISOS_FALLBACK_COUNT = 6;$", re.MULTILINE)
+    expected_version = re.compile(r"^\s*var AVISOS_STORAGE_VERSION = '2026-11-03-avisos-6';$", re.MULTILINE)
     for path in MAIN_PATHS:
         source = path.read_text(encoding="utf-8")
         assert len(expected_fallback.findall(source)) == 1, path
@@ -858,7 +872,7 @@ def test_every_public_navbar_has_two_complete_notice_links():
         for link in links:
             badges = [node for node in link.descendants() if node.has_class("aviso-badge")]
             assert len(badges) == 1, relative_path
-            assert badges[0].text() == "5", relative_path
+            assert badges[0].text() == "6", relative_path
             assert badges[0].text() != "3", relative_path
             svgs = [node for node in link.descendants() if node.tag == "svg"]
             assert len(svgs) == 1, relative_path
@@ -899,7 +913,7 @@ def test_tablet_hide_regression_is_absent_and_navbar_rules_remain():
             assert rule.search(compact), f"{path}: {rule.pattern}"
 
 
-def test_fallback_is_five_before_delayed_sync(browser, site_url):
+def test_fallback_is_six_before_delayed_sync(browser, site_url):
     context = new_context(browser)
     context.add_init_script(
         "const originalFetch = window.fetch.bind(window);"
@@ -908,8 +922,8 @@ def test_fallback_is_five_before_delayed_sync(browser, site_url):
     page = context.new_page()
     try:
         page.goto(f"{site_url}/", wait_until="domcontentloaded")
-        page.wait_for_function("[...document.querySelectorAll('.aviso-badge')].every(b => b.textContent.trim() === '5')")
-        assert _badge_texts(page) == ["5", "5"]
+        page.wait_for_function("[...document.querySelectorAll('.aviso-badge')].every(b => b.textContent.trim() === '6')")
+        assert _badge_texts(page) == ["6", "6"]
         assert "3" not in _badge_texts(page)
     finally:
         context.close()
@@ -924,16 +938,16 @@ def test_old_storage_is_ignored_when_sync_fails(browser, site_url):
     try:
         page.route("**/comunicado/", lambda route: route.abort("failed"))
         page.goto(f"{site_url}/", wait_until="domcontentloaded")
-        page.wait_for_function("[...document.querySelectorAll('.aviso-badge')].every(b => b.textContent.trim() === '5')")
-        assert _badge_texts(page) == ["5", "5"]
+        page.wait_for_function("[...document.querySelectorAll('.aviso-badge')].every(b => b.textContent.trim() === '6')")
+        assert _badge_texts(page) == ["6", "6"]
         assert "3" not in _badge_texts(page)
         assert not page_errors
     finally:
         context.close()
 
 
-def test_successful_sync_persists_five_and_hides_zero(browser, site_url):
-    for count in (5, 0):
+def test_successful_sync_persists_six_and_hides_zero(browser, site_url):
+    for count in (6, 0):
         context = new_context(browser)
         page = context.new_page()
         try:
@@ -945,7 +959,7 @@ def test_successful_sync_persists_five_and_hides_zero(browser, site_url):
             page.wait_for_function(f"localStorage.getItem('avisos_count') === '{count}'")
             assert page.evaluate("localStorage.getItem('avisos_count_version')") == CURRENT_STORAGE_VERSION
             if count:
-                assert _badge_texts(page) == ["5", "5"]
+                assert _badge_texts(page) == ["6", "6"]
                 assert all(
                     page.locator(".aviso-badge").nth(index).evaluate("element => getComputedStyle(element).display") == "flex"
                     for index in range(2)
@@ -969,7 +983,7 @@ def test_responsive_notice_visibility_matrix(browser, site_url):
                 if route != "/comunicado/":
                     page.route(
                         "**/comunicado/",
-                        _notice_response(5),
+                        _notice_response(6),
                     )
                 page.goto(f"{site_url}{route}", wait_until="domcontentloaded")
                 top = page.locator('#navbar > div:first-child > div > div > a[href="/comunicado/"]')
@@ -984,7 +998,7 @@ def test_responsive_notice_visibility_matrix(browser, site_url):
                     toggle.click()
                     assert mobile.is_visible(), (route, width)
                     assert mobile.locator(".aviso-badge").is_visible(), (route, width)
-                    assert mobile.locator(".aviso-badge").text_content().strip() == "5"
+                    assert mobile.locator(".aviso-badge").text_content().strip() == "6"
                 elif width < 900:
                     assert top.is_visible(), (route, width)
                     assert toggle.is_visible(), (route, width)
@@ -994,13 +1008,61 @@ def test_responsive_notice_visibility_matrix(browser, site_url):
                     assert mobile.locator(".aviso-badge").is_visible(), (route, width)
                     assert top.evaluate("element => getComputedStyle(element).display") != "none"
                     assert mobile.evaluate("element => getComputedStyle(element).display") != "none"
-                    assert top.locator(".aviso-badge").text_content().strip() == "5"
-                    assert mobile.locator(".aviso-badge").text_content().strip() == "5"
+                    assert top.locator(".aviso-badge").text_content().strip() == "6"
+                    assert mobile.locator(".aviso-badge").text_content().strip() == "6"
                 else:
                     assert top.is_visible(), (route, width)
                     assert not toggle.is_visible(), (route, width)
                     assert not mobile_menu.is_visible(), (route, width)
                     assert top.locator(".aviso-badge").is_visible(), (route, width)
-                    assert top.locator(".aviso-badge").text_content().strip() == "5"
+                    assert top.locator(".aviso-badge").text_content().strip() == "6"
             finally:
                 context.close()
+
+
+def test_comunicado_sngpc_webservice_notice_is_informative_first_and_official():
+    # 03/11/2026 (consolidado de 03/11, item M1; decisão do Jr: criar o card, em commit separado): nota da Anvisa de
+    # 29/10/2026 sobre a indisponibilidade temporária do Webservice do SNGPC. Sem novo comunicado da Anvisa até a
+    # consulta de 03/11/2026, às 12h03.
+    source = COMUNICADO_PATH.read_text(encoding="utf-8")
+    root = _parse_html(COMUNICADO_PATH)
+    notice_list = next(node for node in root.descendants() if node.attrs.get("id") == "avisos-lista")
+    articles = [node for node in notice_list.descendants() if node.tag == "article"]
+    active = [article for article in articles if article.attrs.get("data-status", "").casefold() != "resolved"]
+    anchored = [node for node in root.descendants() if node.attrs.get("id") == SNGPC_WEBSERVICE_ID]
+
+    assert len(anchored) == 1 and anchored[0] is active[0]
+    notice = anchored[0]
+    assert notice.attrs.get("data-status") == "informativo"
+    assert notice.attrs.get("data-category") == "sngpc"
+    assert notice.attrs.get("data-effective-at") == SNGPC_WEBSERVICE_AT
+    hora = f"{SNGPC_WEBSERVICE_AT[11:13]}h{SNGPC_WEBSERVICE_AT[14:16]}"
+    assert notice.attrs.get("data-updated-at") == f"03/11/2026 às {hora}"
+    assert {"border-orange-200", "bg-orange-50"} <= set(notice.attrs["class"].split())
+    times = [node for node in notice.descendants() if node.tag == "time"]
+    assert [(node.attrs.get("datetime"), node.text()) for node in times] == [(SNGPC_WEBSERVICE_AT, f"03/11/2026 • {hora}")]
+    assert next(node.text() for node in notice.descendants() if node.tag == "h3") == (
+        "SNGPC: Anvisa informa indisponibilidade temporária do Webservice"
+    )
+    html = re.search(rf'<article id="{SNGPC_WEBSERVICE_ID}".*?</article>', source, re.DOTALL).group(0)
+    text = " ".join(re.sub(r"<[^>]+>", " ", html).split())
+    assert "INFORMATIVO" in text and "URGENTE" not in text
+    for term in (
+        "Em nota de 29/10/2026, a Anvisa informou que o Webservice do Sistema Nacional de Gerenciamento de Produtos "
+        "Controlados (SNGPC) estava temporariamente indisponível, para fins de manutenção.",
+        "podem aguardar o retorno ou, quando possível, usar as demais vias disponíveis para o envio dos arquivos XML: a API "
+        "(Interface de Programação de Aplicações) ou o acesso via Web do SNGPC.",
+        "A Anvisa informou que publicará novo comunicado assim que o serviço for retomado.",
+        "Até a consulta de 03/11/2026, às 12h03, esse novo comunicado não havia sido publicado.",
+        "Atualizaremos este comunicado quando a Anvisa informar o retorno do serviço.",
+    ):
+        assert term in text, term
+    # Único link: a nota oficial, no formato de link externo dos avisos.
+    links = [node for node in notice.descendants() if node.tag == "a"]
+    assert [(link.attrs.get("href"), link.text()) for link in links] == [(SNGPC_WEBSERVICE_NOTE, "nota da Anvisa")]
+    assert links[0].attrs.get("target") == "_blank" and links[0].attrs.get("rel") == "noopener noreferrer"
+    # Consolidado de 03/11 (NÃO FAZER): sem "continua fora do ar", sem prorrogação, sem dispensa de escrituração e sem
+    # notícia própria (nenhum link interno).
+    lowered = text.casefold()
+    for claim in ("continua fora", "fora do ar", "prorrog", "dispens", "escrituração", "prazo", "/noticias/"):
+        assert claim not in lowered and claim not in html.casefold(), claim

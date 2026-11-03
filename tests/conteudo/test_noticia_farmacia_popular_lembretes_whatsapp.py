@@ -236,8 +236,9 @@ def test_comunicado_informative_notice_is_active_first_and_internal():
     # 20/10/2026: o aviso da instabilidade passa ao histórico; este volta a ser o ativo mais recente.
     # 26/10/2026: os avisos do MAPA e do período eleitoral passam ao histórico (5 ativos).
     # 31/10/2026, 22h10: o aviso do SNCR, atualizado, passa ao 1º lugar; este vai ao 2º.
-    assert len(articles) == 5
-    assert len(own) == 1 and articles.index(own[0]) == 1
+    # 03/11/2026, 12h03: o aviso do Webservice do SNGPC entra em 1º (6 ativos); este vai ao 3º.
+    assert len(articles) == 6
+    assert len(own) == 1 and articles.index(own[0]) == 2
     notice = own[0]
     opening = notice.split(">", 1)[0]
     text = _text(notice)
