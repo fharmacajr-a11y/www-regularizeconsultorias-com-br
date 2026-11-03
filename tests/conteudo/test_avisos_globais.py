@@ -661,9 +661,10 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     # 31/10/2026, 22h10: o aviso do SNCR, atualizado (prorrogação aprovada na 20ª ROP), passa ao 1º lugar; os dois que
     # ficavam à frente dele descem uma posição.
     # 03/11/2026, 12h03: o aviso do Webservice do SNGPC é o ativo mais recente; os demais descem uma posição.
+    # 03/11/2026 (retoques do Jr): o título do aviso do SNCR passa a citar a transição até 03/03/2027.
     assert titles == [
         "SNGPC: Anvisa informa indisponibilidade temporária do Webservice",
-        "SNCR: cronograma anunciado e nota da API",
+        "SNCR: transição da RCE e da RET eletrônicas vai até 03/03/2027",
         "Farmácia Popular: confira a origem de mensagens pelo WhatsApp",
         "CNES: envio da competência 10/2026 aberto até 9 de novembro",
         "Farmácia Popular: confira municípios com vagas para credenciamento",

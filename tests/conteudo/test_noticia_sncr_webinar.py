@@ -22,6 +22,12 @@ PUBLISHED = "2026-05-28T20:36:00-03:00"
 # 03/11/2026, 12h00 (hora do commit): quadro da RDC nº 1.046/2026, publicada no DOU de 03/11/2026 (consolidado de 03/11).
 UPDATED = "2026-11-03T12:00:00-03:00"
 UPDATE_03_11_ID = "sncr-atualizacao-03-novembro-title"
+# 03/11/2026 (retoques do Jr): descrição com a RDC nº 1.046/2026; guia SNCR × SNGPC, que repete a frase do art. 4º.
+NEW_DESCRIPTION = (
+    "A RDC nº 1.046/2026 permite emitir RCE e RET eletrônicas sem a numeração do SNCR até 03/03/2027. "
+    "A nova etapa do SNCR foi anunciada para 30/09/2026, com implementação gradual."
+)
+GUIDE_PATH = ROOT / "noticias" / "sncr-e-sngpc-o-que-cada-sistema-controla-na-farmacia" / "index.html"
 DOU_1046_URL = (
     "https://www.in.gov.br/web/dou/-/resolucao-da-diretoria-colegiada-anvisa-n-1.046-de-29-de-outubro-de-2026-741186261"
 )
@@ -260,8 +266,9 @@ def test_comunicado_keeps_one_sncr_card_and_six_active_notices():
     paragraphs = [_text(item) for item in re.findall(r"<p>(.*?)</p>", sncr_cards[0], re.DOTALL)]
     limit = next(item for item in paragraphs if "limite de numeração" in item)
     incorrect = next(item for item in paragraphs if "numerações disponibilizadas incorretamente" in item)
+    # 03/11/2026 (retoques do Jr): o título do card passa a citar a transição da RCE e da RET até 03/03/2027.
     for term in (
-        "SNCR: cronograma anunciado e nota da API",
+        "SNCR: transição da RCE e da RET eletrônicas vai até 03/03/2027",
         "30/09/2026",
         "01/10/2026",
         "implementação gradual",
@@ -902,8 +909,24 @@ def test_sncr_update_of_03_november_follows_the_rdc_1046_text():
     # Item B3: a integração ao SNCR vem do art. 4º; a ressalva da transição fala só de numeração, não de integração.
     body_html = _article_body(html)
     body = _plain(body_html)
-    assert ("Quando a prescrição é eletrônica, o art. 4º da RDC nº 1.000/2025 exige que ela seja gerada em serviço de "
-            "prescrição integrado ao SNCR") in body
+    # 03/11/2026 (retoques do Jr): a frase segue o texto do art. 4º ("gerados exclusivamente em serviços de prescrição
+    # eletrônica integrados ao SNCR"), na notícia e no guia SNCR × SNGPC.
+    art_4 = ("Quando a prescrição é eletrônica, o art. 4º da RDC nº 1.000/2025 exige que o receituário seja gerado "
+             "exclusivamente em serviço de prescrição eletrônica integrado ao SNCR.")
+    assert art_4 in body
+    assert art_4 in _plain(_article_body(GUIDE_PATH.read_text(encoding="utf-8")))
+    assert "exige que ela seja gerada" not in body
+    # 03/11/2026 (retoques do Jr): a descrição e o lead citam a RDC nº 1.046/2026.
+    descriptions = re.findall(r'<meta (?:name|property)="(?:description|og:description|twitter:description)" '
+                              r'content="([^"]*)"', html)
+    descriptions += [block["description"] for block in _jsonld_blocks(html) if "description" in block]
+    assert len(descriptions) == 4
+    assert set(descriptions) == {NEW_DESCRIPTION}
+    lead = _text(re.search(r'<p class="text-slate-200 text-base sm:text-lg leading-relaxed">(.*?)</p>', html,
+                           re.DOTALL).group(1))
+    assert lead.startswith("A RDC nº 1.046/2026, publicada no DOU de 03/11/2026, permite emitir eletronicamente, "
+                           "sem a numeração do SNCR, as Receitas de Controle Especial e as receitas sujeitas à "
+                           "retenção até 03/03/2027.")
     caveat = _one_paragraph(body_html, "ressalva de transição")
     for term in ("pela nova redação do art. 18, dada pela RDC nº 1.046/2026",
                  "sem a numeração do SNCR até 03/03/2027", "a partir de 04/03/2027"):
