@@ -50,7 +50,7 @@
   <link rel="stylesheet" href="/assets/css/components.css?v=20261023-botoes-1">
   <link rel="stylesheet" href="/assets/css/pages/home.css?v=20261023-botoes-1">
   <link rel="stylesheet" href="/assets/css/botoes.css?v=20261023-botoes-1">
-  <link rel="stylesheet" href="/assets/css/refinamento.css?v=20261103-refinamento-27">
+  <link rel="stylesheet" href="/assets/css/refinamento.css?v=20261103-refinamento-29">
 
   <script type="application/ld+json">
   {
@@ -219,7 +219,7 @@
 
           <!-- Mapa de clientes: estados do Brasil (malha do IBGE); ao tocar num estado, as cidades -->
           <div class="home-hero-mark hidden lg:flex justify-center items-center lg:col-span-1 relative">
-            <figure class="home-hero-mapa" data-mapa-clientes data-versao="20261102-mapa-4">
+            <figure class="home-hero-mapa" data-mapa-clientes data-versao="20261103-mapa-5">
               <div class="home-hero-mapa__topo">
                 <button type="button" class="home-hero-mapa__voltar" hidden>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
@@ -308,6 +308,12 @@
                 <div class="home-hero-mapa__numeros">
                   <p><strong data-mapa-numero="a">339</strong> <span data-mapa-rotulo="a">cidades com clientes</span></p>
                   <p><strong data-mapa-numero="b">18</strong> <span data-mapa-rotulo="b">estados</span></p>
+                </div>
+                <div class="home-hero-mapa__busca" hidden>
+                  <label class="sr-only" for="home-hero-mapa-busca">Busque sua cidade para ver se temos clientes nela</label>
+                  <svg class="home-hero-mapa__busca-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+                  <input id="home-hero-mapa-busca" class="home-hero-mapa__campo" type="search" placeholder="Busque sua cidade" autocomplete="off" spellcheck="false" enterkeyhint="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="home-hero-mapa-sugestoes">
+                  <ul id="home-hero-mapa-sugestoes" class="home-hero-mapa__sugestoes" role="listbox" aria-label="Cidades encontradas" hidden></ul>
                 </div>
                 <span class="home-hero-mapa__item home-hero-mapa__item--clientes">Estados com clientes</span>
                 <p class="home-hero-mapa__status" aria-live="polite">Estados com clientes em destaque no mapa.</p>
@@ -878,7 +884,7 @@
   </script>
 
   <!-- JavaScript principal (navbar, menu mobile, link ativo) -->
-  <script src="/assets/js/pages/mapa-clientes.js?v=20261102-mapa-4" defer></script>
+  <script src="/assets/js/pages/mapa-clientes.js?v=20261103-mapa-5" defer></script>
   <script src="/assets/js/main.min.js?v=20261026-avisos-1"></script>
 </body>
 </html>

@@ -10,7 +10,9 @@
      /assets/data/mapa/uf-<código>.json, com as cidades com clientes em
      destaque; "‹ Brasil" (ou Esc) volta;
    - +, − e o botão de mapa inteiro; roda do mouse, duplo clique ou duplo
-     toque e pinça aproximam; com o mapa aproximado, arrastar move o mapa.
+     toque e pinça aproximam; com o mapa aproximado, arrastar move o mapa;
+   - "Busque sua cidade" (03/11/2026): sugere cidades pelo nome, e escolher
+     uma abre o estado, aproxima a cidade e diz se temos clientes nela.
    Os números da legenda contam até o valor novo. Com movimento reduzido,
    tudo muda sem animação. Os dados são só cidade e estado.
    ================================================================ */
@@ -247,6 +249,7 @@
     fecharEstado();
     var grupo = document.createElementNS(NS, 'g');
     grupo.setAttribute('class', 'home-hero-mapa__estado');
+    grupo.setAttribute('data-uf', codigo);
     var escalaIbge = document.createElementNS(NS, 'g');
     escalaIbge.setAttribute('transform', 'scale(0.0001,-0.0001)');
     var comClientes = [];
@@ -255,6 +258,7 @@
       caminho.setAttribute('d', m.d);
       caminho.setAttribute('class', 'home-hero-mapa__municipio' + (m.k ? ' home-hero-mapa__municipio--clientes' : ''));
       caminho.setAttribute('data-municipio', m.n);
+      caminho.setAttribute('data-ibge', m.c);
       if (m.k) {
         caminho.setAttribute('data-clientes', '');
         comClientes.push(caminho);
@@ -281,7 +285,8 @@
       dados.municipios.length, 'cidades no estado');
   }
 
-  function abrirEstado(codigo, caminhoEstado) {
+  /* "depois" roda quando o estado já está desenhado e enquadrado (busca). */
+  function abrirEstado(codigo, caminhoEstado, depois) {
     var meu = ++pedido;
     esconderDica();
     status.textContent = 'Carregando as cidades…';
@@ -318,7 +323,7 @@
       inteiro = quadro.slice();
       escala = 1;
       aplicar();
-      animarPara(quadro, 200);
+      animarPara(quadro, 200, depois);
     }).catch(function () {
       if (meu !== pedido) return;
       figura.classList.remove('home-hero-mapa--voando');
@@ -569,6 +574,205 @@
   });
 
   voltar.addEventListener('click', voltarAoBrasil);
+
+  /* ---------- Busca de cidade ----------
+     Na primeira vez que o campo recebe o foco, lê
+     /assets/data/mapa/cidades.json (nome, código do IBGE e se há clientes,
+     tirados dos arquivos dos estados). Ao digitar duas letras ou mais,
+     mostra até seis cidades, sem diferença de acento ou maiúscula: primeiro
+     o nome igual ao digitado, depois as cidades com clientes e as que
+     começam pelo texto. Setas e Enter escolhem; Esc fecha a lista. */
+  var busca = figura.querySelector('.home-hero-mapa__busca');
+  var campo = busca && busca.querySelector('.home-hero-mapa__campo');
+  var lista = busca && busca.querySelector('.home-hero-mapa__sugestoes');
+  var indice = null;
+  var pedidoIndice = null;
+  var sugestoes = [];
+  var marcada = -1;
+  var MAXIMO_SUGESTOES = 6;
+
+  function normalizar(texto) {
+    return texto.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+      .replace(/[^a-z0-9]+/g, ' ').trim();
+  }
+
+  function carregarIndice() {
+    if (!pedidoIndice) {
+      pedidoIndice = fetch('/assets/data/mapa/cidades.json' + (versao ? '?v=' + versao : ''))
+        .then(function (resposta) {
+          if (!resposta.ok) throw new Error('HTTP ' + resposta.status);
+          return resposta.json();
+        })
+        .then(function (json) {
+          indice = json.cidades.map(function (c) {
+            return { nome: c[0], codigo: c[1], clientes: c[2] === 1, uf: json.ufs[String(c[1]).slice(0, 2)], chave: normalizar(c[0]) };
+          });
+          return indice;
+        })
+        .catch(function (erro) {
+          pedidoIndice = null;
+          throw erro;
+        });
+    }
+    return pedidoIndice;
+  }
+
+  function procurar(texto) {
+    var q = normalizar(texto);
+    if (q.length < 2 || !indice) return [];
+    var comeca = [];
+    var contem = [];
+    for (var i = 0; i < indice.length; i++) {
+      var posicao = indice[i].chave.indexOf(q);
+      if (posicao === 0) comeca.push(indice[i]);
+      else if (posicao > 0 && contem.length < MAXIMO_SUGESTOES) contem.push(indice[i]);
+    }
+    comeca.sort(function (a, b) {
+      return (a.chave === q ? 0 : 1) - (b.chave === q ? 0 : 1) ||
+        (a.clientes ? 0 : 1) - (b.clientes ? 0 : 1) ||
+        a.chave.localeCompare(b.chave);
+    });
+    return comeca.concat(contem).slice(0, MAXIMO_SUGESTOES);
+  }
+
+  function fecharLista() {
+    lista.hidden = true;
+    campo.setAttribute('aria-expanded', 'false');
+    campo.removeAttribute('aria-activedescendant');
+    marcada = -1;
+  }
+
+  function marcar(i) {
+    var itens = lista.children;
+    if (marcada >= 0 && itens[marcada]) itens[marcada].setAttribute('aria-selected', 'false');
+    marcada = i;
+    if (!itens[i]) return;
+    itens[i].setAttribute('aria-selected', 'true');
+    campo.setAttribute('aria-activedescendant', itens[i].id);
+  }
+
+  function mostrar(resultado) {
+    sugestoes = resultado;
+    while (lista.firstChild) lista.removeChild(lista.firstChild);
+    marcada = -1;
+    campo.removeAttribute('aria-activedescendant');
+    if (!resultado.length) {
+      var vazio = linha('li', 'Nenhuma cidade encontrada com esse nome.');
+      vazio.className = 'home-hero-mapa__sugestao home-hero-mapa__sugestao--vazia';
+      vazio.setAttribute('role', 'option');
+      vazio.setAttribute('aria-disabled', 'true');
+      lista.appendChild(vazio);
+    }
+    resultado.forEach(function (cidade, i) {
+      var item = document.createElement('li');
+      item.id = 'home-hero-mapa-sugestao-' + i;
+      item.className = 'home-hero-mapa__sugestao';
+      item.setAttribute('role', 'option');
+      item.setAttribute('aria-selected', 'false');
+      item.setAttribute('aria-label', cidade.nome + ' (' + cidade.uf + ')' + (cidade.clientes ? ', com clientes' : ''));
+      var nome = linha('span', cidade.nome);
+      nome.className = 'home-hero-mapa__sugestao-nome';
+      var uf = linha('span', cidade.uf);
+      uf.className = 'home-hero-mapa__sugestao-uf';
+      item.appendChild(nome);
+      item.appendChild(uf);
+      if (cidade.clientes) {
+        var selo = linha('span', 'Com clientes');
+        selo.className = 'home-hero-mapa__sugestao-selo';
+        item.appendChild(selo);
+      }
+      /* O campo fica com o foco (e o teclado do celular aberto). */
+      item.addEventListener('mousedown', function (evento) { evento.preventDefault(); });
+      item.addEventListener('click', function () { escolher(cidade); });
+      lista.appendChild(item);
+    });
+    lista.hidden = false;
+    campo.setAttribute('aria-expanded', 'true');
+  }
+
+  /* Abre o estado da cidade (se ainda não estiver aberto), aproxima a
+     cidade, marca-a e escreve a resposta no texto de ajuda. */
+  function escolher(cidade) {
+    fecharLista();
+    campo.value = cidade.nome + ' (' + cidade.uf + ')';
+    var codigoUf = String(cidade.codigo).slice(0, 2);
+    var resposta = cidade.clientes
+      ? cidade.nome + ' (' + cidade.uf + '): temos clientes nesta cidade.'
+      : cidade.nome + ' (' + cidade.uf + '): ainda não temos clientes nesta cidade. Atendemos empresas de todo o Brasil.';
+
+    function focarCidade() {
+      var caminho = grupoEstado && grupoEstado.querySelector('[data-ibge="' + cidade.codigo + '"]');
+      if (caminho) {
+        esconderDica();
+        marcarCidade(caminho);
+        var caixa = caminho.getBBox();
+        var cx = (caixa.x + caixa.width / 2) / 10000;
+        var cy = -(caixa.y + caixa.height / 2) / 10000;
+        var lado = Math.max(caixa.width, caixa.height) / 10000 * 7;
+        escala = Math.min(ZOOM_MAXIMO, Math.max(1, inteiro[2] / lado));
+        var salvo = atual;
+        atual = [cx - inteiro[2] / escala / 2, cy - inteiro[3] / escala / 2, 0, 0];
+        limitar();
+        var destino = atual;
+        atual = salvo;
+        aplicar();
+        animarPara(destino, 420);
+      }
+      status.textContent = resposta;
+    }
+
+    if (grupoEstado && grupoEstado.getAttribute('data-uf') === codigoUf) {
+      focarCidade();
+      return;
+    }
+    /* Do Brasil, o mapa voa até o estado; com outro estado aberto, troca
+       direto. */
+    abrirEstado(codigoUf, grupoEstado ? null : brasil.querySelector('[data-codigo="' + codigoUf + '"]'), focarCidade);
+  }
+
+  if (busca && campo && lista) {
+    busca.hidden = false;
+
+    campo.addEventListener('focus', function () {
+      carregarIndice().catch(function () {});
+    });
+
+    campo.addEventListener('input', function () {
+      var texto = campo.value;
+      if (normalizar(texto).length < 2) {
+        fecharLista();
+        return;
+      }
+      carregarIndice().then(function () {
+        if (campo.value === texto && document.activeElement === campo) mostrar(procurar(texto));
+      }).catch(function () {
+        status.textContent = 'Não foi possível carregar a lista de cidades agora. Tente de novo em instantes.';
+      });
+    });
+
+    campo.addEventListener('keydown', function (evento) {
+      var aberta = !lista.hidden && sugestoes.length > 0;
+      if (evento.key === 'ArrowDown' && aberta) {
+        marcar((marcada + 1) % sugestoes.length);
+      } else if (evento.key === 'ArrowUp' && aberta) {
+        marcar(marcada <= 0 ? sugestoes.length - 1 : marcada - 1);
+      } else if (evento.key === 'Enter' && aberta) {
+        escolher(sugestoes[marcada >= 0 ? marcada : 0]);
+      } else if (evento.key === 'Escape' && !lista.hidden) {
+        fecharLista();
+        evento.stopPropagation();
+      } else {
+        return;
+      }
+      evento.preventDefault();
+    });
+
+    campo.addEventListener('blur', function () {
+      setTimeout(function () {
+        if (document.activeElement !== campo) fecharLista();
+      }, 150);
+    });
+  }
 
   figura.classList.add('home-hero-mapa--interativo');
   caixaZoom.hidden = false;

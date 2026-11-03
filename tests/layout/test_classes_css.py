@@ -22,7 +22,6 @@ HOOKS = {
     "article-final-cta__link--primary",
     "article-final-cta__link--secondary",
     "aviso-badge",
-    "aviso-tipo",
     "comunicado-historico__body",
     "comunicado-historico__control",
     "comunicado-historico__icon",
@@ -38,6 +37,8 @@ HOOKS = {
 # assets/css/botoes.css (.botao e o tipo) em 23/10/2026; as classes antigas ficaram como ganchos dos testes.
 # contact-hero-section e manuals-hero-section saíram da lista no layout comum (10/10/2026): components.css passou a
 # usá-las nos seletores da reserva da faixa dos controles flutuantes (seção 18).
+# aviso-tipo saiu da lista em 03/11/2026: refinamento.css (R33) passou a pintar os tipos de aviso do Comunicado
+# na paleta do site a partir dessa classe.
 HOOK_PREFIXES = ("manuals-page-",)
 SELECTOR_CLASS = re.compile(r"\.((?:\\[0-9a-fA-F]{1,6}[ \t]?|\\[^0-9a-fA-F\n]|[\w-])+)")
 JS_CLASSES = re.compile(
