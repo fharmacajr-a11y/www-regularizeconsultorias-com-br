@@ -2050,11 +2050,10 @@ body:has(.services-hero-section) main > .institutional-cta-section:last-of-type 
      iniciais e ícones em azul cheio com o desenho branco.
    - As frentes de cada pessoa viram etiquetas (centralizadas até 639 px,
      como o nome; à esquerda acima).
-   - Frentes da equipe: atalhos em pílula (44 px de altura) para o serviço
-     em /servicos/. Fundo azul-claro, sem borda: não tem a cara de nenhum
-     dos quatro tipos de botão (test_botoes_padrao).
+   - Frentes da equipe: cartões com ícone que levam ao serviço em
+     /servicos/ (até 02/11/2026, pílulas azul-claras).
    A reserva da coluna dos botões flutuantes continua em
-   pages/equipe-servicos.css; a lista de atalhos segue a mesma conta dos
+   pages/equipe-servicos.css; a lista de cartões segue a mesma conta dos
    cabeçalhos (--equipe-reserva). */
 .institutional-hero-section.team-hero-section {
   padding-top: 2.5rem !important;
@@ -2271,71 +2270,160 @@ main > section:is(.team-overview-section, .team-work-section, .team-fronts-secti
   text-transform: uppercase;
 }
 
-/* Atalhos das frentes. */
-.team-fronts-lista {
+/* Frentes: cartões com o ícone do serviço (o mesmo de /servicos/), o nome
+   e "Ver serviço" (03/11/2026, pedido do Jr; antes eram pílulas). Dois por
+   fileira até 767 px, quatro até 1023 px (a última fileira, com dois, fica
+   no centro) e cinco a partir de 1024 px. Com mais de 80 px de altura, o
+   cartão não entra na conferência de botões (test_botoes_padrao). */
+.team-fronts-cartoes {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.625rem 0.75rem;
-  max-width: 56rem;
+  gap: 0.75rem;
+  max-width: 60rem;
   margin: 0 auto;
   padding: 0;
   list-style: none;
 }
 
-.team-fronts-link {
-  display: inline-flex;
+.team-fronts-cartoes > li {
+  display: flex;
+  flex: 0 0 calc((100% - 0.75rem) / 2);
+  min-width: 0;
+}
+
+.team-front {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  min-height: 2.75rem;
-  padding: 0.5rem 0.875rem 0.5rem 1.125rem;
-  border-radius: 999px;
-  background-color: #e8f1fb;
-  color: #1a3a5c;
+  gap: 0.625rem;
+  min-width: 0;
+  padding: 1.25rem 0.75rem 1rem;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  background-color: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -16px rgba(15, 23, 42, 0.18);
+  color: #0f172a;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.team-front::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #1a3a5c, #1565c0 55%, #29b6f6);
+}
+
+.team-front__icone {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(145deg, #1565c0, #1a3a5c);
+  box-shadow: 0 8px 18px -8px rgba(21, 101, 192, 0.6);
+  color: #fff;
+}
+
+.team-front__icone svg {
+  width: 1.375rem;
+  height: 1.375rem;
+}
+
+.team-front__nome {
+  display: flex;
+  flex: 1 0 auto;
+  align-items: center;
+  justify-content: center;
   font-size: 0.9375rem;
   font-weight: 600;
   line-height: 1.25rem;
-  text-decoration: none;
-  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  text-wrap: balance;
 }
 
-.team-fronts-link > svg {
-  flex: 0 0 auto;
-  width: 1rem;
-  height: 1rem;
+.team-front__acao {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
   color: #1565c0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+}
+
+.team-front__acao svg {
+  width: 0.875rem;
+  height: 0.875rem;
   transition: transform 0.2s ease;
 }
 
 @media (hover: hover) {
-  .team-fronts-link:hover {
-    background-color: #d3e5f8;
-    color: #0f2a47;
-    transform: translateY(-1px);
+  .team-front:hover {
+    border-color: rgba(21, 101, 192, 0.3);
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.05), 0 18px 36px -18px rgba(21, 101, 192, 0.35);
+    transform: translateY(-2px);
   }
 
-  .team-fronts-link:hover > svg {
+  .team-front:hover .team-front__acao svg {
     transform: translateX(2px);
   }
 }
 
-.team-fronts-link:focus-visible {
+.team-front:focus-visible {
   outline: 2px solid #1565c0;
   outline-offset: 2px;
 }
 
 @media (max-width: 639px) {
-  .team-fronts-lista {
+  .team-fronts-cartoes {
     padding-right: var(--equipe-reserva);
   }
 
-  .team-fronts-link {
+  .team-front__nome {
     font-size: 0.875rem;
   }
 }
 
+/* Em 320 px o cartão tem uns 118 px: com 8 px de padding dos lados e
+   fonte de 13 px, "Documentação" cabe na linha. */
+@media (max-width: 389px) {
+  .team-front {
+    padding-inline: 0.5rem;
+  }
+
+  .team-front__nome {
+    font-size: 0.8125rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .team-fronts-cartoes {
+    gap: 1rem;
+  }
+
+  .team-fronts-cartoes > li {
+    flex-basis: calc((100% - 3 * 1rem) / 4);
+  }
+}
+
+@media (min-width: 1024px) {
+  .team-fronts-cartoes > li {
+    flex-basis: calc((100% - 4 * 1rem) / 5);
+  }
+}
+
 @media (min-width: 640px) {
-  .team-fronts-lista {
+  .team-fronts-cartoes {
     width: calc(100% - 2 * var(--equipe-reserva));
   }
 
@@ -2381,15 +2469,15 @@ main > section:is(.team-overview-section, .team-work-section, .team-fronts-secti
 @media (prefers-reduced-motion: reduce) {
   .team-person-card,
   .team-work-grid > article,
-  .team-fronts-link,
-  .team-fronts-link > svg {
+  .team-front,
+  .team-front__acao svg {
     transition: none;
   }
 
   .team-person-card:hover,
   .team-work-grid > article:hover,
-  .team-fronts-link:hover,
-  .team-fronts-link:hover > svg {
+  .team-front:hover,
+  .team-front:hover .team-front__acao svg {
     transform: none;
   }
 }
@@ -2434,5 +2522,70 @@ main > section:is(.team-overview-section, .team-work-section, .team-fronts-secti
 @media (hover: hover) {
   .botao.botao--principal:hover > svg:has(path[d="M9 5l7 7-7 7"]) {
     background-color: rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* ---------- R31. Botões sobre fundo escuro (03/11/2026) ----------
+   Pedido do Jr sobre os botões da faixa azul do final das páginas (e do
+   topo azul da home): o claro (branco) e o contorno ficam no mesmo
+   acabamento do principal. Vale para os dois tipos inteiros
+   (test_botoes_padrao).
+   - Claro: branco com texto azul-marinho; o que leva ao WhatsApp mostra o
+     ícone do WhatsApp em verde-escuro (#128c7e, 4,2:1 sobre o branco) e os
+     outros terminam na seta num círculo azul-claro, como o secundário.
+   - Contorno: vidro fosco (branco a 7% com desfoque) e borda branca a 32%,
+     no lugar do transparente com borda a 40%; a seta fica num círculo
+     branco translúcido, como a do principal.
+   Os ícones estão no HTML das páginas já revistas (home, Sobre, Serviços e
+   Equipe); nas outras entram quando cada página for revista. */
+.botao.botao--claro > .botao__whatsapp {
+  flex: 0 0 auto;
+  width: 1.125rem;
+  height: 1.125rem;
+  color: #128c7e;
+}
+
+.botao:is(.botao--claro, .botao--contorno) > svg:has(path[d="M9 5l7 7-7 7"]) {
+  box-sizing: content-box;
+  flex: 0 0 auto;
+  width: 0.75rem;
+  height: 0.75rem;
+  padding: 0.25rem;
+  border-radius: 999px;
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.botao.botao--claro > svg:has(path[d="M9 5l7 7-7 7"]) {
+  background-color: rgba(21, 101, 192, 0.12);
+  color: #1565c0;
+}
+
+.botao.botao--contorno {
+  background-color: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.32);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 10px 24px -14px rgba(6, 16, 30, 0.6);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.botao.botao--contorno > svg:has(path[d="M9 5l7 7-7 7"]) {
+  background-color: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+
+@media (hover: hover) {
+  .botao.botao--claro:hover > svg:has(path[d="M9 5l7 7-7 7"]) {
+    background-color: #1565c0;
+    color: #fff;
+  }
+
+  .botao.botao--contorno:hover {
+    background-color: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.55);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 14px 28px -14px rgba(6, 16, 30, 0.7);
+  }
+
+  .botao.botao--contorno:hover > svg:has(path[d="M9 5l7 7-7 7"]) {
+    background-color: rgba(255, 255, 255, 0.28);
   }
 }
