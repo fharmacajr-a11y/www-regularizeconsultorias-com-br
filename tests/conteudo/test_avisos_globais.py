@@ -665,10 +665,10 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     informative_cta = next(node for node in active[2].descendants() if node.tag == "a" and "Leia a notícia sobre a competência 10/2026" in node.text())
     assert {"border-emerald-200", "bg-emerald-50", "text-emerald-700"} <= set(useful_badge.attrs["class"].split())
     assert {"border-emerald-200", "bg-emerald-50"} <= set(active[4].attrs["class"].split())
-    # Desde 04/11/2026 (pedido do Jr) os botões dos avisos ativos são o principal do site (azul, assets/css/botoes.css
-    # e refinamento.css), iguais nos quatro tipos: a cor do tipo fica no card e no selo, não no botão. Os do histórico
-    # continuam no secundário (abaixo). De 23/10 a 03/11/2026 eram todos o secundário.
-    assert useful_cta.attrs["class"].split() == informative_cta.attrs["class"].split() == ["botao", "botao--principal"]
+    # Desde 04/11/2026 (pedido do Jr) os botões dos avisos são .aviso-botao (refinamento.css, R33): o formato do
+    # botão principal do site, na cor do ícone do card (azul no informativo, anil no útil, azul-petróleo na atualização,
+    # vermelho no urgente, cinza no encerrado e no histórico). De 23/10 a 03/11/2026 eram o secundário do site.
+    assert useful_cta.attrs["class"].split() == informative_cta.attrs["class"].split() == ["aviso-botao"]
     assert "comunicado-util__cta" not in useful_cta.attrs["class"].split()
     assert "bg-white" not in useful_cta.attrs["class"].split()
     assert "bg-emerald-50" not in useful_cta.attrs["class"].split()
@@ -746,9 +746,10 @@ def test_comunicado_active_dates_order_and_historical_visual_states():
     )
     historical_controls = [node for article in historical for node in article.descendants() if node.tag in {"a", "button"} and "comunicado-historico__control" in node.attrs.get("class", "").split()]
     assert len(historical_controls) == 16
-    assert all({"botao", "botao--secundario"} <= set(node.attrs["class"].split()) for node in historical_controls)
+    assert all("aviso-botao" in node.attrs["class"].split() for node in historical_controls)
+    assert not any("botao" in node.attrs["class"].split() for node in historical_controls)
     assert all(not any("blue" in class_name for class_name in node.attrs["class"].split()) for node in historical_controls)
-    # O foco e o estado pressionado são os do botão secundário (sem regras próprias desde 23/10/2026).
+    # O foco e o estado pressionado são os de .aviso-botao (sem regras próprias da classe do histórico).
     assert "#avisos-lista .comunicado-historico__control:" not in source
     assert "text-slate-700" in next(node for node in notice_list.descendants() if node.tag == "h2" and node.text() == "Histórico / encerrados").attrs["class"]
 
@@ -769,7 +770,7 @@ def test_comunicado_useful_cta_computed_states(site_url, browser):
         page.goto(f"{site_url}/comunicado/", wait_until="networkidle")
         useful_cta = page.locator('a[href="/noticias/farmacia-popular-listas-ean-junho-2026/"]')
         # O CTA informativo de referência é o do CNES 10/2026 (o do MAPA saiu com o aviso, em 26/10/2026).
-        informative_cta = page.locator(f'#avisos-lista a.botao--principal[href="{CNES_10_ROUTE}"]')
+        informative_cta = page.locator(f'#avisos-lista a.aviso-botao[href="{CNES_10_ROUTE}"]')
 
         def computed_state(locator):
             return locator.evaluate(
@@ -790,8 +791,10 @@ def test_comunicado_useful_cta_computed_states(site_url, browser):
         page.wait_for_timeout(250)
         useful_normal = computed_state(useful_cta)
         informative_normal = computed_state(informative_cta)
-        # Os dois são o botão principal: o mesmo fundo azul, o mesmo texto branco e a mesma borda.
-        assert useful_normal["backgroundColor"] == informative_normal["backgroundColor"] == "rgb(21, 101, 192)"
+        # Cada botão tem a cor do seu card (embaixo do degradê): anil no útil, azul-marinho no informativo; o
+        # texto é branco nos dois.
+        assert useful_normal["backgroundColor"] == "rgb(48, 70, 179)"
+        assert informative_normal["backgroundColor"] == "rgb(26, 58, 92)"
         assert useful_normal["color"] == informative_normal["color"] == "rgb(255, 255, 255)"
         assert useful_normal["borderColor"] == informative_normal["borderColor"]
 
@@ -813,7 +816,7 @@ def test_comunicado_useful_cta_computed_states(site_url, browser):
 
         page.mouse.move(0, 0)
         page.wait_for_timeout(250)
-        # Fora do mouse, os dois voltam ao fundo do principal.
+        # Fora do mouse, os dois voltam à cor de antes.
         assert computed_state(useful_cta)["backgroundColor"] == useful_normal["backgroundColor"]
         assert computed_state(informative_cta)["backgroundColor"] == informative_normal["backgroundColor"]
         useful_cta.focus()

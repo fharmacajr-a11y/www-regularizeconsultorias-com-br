@@ -2794,6 +2794,8 @@ body:is(:has(.home-hero-section), :has(.about-hero-section), :has(.services-hero
   --aviso-cor-escura: #1a3a5c;
   --aviso-selo-fundo: #e8f1fb;
   --aviso-selo-texto: #1565c0;
+  --aviso-botao-1: #1565c0;
+  --aviso-botao-2: #1a3a5c;
 }
 
 :is(#avisos-lista > article, .aviso-tipo):is([data-status="atualizacao"], .bg-yellow-50) {
@@ -2803,6 +2805,8 @@ body:is(:has(.home-hero-section), :has(.about-hero-section), :has(.services-hero
   --aviso-cor-escura: #0369a1;
   --aviso-selo-fundo: #e0f2fe;
   --aviso-selo-texto: #075985;
+  --aviso-botao-1: #0369a1;
+  --aviso-botao-2: #075985;
 }
 
 :is(#avisos-lista > article, .aviso-tipo):is([data-status="util"], .bg-emerald-50) {
@@ -2812,6 +2816,8 @@ body:is(:has(.home-hero-section), :has(.about-hero-section), :has(.services-hero
   --aviso-cor-escura: #364fc7;
   --aviso-selo-fundo: #edf0ff;
   --aviso-selo-texto: #364fc7;
+  --aviso-botao-1: #3b5bdb;
+  --aviso-botao-2: #3046b3;
 }
 
 :is(#avisos-lista > article, .aviso-tipo):is([data-status="urgente"], .bg-red-50) {
@@ -2821,6 +2827,8 @@ body:is(:has(.home-hero-section), :has(.about-hero-section), :has(.services-hero
   --aviso-cor-escura: #991b1b;
   --aviso-selo-fundo: #fee2e2;
   --aviso-selo-texto: #b91c1c;
+  --aviso-botao-1: #dc2626;
+  --aviso-botao-2: #991b1b;
 }
 
 :is(#avisos-lista > article, .aviso-tipo):is([data-status="informativo"], [data-status="atualizacao"], [data-status="util"], [data-status="urgente"], .bg-orange-50, .bg-yellow-50, .bg-emerald-50, .bg-red-50) {
@@ -2842,8 +2850,8 @@ body:is(:has(.home-hero-section), :has(.about-hero-section), :has(.services-hero
 }
 
 :is(#avisos-lista > article, .aviso-tipo):is([data-status="informativo"], [data-status="atualizacao"], [data-status="util"], [data-status="urgente"], .bg-orange-50, .bg-yellow-50, .bg-emerald-50, .bg-red-50) .w-9.h-9.rounded-lg {
-  background: linear-gradient(145deg, var(--aviso-cor), var(--aviso-cor-escura)) !important;
-  box-shadow: 0 6px 14px -6px var(--aviso-cor);
+  background: linear-gradient(145deg, var(--aviso-botao-1), var(--aviso-botao-2)) !important;
+  box-shadow: 0 6px 14px -6px var(--aviso-botao-1);
 }
 
 :is(#avisos-lista > article, .aviso-tipo):is([data-status="informativo"], [data-status="atualizacao"], [data-status="util"], [data-status="urgente"], .bg-orange-50, .bg-yellow-50, .bg-emerald-50, .bg-red-50) .w-9.h-9.rounded-lg svg {
@@ -2857,19 +2865,15 @@ body:is(:has(.home-hero-section), :has(.about-hero-section), :has(.services-hero
 }
 
 /* Encerrado e histórico (04/11/2026, pedido do Jr): o mesmo acabamento dos
-   outros tipos, em cinza: encerrado em cinza-escuro (ícone em degradê
-   escuro com o desenho branco) e histórico em cinza-claro (ícone claro com
-   o desenho cinza). O histórico se reconhece pelo ícone do relógio. Vale
-   para os dois tipos do topo e para os cards do histórico. Os botões do
-   histórico continuam o secundário; os dos avisos ativos são o principal. */
+   outros tipos, em cinza: encerrado em cinza-escuro e histórico em
+   cinza-médio, os dois com o ícone em degradê e o desenho branco, como os
+   tipos ativos. O histórico se reconhece pelo ícone do relógio. Vale para
+   os dois tipos do topo e para os cards do histórico. */
 :is(#avisos-lista > article.comunicado-historico, .aviso-tipo.bg-slate-50) {
   --aviso-borda: #d5dce5;
-  --aviso-linha: linear-gradient(90deg, #334155, #94a3b8);
-  --aviso-icone: linear-gradient(145deg, #64748b, #334155);
-  /* Sem sombra: no celular a data quebra para baixo do ícone, e a sombra
-     escura baixava o contraste dela (test_contraste). */
-  --aviso-icone-sombra: none;
-  --aviso-desenho: #fff;
+  --aviso-linha: linear-gradient(90deg, #1e293b, #94a3b8);
+  --aviso-botao-1: #475569;
+  --aviso-botao-2: #1e293b;
   --aviso-selo-fundo: #e2e8f0;
   --aviso-selo-texto: #334155;
   position: relative;
@@ -2881,10 +2885,9 @@ body:is(:has(.home-hero-section), :has(.about-hero-section), :has(.services-hero
 
 :is(#avisos-lista > article.comunicado-historico, .aviso-tipo.bg-slate-50):has(svg path[d^="M12 8v4l3 3"]) {
   --aviso-borda: #e2e8f0;
-  --aviso-linha: linear-gradient(90deg, #94a3b8, #e2e8f0);
-  --aviso-icone: linear-gradient(145deg, #f8fafc, #e2e8f0);
-  --aviso-icone-sombra: inset 0 0 0 1px #d5dce5;
-  --aviso-desenho: #64748b;
+  --aviso-linha: linear-gradient(90deg, #64748b, #cbd5e1);
+  --aviso-botao-1: #64748b;
+  --aviso-botao-2: #475569;
   --aviso-selo-fundo: #f1f5f9;
   --aviso-selo-texto: #475569;
   background-color: #fbfcfd !important;
@@ -2900,17 +2903,105 @@ body:is(:has(.home-hero-section), :has(.about-hero-section), :has(.services-hero
   background: var(--aviso-linha);
 }
 
+/* Sem sombra no ícone: no celular a data quebra para baixo dele, e a
+   sombra escura baixava o contraste dela (test_contraste). */
 :is(#avisos-lista > article.comunicado-historico, .aviso-tipo.bg-slate-50) .w-9.h-9.rounded-lg {
-  background: var(--aviso-icone) !important;
-  box-shadow: var(--aviso-icone-sombra);
+  background: linear-gradient(145deg, var(--aviso-botao-1), var(--aviso-botao-2)) !important;
+  box-shadow: none;
 }
 
 :is(#avisos-lista > article.comunicado-historico, .aviso-tipo.bg-slate-50) .w-9.h-9.rounded-lg svg {
-  color: var(--aviso-desenho) !important;
+  color: #fff !important;
 }
 
 :is(#avisos-lista > article.comunicado-historico .comunicado-historico__badge, .aviso-tipo.bg-slate-50 span.inline-block.rounded-full) {
   border-color: var(--aviso-borda) !important;
   background-color: var(--aviso-selo-fundo) !important;
   color: var(--aviso-selo-texto) !important;
+}
+
+/* Botões dos avisos (04/11/2026, pedido do Jr): cada botão na cor do ícone
+   do seu card (--aviso-botao-1 e -2, acima), com o mesmo formato do botão
+   principal do site: 44 px, cantos de 0,75rem, degradê de cima para baixo e
+   a seta num círculo branco translúcido. Ao passar o mouse, o botão fica na
+   cor de cima, chapada. O texto branco tem 4,7:1 ou mais em todas as cores.
+   Não é um dos quatro tipos de .botao (test_botoes_padrao exige um estilo
+   só por tipo), e o fundo nunca é o azul do principal. */
+.aviso-botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: 0.75rem;
+  background-color: var(--aviso-botao-2, #1a3a5c);
+  background-image: linear-gradient(180deg, var(--aviso-botao-1, #1565c0) 0%, var(--aviso-botao-2, #1a3a5c) 100%);
+  background-origin: border-box;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08), 0 6px 16px -8px var(--aviso-botao-2, #1a3a5c);
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  line-height: 1.25rem;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.aviso-botao > svg {
+  box-sizing: content-box;
+  flex: 0 0 auto;
+  width: 0.75rem;
+  height: 0.75rem;
+  padding: 0.25rem;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+@media (hover: hover) {
+  .aviso-botao:hover {
+    background-color: var(--aviso-botao-1, #1565c0);
+    background-image: none;
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08), 0 12px 24px -10px var(--aviso-botao-2, #1a3a5c);
+    color: #fff;
+    transform: translateY(-1px);
+  }
+
+  .aviso-botao:hover > svg {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .aviso-botao:hover > svg:has(path[d="M9 5l7 7-7 7"]) {
+    transform: translateX(3px);
+  }
+}
+
+.aviso-botao:focus-visible {
+  outline: 2px solid var(--aviso-botao-2, #1a3a5c);
+  outline-offset: 2px;
+}
+
+@media (max-width: 359px) {
+  .aviso-botao {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aviso-botao,
+  .aviso-botao > svg {
+    transition: none;
+  }
+
+  .aviso-botao:hover,
+  .aviso-botao:hover > svg:has(path[d="M9 5l7 7-7 7"]) {
+    transform: none;
+  }
 }

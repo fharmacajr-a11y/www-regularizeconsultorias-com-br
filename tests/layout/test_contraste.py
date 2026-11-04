@@ -70,7 +70,8 @@ WIDTHS = (390, 1440)
 # deixa de ocupar a janela, e o texto fica mais perto da borda dos degradês.
 GRADIENT_WIDTHS = (320, 360, 640, 768, 896, 1024, 1280)
 HOVER_TARGETS = (
-    ("/comunicado/", "#avisos-lista a.botao"),
+    # Desde 04/11/2026 os botões dos avisos são .aviso-botao, na cor do card (links e os botões do histórico).
+    ("/comunicado/", "#avisos-lista .aviso-botao"),
     ("/noticias/", "#news-article-list a.news-amber-button"),
     ("/noticias/", "#news-article-list a.news-orange-button"),
     ("/contato/", "main a.botao[href^='/whatsapp/']"),
