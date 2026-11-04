@@ -335,6 +335,7 @@
 
   function voltarAoBrasil() {
     pedido++;
+    limparBusca();
     esconderDica();
     fecharEstado();
     brasil.style.display = '';
@@ -457,6 +458,7 @@
     }
     var alvo = evento.target.closest ? evento.target.closest('[data-codigo], [data-municipio]') : null;
     if (!alvo) return;
+    limparBusca();
     if (alvo.hasAttribute('data-municipio')) {
       marcarCidade(alvo);
       mostrarDica(alvo, evento.clientX, evento.clientY, 2.5);
@@ -533,6 +535,7 @@
       else if ((tecla === 'Enter' || tecla === ' ') && estadosTeclado.length) {
         var caminho = estadosTeclado[indiceTeclado < 0 ? 0 : indiceTeclado];
         limparDestaque();
+        limparBusca();
         abrirEstado(caminho.getAttribute('data-codigo'), caminho);
       } else return;
       evento.preventDefault();
@@ -633,6 +636,15 @@
         a.chave.localeCompare(b.chave);
     });
     return comeca.concat(contem).slice(0, MAXIMO_SUGESTOES);
+  }
+
+  /* O campo volta ao começo, sem texto e sem lista, quando o mapa muda por
+     outro caminho: "‹ Brasil" (ou Esc), um estado ou uma cidade tocados no
+     mapa. */
+  function limparBusca() {
+    if (!campo) return;
+    campo.value = '';
+    fecharLista();
   }
 
   function fecharLista() {
