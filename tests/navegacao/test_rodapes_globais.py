@@ -88,6 +88,14 @@ def test_footer_contract_is_canonical():
         assert "independente" in footer_text.lower(), relative_path
         assert "© 2026 Regularize Consultoria" in footer_text, relative_path
         assert "Todos os direitos reservados" in footer_text, relative_path
+        assert "© 2026 Regularize Consultoria. Todos os direitos reservados." in footer_text, relative_path
+        # 04/11/2026 (pedido do Jr): CNPJ, cidade e UF da empresa (comprovante do CNPJ) numa linha própria, no fim
+        # do rodapé de todas as páginas. A razão social fica de fora porque leva nome e CPF do titular. A linha vem
+        # depois do crédito do desenvolvedor para não mudar as quebras medidas em tests/layout/test_rodape_espaco.py.
+        # Duas linhas fixas (<br>): o CNPJ cabe inteiro em 320 px e não se parte no hífen; cada linha é um nó de texto
+        # só, centrado como o test_rodape_espaco.py mede.
+        assert "Regularize Consultoria · Mogi Mirim/SP CNPJ 33.546.050/0001-28" in " ".join(footer_text.split()), relative_path
+        assert footer_text.count("33.546.050/0001-28") == 1, relative_path
 
         gsa_images = [node for node in images if node.attrs.get("src", "").endswith("login-gsa-48.ico")]
         assert len(gsa_images) == 1, relative_path
