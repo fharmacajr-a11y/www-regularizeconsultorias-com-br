@@ -75,7 +75,14 @@ TOPO_03_11 = (
     "sncr-e-sngpc-o-que-cada-sistema-controla-na-farmacia",
     "anvisa-suspende-medicamento-proibe-produtos-irregulares",
 )
-ORDEM = [*TOPO_03_11, *(slug for slug in (*NOVAS, *AMPLIADAS) if slug not in TOPO_03_11)]
+# 04/11/2026, 16h30: o guia de recolhimentos passa a declarar a atualização da retificação da RE nº 2.948/2026
+# (DOU nº 207, de 04/11/2026: o lote 114053 do Paramol é de 500 mg, em embalagem com 500 comprimidos), com
+# dateModified, "Atualizado em", data-updated no card e lastmod. Ele abre a listagem; as três de 03/11/2026 e as
+# que ficavam à frente dele descem uma.
+ATUALIZADAS_04_11 = {"recolhimentos-suspensoes-alertas-anvisa-como-a-farmacia-deve-reagir": "2026-11-04T16:30:00-03:00"}
+ATUALIZADAS = {**ATUALIZADAS_03_11, **ATUALIZADAS_04_11}
+TOPO = (*ATUALIZADAS_04_11, *TOPO_03_11)
+ORDEM = [*TOPO, *(slug for slug in (*NOVAS, *AMPLIADAS) if slug not in TOPO)]
 TIPOS = {
     "atualizacao": (">Atualização</span>", "Ler atualização"),
     "informativo": (">Informativo</span>", "Ler notícia"),
@@ -232,7 +239,8 @@ def test_paramol_fica_publicado_com_noindex_sem_anuncio_e_sem_links():
             continue
         assert f"/noticias/{PARAMOL}/" not in path.read_text(encoding="utf-8"), path.relative_to(ROOT).as_posix()
     # O card de notícias relacionadas do guia passou do Paramol para o recolhimento de suplementos (Alivemed), indexável
-    # e do mesmo tema; o caso do Paramol continua citado no texto do guia.
+    # e do mesmo tema; o caso do Paramol continua citado no texto do guia. 04/11/2026: com os dados da retificação da
+    # RE nº 2.948/2026 (500 mg, embalagem com 500 comprimidos), que o próprio exemplo cita.
     guia = _html(RECOLHIMENTOS)
     relacionadas = guia.split('<section class="article-related-news"', 1)[1].split("</section>", 1)[0]
     assert re.findall(r'href="/noticias/([^"/]+)/"', relacionadas) == [
@@ -240,7 +248,10 @@ def test_paramol_fica_publicado_com_noindex_sem_anuncio_e_sem_links():
         "anvisa-nova-consulta-alertas-sanitarios-substitui-sistec",
         "anvisa-recolhimento-suplementos-irregulares-alivemed",
     ]
-    assert "Paramol 750 mg" in _body_text(guia)
+    texto = _body_text(guia)
+    assert "Paramol 500 mg" in texto and "lote 114053, na apresentação com 500 comprimidos" in texto
+    assert "a Anvisa retificou a RE nº 2.948/2026 (DOU nº 207, de 04/11/2026, Seção 1, p. 153)" in texto
+    assert "Paramol 750 mg" not in texto
 
 
 def test_materias_novas_tem_identidade_card_itemlist_sitemap_e_anuncio():
@@ -249,7 +260,7 @@ def test_materias_novas_tem_identidade_card_itemlist_sitemap_e_anuncio():
     itemlist = _itemlist(index)
     for slug, (titulo, tipo, categoria, carimbo, prioridade) in NOVAS.items():
         posicao = ORDEM.index(slug)
-        atualizado = ATUALIZADAS_03_11.get(slug, carimbo)
+        atualizado = ATUALIZADAS.get(slug, carimbo)
         html = _html(slug)
         head = html.split("</head>", 1)[0]
         url = f"{BASE}/noticias/{slug}/"
@@ -264,7 +275,7 @@ def test_materias_novas_tem_identidade_card_itemlist_sitemap_e_anuncio():
         assert (news["datePublished"], news["dateModified"]) == (carimbo, atualizado), slug
         assert _meta_property(head, "article:published_time") == carimbo, slug
         assert _meta_property(head, "article:modified_time") == atualizado, slug
-        if slug in ATUALIZADAS_03_11:
+        if slug in ATUALIZADAS:
             assert (f'Atualizado em:</span> <time datetime="{atualizado}">{atualizado[8:10]}/{atualizado[5:7]}/'
                     f'{atualizado[:4]}</time> às {atualizado[11:13]}h{atualizado[14:16]}') in html, slug
         else:
@@ -273,11 +284,12 @@ def test_materias_novas_tem_identidade_card_itemlist_sitemap_e_anuncio():
         assert f'article-badge-{tipo} inline-flex items-center rounded-full px-2.5 py-1 whitespace-nowrap">{badge}</span>' in html, slug
         # Card: as cinco abrem a listagem, na ordem dos carimbos, com o tipo e a categoria da matéria.
         # 03/11/2026: a ordem é a de ORDEM; o card do guia SNCR × SNGPC leva data-updated e mostra a atualização.
+        # 04/11/2026: o card do guia de recolhimentos também.
         assert slugs.index(slug) == posicao and slugs.count(slug) == 1, slug
         card = cards[posicao]
         opening = card.split(">", 1)[0]
         assert f'data-category="{categoria}"' in opening, slug
-        if slug in ATUALIZADAS_03_11:
+        if slug in ATUALIZADAS:
             assert f'data-updated="{atualizado}"' in opening, slug
         else:
             assert "data-updated" not in opening, slug

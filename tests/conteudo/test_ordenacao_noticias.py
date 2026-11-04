@@ -200,16 +200,18 @@ def test_news_index_itemlist_ordering():
     # 03/11/2026, 12h00 (hora do commit): a matéria do SNCR (RDC nº 1.046/2026), o guia SNCR × SNGPC e o consolidado
     # de irregulares (RE nº 4.246/2026), no mesmo carimbo, abrem a lista nessa ordem; as outras dez de 01/11/2026
     # descem para as posições 4 a 13 (as duas que ficavam à frente do guia descem três; as demais, duas).
+    # 04/11/2026, 16h30: o guia de recolhimentos (retificação da RE nº 2.948/2026, lote 114053 do Paramol) abre a
+    # lista; as três de 03/11/2026 e as duas que ficavam à frente dele descem uma. Da 7ª posição em diante, nada muda.
+    assert urls[0] == "https://www.regularizeconsultorias.com.br/noticias/recolhimentos-suspensoes-alertas-anvisa-como-a-farmacia-deve-reagir/"
     atualizadas_03_11 = [
         "rdc-1000-2025-anvisa-prorroga-prazo-sncr",
         "sncr-e-sngpc-o-que-cada-sistema-controla-na-farmacia",
         "anvisa-suspende-medicamento-proibe-produtos-irregulares",
     ]
-    assert urls[:3] == [f"https://www.regularizeconsultorias.com.br/noticias/{slug}/" for slug in atualizadas_03_11]
+    assert urls[1:4] == [f"https://www.regularizeconsultorias.com.br/noticias/{slug}/" for slug in atualizadas_03_11]
     novas_e_ampliadas = [
         "cnes-prazos-transmissao-2026",
         "cadastros-autorizacoes-drogaria-afe-licenca-sanitaria-crf-cnes",
-        "recolhimentos-suspensoes-alertas-anvisa-como-a-farmacia-deve-reagir",
         "sifap-ciclo-regularizacao-cadastral-maio-2026",
         "anvisa-alerta-soroterapia-promessas-sem-evidencia",
         "anvisa-amplia-painel-medicamentos-pendentes-registro",
@@ -218,7 +220,7 @@ def test_news_index_itemlist_ordering():
         "farmacia-popular-cuidados-cadastro-documentacao",
         "documentos-tecnicos-essenciais-farmacias-drogarias",
     ]
-    assert urls[3:13] == [f"https://www.regularizeconsultorias.com.br/noticias/{slug}/" for slug in novas_e_ampliadas]
+    assert urls[4:13] == [f"https://www.regularizeconsultorias.com.br/noticias/{slug}/" for slug in novas_e_ampliadas]
     cnes_08_url = "https://www.regularizeconsultorias.com.br/noticias/cnes-competencia-08-2026-prazo-transmissao/"
     sifap_prazo_url = "https://www.regularizeconsultorias.com.br/noticias/prazo-sifap-terminou-pendencias-analise-rta-farmacia-popular/"
     sifap_regularizacao_url = "https://www.regularizeconsultorias.com.br/noticias/sifap-regularizacao-cadastral-farmacias-notificadas-13-maio/"
@@ -232,9 +234,11 @@ def test_news_index_itemlist_ordering():
     # 01/11/2026: os quatro descem 11 (do 12º ao 15º).
     # 03/11/2026, 12h00: o SNCR e produtos irregulares sobem para o 1º e o 3º; o MAPA 1.617 desce para o 14º e o
     # período eleitoral fica no 15º.
-    assert urls[0] == SNCR_WEBINAR_URL
+    # 04/11/2026, 16h30: o SNCR desce para o 2º, abaixo do guia de recolhimentos.
+    assert urls[1] == SNCR_WEBINAR_URL
     # 21/10/2026, 17h45: produtos irregulares (RE nº 4.140/2026 e correção da RE nº 3.159/2026) voltam à 1ª posição.
-    assert urls[2] == PRODUTOS_IRREGULARES_URL
+    # 04/11/2026, 16h30: o consolidado desce do 3º para o 4º, abaixo do guia de recolhimentos.
+    assert urls[3] == PRODUTOS_IRREGULARES_URL
     # SISPA (Comunicado nº 1/2026) segue logo depois.
     assert urls[15] == SISPA_URL
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entrou na 1ª posição da listagem.

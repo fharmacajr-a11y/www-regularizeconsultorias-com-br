@@ -364,14 +364,15 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
     # 01/11/2026 (reenvio ao AdSense): os 11 cards de 01/11 (5 matérias novas e 6 ampliadas) vão ao topo; nenhuma
     # página reunida nem ampliada ficava à frente do consolidado: 2 + 11 = 13.
     # 03/11/2026: o consolidado vai ao 3º lugar (índice 2), logo depois da matéria do SNCR e do guia SNCR × SNGPC.
-    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[2]
-    assert "news-card-compact" in cards[2].split(">", 1)[0]
-    assert f"{UPDATED_DAY} • {UPDATED_CLOCK}" in cards[2]
-    assert "09h06" not in cards[2]
-    assert f'data-summary="{summary}"' in cards[2]
-    assert f"<p class=\"text-slate-500 text-sm leading-relaxed mb-4\">{summary}</p>" in cards[2]
+    # 04/11/2026, 16h30: desce para o 4º (índice 3), abaixo do guia de recolhimentos (retificação da RE nº 2.948/2026).
+    assert 'anvisa-suspende-medicamento-proibe-produtos-irregulares' in cards[3]
+    assert "news-card-compact" in cards[3].split(">", 1)[0]
+    assert f"{UPDATED_DAY} • {UPDATED_CLOCK}" in cards[3]
+    assert "09h06" not in cards[3]
+    assert f'data-summary="{summary}"' in cards[3]
+    assert f"<p class=\"text-slate-500 text-sm leading-relaxed mb-4\">{summary}</p>" in cards[3]
     # Números e lotes do resumo de 13/10/2026 saíram do texto do card e seguem na busca pelas palavras-chave.
-    keywords = cards[2].split('data-keywords="', 1)[1].split('"', 1)[0]
+    keywords = cards[3].split('data-keywords="', 1)[1].split('"', 1)[0]
     for term in ("RE 3.989/2026", "RE 4.000/2026", "RE 4.001/2026", "RE 4.002/2026", "RE 4.009/2026", "RE 4.028/2026",
                  "HXTZ251015", "NDC 46785-162-03", "P07725A", "Xeomin", "cloreto de sódio", "insumos farmacêuticos"):
         assert term in keywords, term
@@ -386,9 +387,9 @@ def test_article_is_unique_and_current_in_the_listing_and_sitemap():
                  "025155", "Z005197", "Z012354"):
         assert term in keywords, term
         assert term not in summary, term
-    assert "As RE nº 3.946 e 3.947/2026 foram publicadas no DOU de 06/10/2026" not in cards[2]
-    assert "União Vegetal Agroindustrial Ltda. como fabricante do Aloe Care" not in cards[2]
-    assert 'href="http' not in cards[2]
+    assert "As RE nº 3.946 e 3.947/2026 foram publicadas no DOU de 06/10/2026" not in cards[3]
+    assert "União Vegetal Agroindustrial Ltda. como fabricante do Aloe Care" not in cards[3]
+    assert 'href="http' not in cards[3]
     assert sitemap.count(f"<loc>{URL}</loc>") == 1
     assert f"<loc>{URL}</loc>\n    <lastmod>{UPDATED[:10]}</lastmod>" in sitemap
 

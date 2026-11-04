@@ -120,7 +120,8 @@ def test_card_mostra_a_data_valida_da_materia_sem_prefixo():
     # SIFAP de maio; o do CNES 10/2026 não tinha) e entram cinco, das matérias ampliadas que ainda não declaravam
     # atualização (a do Alivemed já declarava e só trocou a data). As cinco matérias novas não têm atualização.
     # 03/11/2026, 12h00: o guia SNCR × SNGPC, uma das cinco novas, passa a declarar a atualização da RDC nº 1.046/2026.
-    assert atualizacoes == 50
+    # 04/11/2026, 16h30: o guia de recolhimentos também, com a retificação da RE nº 2.948/2026 (lote 114053 do Paramol).
+    assert atualizacoes == 51
 
 
 def test_materias_do_lote_de_09_10_mostram_a_atualizacao():

@@ -227,7 +227,8 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     # primeiro depois deles, com o carimbo mais recente entre as demais.
     # 03/11/2026, 12h00: a matéria do SNCR (RDC nº 1.046/2026) volta à 1ª posição, com o guia SNCR × SNGPC e o
     # consolidado de irregulares logo depois, no mesmo carimbo.
-    assert cards.index(card) == 0
+    # 04/11/2026, 16h30: o guia de recolhimentos (retificação da RE nº 2.948/2026) abre a listagem; o SNCR fica em 2º.
+    assert cards.index(card) == 1
     assert "news-card-compact" in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
     # 22/10/2026, 22h40: o card do SNCR, atualizado com os manuais, segue em 2º, logo depois do consolidado de irregulares
