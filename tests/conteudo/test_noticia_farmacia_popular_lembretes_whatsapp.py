@@ -245,7 +245,8 @@ def test_comunicado_informative_notice_is_active_first_and_internal():
     assert "confira a origem pelos canais oficiais, procurados por conta própria" in text
     assert "telefone 136" in text
     assert "Leia o esclarecimento sobre os lembretes" in text
-    assert 'class="botao botao--secundario"' in notice
+    # Desde 04/11/2026 o botão dos avisos ativos é o principal (azul).
+    assert 'class="botao botao--principal"' in notice
     assert re.findall(r'href="([^"]+)"', notice) == [ROUTE]
     lowered = text.casefold()
     for claim in ("golpe", "fraude", "urgente", "campanha", "dois meses", "retirada"):

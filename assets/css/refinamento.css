@@ -2264,28 +2264,42 @@ main > section:is(.team-overview-section, .team-work-section, .team-fronts-secti
   font-size: 1.0625rem;
 }
 
-/* Etiquetas das frentes de cada pessoa. */
+/* Frentes de cada pessoa numa lista limpa, com um ponto azul em degradê
+   no lugar das etiquetas em pílula (04/11/2026, pedido do Jr: mais
+   elegante). As colunas se ajustam à largura (no mínimo 14rem cada, ou a
+   largura toda quando ela é menor, em 320 px): duas no card largo do
+   Júnior e uma nos outros e no celular. */
 .team-person-card .team-card-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(14rem, 100%), 1fr));
+  gap: 0.25rem 1.5rem;
   width: auto;
   max-width: none;
   margin: 0;
-  padding: 0.875rem 0 0;
-  border-top: 1px solid #eef2f7;
+  padding: 0;
+  color: #334155;
+  font-size: 0.875rem;
+  line-height: 1.5rem;
   list-style: none;
+  text-align: left;
 }
 
 .team-person-card .team-card-tags > li {
+  position: relative;
   margin: 0 !important;
-  padding: 0.3125rem 0.75rem;
-  border-radius: 999px;
-  background-color: #eef4fb;
-  color: #1e3a5f;
-  font-size: 0.8125rem;
+  padding-left: 1rem;
   font-weight: 500;
-  line-height: 1.25rem;
+}
+
+.team-person-card .team-card-tags > li::before {
+  content: "";
+  position: absolute;
+  top: 0.5625rem;
+  left: 0;
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 999px;
+  background: linear-gradient(145deg, #1565c0, #29b6f6);
 }
 
 /* Três pessoas (02/11/2026: a equipe passou de quatro para três e as frentes
@@ -2302,10 +2316,10 @@ main > section:is(.team-overview-section, .team-work-section, .team-fronts-secti
   }
 }
 
-/* As 16 frentes do card largo vêm em quatro grupos, cada um com um rótulo em
-   caixa alta (como "Principais atividades" na organização do trabalho). O
-   traço de cima passa das etiquetas para o conjunto. A partir de 768 px o
-   rótulo fica à esquerda, na altura da primeira fileira de etiquetas. */
+/* As frentes vêm em grupos com um rótulo em caixa alta (como "Principais
+   atividades" na organização do trabalho): quatro no card largo do Júnior
+   e um ("Áreas de atuação") nos outros dois. No card largo, a partir de
+   768 px, o rótulo fica à esquerda, na altura da primeira linha. */
 .team-card-grupos {
   display: grid;
   gap: 0.875rem;
@@ -2329,13 +2343,17 @@ main > section:is(.team-overview-section, .team-work-section, .team-fronts-secti
 }
 
 @media (max-width: 639px) {
-  .team-card-grupo__titulo {
-    text-align: center;
-  }
-
   /* A função quebra em linhas parecidas, sem uma palavra sozinha embaixo. */
   .team-person-card > div:first-child p {
     text-wrap: balance;
+  }
+
+  /* O texto alinhado à esquerda vai até a borda do conteúdo do card, colada
+     na coluna dos botões flutuantes; com 10 px de folga ele não encosta nela
+     nem com a barra de rolagem clássica (test_sobre_equipe_faixa_controles). */
+  .team-person-card .team-card-tags,
+  .team-person-bio {
+    padding-right: 0.625rem;
   }
 }
 
@@ -2344,7 +2362,7 @@ main > section:is(.team-overview-section, .team-work-section, .team-fronts-secti
     gap: 0.75rem;
   }
 
-  .team-card-grupo {
+  .team-person-card--amplo .team-card-grupo {
     display: grid;
     grid-template-columns: 11.5rem minmax(0, 1fr);
     column-gap: 1rem;
@@ -2356,30 +2374,22 @@ main > section:is(.team-overview-section, .team-work-section, .team-fronts-secti
     border-top: 1px dashed #e2e8f0;
   }
 
-  .team-card-grupo__titulo {
+  .team-person-card--amplo .team-card-grupo__titulo {
     margin: 0;
-    padding-top: 0.4375rem;
+    padding-top: 0.25rem;
   }
 }
 
 /* Até 639 px a reserva da coluna dos botões flutuantes deixa de ser padding
    à direita (pages/equipe-servicos.css) e vira margem do card, como em
    Serviços e na "Nossa história" da Sobre: o padding volta a 1rem dos dois
-   lados e o nome, o ícone e as etiquetas ficam no centro do card. A margem
+   lados e o nome e o ícone ficam no centro do card. A margem
    é a faixa menos o que já existe até a borda, a borda e o padding. */
 @media (max-width: 639px) {
   .team-person-card,
   .team-work-grid > article {
     margin-right: max(0px, calc(var(--equipe-faixa) - var(--equipe-folga) - 1px - 1rem));
     padding-right: 1rem !important;
-  }
-
-  .team-person-card .team-card-tags {
-    justify-content: center;
-  }
-
-  .team-person-card .team-card-tags > li {
-    font-size: 0.78125rem;
   }
 }
 
@@ -2771,7 +2781,7 @@ body:is(:has(.home-hero-section), :has(.about-hero-section), :has(.services-hero
    do card e, nos tipos do topo da página, da cor de fundo do card.
    - Informativo: azul da marca (#1565c0);
    - Atualização: azul-claro (#0284c7);
-   - Útil: cinza-azulado (#64748b);
+   - Útil: azul-anil (#4c6ef5; em 04/11/2026, antes cinza-azulado);
    - Urgente: vermelho (#dc2626);
    - Encerrado e histórico continuam cinza, como estão.
    Cada card ganha o fundo bem claro da cor, a borda, a linha de 3 px no
@@ -2796,12 +2806,12 @@ body:is(:has(.home-hero-section), :has(.about-hero-section), :has(.services-hero
 }
 
 :is(#avisos-lista > article, .aviso-tipo):is([data-status="util"], .bg-emerald-50) {
-  --aviso-fundo: #f8fafc;
-  --aviso-borda: #dbe3ec;
-  --aviso-cor: #64748b;
-  --aviso-cor-escura: #334155;
-  --aviso-selo-fundo: #eef2f6;
-  --aviso-selo-texto: #334155;
+  --aviso-fundo: #f6f7ff;
+  --aviso-borda: #cdd5fb;
+  --aviso-cor: #4c6ef5;
+  --aviso-cor-escura: #364fc7;
+  --aviso-selo-fundo: #edf0ff;
+  --aviso-selo-texto: #364fc7;
 }
 
 :is(#avisos-lista > article, .aviso-tipo):is([data-status="urgente"], .bg-red-50) {
@@ -2841,6 +2851,65 @@ body:is(:has(.home-hero-section), :has(.about-hero-section), :has(.services-hero
 }
 
 :is(#avisos-lista > article, .aviso-tipo):is([data-status="informativo"], [data-status="atualizacao"], [data-status="util"], [data-status="urgente"], .bg-orange-50, .bg-yellow-50, .bg-emerald-50, .bg-red-50) span.inline-block.rounded-full {
+  border-color: var(--aviso-borda) !important;
+  background-color: var(--aviso-selo-fundo) !important;
+  color: var(--aviso-selo-texto) !important;
+}
+
+/* Encerrado e histórico (04/11/2026, pedido do Jr): o mesmo acabamento dos
+   outros tipos, em cinza: encerrado em cinza-escuro (ícone em degradê
+   escuro com o desenho branco) e histórico em cinza-claro (ícone claro com
+   o desenho cinza). O histórico se reconhece pelo ícone do relógio. Vale
+   para os dois tipos do topo e para os cards do histórico. Os botões do
+   histórico continuam o secundário; os dos avisos ativos são o principal. */
+:is(#avisos-lista > article.comunicado-historico, .aviso-tipo.bg-slate-50) {
+  --aviso-borda: #d5dce5;
+  --aviso-linha: linear-gradient(90deg, #334155, #94a3b8);
+  --aviso-icone: linear-gradient(145deg, #64748b, #334155);
+  /* Sem sombra: no celular a data quebra para baixo do ícone, e a sombra
+     escura baixava o contraste dela (test_contraste). */
+  --aviso-icone-sombra: none;
+  --aviso-desenho: #fff;
+  --aviso-selo-fundo: #e2e8f0;
+  --aviso-selo-texto: #334155;
+  position: relative;
+  overflow: hidden;
+  border-color: var(--aviso-borda) !important;
+  background-color: #f8fafc !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -18px rgba(15, 23, 42, 0.16) !important;
+}
+
+:is(#avisos-lista > article.comunicado-historico, .aviso-tipo.bg-slate-50):has(svg path[d^="M12 8v4l3 3"]) {
+  --aviso-borda: #e2e8f0;
+  --aviso-linha: linear-gradient(90deg, #94a3b8, #e2e8f0);
+  --aviso-icone: linear-gradient(145deg, #f8fafc, #e2e8f0);
+  --aviso-icone-sombra: inset 0 0 0 1px #d5dce5;
+  --aviso-desenho: #64748b;
+  --aviso-selo-fundo: #f1f5f9;
+  --aviso-selo-texto: #475569;
+  background-color: #fbfcfd !important;
+}
+
+:is(#avisos-lista > article.comunicado-historico, .aviso-tipo.bg-slate-50)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--aviso-linha);
+}
+
+:is(#avisos-lista > article.comunicado-historico, .aviso-tipo.bg-slate-50) .w-9.h-9.rounded-lg {
+  background: var(--aviso-icone) !important;
+  box-shadow: var(--aviso-icone-sombra);
+}
+
+:is(#avisos-lista > article.comunicado-historico, .aviso-tipo.bg-slate-50) .w-9.h-9.rounded-lg svg {
+  color: var(--aviso-desenho) !important;
+}
+
+:is(#avisos-lista > article.comunicado-historico .comunicado-historico__badge, .aviso-tipo.bg-slate-50 span.inline-block.rounded-full) {
   border-color: var(--aviso-borda) !important;
   background-color: var(--aviso-selo-fundo) !important;
   color: var(--aviso-selo-texto) !important;
