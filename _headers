@@ -1,0 +1,18 @@
+# Headers de segurança do site na Cloudflare Pages.
+# O GitHub Pages ignora este arquivo (nomes iniciados por "_" ficam fora do Jekyll);
+# scripts/montar_site_cloudflare.py o copia para a raiz do site publicado.
+# Sem Content-Security-Policy de scripts: o AdSense e os scripts embutidos nas páginas
+# quebrariam com uma política rígida. frame-ancestors só impede o site dentro de iframe
+# de outro domínio.
+
+/*
+  Strict-Transport-Security: max-age=31536000
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Content-Security-Policy: frame-ancestors 'self'
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+
+# O endereço .pages.dev repete o site inteiro: fica fora do Google.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex

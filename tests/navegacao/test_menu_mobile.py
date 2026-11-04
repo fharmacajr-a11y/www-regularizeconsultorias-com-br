@@ -760,6 +760,9 @@ def _sitemap_routes():
 def test_header_routes_match_the_served_sitemap():
     """As páginas medidas pela geometria são as do sitemap da mesma pasta: uma ausente não some em silêncio."""
     routes = set(_header_routes())
+    # A 404.html tem o menu completo, mas é página de erro: noindex e fora do sitemap.
+    assert "/404.html" in routes, "404.html sem o menu do site"
+    routes.discard("/404.html")
     expected = _sitemap_routes()
     assert routes == expected, (f"páginas com menu fora do sitemap: {sorted(routes - expected)}; "
                                 f"URLs do sitemap sem página com menu na pasta servida: {sorted(expected - routes)}")
