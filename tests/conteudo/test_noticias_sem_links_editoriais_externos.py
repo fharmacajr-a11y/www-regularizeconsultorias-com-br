@@ -16,7 +16,8 @@ from support import ROOT, TreeParser
 
 NEWS_DIRECTORY = ROOT / "noticias"
 OWN_HOSTS = {"www.regularizeconsultorias.com.br", "regularizeconsultorias.com.br"}
-INSTITUTIONAL_EMAILS = {"fharmaca2013@hotmail.com"}
+# 04/11/2026 (pedido do Jr): o e-mail do domínio substitui o Hotmail em todo o site.
+INSTITUTIONAL_EMAILS = {"contato@regularizeconsultorias.com.br"}
 FORWARD_ATTRIBUTES = ("href", "src", "action", "formaction", "poster", "cite", "data-href")
 BARE_URL = re.compile(r"https?://[^\s<>\"']+|(?<![A-Za-z0-9:/])//[A-Za-z0-9.-]+\.[A-Za-z]{2,}[^\s<>\"']*")
 # Destinos que já saíram do conteúdo público e não podem voltar em outra matéria.
