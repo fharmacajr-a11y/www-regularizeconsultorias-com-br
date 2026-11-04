@@ -122,7 +122,9 @@ def test_privacy_policy_contains_the_confirmed_disclosures_only():
     normalized = content.casefold()
 
     assert "www.regularizeconsultorias.com.br" in normalized
-    assert "fharmaca2013@hotmail.com" in normalized
+    # 04/11/2026 (pedido do Jr): o e-mail do domínio (contato@, Email Routing do Cloudflare, só recebe) substitui o Hotmail.
+    assert "contato@regularizeconsultorias.com.br" in normalized
+    assert "hotmail" not in normalized
     assert "não possui formulário próprio" in normalized
     assert "whatsapp" in normalized
     assert "instagram" in normalized
