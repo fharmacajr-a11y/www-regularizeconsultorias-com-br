@@ -2795,7 +2795,7 @@ body:is(:has(.home-hero-section), :has(.about-hero-section), :has(.services-hero
   --aviso-selo-fundo: #e8f1fb;
   --aviso-selo-texto: #1565c0;
   --aviso-botao-1: #1565c0;
-  --aviso-botao-2: #1a3a5c;
+  --aviso-botao-2: #11529e;
 }
 
 :is(#avisos-lista > article, .aviso-tipo):is([data-status="atualizacao"], .bg-yellow-50) {
@@ -2828,7 +2828,7 @@ body:is(:has(.home-hero-section), :has(.about-hero-section), :has(.services-hero
   --aviso-selo-fundo: #fee2e2;
   --aviso-selo-texto: #b91c1c;
   --aviso-botao-1: #dc2626;
-  --aviso-botao-2: #991b1b;
+  --aviso-botao-2: #b91c1c;
 }
 
 :is(#avisos-lista > article, .aviso-tipo):is([data-status="informativo"], [data-status="atualizacao"], [data-status="util"], [data-status="urgente"], .bg-orange-50, .bg-yellow-50, .bg-emerald-50, .bg-red-50) {
@@ -2871,9 +2871,9 @@ body:is(:has(.home-hero-section), :has(.about-hero-section), :has(.services-hero
    os dois tipos do topo e para os cards do histórico. */
 :is(#avisos-lista > article.comunicado-historico, .aviso-tipo.bg-slate-50) {
   --aviso-borda: #d5dce5;
-  --aviso-linha: linear-gradient(90deg, #1e293b, #94a3b8);
+  --aviso-linha: linear-gradient(90deg, #334155, #94a3b8);
   --aviso-botao-1: #475569;
-  --aviso-botao-2: #1e293b;
+  --aviso-botao-2: #334155;
   --aviso-selo-fundo: #e2e8f0;
   --aviso-selo-texto: #334155;
   position: relative;
@@ -2887,7 +2887,7 @@ body:is(:has(.home-hero-section), :has(.about-hero-section), :has(.services-hero
   --aviso-borda: #e2e8f0;
   --aviso-linha: linear-gradient(90deg, #64748b, #cbd5e1);
   --aviso-botao-1: #64748b;
-  --aviso-botao-2: #475569;
+  --aviso-botao-2: #536179;
   --aviso-selo-fundo: #f1f5f9;
   --aviso-selo-texto: #475569;
   background-color: #fbfcfd !important;
@@ -2922,8 +2922,9 @@ body:is(:has(.home-hero-section), :has(.about-hero-section), :has(.services-hero
 
 /* Botões dos avisos (04/11/2026, pedido do Jr): cada botão na cor do ícone
    do seu card (--aviso-botao-1 e -2, acima), com o mesmo formato do botão
-   principal do site: 44 px, cantos de 0,75rem, degradê de cima para baixo e
-   a seta num círculo branco translúcido. Ao passar o mouse, o botão fica na
+   principal do site: 44 px, cantos de 0,75rem, degradê suave de cima para
+   baixo (duas tonalidades próximas da mesma cor, como o da atualização, que
+   o Jr escolheu como padrão) e a seta num círculo branco translúcido. Ao passar o mouse, o botão fica na
    cor de cima, chapada. O texto branco tem 4,7:1 ou mais em todas as cores.
    Não é um dos quatro tipos de .botao (test_botoes_padrao exige um estilo
    só por tipo), e o fundo nunca é o azul do principal. */
@@ -2939,7 +2940,7 @@ body:is(:has(.home-hero-section), :has(.about-hero-section), :has(.services-hero
   background-color: var(--aviso-botao-2, #1a3a5c);
   background-image: linear-gradient(180deg, var(--aviso-botao-1, #1565c0) 0%, var(--aviso-botao-2, #1a3a5c) 100%);
   background-origin: border-box;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08), 0 6px 16px -8px var(--aviso-botao-2, #1a3a5c);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08), 0 6px 16px -10px var(--aviso-botao-2, #1a3a5c);
   color: #fff;
   font-family: inherit;
   font-size: 0.9375rem;

@@ -791,10 +791,10 @@ def test_comunicado_useful_cta_computed_states(site_url, browser):
         page.wait_for_timeout(250)
         useful_normal = computed_state(useful_cta)
         informative_normal = computed_state(informative_cta)
-        # Cada botão tem a cor do seu card (embaixo do degradê): anil no útil, azul-marinho no informativo; o
+        # Cada botão tem a cor do seu card (embaixo do degradê): anil no útil, azul no informativo; o
         # texto é branco nos dois.
         assert useful_normal["backgroundColor"] == "rgb(48, 70, 179)"
-        assert informative_normal["backgroundColor"] == "rgb(26, 58, 92)"
+        assert informative_normal["backgroundColor"] == "rgb(17, 82, 158)"
         assert useful_normal["color"] == informative_normal["color"] == "rgb(255, 255, 255)"
         assert useful_normal["borderColor"] == informative_normal["borderColor"]
 
