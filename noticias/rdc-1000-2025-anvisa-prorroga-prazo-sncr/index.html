@@ -37,6 +37,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/css/tailwind.min.css?v=20261003-acessibilidade-1">
   <link rel="stylesheet" href="/assets/css/custom.min.css?v=20261023-botoes-1" />
+  <link rel="stylesheet" href="/assets/css/pages/noticia-resumo.css?v=20261104-resumo-1" />
   <link rel="stylesheet" href="/assets/css/botoes.css?v=20261023-botoes-1" />
   <link rel="stylesheet" href="/assets/css/pages/noticias-tipos.css?v=20261023-botoes-1" />
   <style>
@@ -372,6 +373,25 @@
           </div>
         </div>
 
+        <div class="noticia-resumo" role="region" aria-labelledby="noticia-resumo-titulo" data-noticia-resumo>
+          <div class="noticia-resumo__topo">
+            <div class="noticia-resumo__cabeca">
+              <h2 id="noticia-resumo-titulo" class="noticia-resumo__titulo" data-leitura="Resumo da notícia.">Resumo da notícia</h2>
+              <p class="noticia-resumo__data">Conferido com a atualização de <time datetime="2026-11-03T12:00:00-03:00">03/11/2026</time>, às 12h00</p>
+            </div>
+            <div class="noticia-resumo__controles">
+              <button type="button" class="botao botao--secundario noticia-resumo__ouvir" data-resumo-ouvir hidden><svg class="noticia-resumo__icone-ouvir" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14"/></svg><svg class="noticia-resumo__icone-parar" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg><span data-resumo-ouvir-rotulo>Ouvir resumo</span></button>
+              <div class="noticia-resumo__velocidades" role="group" aria-labelledby="noticia-resumo-velocidade" data-resumo-velocidades hidden><span id="noticia-resumo-velocidade" class="noticia-resumo__velocidade-rotulo">Velocidade</span><button type="button" class="noticia-resumo__velocidade" data-velocidade="1" aria-pressed="true">1x</button><button type="button" class="noticia-resumo__velocidade" data-velocidade="1.5" aria-pressed="false">1,5x</button><button type="button" class="noticia-resumo__velocidade" data-velocidade="2" aria-pressed="false">2x</button><button type="button" class="noticia-resumo__velocidade" data-velocidade="3" aria-pressed="false">3x</button></div>
+            </div>
+          </div>
+          <ol class="noticia-resumo__itens">
+            <li class="noticia-resumo__item" data-leitura="O que mudou. A R D C número mil e quarenta e seis, de dois mil e vinte e seis, mudou o artigo dezoito da R D C número mil, de dois mil e vinte e cinco. Até três de março de dois mil e vinte e sete, a Receita de Controle Especial e a Receita Sujeita à Retenção podem ser emitidas eletronicamente sem a numeração do S N C R."><span class="noticia-resumo__item-titulo">O que mudou</span><span class="noticia-resumo__item-texto">A RDC nº 1.046/2026 mudou o art. 18 da RDC nº 1.000/2025: até 03/03/2027, a Receita de Controle Especial (RCE) e a Receita Sujeita à Retenção (RET) podem ser emitidas eletronicamente sem a numeração do SNCR.</span></li>
+            <li class="noticia-resumo__item" data-leitura="Desde quando. Em vigor desde três de novembro de dois mil e vinte e seis, data da publicação no Diário Oficial da União, edição duzentos e seis, seção um, página duzentos e quarenta e quatro. A partir de quatro de março de dois mil e vinte e sete, essas receitas, quando eletrônicas, devem ter a numeração do S N C R."><span class="noticia-resumo__item-titulo">Desde quando</span><span class="noticia-resumo__item-texto">Em vigor desde 03/11/2026, data da publicação no DOU (edição 206, Seção 1, página 244). A partir de 04/03/2027, a RCE e a RET eletrônicas devem ter a numeração do SNCR.</span></li>
+            <li class="noticia-resumo__item" data-leitura="O que a farmácia deve fazer. A farmácia pode aceitar, durante a validade, as receitas eletrônicas desses dois tipos emitidas sem numeração até três de março de dois mil e vinte e sete. Valem as regras da Portaria S V S do Ministério da Saúde número trezentos e quarenta e quatro, de mil novecentos e noventa e oito, e da R D C número quatrocentos e setenta e um, de dois mil e vinte e um. Nas emitidas a partir de quatro de março de dois mil e vinte e sete, confira a numeração do S N C R."><span class="noticia-resumo__item-titulo">O que a farmácia deve fazer</span><span class="noticia-resumo__item-texto">Pode aceitar, durante a validade, a RCE e a RET eletrônicas emitidas sem numeração até 03/03/2027, observadas a Portaria SVS/MS nº 344/1998 e a RDC nº 471/2021. Nas emitidas a partir de 04/03/2027, confira a numeração do SNCR.</span></li>
+          </ol>
+          <p class="noticia-resumo__aviso" data-resumo-aviso role="status"></p>
+        </div>
+
         <section class="article-body">
           <aside data-news-update-callout aria-labelledby="sncr-atualizacao-03-novembro-title" class="mb-6 rounded-2xl border border-yellow-200 bg-yellow-50 p-5 shadow-sm md:p-6">
             <div class="mb-3 flex flex-wrap items-center gap-2 text-xs">
@@ -624,5 +644,6 @@
   </div>
 
   <script src="/assets/js/main.min.js?v=20261103-avisos-1"></script>
+  <script src="/assets/js/pages/noticia-resumo.js?v=20261104-resumo-1"></script>
 </body>
 </html>

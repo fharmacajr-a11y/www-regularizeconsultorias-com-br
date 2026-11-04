@@ -236,7 +236,9 @@ QUADROS = {
 # teste confere a estrutura (só o mês atual aberto, detalhes fechados, cartões de até 3 linhas em 390 px e linhas de
 # até 2 linhas em 1280 px) e que a parte fixa da página (altura total menos a tabela do mês aberto) não passe de 10%
 # acima do valor medido em 22/10/2026.
-PARTE_FIXA_BASE = {390: 6148, 1280: 3703}
+# 04/11/2026: a base soma o resumo do topo da notícia (piloto do resumo em áudio, tests/conteudo/test_noticias_resumo.py),
+# com o botão e a velocidade, medido nesse dia com 781 px em 390 px e 523 px em 1280 px.
+PARTE_FIXA_BASE = {390: 6148 + 781, 1280: 3703 + 523}
 
 
 def _itens(html):

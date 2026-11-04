@@ -1,0 +1,288 @@
+/* ================================================================
+   Regularize Consultoria — Resumo da notícia (piloto de 04/11/2026)
+   ----------------------------------------------------------------
+   Bloco logo abaixo do cartão "Publicado em / Atualizado em", antes do
+   corpo, com os três pontos da notícia (o que mudou, desde quando e o
+   que fazer) e o botão "Ouvir resumo". O botão é o .botao--secundario
+   de botoes.css, que vem depois deste arquivo; aqui só entram o ícone,
+   a largura no celular e a troca de ícone durante a leitura. Abaixo dele,
+   a velocidade da voz (1x, 1,5x, 2x e 3x).
+   A leitura em voz é feita por assets/js/pages/noticia-resumo.js, com a
+   síntese de voz do próprio navegador. Sem suporte, o botão fica oculto
+   (atributo hidden do HTML).
+   Carregado só nas notícias que têm o resumo, nas duas famílias de CSS
+   (custom.min.css e base.css + components.css).
+   ================================================================ */
+
+.noticia-resumo {
+  margin: 0 0 2rem;
+  padding: 1.25rem;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #1565c0;
+  border-radius: 1rem;
+  background-color: #fff;
+  box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+}
+
+.noticia-resumo [hidden] {
+  display: none !important;
+}
+
+.noticia-resumo__topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+}
+
+.noticia-resumo__titulo {
+  margin: 0;
+  color: #0f172a;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.75rem;
+  letter-spacing: -0.01em;
+}
+
+.noticia-resumo__data {
+  margin: 0.25rem 0 0;
+  color: #475569;
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+}
+
+.noticia-resumo__cabeca {
+  min-width: 0;
+}
+
+/* "Ouvir resumo" e, logo abaixo, a velocidade, alinhados à direita. */
+.noticia-resumo__controles {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.noticia-resumo__ouvir {
+  flex-shrink: 0;
+}
+
+.noticia-resumo__ouvir svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+}
+
+.noticia-resumo__ouvir .noticia-resumo__icone-parar,
+.noticia-resumo__ouvir.is-tocando .noticia-resumo__icone-ouvir {
+  display: none;
+}
+
+.noticia-resumo__ouvir.is-tocando .noticia-resumo__icone-parar {
+  display: block;
+}
+
+/* Velocidade da voz: 1x, 1,5x, 2x e 3x. Controle de estado (aria-pressed),
+   como as categorias de /noticias/: 44 px e o escolhido em azul. */
+.noticia-resumo__velocidades {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.noticia-resumo__velocidade-rotulo {
+  margin-right: 0.25rem;
+  color: #475569;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+}
+
+.noticia-resumo__velocidade {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0 0.625rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.75rem;
+  background-color: #fff;
+  color: #334155;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.noticia-resumo__velocidade:hover {
+  border-color: rgba(21, 101, 192, 0.45);
+  color: #1a3a5c;
+}
+
+.noticia-resumo__velocidade[aria-pressed="true"] {
+  border-color: #1565c0;
+  background-color: #1565c0;
+  color: #fff;
+}
+
+.noticia-resumo__velocidade:focus-visible {
+  outline: 2px solid #1565c0;
+  outline-offset: 2px;
+}
+
+.noticia-resumo__itens {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1rem 0 0;
+  padding: 1rem 0 0;
+  border-top: 1px solid #e2e8f0;
+  list-style: none;
+  counter-reset: noticia-resumo;
+}
+
+/* Número e título na mesma linha; o texto ocupa a largura toda no celular e
+   fica alinhado ao título a partir de 640 px. */
+.noticia-resumo__item {
+  display: grid;
+  grid-template-columns: 1.75rem minmax(0, 1fr);
+  align-items: center;
+  column-gap: 0.75rem;
+  margin: 0;
+  padding: 0.375rem 0.5rem;
+  border-radius: 0.75rem;
+  counter-increment: noticia-resumo;
+  transition: background-color 0.2s ease;
+}
+
+.noticia-resumo__item::before {
+  content: counter(noticia-resumo);
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  background-color: #e3f0fc;
+  color: #0d47a1;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* Item que está sendo lido em voz alta. */
+.noticia-resumo__item.is-lendo {
+  background-color: #eff6ff;
+}
+
+.noticia-resumo__item-titulo {
+  grid-column: 2;
+  grid-row: 1;
+  color: #0f172a;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.375rem;
+}
+
+.noticia-resumo__item-texto {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  margin-top: 0.25rem;
+  color: #334155;
+  font-size: 0.9375rem;
+  line-height: 1.625rem;
+}
+
+.noticia-resumo__aviso {
+  margin: 0.75rem 0 0;
+  color: #9a3412;
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+}
+
+.noticia-resumo__aviso:empty {
+  margin: 0;
+}
+
+/* Celular: o resumo cabe numa tela; texto de 14 px e menos folga. */
+@media (max-width: 639px) {
+  .noticia-resumo {
+    padding: 1rem 1rem 1rem 0.875rem;
+  }
+
+  .noticia-resumo__topo > div {
+    flex-basis: 100%;
+  }
+
+  .noticia-resumo__titulo {
+    font-size: 1.125rem;
+    line-height: 1.5rem;
+  }
+
+  .noticia-resumo__itens {
+    gap: 0.5rem;
+    margin-top: 0.875rem;
+    padding-top: 0.75rem;
+  }
+
+  .noticia-resumo__item {
+    padding: 0.25rem 0.375rem;
+  }
+
+  .noticia-resumo__item-texto {
+    font-size: 0.875rem;
+    line-height: 1.375rem;
+  }
+
+  .noticia-resumo__controles {
+    align-items: stretch;
+  }
+
+  .noticia-resumo__ouvir {
+    width: 100%;
+  }
+
+  /* "Velocidade" em cima e os quatro botões repartindo a largura: cabe em 320 px. */
+  .noticia-resumo__velocidades {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(2.75rem, 1fr));
+  }
+
+  .noticia-resumo__velocidade-rotulo {
+    grid-column: 1 / -1;
+    margin: 0;
+  }
+
+  .noticia-resumo__velocidade {
+    padding: 0 0.25rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .noticia-resumo__item-texto {
+    grid-column: 2;
+  }
+}
+
+@media (min-width: 768px) {
+  .noticia-resumo {
+    padding: 1.5rem 1.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .noticia-resumo__item,
+  .noticia-resumo__velocidade {
+    transition: none;
+  }
+}
+
+@media print {
+  .noticia-resumo__controles,
+  .noticia-resumo__aviso {
+    display: none !important;
+  }
+}

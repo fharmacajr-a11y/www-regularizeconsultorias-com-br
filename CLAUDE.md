@@ -18,3 +18,10 @@ Os ofícios-circulares do MAPA não saem sempre na mesma página. Em toda confer
 - “Memorandos, Ofícios e Ofícios circulares” (Produtos veterinários > Legislação): https://www.gov.br/agricultura/pt-br/assuntos/insumos-agropecuarios/insumos-pecuarios/produtos-veterinarios/legislacao-1/memorandos-e-oficios
 
 O Ofício-Circular nº 75/2026, sobre a Portaria SDA/MAPA nº 1.617/2026, saiu só na segunda.
+
+## Resumo do topo das notícias
+
+Piloto de 04/11/2026 em três notícias (SNCR, irregulares e MAPA). O bloco “Resumo da notícia” (`data-noticia-resumo`) fica logo abaixo do cartão de datas, antes do corpo, com três pontos, cada um em duas ou três linhas e sem link: o que mudou, desde quando e o que a farmácia (ou a empresa) deve fazer. O botão “Ouvir resumo” lê o bloco com a voz do próprio navegador.
+
+- Toda atualização de uma notícia com resumo revisa o resumo no mesmo commit: o texto visível, a versão falada (`data-leitura`) e o `<time>` de “Conferido com a atualização de”, igual ao `dateModified`. Sem isso, tests/conteudo/test_noticias_resumo.py falha.
+- A versão falada diz o mesmo que o item, com as siglas soletradas (“R D C”, “S N C R”) e os números e as datas por extenso, sem algarismo, “nº” ou barra.

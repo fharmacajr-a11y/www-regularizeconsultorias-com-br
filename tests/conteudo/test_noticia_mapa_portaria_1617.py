@@ -297,7 +297,8 @@ def test_portaria_1617_registers_oficio_circular_75_and_the_divergence_as_a_conf
 
     # Nenhuma data é escolhida: "prevalece" só aparece em "qual ... prevalece", e o uso terapêutico não é ampliado.
     page_text = _text(html)
-    assert page_text.count("prevalece") == len(re.findall(r"qual (?:delas|das datas) prevalece", page_text)) == 5
+    # 04/11/2026: 6, com o "qual das datas prevalece" do resumo do topo (tests/conteudo/test_noticias_resumo.py).
+    assert page_text.count("prevalece") == len(re.findall(r"qual (?:delas|das datas) prevalece", page_text)) == 6
     folded = page_text.casefold()
     for wrong in ("data correta", "data válida", "data que vale", "passa a valer", "substitui o ofício",
                   "revoga o ofício", "retifica o ofício", "uso terapêutico liberado", "liberad", "datas oficiais",

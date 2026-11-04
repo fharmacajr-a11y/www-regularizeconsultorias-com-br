@@ -35,6 +35,9 @@ VERSIONED_ASSETS = (
     "/assets/css/base.css",
     "/assets/css/botoes.css",
     "/assets/js/manuais-e-pops.js",
+    # 04/11/2026: resumo do topo das notícias e o botão "Ouvir resumo" (piloto em três notícias).
+    "/assets/css/pages/noticia-resumo.css",
+    "/assets/js/pages/noticia-resumo.js",
 )
 ASSET_REFERENCE = re.compile(r'(?:href|src)="(/assets/[^"?]+\.(?:css|js))(\?[^"]*)?"')
 
