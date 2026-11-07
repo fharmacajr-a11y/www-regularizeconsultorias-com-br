@@ -106,7 +106,7 @@ def test_rodape_da_politica_de_privacidade_tem_os_icones_do_contato():
     rodape = _blocos(ROOT / "politica-de-privacidade" / "index.html")["rodapé"]
     contato = rodape[rodape.index(">Contato</h2>"):]
     itens = re.findall(r'<li class="flex items-center gap-3">(.*?)</li>', contato)
-    hrefs = ("/whatsapp/", "mailto:contato@regularizeconsultorias.com.br", "https://www.instagram.com/regularizeconsultoriarc/")
+    hrefs = ("/whatsapp/", "mailto:contato@regularizeconsultorias.com.br", "mailto:contatojr@regularizeconsultorias.com.br", "https://www.instagram.com/regularizeconsultoriarc/")
     assert len(itens) == len(hrefs)
     for item, href in zip(itens, hrefs):
         assert item.startswith('<svg class="w-4 h-4 text-brand-light flex-shrink-0"'), href

@@ -3082,3 +3082,65 @@ body:is(:has(.home-hero-section), :has(.about-hero-section), :has(.services-hero
 .botao:is(.botao--principal, .botao--secundario):focus-visible {
   outline-offset: 0;
 }
+
+/* Farmácia Popular: bloco da renovação (07/11/2026, pedido do Jr), logo depois
+   da atualização normativa e com o mesmo desenho dela (pages/farmacia-popular.css).
+   Classe própria: os testes contam .fp-regulatory-update como um bloco só. */
+.fp-renovacao {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid #bfdbfe;
+  border-left: 0.25rem solid var(--color-brand);
+  border-radius: 0.75rem;
+  background: #eff6ff;
+}
+
+.fp-renovacao h2 {
+  margin: 0;
+  color: #1e3a5f;
+  font-size: 1.2rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.fp-renovacao p:not(.fp-eyebrow) {
+  max-width: 54rem;
+  margin: 0.5rem 0 0;
+  color: #475569;
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.fp-renovacao > a {
+  flex-shrink: 0;
+  width: 100%;
+}
+
+/* Em 320 px o botão só cabe em uma linha com menos recuo e sem a seta. */
+@media (max-width: 359px) {
+  .fp-renovacao {
+    padding-inline: 1rem;
+  }
+
+  .fp-renovacao > a > svg {
+    display: none;
+  }
+}
+
+@media (min-width: 640px) {
+  .fp-renovacao {
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .fp-renovacao > a {
+    width: auto;
+    white-space: nowrap;
+  }
+}
