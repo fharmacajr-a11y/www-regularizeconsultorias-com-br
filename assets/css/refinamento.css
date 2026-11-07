@@ -944,7 +944,7 @@ footer .border-t.border-slate-800 {
 .about-audience-card > div:first-child,
 .home-about-cards-grid > div > div:first-child,
 .home-services-grid > a > div:first-child {
-  background: linear-gradient(145deg, #1565c0, #1a3a5c);
+  background: linear-gradient(145deg, #1565c0, #11529e);
   box-shadow: 0 8px 18px -8px rgba(21, 101, 192, 0.6);
 }
 
@@ -1335,7 +1335,7 @@ main > .home-manuals-section + section {
   width: 2.125rem;
   height: 2.125rem;
   border-radius: 0.625rem;
-  background: linear-gradient(145deg, #1565c0, #1a3a5c);
+  background: linear-gradient(145deg, #1565c0, #11529e);
   box-shadow: 0 8px 18px -8px rgba(21, 101, 192, 0.6);
   color: #fff;
   font-size: 0.9375rem;
@@ -1554,7 +1554,7 @@ main > .home-manuals-section + section .grid > div:first-child > p:first-child::
 }
 
 .botao.botao--secundario > svg {
-  background: linear-gradient(145deg, #1565c0, #1a3a5c);
+  background: linear-gradient(145deg, #1565c0, #11529e);
   box-shadow: 0 4px 10px -4px rgba(21, 101, 192, 0.6);
   color: #fff;
 }
@@ -1802,7 +1802,7 @@ main .services-grid > article > div:first-child {
   height: 3rem;
   margin-bottom: 1rem;
   border-radius: 0.75rem;
-  background: linear-gradient(145deg, #1565c0, #1a3a5c);
+  background: linear-gradient(145deg, #1565c0, #11529e);
   box-shadow: 0 8px 18px -8px rgba(21, 101, 192, 0.6);
 }
 
@@ -2016,7 +2016,7 @@ body:has(.services-hero-section) main > .institutional-cta-section:last-of-type 
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 0.625rem;
-  background: linear-gradient(145deg, #1565c0, #1a3a5c);
+  background: linear-gradient(145deg, #1565c0, #11529e);
   box-shadow: 0 6px 14px -6px rgba(21, 101, 192, 0.55);
   color: #fff;
 }
@@ -2255,7 +2255,7 @@ main > section:is(.team-overview-section, .team-work-section, .team-fronts-secti
 
 .team-person-card > div:first-child > div:first-child,
 .team-work-grid > article > div:first-child > div:first-child {
-  background: linear-gradient(145deg, #1565c0, #1a3a5c);
+  background: linear-gradient(145deg, #1565c0, #11529e);
   box-shadow: 0 8px 18px -8px rgba(21, 101, 192, 0.6);
   color: #fff;
 }
@@ -2458,7 +2458,7 @@ main > section:is(.team-overview-section, .team-work-section, .team-fronts-secti
   width: 2rem;
   height: 2rem;
   border-radius: 999px;
-  background: linear-gradient(145deg, #1565c0, #1a3a5c);
+  background: linear-gradient(145deg, #1565c0, #11529e);
   color: #fff;
 }
 
@@ -2589,7 +2589,7 @@ main > section:is(.team-overview-section, .team-work-section, .team-fronts-secti
    Pedido do Jr sobre o "Falar sobre este serviço", que passa de secundário
    (branco) a principal (azul). O tipo inteiro muda, porque
    test_botoes_padrao exige o mesmo estilo nos botões do mesmo tipo: o azul
-   chapado vira o degradê dos ícones dos cards (#1565c0 → #1a3a5c; branco
+   chapado vira o degradê dos ícones dos cards (hoje #1565c0 → #11529e; branco
    com 5,6:1 no trecho mais claro) e a seta para a direita fica num círculo
    branco translúcido, como a do secundário. 2ª versão (o Jr achou a 1ª,
    na diagonal, escura demais): o degradê vai de cima para baixo, na altura
@@ -3023,7 +3023,9 @@ body:is(:has(.home-hero-section), :has(.about-hero-section), :has(.services-hero
    motivo. O branco (claro) e o contorno, que só aparecem nas faixas azuis
    como a chamada principal da seção, continuam com 44 px e 15 px. O degradê
    do principal (R30) passa a ser o suave do botão do Informativo (#1565c0 →
-   #11529e), que o Jr aprovou nos avisos; antes ia até #1a3a5c. */
+   #11529e), que o Jr aprovou nos avisos; antes ia até #1a3a5c. Os ícones dos
+   cards de todas as páginas usam o mesmo azul (07/11/2026: o Jr viu o ícone
+   mais escuro que o botão ao lado). */
 .botao:is(.botao--principal, .botao--secundario) {
   gap: 0.375rem;
   padding: 0.25rem 0.875rem;
