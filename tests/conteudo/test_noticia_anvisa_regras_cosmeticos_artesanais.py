@@ -195,7 +195,8 @@ def test_listing_places_the_updated_card_by_its_update_stamp():
     cards = re.findall(r"(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)", html, re.DOTALL)
     # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas.
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert len(cards) == 83
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(cards) == 84
     # Lote de 09/10/2026: o card sobe pelo carimbo da atualização (regra de ordenação por data-updated).
     # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
@@ -205,7 +206,8 @@ def test_listing_places_the_updated_card_by_its_update_stamp():
     # 01/11/2026 (reenvio ao AdSense): os 11 cards de 01/11 (5 matérias novas e 6 ampliadas) vão ao topo e saem os das
     # páginas reunidas. Índice novo = anterior + 11 - reunidas à frente (CNES 09 e 10/2026) - ampliadas já à frente:
     # 18 + 11 - 2 - 0 = 27.
-    card = cards[27]
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular abre a listagem; este card desce uma posição.
+    card = cards[28]
     opening = card.split(">", 1)[0]
     assert f'href="{ROUTE}"' in card
     assert html.count(f'href="{ROUTE}"') == 1
@@ -220,8 +222,9 @@ def test_listing_places_the_updated_card_by_its_update_stamp():
     assert "A RDC 1.045/2026 e a IN 474/2026 foram publicadas no DOU de 05/10/2026" in card
     assert f'<time datetime="{UPDATED}" class="leading-none">09/10/2026 • 20h26</time>' in card
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert "83 notícias encontradas" in html
-    assert '>Todos</span><span class="text-xs text-slate-400">83<' in html
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert "84 notícias encontradas" in html
+    assert '>Todos</span><span class="text-xs text-slate-400">84<' in html
     # 01/11/2026: +2 guias da ANVISA.
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
     assert '>ANVISA</span><span class="text-xs text-slate-400">55<' in html
@@ -230,10 +233,14 @@ def test_listing_places_the_updated_card_by_its_update_stamp():
     collection = next(block for block in _jsonld(html) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert len(items) == 83
-    assert items[27]["position"] == 28
-    assert items[27]["url"] == URL
-    assert [item["position"] for item in items] == list(range(1, 84))
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(items) == 84
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular abre a listagem; este card desce uma posição.
+    assert items[28]["position"] == 29
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular abre a listagem; este card desce uma posição.
+    assert items[28]["url"] == URL
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert [item["position"] for item in items] == list(range(1, 85))
 
 
 def test_sitemap_adds_only_the_new_url_and_the_listing_lastmod():
@@ -250,8 +257,9 @@ def test_sitemap_adds_only_the_new_url_and_the_listing_lastmod():
         # 01/11/2026: a listagem ganhou os cards das cinco matérias novas e trocou os das páginas reunidas.
         # 03/11/2026: a listagem trocou os resumos dos cards do SNCR e de produtos irregulares e levou esses dois e o
         # do guia SNCR × SNGPC ao topo.
+        # 07/11/2026: a listagem ganhou o card da notícia da auditoria do Farmácia Popular.
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-11-03</lastmod>"
+        "    <lastmod>2026-11-07</lastmod>"
     ) in sitemap
     assert (
         # 22/10/2026: a matéria do SNCR recebeu o quadro dos manuais. 26/10/2026: itens A-1 e M-1.

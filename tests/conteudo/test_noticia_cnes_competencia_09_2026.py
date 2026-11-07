@@ -192,7 +192,8 @@ def test_news_index_swapped_the_card_for_the_unified_page():
     assert 'data-category="cnes"' in unified[0]
     assert all("news-card-compact" in card.split(">", 1)[0] for card in cards)
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert len(cards) == 83
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(cards) == 84
     # Seis cards do CNES até 31/10/2026; as quatro competências (06, 08, 09 e 10/2026) viraram um só.
     assert '<span>CNES</span><span class="text-xs text-slate-400">3</span>' in html
 

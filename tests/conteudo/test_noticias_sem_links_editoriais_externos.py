@@ -143,7 +143,8 @@ def editorial_external_problems(html, page):
 def test_news_editorial_content_does_not_forward_to_external_references():
     paths = news_article_paths()
     # 01/11/2026 (reenvio ao AdSense): +5 matérias novas; as páginas reunidas (noindex) continuam verificadas aqui.
-    assert len(paths) == 90
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(paths) == 91
     problems = []
     for path in paths:
         page = path.relative_to(ROOT).as_posix()

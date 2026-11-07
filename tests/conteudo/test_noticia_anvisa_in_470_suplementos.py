@@ -206,18 +206,21 @@ def test_index_has_one_card_in_fifth_position_and_expected_counts():
     classes = [re.search(r'<article class="([^"]*)"', card).group(1) for card in card_blocks]
     # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas.
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert len(card_blocks) == 83
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(card_blocks) == 84
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
     # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
     # 01/11/2026 (reenvio ao AdSense): os 11 cards de 01/11 (5 matérias novas e 6 ampliadas) vão ao topo e saem os das
     # páginas reunidas. Índice novo = anterior + 11 - reunidas que ficavam à frente - ampliadas que já ficavam à
     # frente: 39 + 11 - 5 - 0 = 45.
-    assert f'/noticias/{SLUG}/' in card_blocks[45]
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular abre a listagem; este card desce uma posição.
+    assert f'/noticias/{SLUG}/' in card_blocks[46]
     # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
     assert all("news-card-compact" in value for value in classes)
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert '>Todos</span><span class="text-xs text-slate-400">83<' in html
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert '>Todos</span><span class="text-xs text-slate-400">84<' in html
     # 01/11/2026: +2 guias da ANVISA.
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
     assert '>ANVISA</span><span class="text-xs text-slate-400">55<' in html
@@ -252,4 +255,5 @@ def test_sitemap_contains_new_url_with_editorial_lastmod():
     assert matches[0].findtext("s:lastmod", namespaces=namespace) == "2026-09-21"
     # 01/11/2026 (reenvio ao AdSense): +5 matérias novas, -6 páginas reunidas (noindex, fora do sitemap).
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert len(root.findall("s:url", namespace)) == 104
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(root.findall("s:url", namespace)) == 105

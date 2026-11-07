@@ -157,7 +157,8 @@ try:
                 page.evaluate(SETTLE)
                 state = page.evaluate(STATE, asc)
                 # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-                check("teclado: Enter em A-Z Mais velha", state, count="83 notícias encontradas")
+                # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+                check("teclado: Enter em A-Z Mais velha", state, count="84 notícias encontradas")
             closing()
             context.close()
         else:
@@ -276,7 +277,8 @@ def test_listing_without_javascript_keeps_search_and_strip(base_url):
         assert state["search"] and state["strip"] and state["todos"] and state["sort"], (width, state)
         # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas.
         # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-        assert state["cards"] == 83, (width, state["cards"])
+        # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+        assert state["cards"] == 84, (width, state["cards"])
         assert state["overflowX"] <= 0, (width, state["overflowX"])
     assert phone["filtersBeforeList"] and not phone["contact"], phone
     assert desktop["contact"] and not desktop["filtersBeforeList"], desktop

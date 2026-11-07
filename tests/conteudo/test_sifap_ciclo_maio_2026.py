@@ -202,12 +202,14 @@ def test_titulos_carimbo_ordem_e_contagens():
     cards = re.findall(r"<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>", index, flags=re.S)
     # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas.
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert len(cards) == 83
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(cards) == 84
     assert "prazo-sifap-terminou" not in index and "sifap-regularizacao-cadastral" not in index
     # O card da página reunida é o 5º: as quatro matérias novas de 01/11/2026 com carimbo posterior vêm antes.
     # 03/11/2026, 12h00: passa ao 7º; à frente dele, as três matérias do carimbo de 03/11/2026 (SNCR, guia SNCR × SNGPC,
     # que era uma das quatro, e produtos irregulares) e as outras três novas de 01/11/2026.
-    card = cards[6]
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular abre a listagem; este card desce uma posição.
+    card = cards[7]
     assert f'href="{NOVA_ROUTE}"' in card and index.count(f'href="{NOVA_ROUTE}"') == 1
     # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
     assert all("news-card-compact" in item.split(">", 1)[0] for item in cards)
@@ -218,9 +220,11 @@ def test_titulos_carimbo_ordem_e_contagens():
 
     items = re.findall(r'\{"@type":"ListItem","position":(\d+),"url":"([^"]+)"\}', index)
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert len(items) == 83
-    assert [int(position) for position, _ in items] == list(range(1, 84))
-    assert items[6][1] == NOVA_URL
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(items) == 84
+    assert [int(position) for position, _ in items] == list(range(1, 85))
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular abre a listagem; este card desce uma posição.
+    assert items[7][1] == NOVA_URL
     assert PRAZO_URL not in index and REG_URL not in index
 
     historico = historico_html(comunicado)
@@ -243,7 +247,8 @@ def test_titulos_carimbo_ordem_e_contagens():
     assert statuses.count("resolved") == 13
     assert ">6</span>" in prazo
     # 01/11/2026: +5 matérias novas; as reunidas continuam publicadas.
-    assert len(list((ROOT / "noticias").glob("*/index.html"))) == 90
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(list((ROOT / "noticias").glob("*/index.html"))) == 91
 
 
 SUSP_URL = "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-suspensao-temporaria-recadastramento-sifap/"
@@ -385,7 +390,8 @@ def test_suspensao_registra_a_correcao_material_com_datas_e_ordem_coerentes():
     cards = _cards(index)
     # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas.
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert len(cards) == 83
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(cards) == 84
     # 11/10/2026, 06h07: a atualização do CNES 09/2026 (prazo encerrado, item 48) leva aquele card ao 1º lugar; os cards das posições 1 a 31 descem uma.
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
@@ -393,24 +399,27 @@ def test_suspensao_registra_a_correcao_material_com_datas_e_ordem_coerentes():
     # 01/11/2026 (reenvio ao AdSense): os 11 cards de 01/11 (5 matérias novas e 6 ampliadas) vão ao topo e saem os das
     # páginas reunidas. Índice novo = anterior + 11 - reunidas à frente (CNES 08, 09 e 10/2026) - ampliadas já à
     # frente: 28 + 11 - 3 - 0 = 36.
-    assert SUSP_URL.endswith(re.search(r'href="(/noticias/[^"]+/)"', cards[36]).group(1))
-    assert f'data-updated="{stamp}"' in cards[36]
-    assert f'<time datetime="{stamp}" class="leading-none">{day} • {hour}</time>' in cards[36]
-    assert SUMMARY_SUSP in cards[36]
-    assert f'data-title="{CARD_TITLE_SUSP}"' in cards[36]
-    assert f">{CARD_TITLE_SUSP}</h2>" in cards[36]
-    assert "<br" not in re.search(r"<h2\b[^>]*>.*?</h2>", cards[36], re.S).group(0).casefold()
-    assert HEADLINE_SUSP not in cards[36]
-    assert "prazo aberto" not in cards[36].casefold()
-    assert "news-card-compact" in cards[36].split(">", 1)[0]
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular abre a listagem; este card desce uma posição.
+    assert SUSP_URL.endswith(re.search(r'href="(/noticias/[^"]+/)"', cards[37]).group(1))
+    assert f'data-updated="{stamp}"' in cards[37]
+    assert f'<time datetime="{stamp}" class="leading-none">{day} • {hour}</time>' in cards[37]
+    assert SUMMARY_SUSP in cards[37]
+    assert f'data-title="{CARD_TITLE_SUSP}"' in cards[37]
+    assert f">{CARD_TITLE_SUSP}</h2>" in cards[37]
+    assert "<br" not in re.search(r"<h2\b[^>]*>.*?</h2>", cards[37], re.S).group(0).casefold()
+    assert HEADLINE_SUSP not in cards[37]
+    assert "prazo aberto" not in cards[37].casefold()
+    assert "news-card-compact" in cards[37].split(">", 1)[0]
     assert cards == sorted(cards, key=_card_moment, reverse=True)
     items = re.findall(r'\{"@type":"ListItem","position":(\d+),"url":"([^"]+)"\}', index)
-    assert [int(position) for position, _ in items] == list(range(1, 84))
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert [int(position) for position, _ in items] == list(range(1, 85))
     assert [url for _, url in items] == _card_hrefs(cards)
     # 16/10/2026, 20h06: o card do CNES 10/2026 entra na 1ª posição da listagem; os demais descem uma.
     # 17/10/2026, 09h50: o card do esclarecimento do Farmácia Popular entra na 1ª posição da listagem; os demais descem uma.
     # 20/10/2026, 10h12: os cards do consolidado de produtos irregulares e do SISPA sobem para a 1ª e a 2ª posições; os que ficavam entre eles descem uma.
-    assert items[36][1] == SUSP_URL
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular abre a listagem; este card desce uma posição.
+    assert items[37][1] == SUSP_URL
     assert f"<loc>{SUSP_URL}</loc>\n    <lastmod>{stamp[:10]}</lastmod>" in sitemap
 
     cuidados = CUIDADOS.read_text(encoding="utf-8")

@@ -187,7 +187,8 @@ def test_janelas_e_barra_classica(medidas):
         # 01/11/2026 (reenvio ao AdSense): 84 cards (85 + 5 novos - 6 das páginas reunidas); Farmácia Popular com 10
         # (saem as duas páginas do SIFAP de maio, entra a reunida).
         # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-        assert visiveis == {"carga": 5, "ver_mais": 83, "filtro": 5, "filtro_ver_mais": 10, "busca": 5,
+        # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+        assert visiveis == {"carga": 5, "ver_mais": 84, "filtro": 5, "filtro_ver_mais": 11, "busca": 5,
                             "mais_velha": 5}, (janela["janela"], visiveis)
 
 

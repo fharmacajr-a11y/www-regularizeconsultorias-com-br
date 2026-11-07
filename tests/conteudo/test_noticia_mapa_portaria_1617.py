@@ -178,10 +178,12 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     assert comunicado.count(f'href="/noticias/{SLUG}/"') == 1
     # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas; +2 guias da ANVISA.
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert len(cards) == 83
-    assert index.count("data-news-card") == 83
-    assert "83 notícias encontradas" in index
-    assert '>Todos</span><span class="text-xs text-slate-400">83<' in index
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(cards) == 84
+    assert index.count("data-news-card") == 84
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert "84 notícias encontradas" in index
+    assert '>Todos</span><span class="text-xs text-slate-400">84<' in index
     assert '>ANVISA</span><span class="text-xs text-slate-400">55<' in index
     assert '>M.A.P.A</span><span class="text-xs text-slate-400">3<' in index
     assert len(re.findall(r'\bdata-category="mapa"', index)) == 3
@@ -198,7 +200,8 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     # passa do 2º ao 13º (índice 1 + 11 = 12).
     # 03/11/2026, 12h00: a matéria do SNCR, o guia SNCR × SNGPC e o consolidado de irregulares, no mesmo carimbo, vão
     # ao topo; o MAPA 1.617 passa do 13º ao 14º (o SNCR já estava à frente dele).
-    card = cards[13]
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular abre a listagem; este card desce uma posição.
+    card = cards[14]
     opening = card.split(">", 1)[0]
     assert f'href="/noticias/{SLUG}/"' in card
     assert index.count(f'href="/noticias/{SLUG}/"') == 1
@@ -215,15 +218,20 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
     # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
     assert all("news-card-compact" in item.split(">", 1)[0] for item in cards)
     # 01/11/2026: 32 + 11 - 5 reunidas à frente = 38 (test_noticia_cadastro_anvisa_govbr.py).
-    assert "cadastro-anvisa-govbr-transicao-sistemas" in cards[38]
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular abre a listagem; este card desce uma posição.
+    assert "cadastro-anvisa-govbr-transicao-sistemas" in cards[39]
 
     collection = next(block for block in _jsonld(index) if block.get("@type") == "CollectionPage")
     items = collection["mainEntity"]["itemListElement"]
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert len(items) == 83
-    assert items[13]["position"] == 14
-    assert items[13]["url"] == PUBLIC_URL
-    assert [item["position"] for item in items] == list(range(1, 84))
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(items) == 84
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular abre a listagem; este card desce uma posição.
+    assert items[14]["position"] == 15
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular abre a listagem; este card desce uma posição.
+    assert items[14]["url"] == PUBLIC_URL
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert [item["position"] for item in items] == list(range(1, 85))
     assert sitemap.count(f"<loc>{PUBLIC_URL}</loc>") == 1
     assert f"<loc>{PUBLIC_URL}</loc>\n    <lastmod>2026-10-28</lastmod>" in sitemap
     # 13/10/2026: a listagem reordenou produtos irregulares, SNCR e DCB. 20/10/2026: reordenou produtos irregulares e SISPA.
@@ -236,8 +244,9 @@ def test_portaria_1617_enters_the_public_listing_itemlist_and_sitemap():
         # 01/11/2026: a listagem ganhou os cards das cinco matérias novas e trocou os das páginas reunidas.
         # 03/11/2026: a listagem trocou os resumos dos cards do SNCR e de produtos irregulares e levou esses dois e o
         # do guia SNCR × SNGPC ao topo.
+        # 07/11/2026: a listagem ganhou o card da notícia da auditoria do Farmácia Popular.
         "<loc>https://www.regularizeconsultorias.com.br/noticias/</loc>\n"
-        "    <lastmod>2026-11-03</lastmod>"
+        "    <lastmod>2026-11-07</lastmod>"
     ) in sitemap
 
 

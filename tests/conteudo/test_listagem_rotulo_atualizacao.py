@@ -91,7 +91,8 @@ def _cards():
     cards = re.findall(r'(<article\b[^>]*\bdata-news-card\b[^>]*>.*?</article>)', html, re.DOTALL)
     # 01/11/2026 (reenvio ao AdSense): 85 + 5 cards novos - 6 cards das páginas reunidas.
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert len(cards) == 83
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(cards) == 84
     for card in cards:
         slug = re.search(r'href="/noticias/([^"/]+)/"', card).group(1)
         tempos = re.findall(r'<time datetime="([^"]+)"[^>]*>([^<]*)</time>', card)

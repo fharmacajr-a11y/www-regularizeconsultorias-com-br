@@ -46,22 +46,26 @@ def test_listing_places_the_updated_cosmetics_card_eighth():
     # 01/11/2026 (reenvio ao AdSense): os 11 cards de 01/11 (5 matérias novas e 6 ampliadas) vão ao topo e saem os das
     # 6 páginas reunidas (total 85 + 5 - 6 = 84). Índice novo = anterior + 11 - reunidas que ficavam à frente -
     # ampliadas que já ficavam à frente: 36 + 11 - 5 - 0 = 42.
-    card = cards[42]
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular abre a listagem; este card desce uma posição.
+    card = cards[43]
 
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert len(cards) == 83
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(cards) == 84
     assert "/noticias/anvisa-atualiza-listas-substancias-cosmeticos/" in card
     assert f'data-updated="{UPDATED}"' in card
     assert "está encerrada" in card
     assert "recebe contribuições" not in card
     assert "permanece aberta" not in card
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert '>Todos</span><span class="text-xs text-slate-400">83<' in html
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert '>Todos</span><span class="text-xs text-slate-400">84<' in html
     # 01/11/2026: +2 guias da ANVISA (cadastros da drogaria; recolhimentos, suspensões e alertas).
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
     assert '>ANVISA</span><span class="text-xs text-slate-400">55<' in html
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular abre a listagem; este card desce uma posição.
     assert (
-        '"position":43,"url":"https://www.regularizeconsultorias.com.br'
+        '"position":44,"url":"https://www.regularizeconsultorias.com.br'
         '/noticias/anvisa-atualiza-listas-substancias-cosmeticos/"'
     ) in html
     sitemap = SITEMAP.read_text(encoding="utf-8")

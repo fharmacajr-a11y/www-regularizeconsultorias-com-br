@@ -157,7 +157,8 @@ def test_every_public_page_with_a_footer_links_to_the_policy():
 
     # 106 páginas do sitemap + 404.html. 01/11/2026 (reenvio ao AdSense): +5 matérias novas; as seis páginas reunidas
     # seguem públicas (noindex) com o rodapé.
-    assert len(paths_with_footer) == 112
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(paths_with_footer) == 113
 
 
 def test_noindex_technical_pages_do_not_gain_the_policy_footer_link():

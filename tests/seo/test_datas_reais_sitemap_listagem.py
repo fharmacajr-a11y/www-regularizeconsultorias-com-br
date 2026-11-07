@@ -63,7 +63,8 @@ def test_lastmod_de_cada_materia_e_o_dia_da_ultima_atualizacao_declarada():
     paginas = sorted(p for p in (ROOT / "noticias").glob("*/index.html") if "a-publicar" not in p.parts)
     # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas. As seis reunidas nelas continuam publicadas com noindex e
     # ficam fora do sitemap: para elas, a regra é não ter <loc>; para as outras 84, o lastmod segue a data declarada.
-    assert len(paginas) == 90
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(paginas) == 91
     falhas = []
     reunidas = []
     for pagina in paginas:
@@ -98,7 +99,8 @@ def test_card_da_now_foods_mostra_a_atualizacao_real_sem_mudar_de_posicao():
     cards = _cards()
     # 01/11/2026 (reenvio ao AdSense): 85 + 5 cards novos - 6 cards das páginas reunidas.
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert len(cards) == 83
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(cards) == 84
     own = [card for card in cards if f'href="/noticias/{NOW_FOODS}/"' in card]
     assert len(own) == 1
     card = own[0]
@@ -121,7 +123,8 @@ def test_card_da_now_foods_mostra_a_atualizacao_real_sem_mudar_de_posicao():
     # 01/11/2026 (reenvio ao AdSense): saem 6 cards à frente (as páginas reunidas), entram 5 à frente (as matérias novas)
     # e 2 que ficavam atrás passam à frente (as matérias de 28/04/2026 ampliadas em 01/11/2026): 81 - 6 + 5 + 2 = 82.
     # 02/11/2026 (decisão do Jr): sai o card do Paramol (30/07/2026), que ficava à frente: 82 - 1 = 81.
-    assert position == 81
+    # 07/11/2026: entra à frente o card da notícia da auditoria do Farmácia Popular: 81 + 1 = 82.
+    assert position == 82
 
 
 def test_lastmod_das_paginas_institucionais_segue_a_ultima_mudanca_real_do_texto():

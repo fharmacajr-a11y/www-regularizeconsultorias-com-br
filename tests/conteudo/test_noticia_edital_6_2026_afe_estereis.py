@@ -181,7 +181,8 @@ def test_news_index_has_one_card_and_one_itemlist_entry():
     assert ">Atualização</span>" in own[0] and "Ler atualização" in own[0]
     # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas.
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert len(cards) == 83
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(cards) == 84
 
 
 def test_sitemap_lists_the_new_url_once():

@@ -25,7 +25,8 @@ def test_nenhum_titulo_ou_resumo_tem_quebra_incondicional():
     cards = _cards()
     # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 cards das páginas reunidas nelas.
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert len(cards) == 83
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(cards) == 84
     # Modelo único (12/10/2026, R1): todos os cards levam news-card-compact; a posição não troca o formato.
     assert all("news-card-compact" in card.split(">", 1)[0] for card in cards)
     for card in cards:

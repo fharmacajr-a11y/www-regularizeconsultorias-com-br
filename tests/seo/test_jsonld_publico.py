@@ -61,4 +61,5 @@ def test_public_jsonld_is_valid():
                 ) from error
 
     # 01/11/2026 (reenvio ao AdSense): +10 blocos, os dois (NewsArticle e BreadcrumbList) de cada uma das cinco matérias novas.
-    assert block_count == 195
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert block_count == 197

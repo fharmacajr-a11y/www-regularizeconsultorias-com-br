@@ -71,8 +71,9 @@ def test_existing_card_stays_unique_as_the_listing_grows():
     assert html.count(f'"url":"{PUBLIC_URL}"') == 1
     # 01/11/2026 (reenvio ao AdSense): 85 + 5 matérias novas - 6 páginas reunidas.
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert html.count("data-news-card") == 83
-    assert "83 notícias encontradas" in html
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert html.count("data-news-card") == 84
+    assert "84 notícias encontradas" in html
     card = re.search(
         rf'<article\b[^>]*data-news-card[^>]*>.*?href="/noticias/{SLUG}/".*?</article>',
         html,

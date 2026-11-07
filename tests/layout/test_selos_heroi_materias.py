@@ -114,7 +114,8 @@ def selos():
 
 def test_todas_as_materias_medidas_com_e_sem_barra(selos):
     # 01/11/2026 (reenvio ao AdSense): +5 matérias novas; as seis reunidas seguem publicadas (noindex) e são medidas.
-    assert len(MATERIAS) == 90
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(MATERIAS) == 91
     assert len(selos) == 2 * len(MATERIAS)
     for r in selos:
         assert r["medida"] and len(r["medida"]["selos"]) >= 2, r["pagina"]

@@ -163,7 +163,8 @@ def test_news_index_swapped_the_card_for_the_unified_page():
     # Até 31/10/2026 o card desta matéria era o 7º (índice 6). Desde 01/11/2026 ele e o item do ItemList saíram; o card
     # da página reunida entrou uma única vez, com a categoria CNES.
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert len(cards) == 83
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(cards) == 84
     assert f'href="{ROUTE}"' not in html
     assert f'"url":"{PUBLIC_URL}"' not in html
     assert f'data-title="{TITLE}"' not in html
@@ -173,13 +174,16 @@ def test_news_index_swapped_the_card_for_the_unified_page():
     assert ">Atualização</span>" in unified[0] and "Ler atualização" in unified[0]
     assert "news-amber-card" in unified[0] and "news-card-compact" in unified[0].split(">", 1)[0]
     items = re.findall(r'\{"@type":"ListItem","position":(\d+),"url":"([^"]+)"\}', html)
-    assert [int(p) for p, _ in items] == list(range(1, 84))
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert [int(p) for p, _ in items] == list(range(1, 85))
     assert [url for _, url in items].count(UNIFIED_URL) == 1
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert '<span>Todos</span><span class="text-xs text-slate-400">83</span>' in html
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert '<span>Todos</span><span class="text-xs text-slate-400">84</span>' in html
     assert '<span>CNES</span><span class="text-xs text-slate-400">3</span>' in html
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert "83 notícias encontradas" in html
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert "84 notícias encontradas" in html
 
 
 def test_comunicado_informative_notice_is_active_and_second():
@@ -218,7 +222,8 @@ def test_sitemap_dropped_the_url_for_the_unified_page():
 
     # Até 31/10/2026: 106 URLs, esta uma vez, lastmod 2026-10-16. Desde 01/11/2026, noindex e fora do sitemap.
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert sitemap.count("<loc>") == 104
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert sitemap.count("<loc>") == 105
     assert f"<loc>{PUBLIC_URL}</loc>" not in sitemap
     assert sitemap.count(f"<loc>{UNIFIED_URL}</loc>") == 1
     assert re.search(rf"<loc>{re.escape(UNIFIED_URL)}</loc>\s*<lastmod>2026-11-01</lastmod>", sitemap)
@@ -226,4 +231,5 @@ def test_sitemap_dropped_the_url_for_the_unified_page():
     # 01/11/2026: a listagem ganhou os cards das cinco matérias novas e trocou os das páginas reunidas.
     # 03/11/2026: a listagem trocou os resumos dos cards do SNCR e de produtos irregulares e levou esses dois e o do guia
     # SNCR × SNGPC ao topo.
-    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-11-03</lastmod>", sitemap)
+    # 07/11/2026: a listagem ganhou o card da notícia da auditoria do Farmácia Popular.
+    assert re.search(r"<loc>https://www\.regularizeconsultorias\.com\.br/noticias/</loc>\s*<lastmod>2026-11-07</lastmod>", sitemap)

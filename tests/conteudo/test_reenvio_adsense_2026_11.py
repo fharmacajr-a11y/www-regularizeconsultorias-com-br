@@ -82,7 +82,9 @@ TOPO_03_11 = (
 ATUALIZADAS_04_11 = {"recolhimentos-suspensoes-alertas-anvisa-como-a-farmacia-deve-reagir": "2026-11-04T16:30:00-03:00"}
 ATUALIZADAS = {**ATUALIZADAS_03_11, **ATUALIZADAS_04_11}
 TOPO = (*ATUALIZADAS_04_11, *TOPO_03_11)
-ORDEM = [*TOPO, *(slug for slug in (*NOVAS, *AMPLIADAS) if slug not in TOPO)]
+# 07/11/2026: a notícia da auditoria do Farmácia Popular, fora deste lote, abre a listagem; as do lote descem uma.
+FORA_DO_LOTE = ("farmacia-popular-auditoria-suspensao-averiguacao",)
+ORDEM = [*FORA_DO_LOTE, *TOPO, *(slug for slug in (*NOVAS, *AMPLIADAS) if slug not in TOPO)]
 TIPOS = {
     "atualizacao": (">Atualização</span>", "Ler atualização"),
     "informativo": (">Informativo</span>", "Ler notícia"),
@@ -332,17 +334,21 @@ def test_listagem_contadores_e_lastmod():
     index, cards, _ = _cards()
     sitemap, _ = _sitemap()
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert len(cards) == 83 and "83 notícias encontradas" in index
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(cards) == 84 and "84 notícias encontradas" in index
     contadores = dict(re.findall(r"<span>([^<]+)</span><span class=\"text-xs text-slate-400\">(\d+)</span>", index))
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert contadores["Todos"] == "83"
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert contadores["Todos"] == "84"
     assert contadores["ANVISA"] == "55"
     assert contadores["CNES"] == "3"
     assert contadores["SNCR"] == "3"
-    assert contadores["FARMÁCIA POPULAR"] == "10"
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert contadores["FARMÁCIA POPULAR"] == "11"
     # 03/11/2026: a listagem trocou os resumos dos cards do SNCR e de produtos irregulares e levou esses dois e o do guia
     # SNCR × SNGPC ao topo.
-    assert sitemap[f"{BASE}/noticias/"][0] == "2026-11-03"
+    # 07/11/2026: a listagem ganhou o card da notícia da auditoria do Farmácia Popular.
+    assert sitemap[f"{BASE}/noticias/"][0] == "2026-11-07"
     # Comunicados: três avisos trocaram só o destino do link; o texto e o lastmod ficam.
     # 03/11/2026: o aviso do SNCR ganhou a atualização da RDC nº 1.046/2026.
     assert sitemap[f"{BASE}/comunicado/"][0] == "2026-11-03"

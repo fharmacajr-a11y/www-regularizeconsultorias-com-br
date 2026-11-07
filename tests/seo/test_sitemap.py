@@ -73,7 +73,8 @@ def test_sitemap_is_valid_xml_with_unique_urls():
     # 01/11/2026 (reenvio ao AdSense): +5 matérias novas e -6 páginas reunidas nelas. As reunidas continuam publicadas,
     # com noindex e aviso para a página nova, e saem do sitemap; toda outra página pública continua nele.
     # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-    assert len(locations) == 104
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(locations) == 105
     assert len(locations) == len(set(locations))
     assert set(locations) == public_canonicals
     # 02/11/2026 (decisão do Jr): além das seis reunidas, a notícia do Paramol (lote 114053) ganhou noindex.
@@ -168,7 +169,8 @@ def test_portaria_news_news_index_and_comunicado_have_expected_sitemap_metadata(
     # reunidas e reordenou os seis cards de matérias ampliadas.
     # 03/11/2026: a listagem trocou os resumos dos cards do SNCR e de produtos irregulares e levou esses dois e o do
     # guia SNCR × SNGPC ao topo.
-    assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-11-03"
+    # 07/11/2026: a listagem ganhou o card da notícia da auditoria do Farmácia Popular.
+    assert by_location[NEWS_INDEX_URL].findtext("s:lastmod", namespaces=NS) == "2026-11-07"
     # 17/10/2026, 09h50: Comunicados ganhou o aviso informativo do Farmácia Popular.
     # 19/10/2026, 15h40: Comunicados ganhou o aviso informativo da instabilidade nos sistemas da Anvisa.
     # 20/10/2026: o aviso da instabilidade na Anvisa passou ao histórico.

@@ -202,6 +202,10 @@ def test_news_index_itemlist_ordering():
     # descem para as posições 4 a 13 (as duas que ficavam à frente do guia descem três; as demais, duas).
     # 04/11/2026, 16h30: o guia de recolhimentos (retificação da RE nº 2.948/2026, lote 114053 do Paramol) abre a
     # lista; as três de 03/11/2026 e as duas que ficavam à frente dele descem uma. Da 7ª posição em diante, nada muda.
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular abre a listagem; as demais descem uma. As posições abaixo
+    # são as de 04/11/2026, contadas depois dela.
+    assert urls[0] == "https://www.regularizeconsultorias.com.br/noticias/farmacia-popular-auditoria-suspensao-averiguacao/"
+    urls = urls[1:]
     assert urls[0] == "https://www.regularizeconsultorias.com.br/noticias/recolhimentos-suspensoes-alertas-anvisa-como-a-farmacia-deve-reagir/"
     atualizadas_03_11 = [
         "rdc-1000-2025-anvisa-prorroga-prazo-sncr",

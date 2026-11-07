@@ -289,11 +289,13 @@ def test_listagem_contagem_ordem_e_cliques(faixa):
     for (largura, altura), janela in faixa.items():
         # 01/11/2026 (reenvio ao AdSense): 85 + 5 cards novos - 6 cards das páginas reunidas.
         # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-        assert janela["antes"]["cards"] == 83
+        # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+        assert janela["antes"]["cards"] == 84
         # "destaques" conta os cards visíveis sem news-card-compact: com o modelo único (12/10/2026) não há nenhum.
         assert janela["antes"]["visiveis"] == 5 and janela["antes"]["destaques"] == 5
         # 02/11/2026 (decisão do Jr): a notícia do Paramol (lote 114053) ganhou noindex e saiu da listagem e do sitemap.
-        assert janela["depois"]["visiveis"] == 83 and janela["depois"]["destaques"] == 5
+        # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+        assert janela["depois"]["visiveis"] == 84 and janela["depois"]["destaques"] == 5
         assert janela["antes"]["ordem"] == janela["depois"]["ordem"]
         assert janela["depois"]["overflowX"] <= 0, largura
     ordens = {tuple(j["depois"]["ordem"]) for j in faixa.values()}

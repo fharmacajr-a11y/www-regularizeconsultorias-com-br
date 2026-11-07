@@ -884,7 +884,8 @@ def test_every_public_navbar_has_two_complete_notice_links():
         assert "gap-2" in mobile_classes, relative_path
     # 106 páginas do sitemap + 404.html. 01/11/2026 (reenvio ao AdSense): +5 matérias novas; as seis reunidas seguem
     # publicadas (noindex) com a navbar.
-    assert pages_with_navbar == 112
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert pages_with_navbar == 113
 
 
 def test_tablet_hide_regression_is_absent_and_navbar_rules_remain():

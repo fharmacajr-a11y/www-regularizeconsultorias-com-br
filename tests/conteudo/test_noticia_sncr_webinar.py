@@ -228,7 +228,8 @@ def test_sncr_card_is_unique_current_and_featured_in_the_news_listing():
     # 03/11/2026, 12h00: a matéria do SNCR (RDC nº 1.046/2026) volta à 1ª posição, com o guia SNCR × SNGPC e o
     # consolidado de irregulares logo depois, no mesmo carimbo.
     # 04/11/2026, 16h30: o guia de recolhimentos (retificação da RE nº 2.948/2026) abre a listagem; o SNCR fica em 2º.
-    assert cards.index(card) == 1
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular abre a listagem; o SNCR fica em 3º.
+    assert cards.index(card) == 2
     assert "news-card-compact" in card.split(">", 1)[0]
     assert f'data-updated="{UPDATED}"' in card
     # 22/10/2026, 22h40: o card do SNCR, atualizado com os manuais, segue em 2º, logo depois do consolidado de irregulares
@@ -810,7 +811,8 @@ def test_sncr_pages_leave_out_the_items_held_for_another_update():
     # 01/11/2026 (reenvio ao AdSense): +5 matérias novas (CNES 2026, SIFAP de maio e três guias); nenhuma do SNCR além
     # do guia "SNCR e SNGPC", que cita os 16 dígitos e os 20 medicamentos atribuídos à 2ª edição do manual, como o
     # quadro de 22/10/2026.
-    assert len(list((ROOT / "noticias").glob("*/index.html"))) == 90
+    # 07/11/2026: a notícia da auditoria do Farmácia Popular entra no topo da listagem, no ItemList e no sitemap.
+    assert len(list((ROOT / "noticias").glob("*/index.html"))) == 91
 
 
 def test_sncr_22_10_update_attributes_the_manuals_and_keeps_the_change_as_planned():
